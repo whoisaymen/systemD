@@ -34,6 +34,16 @@ export const festival = {
       title: "Body",
       type: "blockContent",
     },
+    {
+      name: "sections",
+      title: "Sections",
+      type: "array",
+      of: [
+        { name: "gallery", type: "gallery" },
+        { name: "blockContentModule", type: "blockContentModule" },
+      ],
+      description: "Add, edit, and reorder sections",
+    },
   ],
 
   preview: {
