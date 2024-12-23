@@ -17,7 +17,7 @@ import {
 	LeFestival,
 	LaMemoire,
 	LaMemoireText,
-} from '../components/svgs'
+} from './svgs'
 
 import festivalPrev1 from '/public/assets/images/festivalprev1.png'
 import festivalPrev2 from '/public/assets/images/festivalprev2.png'

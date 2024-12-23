@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation'
-import SystemD from '../SystemD'
+import SystemD from '../../components/SystemD'
 
 export default async function Page({
 	params,

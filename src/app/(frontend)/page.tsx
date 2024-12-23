@@ -2,7 +2,7 @@ import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { modulesQuery } from '@/sanity/lib/queries'
 import Modules from '@/ui/modules'
 import processMetadata from '@/lib/processMetadata'
-import SystemD from './SystemD'
+import SystemD from '../components/SystemD'
 
 export default async function Page() {
 	const page = await getPage()
