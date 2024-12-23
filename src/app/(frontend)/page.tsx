@@ -34,7 +34,5 @@ async function getPage() {
 
 	if (!data)
 		throw Error('No `page` document with slug "index" found in the Studio')
-
-	console.log(data, 'data')
 	return data
 }

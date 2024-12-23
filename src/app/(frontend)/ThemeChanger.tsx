@@ -16,7 +16,6 @@ const ThemeSwitch = () => {
 		return null
 	}
 	const toggleTheme = () => {
-		console.log(theme)
 		setTheme(theme === 'dark' ? 'light' : 'dark')
 	}
 
