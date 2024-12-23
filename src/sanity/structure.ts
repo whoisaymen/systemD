@@ -55,7 +55,7 @@ export const structure = structureTool({
 						S.list()
 							.title('Le Festival')
 							.items([
-								singleton(S, 'festival', 'Info').icon(FaInfoCircle),
+								singleton(S, 'lefestival', 'Info').icon(FaInfoCircle),
 								singleton(
 									S,
 									'callForParticipation',

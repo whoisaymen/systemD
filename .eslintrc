@@ -1,3 +1,10 @@
 {
-	"extends": "@sanity/eslint-config-studio",
+	"extends": ["@sanity/eslint-config-studio", "next", "next/core-web-vitals"],
+	"plugins": ["@typescript-eslint"],
+	"rules": {
+		"@typescript-eslint/no-empty-function": [
+			"error",
+			{ "allow": ["arrowFunctions"] },
+		],
+	},
 }
