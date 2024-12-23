@@ -1,0 +1,12 @@
+<svg viewBox="0 0 172 172" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle with a stroke -->
+  <circle
+    cx="86" 
+    cy="86" 
+    r="81" 
+    fill="currentColor" 
+    stroke="color" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+</svg>
