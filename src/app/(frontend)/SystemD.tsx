@@ -33,9 +33,13 @@ const repeatedImages = Array.from(
 	(_, index) => images[index % images.length],
 )
 
-export default function SystemD({ initialTab }) {
+interface SystemDProps {
+	initialTab?: string | null
+}
+
+export default function SystemD({ initialTab }: SystemDProps) {
 	const router = useRouter()
-	const [activeTab, setActiveTab] = useState(null)
+	const [activeTab, setActiveTab] = useState<string | null>(null)
 
 	useEffect(() => {
 		if (initialTab) {
@@ -43,15 +47,15 @@ export default function SystemD({ initialTab }) {
 		}
 	}, [initialTab])
 
-	const handleTabClick = (tab) => {
+	const handleTabClick = (tab: string) => {
 		const newTab = activeTab === tab ? null : tab
 		setActiveTab(newTab)
-		router.push(newTab ? `/${newTab}` : '/', { shallow: true })
+		router.push(newTab ? `/${newTab}` : '/', { shallow: true } as any)
 	}
 
 	const handleCloseClick = () => {
 		setActiveTab(null)
-		router.push('/', { shallow: true })
+		router.push('/', { shallow: true } as any)
 	}
 
 	const bigBangVariants = {

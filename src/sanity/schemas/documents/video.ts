@@ -1,10 +1,10 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
-import { VscVideo } from 'react-icons/vsc'
+import { VscFileMedia } from 'react-icons/vsc'
 
 export default defineType({
 	name: 'video',
 	title: 'Vidéo',
-	icon: VscVideo,
+	icon: VscFileMedia,
 	type: 'document',
 	groups: [
 		{ name: 'content', title: 'Content', default: true },

@@ -4,9 +4,15 @@ const languages = [
 	{ id: 'fr', title: 'French' },
 ]
 
+const defaultLanguage = languages.find((item) => item.isDefault)
+
+if (!defaultLanguage) {
+	throw new Error('Default language not found')
+}
+
 const i18n = {
 	languages,
-	base: languages.find((item) => item.isDefault).id,
+	base: defaultLanguage.id,
 }
 
 const googleTranslateLanguages = languages.map(({ id, title }) => ({
