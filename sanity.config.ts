@@ -20,8 +20,7 @@ import { theme } from '@/sanity/utils/theme'
 // import { frFRLocale } from '@sanity/locale-fr-fr'
 import { internationalizedArray } from 'sanity-plugin-internationalized-array'
 import { documentInternationalization } from '@sanity/document-internationalization'
-import StudioLogo from '@/app/components/StudioLogo'
-import NewNavbar from '@/app/components/NewNavbar'
+import StudioLogo from '@/components/StudioLogo'
 
 const singletonTypes = ['site']
 
