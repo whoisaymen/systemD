@@ -1,6 +1,0 @@
-{
-	"extends": "@sanity/eslint-config-studio",
-	"rules": {
-		"@typescript-eslint/no-empty-function": ["off"],
-	},
-}
