@@ -1,27 +1,21 @@
 import { defineField, defineType, KeyedObject } from 'sanity'
 import { GoPerson } from 'react-icons/go'
+import festival from './festival'
 
 export default defineType({
 	name: 'jury',
-	title: 'Jury',
+	title: 'Membre du jury',
 	type: 'document',
 	icon: GoPerson,
 	fields: [
 		defineField({
 			name: 'name',
-			title: 'Name',
+			title: 'Nom',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'title',
-			title: 'Title',
-			type: 'internationalizedArrayString',
-			description: "Team member's role",
-		}),
-		defineField({
 			name: 'image',
-			title: 'Image',
 			type: 'image',
 			options: {
 				hotspot: true,
@@ -29,30 +23,29 @@ export default defineType({
 		}),
 		defineField({
 			name: 'biography',
-			title: 'Biography',
+			title: 'Biographie',
 			type: 'internationalizedArrayText',
 		}),
 		defineField({
-			name: 'festival',
+			name: 'edition',
 			title: 'Festival',
 			type: 'reference',
 			to: [{ type: 'festival' }],
-			description: 'The festival this jury member is associated with',
+			description: "L'édition du festival auquel ce membre du jury est associé",
 		}),
 	],
 	preview: {
 		select: {
 			title: 'name',
-			subtitle: 'title',
+			festivalYear: 'edition.year',
 			media: 'image',
 		},
-		prepare({ title, subtitle, media }) {
-			const subtitleText = subtitle?.length
-				? subtitle?.find((v: KeyedObject) => v?._key === 'fr')?.value
-				: ''
+		prepare({ title, festivalYear, media }) {
 			return {
 				title,
-				subtitle: subtitleText,
+				subtitle: festivalYear
+					? `Édition ${festivalYear}`
+					: 'Aucune édition associée',
 				media,
 			}
 		},

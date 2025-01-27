@@ -1,32 +1,24 @@
-import { defineArrayMember, defineField, defineType } from 'sanity'
+import { defineField, defineType } from 'sanity'
 import { VscCalendar } from 'react-icons/vsc'
-import imageBlock from '../fragments/image-block'
 
 export default defineType({
 	name: 'lefestival',
 	title: 'Festival',
 	icon: VscCalendar,
 	type: 'document',
-	groups: [
-		{ name: 'content', default: true },
-		{ name: 'options' },
-		{ name: 'seo', title: 'SEO' },
-	],
 	fields: [
 		defineField({
-			name: 'title',
-			title: 'Title',
-			type: 'string',
-		}),
-		defineField({
-			name: 'introText',
-			title: 'Texte explicatif',
-			type: 'text',
-		}),
-		defineField({
-			name: 'teaserVideo',
-			title: 'Vidéo teaser',
-			type: 'url',
+			name: 'blocks',
+			title: 'Blocs',
+			type: 'array',
+			of: [
+				{ type: 'mediaTeaserBlock' },
+				{ type: 'yellowBannerBlock' },
+				{ type: 'whiteTextBlock' },
+				{ type: 'juryBlock' },
+				{ type: 'yellowTicketBlock' },
+				{ type: 'onTourBlock' },
+			],
 		}),
 	],
 	preview: {

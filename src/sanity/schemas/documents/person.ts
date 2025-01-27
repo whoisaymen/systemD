@@ -4,21 +4,20 @@ import { GoPerson } from 'react-icons/go'
 
 export default defineType({
 	name: 'person',
-	title: 'Person',
+	title: "Membre de l'équipe",
 	type: 'document',
 	icon: GoPerson,
 	fields: [
 		defineField({
 			name: 'name',
-			title: 'Name',
+			title: 'Nom',
 			type: 'string',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'title',
-			title: 'Title',
+			title: 'Titre',
 			type: 'internationalizedArrayString',
-			description: "Team member's role",
 		}),
 		defineField({
 			name: 'image',
@@ -29,9 +28,8 @@ export default defineType({
 		}),
 		defineField({
 			name: 'biography',
+			title: 'Biographie',
 			type: 'internationalizedArrayText',
-			// group: 'localized',
-			// hidden: (context) => context?.document?.name === undefined,
 		}),
 	],
 	preview: {

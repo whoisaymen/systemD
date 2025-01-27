@@ -1,134 +1,111 @@
-import { defineArrayMember, defineField, defineType } from 'sanity'
+import { defineField, defineType } from 'sanity'
 import { VscCalendar } from 'react-icons/vsc'
-import imageBlock from '../fragments/image-block'
+import photoGalleryBlock from '../objects/photoGalleryBlock'
 
 export default defineType({
 	name: 'film',
 	title: 'Film',
 	icon: VscCalendar,
 	type: 'document',
-	groups: [
-		{ name: 'content', title: 'Content', default: true },
-		{ name: 'details', title: 'Details' },
-		{ name: 'media', title: 'Media' },
-		{ name: 'seo', title: 'SEO' },
-	],
 	fields: [
 		defineField({
 			name: 'title',
-			title: 'Title',
-			type: 'string',
-			group: 'content',
-		}),
-		defineField({
-			name: 'description',
-			title: 'Description',
-			type: 'text',
-			group: 'content',
-		}),
-		defineField({
-			name: 'releaseDate',
-			title: 'Release Date',
-			type: 'date',
-			group: 'details',
+			title: 'Titre',
+			type: 'internationalizedArrayString',
 		}),
 		defineField({
 			name: 'director',
-			title: 'Director',
+			title: 'Nom du réalisateur',
 			type: 'string',
-			group: 'details',
 		}),
 		defineField({
-			name: 'cast',
-			title: 'Cast',
-			type: 'array',
-			of: [{ type: 'string' }],
-			group: 'details',
+			name: 'production',
+			title: 'Nom de la production',
+			type: 'string',
 		}),
 		defineField({
-			name: 'duration',
-			title: 'Duration (minutes)',
+			name: 'year',
+			title: 'Année',
 			type: 'number',
-			group: 'details',
+			validation: (Rule) =>
+				Rule.required().min(1900).max(new Date().getFullYear()),
 		}),
 		defineField({
-			name: 'categories',
-			title: 'Categories',
+			name: 'genre',
+			title: 'Genre',
+			type: 'reference',
+			to: [{ type: 'genre' }],
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'synopsis',
+			title: 'Synopsis',
+			type: 'internationalizedArrayText',
+		}),
+		defineField({
+			name: 'city',
+			title: 'Ville',
+			type: 'internationalizedArrayString',
+		}),
+		defineField({
+			name: 'length',
+			title: 'Durée (minutes)',
+			type: 'number',
+		}),
+		defineField({
+			name: 'gallery',
+			title: 'Galerie de photos',
 			type: 'array',
-			of: [
-				{
-					type: 'reference',
-					to: [{ type: 'blog.category' }],
-				},
-			],
-			group: 'details',
+			of: [{ type: 'photoGalleryBlock' }],
 		}),
 		defineField({
-			name: 'poster',
-			title: 'Poster',
+			name: 'affiche',
+			title: 'Affiche',
 			type: 'image',
 			options: {
 				hotspot: true,
 			},
-			group: 'media',
 		}),
 		defineField({
-			name: 'trailer',
-			title: 'Trailer',
+			name: 'playFilmUrl',
+			title: 'URL du teaser du film',
 			type: 'url',
-			group: 'media',
-		}),
-		defineField({
-			name: 'gallery',
-			title: 'Gallery',
-			type: 'array',
-			of: [{ type: 'image' }],
-			options: {
-				layout: 'grid',
-			},
-			group: 'media',
-		}),
-		defineField({
-			name: 'body',
-			title: 'Body',
-			type: 'array',
-			of: [
-				{ type: 'block' },
-				imageBlock,
-				defineArrayMember({
-					title: 'Code block',
-					type: 'code',
-					options: {
-						withFilename: true,
-					},
-				}),
-				{ type: 'custom-html' },
-			],
-			group: 'content',
-		}),
-		defineField({
-			name: 'seo',
-			title: 'SEO',
-			type: 'object',
-			fields: [
-				defineField({
-					name: 'metaTitle',
-					title: 'Meta Title',
-					type: 'string',
-				}),
-				defineField({
-					name: 'metaDescription',
-					title: 'Meta Description',
-					type: 'text',
-				}),
-				defineField({
-					name: 'keywords',
-					title: 'Keywords',
-					type: 'array',
-					of: [{ type: 'string' }],
-				}),
-			],
-			group: 'seo',
 		}),
 	],
+	preview: {
+		select: {
+			title: 'title',
+			director: 'director',
+			year: 'year',
+			affiche: 'affiche',
+			gallery: 'gallery',
+		},
+		prepare({ title, director, year, affiche, gallery }) {
+			const getLocalizedValue = (array, lang) => {
+				if (!Array.isArray(array)) return null
+				return array.find((v) => v?._key === lang)?.value
+			}
+
+			const displayTitle =
+				getLocalizedValue(title, 'fr') ||
+				getLocalizedValue(title, 'en') ||
+				getLocalizedValue(title, 'nl') ||
+				'Untitled'
+
+			// const displayDirector =
+			// 	getLocalizedValue(director, 'fr') ||
+			// 	getLocalizedValue(director, 'en') ||
+			// 	getLocalizedValue(director, 'nl') ||
+			// 	'Unknown Director'
+
+			const media =
+				affiche || (gallery && gallery.length > 0 ? gallery[0].photo : null)
+
+			return {
+				title: `${displayTitle} (${year})`,
+				subtitle: `Réalisé par ${director}`,
+				media,
+			}
+		},
+	},
 })

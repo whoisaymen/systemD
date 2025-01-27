@@ -17,7 +17,7 @@ import { colorInput } from '@sanity/color-input'
 import { schemaTypes } from './src/sanity/schemas'
 import { theme } from '@/sanity/utils/theme'
 
-// import { frFRLocale } from '@sanity/locale-fr-fr'
+import { frFRLocale } from '@sanity/locale-fr-fr'
 import { internationalizedArray } from 'sanity-plugin-internationalized-array'
 import { documentInternationalization } from '@sanity/document-internationalization'
 import StudioLogo from '@/components/StudioLogo'
@@ -39,7 +39,7 @@ export default defineConfig({
 	// },
 
 	plugins: [
-		// frFRLocale(),
+		frFRLocale(),
 		structure,
 		presentation,
 		dashboardTool({

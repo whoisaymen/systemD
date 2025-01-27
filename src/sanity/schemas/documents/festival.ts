@@ -1,5 +1,4 @@
 import { defineField, defineType } from 'sanity'
-import { GiPartyPopper } from 'react-icons/gi'
 
 export default defineType({
 	name: 'festival',
@@ -7,35 +6,78 @@ export default defineType({
 	type: 'document',
 	fields: [
 		defineField({
-			name: 'name',
-			title: 'Name',
-			type: 'string',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
 			name: 'year',
-			title: 'Year',
+			title: 'Année',
 			type: 'number',
 			validation: (Rule) =>
 				Rule.required().min(1900).max(new Date().getFullYear()),
 		}),
 		defineField({
+			name: 'venue',
+			title: 'Lieu',
+			type: 'string',
+		}),
+		defineField({
+			name: 'visual',
+			title: 'Visuel',
+			type: 'image',
+			options: {
+				hotspot: true,
+			},
+		}),
+		defineField({
 			name: 'description',
 			title: 'Description',
-			type: 'text',
+			type: 'internationalizedArrayText',
+			validation: (Rule) => Rule.max(250),
+		}),
+		defineField({
+			name: 'pressLink',
+			title: 'Lien de presse',
+			type: 'url',
+		}),
+		defineField({
+			name: 'filmSelection',
+			title: 'Films sélectionnés',
+			type: 'array',
+			of: [
+				{
+					type: 'reference',
+					to: [{ type: 'film' }],
+				},
+			],
 		}),
 		defineField({
 			name: 'jury',
-			title: 'Jury Members',
+			title: 'Membres du jury',
 			type: 'array',
 			of: [{ type: 'reference', to: [{ type: 'jury' }] }],
-			description: 'The jury members for this festival',
+		}),
+		defineField({
+			name: 'photoGallery',
+			title: 'Galerie de photos',
+			type: 'array',
+			of: [{ type: 'photoGalleryBlock' }],
+		}),
+		defineField({
+			name: 'expoPhoto',
+			title: 'Expo photo',
+			type: 'array',
+			of: [{ type: 'expoPhotoBlock' }],
 		}),
 	],
 	preview: {
 		select: {
-			title: 'name',
-			subtitle: 'year',
+			title: 'year',
+			subtitle: 'venue',
+			media: 'visual',
+		},
+		prepare({ title, subtitle, media }) {
+			return {
+				title: `Édition ${title}`,
+				subtitle,
+				media,
+			}
 		},
 	},
 })

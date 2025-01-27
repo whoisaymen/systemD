@@ -9,6 +9,7 @@ export default defineType({
 	fields: [
 		defineField({
 			name: 'name',
+			title: 'Nom',
 			type: 'string',
 		}),
 		defineField({
@@ -20,6 +21,7 @@ export default defineType({
 			fields: [
 				defineField({
 					name: 'default',
+					title: 'Défault',
 					type: 'image',
 					options: {
 						hotspot: true,
@@ -27,7 +29,7 @@ export default defineType({
 				}),
 				defineField({
 					name: 'light',
-					description: 'On dark backgrounds',
+					title: 'Light mode',
 					type: 'image',
 					options: {
 						hotspot: true,
@@ -35,7 +37,7 @@ export default defineType({
 				}),
 				defineField({
 					name: 'dark',
-					description: 'On light backgrounds',
+					title: 'Dark mode',
 					type: 'image',
 					options: {
 						hotspot: true,

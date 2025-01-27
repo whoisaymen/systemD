@@ -4,8 +4,8 @@ import imageBlock from '../fragments/image-block'
 import internationalizedBlock from './internationalizedBlock'
 
 export default defineType({
-	name: 'bigbang',
-	title: 'Big Bang',
+	name: 'bigbangShortStory',
+	title: 'Short story',
 	icon: VscCalendar,
 	type: 'document',
 	groups: [
@@ -14,25 +14,35 @@ export default defineType({
 		// { name: 'seo', title: 'SEO' },
 	],
 	fields: [
+		// defineField({
+		// 	name: 'body',
+		// 	title: 'Paragraphes',
+		// 	type: 'array',
+		// 	of: [
+		// 		{
+		// 			type: 'internationalizedBlock',
+		// 		},
+		// 	],
+		// }),
 		defineField({
 			name: 'body',
-			title: 'Contenu',
+			title: 'Paragraphes',
 			type: 'array',
 			of: [
 				{
-					type: 'internationalizedBlock',
+					type: 'customParagraph',
 				},
 			],
 		}),
-		// defineField({
-		// 	name: 'metadata',
-		// 	type: 'metadata',
-		// 	group: 'seo',
-		// }),
 	],
+	// defineField({
+	// 	name: 'metadata',
+	// 	type: 'metadata',
+	// 	group: 'seo',
+	// }),
 	preview: {
 		prepare: () => ({
-			title: 'Big Bang',
+			title: 'Short story',
 		}),
 	},
 })

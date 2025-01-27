@@ -1,27 +1,33 @@
-import { defineArrayMember, defineField, defineType } from 'sanity'
+import { defineField, defineType } from 'sanity'
 import { VscCalendar } from 'react-icons/vsc'
-import imageBlock from '../fragments/image-block'
 
 export default defineType({
 	name: 'fabrique',
 	title: 'La Fabrique',
 	icon: VscCalendar,
 	type: 'document',
-	groups: [
-		// { name: 'content', default: true },
-		// { name: 'options' },
-		// { name: 'seo', title: 'SEO' },
-	],
 	fields: [
 		defineField({
-			name: 'body',
-			title: 'Contenu',
+			name: 'title',
+			title: 'Titre',
+			type: 'internationalizedArrayString',
+		}),
+		defineField({
+			name: 'description',
+			title: 'Description',
+			type: 'internationalizedArrayText',
+		}),
+		defineField({
+			name: 'actions',
+			title: 'Actions',
 			type: 'array',
-			of: [
-				{
-					type: 'internationalizedBlock',
-				},
-			],
+			of: [{ type: 'actionsBlock' }],
+		}),
+		defineField({
+			name: 'vision',
+			title: 'Vision',
+			type: 'array',
+			of: [{ type: 'visionBlock' }],
 		}),
 	],
 	preview: {

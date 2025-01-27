@@ -3,22 +3,36 @@ import { VscTag } from 'react-icons/vsc'
 
 export default defineType({
 	name: 'genre',
-	title: 'Film genre',
+	title: 'Genre du film',
 	type: 'document',
 	icon: VscTag,
 	fields: [
 		defineField({
 			name: 'title',
-			type: 'string',
-			validation: (Rule) => Rule.required(),
-		}),
-		defineField({
-			name: 'slug',
-			type: 'slug',
-			options: {
-				source: 'title',
-			},
+			title: 'Titre',
+			type: 'internationalizedArrayString',
 			validation: (Rule) => Rule.required(),
 		}),
 	],
+	preview: {
+		select: {
+			title: 'title',
+		},
+		prepare({ title }) {
+			const getLocalizedValue = (array, lang) => {
+				if (!Array.isArray(array)) return null
+				return array.find((v) => v?._key === lang)?.value
+			}
+
+			const displayTitle =
+				getLocalizedValue(title, 'fr') ||
+				getLocalizedValue(title, 'en') ||
+				getLocalizedValue(title, 'nl') ||
+				'Sans titre'
+
+			return {
+				title: displayTitle,
+			}
+		},
+	},
 })

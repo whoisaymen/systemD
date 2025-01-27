@@ -19,6 +19,7 @@
 		"@sanity/dashboard": "^4.1.0",
 		"@sanity/document-internationalization": "^3.3.0",
 		"@sanity/image-url": "^1.1.0",
+		"@sanity/locale-fr-fr": "^1.2.15",
 		"@sanity/preview-url-secret": "^2.0.5",
 		"@sanity/vision": "^3.66.1",
 		"@vercel/analytics": "^1.4.1",

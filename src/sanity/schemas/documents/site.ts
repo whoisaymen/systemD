@@ -2,17 +2,18 @@ import { defineField, defineType } from 'sanity'
 
 export default defineType({
 	name: 'site',
-	title: 'Site settings',
+	title: 'Réglages',
 	type: 'document',
 	groups: [
-		{ name: 'general', default: true },
-		{ name: 'navigation' },
+		{ name: 'general', title: 'Général', default: true },
+		{ name: 'socials', title: 'Réseaux sociaux' },
 		{ name: 'seo', title: 'SEO' },
-		{ name: 'visual', title: 'Visual identity' },
+		{ name: 'visual', title: 'Identité visuelle' },
 	],
 	fields: [
 		defineField({
 			name: 'title',
+			title: 'Titre',
 			type: 'string',
 			group: 'general',
 			validation: (Rule) => Rule.required(),
@@ -35,36 +36,19 @@ export default defineType({
 		}),
 		defineField({
 			name: 'announcements',
+			title: 'News',
 			type: 'array',
 			of: [{ type: 'reference', to: [{ type: 'announcement' }] }],
 			group: 'general',
 		}),
-		defineField({
-			name: 'ctas',
-			title: 'Call-to-action (Site-wide)',
-			description: 'Typically used in the header and/or footer.',
-			type: 'array',
-			of: [{ type: 'cta' }],
-			group: 'general',
-		}),
-		defineField({
-			name: 'headerMenu',
-			type: 'reference',
-			to: [{ type: 'navigation' }],
-			group: 'navigation',
-		}),
-		defineField({
-			name: 'footerMenu',
-			type: 'reference',
-			to: [{ type: 'navigation' }],
-			group: 'navigation',
-		}),
-		defineField({
-			name: 'social',
-			type: 'reference',
-			to: [{ type: 'navigation' }],
-			group: 'navigation',
-		}),
+		// defineField({
+		// 	name: 'ctas',
+		// 	title: 'Call-to-action (Site-wide)',
+		// 	description: 'Typically used in the header and/or footer.',
+		// 	type: 'array',
+		// 	of: [{ type: 'cta' }],
+		// 	group: 'general',
+		// }),
 		defineField({
 			name: 'copyright',
 			type: 'array',
@@ -76,20 +60,39 @@ export default defineType({
 			],
 			group: 'general',
 		}),
+		// defineField({
+		// 	name: 'headerMenu',
+		// 	type: 'reference',
+		// 	to: [{ type: 'navigation' }],
+		// 	group: 'navigation',
+		// }),
+		// defineField({
+		// 	name: 'footerMenu',
+		// 	type: 'reference',
+		// 	to: [{ type: 'navigation' }],
+		// 	group: 'navigation',
+		// }),
+		defineField({
+			name: 'social',
+			title: 'Réseaux sociaux',
+			type: 'reference',
+			to: [{ type: 'navigation' }],
+			group: 'socials',
+		}),
 		defineField({
 			name: 'ogimage',
-			title: 'Open Graph Image (Site-wide)',
+			title: 'Image Open Graph',
 			description:
-				'Used for social sharing previews. Set page-specific images in Page documents.',
+				'Utilisée pour les aperçus de partage sur les réseaux sociaux.',
 			type: 'image',
 			options: {
 				hotspot: true,
 			},
-			group: 'general',
+			group: 'socials',
 		}),
 		defineField({
 			name: 'keywords',
-			title: 'Meta Keywords',
+			title: 'Mots-clés Meta',
 			type: 'array',
 			of: [{ type: 'string' }],
 			options: {
@@ -99,21 +102,45 @@ export default defineType({
 		}),
 		// visual , title:'Visual identity'fields
 		defineField({
-			name: 'primaryColor',
-			title: 'Primary Color',
+			name: 'primaryColorLight',
+			title: 'Couleur primaire light mode',
 			type: 'color',
 			group: 'visual',
 		}),
 		defineField({
-			name: 'secondaryColor',
-			title: 'Secondary Color',
+			name: 'primaryColorDark',
+			title: 'Couleur primaire dark mode',
+			type: 'color',
+			group: 'visual',
+		}),
+		defineField({
+			name: 'secondaryColorLight',
+			title: 'Couleur secondaire light mode',
+			type: 'color',
+			group: 'visual',
+		}),
+		defineField({
+			name: 'secondaryColorDark',
+			title: 'Couleur secondaire dark mode',
+			type: 'color',
+			group: 'visual',
+		}),
+		defineField({
+			name: 'accentColorLight',
+			title: 'Couleur accentuée light mode',
+			type: 'color',
+			group: 'visual',
+		}),
+		defineField({
+			name: 'accentColorDark',
+			title: 'Couleur accentuée dark mode',
 			type: 'color',
 			group: 'visual',
 		}),
 	],
 	preview: {
 		prepare: () => ({
-			title: 'Site settings',
+			title: 'Réglages',
 		}),
 	},
 })

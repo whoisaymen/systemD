@@ -4,6 +4,7 @@ import page from './documents/page'
 import blogPost from './documents/blog.post'
 import blogCategory from './documents/blog.category'
 import navigation from './documents/navigation'
+import homepage from './documents/homepage'
 import announcement from './documents/announcement'
 import redirect from './documents/redirect'
 import logo from './documents/logo'
@@ -15,7 +16,8 @@ import testimonial from './documents/testimonial'
 import fabrique from './documents/lafabrique'
 import lefestival from './documents/lefestival'
 import festival from './documents/festival'
-import bigbang from './documents/bigbang'
+import bigbangShortStory from './documents/bigbangShortStory'
+import bigbangLongStory from './documents/bigbangLongStory'
 import memoire from './documents/lamemoire'
 import film from './documents/film'
 import photo from './documents/photo'
@@ -45,6 +47,7 @@ import callout from './modules/callout'
 import cardList from './modules/card-list'
 import creativeModule from './modules/creative'
 import customHtml from './modules/custom-html'
+import customParagraph from './modules/customParagraph'
 import flagList from './modules/flag-list'
 import hero from './modules/hero'
 import heroSaas from './modules/hero.saas'
@@ -60,6 +63,20 @@ import testimonialFeatured from './modules/testimonial.featured'
 import testimonialList from './modules/testimonial-list'
 import callforparticipation from './documents/callForParticipation'
 import internationalizedBlock from './documents/internationalizedBlock'
+import quote from './modules/quote'
+import paragraph from './modules/paragraph'
+import image from './modules/image'
+import actions from './modules/actions'
+import vision from './modules/vision'
+import gallery from './modules/gallery'
+import expoPhoto from './modules/expoPhoto'
+import contact from './documents/contact'
+import mediaTeaser from './modules/media-teaser'
+import yellowBanner from './modules/yellow-banner'
+import whiteText from './modules/white-text'
+import juryBlock from './modules/jury-block'
+import ticketBlock from './modules/ticket-block'
+import onTourBlock from './modules/on-tour-block'
 
 export const schemaTypes = [
 	// documents
@@ -68,6 +85,7 @@ export const schemaTypes = [
 	blogPost,
 	blogCategory,
 	navigation,
+	homepage,
 	announcement,
 	redirect,
 	logo,
@@ -79,7 +97,8 @@ export const schemaTypes = [
 	fabrique,
 	lefestival,
 	festival,
-	bigbang,
+	bigbangShortStory,
+	bigbangLongStory,
 	memoire,
 	film,
 	photo,
@@ -91,6 +110,7 @@ export const schemaTypes = [
 	award,
 	practicalInfo,
 	press,
+	contact,
 
 	// objects
 	cta,
@@ -123,4 +143,18 @@ export const schemaTypes = [
 	testimonialFeatured,
 	testimonialList,
 	internationalizedBlock,
+	customParagraph,
+	quote,
+	paragraph,
+	image,
+	actions,
+	vision,
+	gallery,
+	expoPhoto,
+	mediaTeaser,
+	yellowBanner,
+	whiteText,
+	juryBlock,
+	ticketBlock,
+	onTourBlock,
 ]
