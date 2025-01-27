@@ -1,6 +1,5 @@
 import { defineField, defineType } from 'sanity'
 import { VscCalendar } from 'react-icons/vsc'
-import photoGalleryBlock from '../objects/photoGalleryBlock'
 
 export default defineType({
 	name: 'film',
@@ -81,7 +80,7 @@ export default defineType({
 			gallery: 'gallery',
 		},
 		prepare({ title, director, year, affiche, gallery }) {
-			const getLocalizedValue = (array, lang) => {
+			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
 				return array.find((v) => v?._key === lang)?.value
 			}

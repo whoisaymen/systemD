@@ -32,9 +32,9 @@ export default defineType({
 		},
 		prepare({ title, text, media }) {
 			console.log(title, text)
-			const getLocalizedValue = (array, lang) => {
+			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
-				return array.find((v: KeyedObject) => v?._key === lang)?.value
+				return array.find((v) => v?._key === lang)?.value
 			}
 
 			const displayTitle =

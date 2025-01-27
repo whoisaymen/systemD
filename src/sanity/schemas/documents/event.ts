@@ -44,7 +44,7 @@ export default defineType({
 			media: 'visual',
 		},
 		prepare({ title, date, media }) {
-			const getLocalizedValue = (array, lang) => {
+			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
 				return array.find((v) => v?._key === lang)?.value
 			}
