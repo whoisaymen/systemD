@@ -70,6 +70,13 @@ export default defineType({
 			title: 'URL du teaser du film',
 			type: 'url',
 		}),
+		defineField({
+			name: 'festival',
+			title: 'Festival',
+			type: 'reference',
+			to: [{ type: 'festival' }],
+			description: 'Sélectionnez le festival auquel ce film appartient',
+		}),
 	],
 	preview: {
 		select: {

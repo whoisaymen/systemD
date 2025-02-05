@@ -40,6 +40,7 @@ export default defineType({
 			name: 'filmSelection',
 			title: 'Films sélectionnés',
 			type: 'array',
+			validation: (Rule) => Rule.unique(),
 			of: [
 				{
 					type: 'reference',
