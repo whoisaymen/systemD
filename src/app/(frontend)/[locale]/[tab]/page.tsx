@@ -3,16 +3,16 @@ import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { modulesQuery } from '@/sanity/lib/queries'
 import { redirect } from 'next/navigation'
 
-type paramsType = Promise<{ locale: string; tab: string }>
+type ParamsType = { locale: string; tab: string }
 
-export default async function Page({ params }: { params: paramsType }) {
-	const { locale, tab } = await params
+export default async function Page({ params }: { params: ParamsType }) {
+	const { locale, tab } = params
 	let content
 
 	const allowedPaths = ['home', 'admin']
 
 	if (!allowedPaths.includes(tab)) {
-		redirect('/')
+		redirect(`/${locale}`)
 	}
 
 	try {
