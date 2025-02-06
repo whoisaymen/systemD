@@ -3,11 +3,9 @@ import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { modulesQuery } from '@/sanity/lib/queries'
 import { redirect } from 'next/navigation'
 
-export default async function Page({
-	params,
-}: {
-	params: { locale: string; tab: string }
-}) {
+type paramsType = Promise<{ locale: string; tab: string }>
+
+export default async function Page({ params }: { params: paramsType }) {
 	const { locale, tab } = await params
 	let content
 
