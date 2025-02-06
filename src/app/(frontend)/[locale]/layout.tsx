@@ -23,8 +23,8 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
 	title: 'System_D | Empowering self-made filmmakers',
-	description: 'The official Next.js Course Dashboard, built with App Router.',
-	metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+	description:
+		'System_D supports self-taught filmmakers by offering resources for research, production, and distribution. Focusing on decolonization and amplifying diverse voices, it creates a platform for emerging creators to share alternative stories and engage with professional feedback.',
 }
 
 export default async function RootLayout({
