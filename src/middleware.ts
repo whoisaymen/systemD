@@ -7,14 +7,8 @@ export const config = {
 	// Match only internationalized pathnames
 	matcher: [
 		'/',
-		'/:locale(fr|en)/((?!admin|api|_next|_vercel|.*\\..*).*)', // Match all pathnames except for
-		// - … if they start with `/admin`, `/api`, `/_next` or `/_vercel`
-		// - … the ones containing a dot (e.g. `favicon.ico`)
-		'/(fr|en)/:path*', // Match all pathnames except for
-		// - … if they start with `/api`, `/_next` or `/_vercel`
-		// - … the ones containing a dot (e.g. `favicon.ico`)
+		'/:locale(fr|en)/((?!admin|api|_next|_vercel|.*\\..*).*)',
+		'/(fr|en)/:path*',
 		'/((?!admin|api|_next|_vercel|.*\\..*).*)',
-		// However, match all pathnames within `/users`, optionally with a locale prefix
-		'/([\\w-]+)?/users/(.+)',
 	],
 }

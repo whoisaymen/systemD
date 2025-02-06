@@ -53,10 +53,10 @@ export default function Page() {
 	)
 }
 
-export async function generateMetadata() {
-	const page = await getPage()
-	return processMetadata(page)
-}
+// export async function generateMetadata() {
+// 	const page = await getPage()
+// 	return processMetadata(page)
+// }
 
 async function getPage() {
 	const data = await fetchSanityLive<Sanity.Page>({

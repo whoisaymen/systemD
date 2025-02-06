@@ -19,6 +19,13 @@ import { ViewTransitions } from 'next-view-transitions'
 import NavBar from '@/components/navigation/NavBar'
 import localFont from 'next/font/local'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+	title: 'System_D | Empowering self-made filmmakers',
+	description: 'The official Next.js Course Dashboard, built with App Router.',
+	metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+}
 
 export default async function RootLayout({
 	children,
