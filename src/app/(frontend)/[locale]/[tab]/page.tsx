@@ -5,8 +5,12 @@ import { redirect } from 'next/navigation'
 
 type ParamsType = { locale: string; tab: string }
 
-export default async function Page({ params }: { params: ParamsType }) {
-	const { locale, tab } = params
+export default async function Page({
+	params,
+}: {
+	params: Promise<ParamsType>
+}) {
+	const { locale, tab } = await params
 	let content
 
 	const allowedPaths = ['home', 'admin']
