@@ -11,8 +11,8 @@ export default function Page() {
 			<div className="no-scrollbar relative z-10 flex h-full w-[75vw] flex-shrink-0 flex-col items-center justify-center overflow-scroll py-1 mix-blend-difference">
 				<LogoShortTsx fillColor="#AAAAAF" />
 				<div className="mt-2 w-full text-2xl font-medium uppercase text-[#AAAAAF]">
-					<h1 className="flex flex-col text-xl font-bold">
-						<div className="flex w-full items-center justify-between pr-36">
+					<h1 className="flex flex-col text-[2vw] font-bold leading-relaxed lg:text-[1.5vw]">
+						<div className="flex w-full items-center justify-between lg:pr-36">
 							<span className="">empowering</span>
 
 							<span>
@@ -28,6 +28,7 @@ export default function Page() {
 								audiovisuals <span className="text-[#DEFE04]">&</span> makers
 							</span>
 						</div>
+
 						<div className="flex w-full items-center justify-between space-x-16 pr-8">
 							<span>
 								creatives<span className="text-[#DEFE04]">/</span>

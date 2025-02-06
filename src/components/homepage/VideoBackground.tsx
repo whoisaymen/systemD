@@ -5,6 +5,7 @@ const VideoBackground = () => {
 			autoPlay
 			loop
 			muted
+			playsInline
 		>
 			<source src="/assets/videos/teaser2.mp4" type="video/mp4" />
 			{/* <track
