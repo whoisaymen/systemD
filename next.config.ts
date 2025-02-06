@@ -3,6 +3,9 @@ import { projectId, dataset, apiVersion } from '@/sanity/lib/env'
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from 'next'
 
+import createNextIntlPlugin from 'next-intl/plugin'
+const withNextIntl = createNextIntlPlugin()
+
 const client = createClient({
 	projectId,
 	dataset,
@@ -11,7 +14,7 @@ const client = createClient({
 	useCdn: true,
 })
 
-export default {
+const nextConfig: NextConfig = {
 	images: {
 		remotePatterns: [
 			{
@@ -53,6 +56,7 @@ export default {
 				test: /\.svg$/i,
 				resourceQuery: /url/, // *.svg?url
 			},
+
 			// Convert all other *.svg imports to React components
 			{
 				test: /\.svg$/i,
@@ -69,4 +73,6 @@ export default {
 	// 		fullUrl: true,
 	// 	},
 	// },
-} satisfies NextConfig
+}
+
+export default withNextIntl(nextConfig)

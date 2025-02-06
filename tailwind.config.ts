@@ -1,9 +1,10 @@
 import plugin from 'tailwindcss/plugin'
 import type { Config } from 'tailwindcss'
+import { fontFamily } from 'tailwindcss/defaultTheme'
 
 export default {
 	darkMode: 'class',
-	content: ['./src/{app,ui}/**/*.{ts,tsx}'],
+	content: ['./src/{app,ui,components}/**/*.{ts,tsx}'],
 	theme: {
 		extend: {
 			colors: {
@@ -14,6 +15,10 @@ export default {
 			},
 			maxHeight: {
 				fold: 'calc(100svh - var(--header-height))',
+			},
+			fontFamily: {
+				anisette: ['Anisette', ...fontFamily.mono],
+				geist: ['var(--font-geist)', ...fontFamily.sans],
 			},
 		},
 
