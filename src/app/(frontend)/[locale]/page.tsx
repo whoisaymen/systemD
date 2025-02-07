@@ -4,12 +4,17 @@ import processMetadata from '@/lib/processMetadata'
 import VideoBackground from '@/components/homepage/VideoBackground'
 import LogoShortTsx from '@/components/svgs/LogoShort'
 import { useTranslations } from 'next-intl'
+import LogoShortAnimated from '@/components/svgs/LogoShortAnimated'
 
 export default function Page() {
 	return (
-		<div className="relative flex h-svh w-full items-center justify-center overflow-hidden">
-			<div className="no-scrollbar relative z-10 flex h-full w-[75vw] flex-shrink-0 flex-col items-center justify-center overflow-scroll py-1 mix-blend-difference">
-				<LogoShortTsx fillColor="#AAAAAF" />
+		<div className="relative flex h-svh w-full items-center justify-center">
+			<div className="no-scrollbar relative z-10 flex h-full w-[75vw] flex-shrink-0 flex-col items-center justify-center py-1 mix-blend-difference">
+				<LogoShortAnimated
+					className="w-full !overflow-visible"
+					fillColor="#AAAAAF"
+				/>
+				{/* <LogoShortTsx fillColor="#AAAAAF" /> */}
 				<div className="mt-2 w-full text-2xl font-medium uppercase text-[#AAAAAF]">
 					<h1 className="flex flex-col text-[2vw] font-bold leading-relaxed lg:text-[1.5vw]">
 						<div className="flex w-full items-center justify-between lg:pr-36">
