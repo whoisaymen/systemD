@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl'
 
 export default function Page() {
 	return (
-		<div className="relative flex h-screen w-full items-center justify-center overflow-hidden">
+		<div className="relative flex h-svh w-full items-center justify-center overflow-hidden">
 			<div className="no-scrollbar relative z-10 flex h-full w-[75vw] flex-shrink-0 flex-col items-center justify-center overflow-scroll py-1 mix-blend-difference">
 				<LogoShortTsx fillColor="#AAAAAF" />
 				<div className="mt-2 w-full text-2xl font-medium uppercase text-[#AAAAAF]">
