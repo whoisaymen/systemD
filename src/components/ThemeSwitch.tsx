@@ -21,11 +21,15 @@ const ThemeSwitch = () => {
 
 	return (
 		<div
-			className="toggler my-1 h-8 w-16 cursor-pointer rounded-3xl bg-black dark:bg-white"
+			className="toggler my-1 h-full w-16 cursor-pointer rounded-md bg-[#DEFE04]"
 			onClick={toggleTheme}
 		>
 			<motion.div
-				className="h-8 w-8 scale-75 rounded-3xl bg-white transition-transform dark:bg-black"
+				className={`h-8 w-8 scale-75 rounded-md transition-transform ${
+					theme === 'dark'
+						? 'bg-gradient-to-r from-[#DEFE04] to-[#1C1C1E]'
+						: 'bg-gradient-to-r from-[#D3D3D3] to-[#A9A9A9]'
+				}`}
 				layout
 				transition={{ type: 'spring', stiffness: 200, damping: 30 }}
 				style={{

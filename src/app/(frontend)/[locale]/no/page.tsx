@@ -15,14 +15,14 @@ export default async function Page({
 
 	const allowedPaths = ['home', 'admin']
 
-	if (!allowedPaths.includes(tab)) {
-		redirect(`/${locale || 'en'}`)
-	}
+	// if (!allowedPaths.includes(tab)) {
+	// 	redirect(`/${locale || 'en'}`)
+	// }
 
-	if (!locale || !tab) {
-		console.error('Missing locale or tab:', { locale, tab })
-		redirect('/')
-	}
+	// if (!locale || !tab) {
+	// 	console.error('Missing locale or tab:', { locale, tab })
+	// 	redirect('/')
+	// }
 
 	try {
 		content = await getContent(tab, locale)

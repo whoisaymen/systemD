@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl'
 import LogoShortAnimated from '@/components/svgs/LogoShortAnimated'
 import { FaInstagram } from 'react-icons/fa'
 
-export default function Page() {
+export default function IndexRoute() {
 	return (
 		<div className="relative flex h-svh w-full items-center justify-center overflow-hidden tracking-tight">
 			{/* Rule of thirds grid */}
