@@ -31,10 +31,11 @@ export default function Page() {
 			<div className="absolute bottom-4 left-4 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
 			<div className="absolute bottom-4 right-4 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
 
-			<div className="absolute bottom-4 left-0 z-20 flex w-full rotate-0 items-center justify-center font-mono text-[2vw] font-bold uppercase leading-relaxed mix-blend-normal sm:hidden lg:text-[1.5vw]">
-				<div className="mr-1 h-[0.5rem] w-[0.5rem] animate-pulse rounded-full bg-red-500 text-red-500"></div>
-				<span className="animate-pulse font-mono tracking-wide text-red-500">
-					More info soon
+			<div className="absolute bottom-[30vh] left-0 z-20 flex w-full rotate-0 items-center justify-center text-[2vw] font-bold uppercase leading-relaxed mix-blend-difference sm:hidden lg:text-[1.5vw]">
+				<span className="px-[2px] text-[#fff]">(</span>
+				<div className="relative z-30 mr-1 h-[0.5rem] w-[0.5rem] animate-pulse rounded-full bg-red-500"></div>
+				<span className="-tracking-tight text-[#8C8C8C]">
+					More info soon<span className="px-[2px] text-[#fff]">)</span>
 				</span>
 			</div>
 

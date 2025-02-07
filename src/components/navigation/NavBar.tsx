@@ -85,7 +85,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 						href={`/${locale}/equipe`}
 						className="h-[20vh] w-full cursor-pointer rounded-md bg-black"
 					>
-						<div className="relative flex h-full w-full flex-col items-center justify-center rounded-md bg-[#8C8C8C]">
+						<div className="relative flex h-full w-full flex-col items-center justify-center rounded-md bg-[#]">
 							<HoverableItem>
 								{(isHovered) => (
 									<LEquipeTsx
