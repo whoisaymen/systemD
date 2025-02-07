@@ -15,7 +15,21 @@ export default function SystemD({
 	content: any
 	locale: string
 }) {
-	console.log('SystemD', locale)
+	console.log(content, 'contentbefore')
+	// Mapping tab names to their respective components
+	const TabComponent = {
+		bigbang: (
+			<BigBangContent
+				locale={locale}
+				shortStory={content.shortStory}
+				longStory={content.longStory}
+			/>
+		),
+		equipe: <EquipeContent person={content} language={locale} />,
+		fabrique: <FabriqueContent fabrique={content.fabrique} language={locale} />,
+	}[tab] || <pre>{JSON.stringify(content, null, 2)}</pre>
+
+	console.log('SystemD', content)
 	return (
 		<div className="min-h-screen w-full bg-[#DADADA] py-1">
 			<AnimatePresence>
@@ -26,23 +40,7 @@ export default function SystemD({
 					exit={{ x: '-100%' }}
 					transition={{ duration: 0.6, ease: 'easeInOut', type: 'spring' }}
 				>
-					<div className="h-full w-full rounded-md p-4">
-						<div>
-							{tab === 'bigbang' ? (
-								<BigBangContent
-									locale={locale}
-									shortStory={content.shortStory}
-									longStory={content.longStory}
-								/>
-							) : tab === 'equipe' ? (
-								<EquipeContent person={content.person} language="en" />
-							) : tab === 'fabrique' ? (
-								<FabriqueContent fabrique={content.fabrique} language="en" />
-							) : (
-								<pre>{JSON.stringify(content, null, 2)}</pre>
-							)}
-						</div>
-					</div>
+					<div className="h-full w-full rounded-md p-4">{TabComponent}</div>
 				</motion.div>
 			</AnimatePresence>
 		</div>

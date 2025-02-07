@@ -45,25 +45,27 @@ export default async function RootLayout({
 				<body
 					className={`${GeistSans.className} bg-black text-ink antialiased`}
 				>
-					<NextIntlClientProvider messages={messages}>
-						<NuqsAdapter>
-							<SkipToContent />
-							<Announcement />
-							{/* <NavBar locale={locale} /> */}
-							{/* <Header /> */}
-							{/* <main id="main-content" role="main" tabIndex={-1}>
+					<ThemeProvider attribute="class">
+						<NextIntlClientProvider messages={messages}>
+							<NuqsAdapter>
+								<SkipToContent />
+								<Announcement />
+								<NavBar locale={locale} />
+								{/* <Header /> */}
+								{/* <main id="main-content" role="main" tabIndex={-1}>
 						{children}
 					</main> */}
-							<ThemeProvider attribute="class">{children}</ThemeProvider>
+								{children}
 
-							{/* <Footer /> */}
+								{/* <Footer /> */}
 
-							<VisualEditingControls />
-						</NuqsAdapter>
+								<VisualEditingControls />
+							</NuqsAdapter>
 
-						<Analytics />
-						<SpeedInsights />
-					</NextIntlClientProvider>
+							<Analytics />
+							<SpeedInsights />
+						</NextIntlClientProvider>
+					</ThemeProvider>
 				</body>
 			</html>
 		</ViewTransitions>

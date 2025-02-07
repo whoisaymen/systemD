@@ -10,11 +10,11 @@ export const routing = defineRouting({
 
 	pathnames: {
 		'/': '/',
-		'/pathnames': {
-			en: '/team',
-			fr: '/equipe',
-			nl: '/equipe',
-		},
+		// '/pathnames': {
+		// 	en: '/equipe',
+		// 	fr: '/equipe',
+		// 	nl: '/equipe',
+		// },
 	},
 })
 
