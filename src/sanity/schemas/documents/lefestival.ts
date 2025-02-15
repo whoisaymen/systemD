@@ -16,7 +16,7 @@ export default defineType({
 				{ type: 'yellowBannerBlock' },
 				{ type: 'whiteTextBlock' },
 				{ type: 'juryBlock' },
-				{ type: 'yellowTicketBlock' },
+				{ type: 'ticketBlock' },
 				{ type: 'onTourBlock' },
 			],
 		}),

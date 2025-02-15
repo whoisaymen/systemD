@@ -6,33 +6,67 @@ export default defineType({
 	type: 'object',
 	fields: [
 		defineField({
-			name: 'photo',
-			title: 'Photo',
-			type: 'image',
+			name: 'photos',
+			title: 'Photos',
+			type: 'array',
+			of: [
+				{
+					type: 'image',
+					options: {
+						hotspot: true,
+					},
+				},
+			],
+			// of: [
+			// 	{
+			// 		type: 'object',
+			// 		fields: [
+			// 			defineField({
+			// 				name: 'photo',
+			// 				title: 'Photo',
+			// 				type: 'image',
+			// 				options: {
+			// 					hotspot: true,
+			// 				},
+			// 			}),
+			// 			defineField({
+			// 				name: 'altText',
+			// 				title: 'Texte alternatif',
+			// 				type: 'string',
+			// 				options: {
+			// 					isHighlighted: true, // This will make the field appear in the image editor
+			// 				},
+			// 			}),
+			// 		],
+			// 		preview: {
+			// 			select: {
+			// 				title: 'altText',
+			// 				media: 'photo',
+			// 			},
+			// 			prepare({ title, media }) {
+			// 				return {
+			// 					title: title || 'Sans texte alternatif',
+			// 					media,
+			// 				}
+			// 			},
+			// 		},
+			// 	},
+			// ],
 			options: {
-				hotspot: true,
+				layout: 'grid',
 			},
-		}),
-		defineField({
-			name: 'caption',
-			title: 'Légende',
-			type: 'string',
-		}),
-		defineField({
-			name: 'altText',
-			title: 'Texte alternatif',
-			type: 'string',
 		}),
 	],
 	preview: {
 		select: {
-			media: 'photo',
-			caption: 'caption',
+			photos: 'photos',
 		},
-		prepare({ media, caption }) {
+		prepare({ photos }) {
+			const firstPhoto = photos?.[0]?.asset ? photos[0] : undefined
+
 			return {
-				title: caption || 'Sans légende',
-				media,
+				title: 'Galerie de photos',
+				media: firstPhoto,
 			}
 		},
 	},

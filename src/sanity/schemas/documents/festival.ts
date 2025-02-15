@@ -37,17 +37,22 @@ export default defineType({
 			type: 'url',
 		}),
 		defineField({
-			name: 'filmSelection',
-			title: 'Films sélectionnés',
-			type: 'array',
-			validation: (Rule) => Rule.unique(),
-			of: [
-				{
-					type: 'reference',
-					to: [{ type: 'film' }],
-				},
-			],
+			name: 'aftermovieLink',
+			title: "Lien de l'aftermovie",
+			type: 'url',
 		}),
+		// defineField({
+		// 	name: 'filmSelection',
+		// 	title: 'Films sélectionnés',
+		// 	type: 'array',
+		// 	validation: (Rule) => Rule.unique(),
+		// 	of: [
+		// 		{
+		// 			type: 'reference',
+		// 			to: [{ type: 'film' }],
+		// 		},
+		// 	],
+		// }),
 		defineField({
 			name: 'jury',
 			title: 'Membres du jury',

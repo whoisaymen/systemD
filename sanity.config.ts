@@ -21,6 +21,7 @@ import { frFRLocale } from '@sanity/locale-fr-fr'
 import { internationalizedArray } from 'sanity-plugin-internationalized-array'
 import { documentInternationalization } from '@sanity/document-internationalization'
 import StudioLogo from '@/components/StudioLogo'
+// import { media } from 'sanity-plugin-media'
 
 const singletonTypes = ['site']
 
@@ -39,6 +40,7 @@ export default defineConfig({
 	// },
 
 	plugins: [
+		// media(),
 		frFRLocale(),
 		structure,
 		presentation,

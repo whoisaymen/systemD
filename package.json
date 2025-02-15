@@ -13,6 +13,7 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@butterfail/tailwindcss-inverted-radius": "^0.1.2",
 		"@portabletext/to-html": "^2.0.13",
 		"@sanity/code-input": "^5.0.0",
 		"@sanity/color-input": "^4.0.3",
@@ -43,6 +44,7 @@
 		"sanity": "^3.66.1",
 		"sanity-plugin-dashboard-widget-vercel": "^2.0.1",
 		"sanity-plugin-internationalized-array": "^3.0.3",
+		"sanity-plugin-media": "^2.3.2",
 		"shiki": "^1.24.0",
 		"styled-components": "^6.1.13",
 		"tailwind-merge": "^2.5.5",

@@ -1,7 +1,7 @@
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
-	name: 'yellowTicketBlock',
+	name: 'ticketBlock',
 	title: 'Bloc ticket',
 	type: 'object',
 	fields: [

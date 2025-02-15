@@ -43,7 +43,15 @@ export default defineType({
 	],
 	preview: {
 		select: {
-			media: 'photo',
+			title: 'curatorName',
+			media: 'photos.0.photo',
+		},
+		prepare(selection) {
+			const { title, media } = selection
+			return {
+				title,
+				media,
+			}
 		},
 	},
 })

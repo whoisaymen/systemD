@@ -13,6 +13,31 @@ export default defineType({
 			type: 'internationalizedArrayString',
 		}),
 		defineField({
+			name: 'slug',
+			type: 'slug',
+			title: 'Slug URL',
+			description: `"Slug URL" est le chemin ou le lien permanent de l'URL. Il est généré automatiquement à partir du titre. Par exemple, si le titre est "La Haine", le slug sera "fight-club", et sera accessible à https://systemd.brussels/film/la-haine.
+`,
+			options: {
+				source: (doc: any) => {
+					const defaultLanguage = 'en' // Replace with your default language
+					const titleArray = doc.title || doc.metadata.title
+					const titleObject =
+						titleArray.find((item: any) => item.language === defaultLanguage) ||
+						titleArray[0]
+					return titleObject ? titleObject.value : 'untitled'
+				},
+				slugify: (input: string) =>
+					input
+						.trim() // Trim leading and trailing spaces
+						.toLowerCase()
+						.replace(/\s+/g, '-') // Replace spaces with hyphens
+						.replace(/[^\w-]+/g, '') // Remove all non-word characters except hyphens
+						.slice(0, 96), // Limit slug length to 96 characters
+			},
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: 'director',
 			title: 'Nom du réalisateur',
 			type: 'string',
@@ -51,12 +76,12 @@ export default defineType({
 			title: 'Durée (minutes)',
 			type: 'number',
 		}),
-		defineField({
-			name: 'gallery',
-			title: 'Galerie de photos',
-			type: 'array',
-			of: [{ type: 'photoGalleryBlock' }],
-		}),
+		// defineField({
+		// 	name: 'gallery',
+		// 	title: 'Galerie de photos',
+		// 	type: 'array',
+		// 	of: [{ type: 'photoGalleryBlock' }],
+		// }),
 		defineField({
 			name: 'affiche',
 			title: 'Affiche',
@@ -67,7 +92,7 @@ export default defineType({
 		}),
 		defineField({
 			name: 'playFilmUrl',
-			title: 'URL du teaser du film',
+			title: 'URL',
 			type: 'url',
 		}),
 		defineField({
@@ -81,12 +106,15 @@ export default defineType({
 	preview: {
 		select: {
 			title: 'title',
-			director: 'director',
 			year: 'year',
+			director: 'director',
+			festival: 'festival.year',
 			affiche: 'affiche',
 			gallery: 'gallery',
 		},
-		prepare({ title, director, year, affiche, gallery }) {
+		prepare(selection) {
+			const { title, year, director, festival, affiche, gallery } = selection
+
 			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
 				return array.find((v) => v?._key === lang)?.value
@@ -104,11 +132,13 @@ export default defineType({
 			// 	getLocalizedValue(director, 'nl') ||
 			// 	'Unknown Director'
 
+			const displayYear = festival ? `édition ${festival}` : `${year}`
+
 			const media =
 				affiche || (gallery && gallery.length > 0 ? gallery[0].photo : null)
 
 			return {
-				title: `${displayTitle} (${year})`,
+				title: `${displayTitle} (${displayYear})`,
 				subtitle: `Réalisé par ${director}`,
 				media,
 			}

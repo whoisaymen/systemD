@@ -87,7 +87,49 @@ export const structure = structureTool({
 				S.divider(),
 
 				S.documentTypeListItem('festival').title('Festivals').icon(VscCalendar),
-				S.documentTypeListItem('film').title('Films').icon(FaFilm),
+				S.listItem()
+					.title('Films')
+					.icon(FaFilm)
+					.child(
+						S.list()
+							.title('Filtres des Films')
+							.items([
+								S.listItem()
+									.title('Tous les Films')
+									.child(
+										S.documentList()
+											.title('Tous les Films')
+											.filter('_type == "film"'),
+									),
+								S.listItem()
+									.title('Films par Édition du Festival')
+									.child(
+										S.documentTypeList('festival')
+											.title('Éditions du Festival')
+											.child((festivalId) =>
+												S.documentList()
+													.title("Films de l'Édition")
+													.filter(
+														'_type == "film" && festival._ref == $festivalId',
+													)
+													.params({ festivalId }),
+											),
+									),
+								S.listItem()
+									.title('Films par Genre')
+									.child(
+										S.documentTypeList('genre')
+											.title('Genres')
+											.child((genreId) =>
+												S.documentList()
+													.title('Films')
+													.filter('_type == "film" && genre._ref == $genreId')
+													.params({ genreId }),
+											),
+									),
+							]),
+					),
+				// S.documentTypeListItem('film').title('Films').icon(FaFilm),
 				S.documentTypeListItem('jury').title('Jurys').icon(FaUserFriends),
 				S.documentTypeListItem('genre').title('Genres').icon(FaTags),
 				S.divider(),
