@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 const ThemeSwitch = () => {
 	const [mounted, setMounted] = useState(false)

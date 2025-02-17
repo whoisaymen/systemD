@@ -5,6 +5,9 @@ import { Link } from 'next-view-transitions'
 import BigBangContent from './bigbang/BigBangContent'
 import EquipeContent from './equipe/EquipeContent'
 import FabriqueContent from './fabrique/FabriqueContent'
+import FestivalContent from './festival/FestivalContent'
+import MemoireContent from './memoire/MemoireContent'
+import ContactContent from './contact/ContactContent'
 
 export default function SystemD({
 	tab,
@@ -15,7 +18,6 @@ export default function SystemD({
 	content: any
 	locale: string
 }) {
-	console.log(content, 'contentbefore')
 	// Mapping tab names to their respective components
 	const TabComponent = {
 		bigbang: (
@@ -26,7 +28,10 @@ export default function SystemD({
 			/>
 		),
 		equipe: <EquipeContent person={content} language={locale} />,
-		fabrique: <FabriqueContent fabrique={content.fabrique} language={locale} />,
+		fabrique: <FabriqueContent fabrique={content} language={locale} />,
+		festival: <FestivalContent festival={content} language={locale} />,
+		memoire: <MemoireContent memoire={content} language={locale} />,
+		contact: <ContactContent contact={content} language={locale} />,
 	}[tab] || <pre>{JSON.stringify(content, null, 2)}</pre>
 
 	console.log('SystemD', content)
@@ -40,7 +45,7 @@ export default function SystemD({
 					exit={{ x: '-100%' }}
 					transition={{ duration: 0.6, ease: 'easeInOut', type: 'spring' }}
 				>
-					<div className="h-full w-full rounded-md p-4">{TabComponent}</div>
+					<div className="h-full w-full rounded-md">{TabComponent}</div>
 				</motion.div>
 			</AnimatePresence>
 		</div>

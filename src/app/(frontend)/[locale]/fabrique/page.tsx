@@ -1,3 +1,4 @@
+import FabriqueContent from '@/components/fabrique/FabriqueContent'
 import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 
@@ -6,13 +7,15 @@ export default async function FabriquePage({
 }: {
 	params: { locale: string }
 }) {
-	const { locale } = params
-	const content = await getFabrique('bigbang', locale)
+	const { locale } = await params
+	const content = await getFabrique()
 
-	return <SystemD tab="fabrique" content={content} locale={locale} />
+	// return <SystemD tab="fabrique" content={content} locale={locale} />
+	return <FabriqueContent fabrique={content.fabrique} language={locale} />
+	// return <FabriqueContent fabrique={content.fabrique} language={locale} />
 }
 
-async function getFabrique(tab: string, locale: string) {
+async function getFabrique() {
 	const query = groq`
     {
       "fabrique": *[_type == 'fabrique'][0]{
@@ -23,11 +26,10 @@ async function getFabrique(tab: string, locale: string) {
       }
     }
   `
-	const params = { tab }
 	const data = await fetchSanityLive({ query })
 
 	if (!data) {
-		throw new Error(`No content found for tab "${tab}"`)
+		throw new Error(`No content found for Fabrique"`)
 	}
 
 	return data

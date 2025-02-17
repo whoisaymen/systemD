@@ -53,6 +53,17 @@
 	::-webkit-details-marker {
 		display: none;
 	}
+
+	:root {
+		--color-ink: theme(colors.ink);
+		--color-canvas: theme(colors.canvas);
+		--color-accent: theme(colors.accent);
+		--color-primary: theme(colors.primary);
+		--color-dark: theme(colors.dark);
+		--color-grayLight: theme(colors.grayLight);
+		--color-grayDark: theme(colors.grayDark);
+		--width-column-width: 18rem;
+	}
 }
 
 @layer components {

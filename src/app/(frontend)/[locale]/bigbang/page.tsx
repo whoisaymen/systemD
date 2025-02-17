@@ -1,15 +1,24 @@
+import BigBangContent from '@/components/bigbang/BigBangContent'
 import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
+import { notFound } from 'next/navigation'
 
 export default async function BigBangPage({
 	params,
 }: {
 	params: { locale: string }
 }) {
-	const { locale } = params
+	const { locale } = await params
 	const content = await getBigBang()
 
-	return <SystemD tab="bigbang" content={content} locale={locale} />
+	// return <SystemD tab="bigbang" content={content} locale={locale} />
+	return (
+		<BigBangContent
+			shortStory={content.shortStory}
+			longStory={content.longStory}
+			locale={locale}
+		/>
+	)
 }
 
 async function getBigBang() {
@@ -21,20 +30,13 @@ async function getBigBang() {
       "longStory": *[_type == 'bigbangLongStory'][0]{
         title,
         body,
-        "translations": *[_type == 'translation.metadata' && references(^._id)]{
-          translations {
-            value {
-              title,
-              body
-            }
-          }
-        }
       }
     }
   `
 	const data = await fetchSanityLive({ query })
 
 	if (!data) {
+		notFound()
 		throw new Error(`No content found}"`)
 	}
 

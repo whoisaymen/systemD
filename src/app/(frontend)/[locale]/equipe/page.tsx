@@ -1,3 +1,4 @@
+import EquipeContent from '@/components/equipe/EquipeContent'
 import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 
@@ -10,7 +11,8 @@ export default async function EquipePage({
 	const content = await getEquipe('fabrique', locale)
 	console.log(content, 'content')
 
-	return <SystemD tab="equipe" content={content} locale={locale} />
+	// return <SystemD tab="equipe" content={content} locale={locale} />
+	return <EquipeContent person={content} language={locale} />
 }
 
 async function getEquipe(tab: string, locale: string) {

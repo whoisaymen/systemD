@@ -26,7 +26,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	}
 
 	return (
-		<div className="p-4">
+		<div className="w-full space-y-20 rounded-md bg-white pt-6">
 			{/* Title */}
 			<h1 className="text-3xl font-bold">
 				{getLocalizedValue(fabrique.title, language) || 'No title available'}

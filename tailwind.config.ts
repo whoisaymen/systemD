@@ -10,8 +10,11 @@ export default {
 			colors: {
 				ink: '#1d1d1f',
 				canvas: '#fff',
-
 				accent: '#1d1d1f',
+				primary: '#DEFE04',
+				dark: '#1C1C1E',
+				grayLight: '#8C8C8C',
+				grayDark: '#8C8C8F',
 			},
 			maxHeight: {
 				fold: 'calc(100svh - var(--header-height))',
@@ -19,6 +22,9 @@ export default {
 			fontFamily: {
 				anisette: ['Anisette', ...fontFamily.mono],
 				geist: ['var(--font-geist)', ...fontFamily.sans],
+			},
+			width: {
+				'column-width': '16rem',
 			},
 		},
 
@@ -45,6 +51,7 @@ export default {
 				},
 			)
 		}),
+		require('@butterfail/tailwindcss-inverted-radius'),
 	],
 	safelist: [{ pattern: /action.*/ }, 'ghost'],
 } satisfies Config

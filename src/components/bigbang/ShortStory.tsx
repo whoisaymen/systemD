@@ -1,6 +1,6 @@
 import Img from '@/ui/Img'
-import { LogoShort } from '../svgs'
 import Link from 'next/link'
+import LogoShortTsx from '../svgs/LogoShort'
 
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
@@ -72,12 +72,12 @@ const renderParagraph = (paragraph: any, titles: string[]) => {
 					<>
 						<Link
 							href="/"
-							className="absolute -left-10 top-0 h-auto w-[15rem] rounded-md bg-[#000] px-4 py-1 dark:bg-[#DEFE04]"
+							className="bg-grayLight absolute -left-10 top-0 h-auto w-[15rem] rounded-md px-4 py-1 dark:bg-[#DEFE04]"
 							style={{ transform: `rotate(${10}deg)` }}
 						>
-							<LogoShort className="w-full text-[#1E1E1E]" />
+							<LogoShortTsx className="text-primary dark:text-grayLight w-full" />
 						</Link>
-						<span className="px-[6.5rem] text-[#8C8C8F]"></span>
+						<span className="text-grayLight px-[6.5rem]"></span>
 					</>
 				) : (
 					word

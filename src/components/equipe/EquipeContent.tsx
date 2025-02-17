@@ -18,7 +18,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ person, language }) => {
 		: ''
 
 	return (
-		<div className="p-4">
+		<div className="h-full w-full space-y-20 rounded-md bg-white pt-6">
 			<h1 className="text-3xl font-bold">{person.name}</h1>
 			{imageUrl && (
 				<Img

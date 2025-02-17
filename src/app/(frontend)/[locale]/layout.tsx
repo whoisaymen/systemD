@@ -7,8 +7,7 @@ import { routing } from '@/i18n/routing'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import SkipToContent from '@/ui/SkipToContent'
 import Announcement from '@/ui/Announcement'
-import Header from '@/ui/header'
-import Footer from '@/ui/footer'
+
 import VisualEditingControls from '@/ui/VisualEditingControls'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -43,9 +42,9 @@ export default async function RootLayout({
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body
-					className={`${GeistSans.className} bg-black text-ink antialiased`}
+					className={`${GeistSans.className} bg-[#DADADA] text-ink antialiased`}
 				>
-					<ThemeProvider attribute="class">
+					<ThemeProvider attribute="class" defaultTheme="dark">
 						<NextIntlClientProvider messages={messages}>
 							<NuqsAdapter>
 								<SkipToContent />
@@ -55,7 +54,11 @@ export default async function RootLayout({
 								{/* <main id="main-content" role="main" tabIndex={-1}>
 						{children}
 					</main> */}
-								{children}
+								<main className="flex h-screen w-full items-center justify-center">
+									<div className="no-scrollbar z-40 flex h-[calc(100svh-0.50rem)] w-[calc(100vw-2*var(--width-column-width))] items-start justify-center overflow-y-scroll rounded-md">
+										{children}
+									</div>
+								</main>
 
 								{/* <Footer /> */}
 
