@@ -130,7 +130,37 @@ export const structure = structureTool({
 							]),
 					),
 				// S.documentTypeListItem('film').title('Films').icon(FaFilm),
-				S.documentTypeListItem('jury').title('Jurys').icon(FaUserFriends),
+				// S.documentTypeListItem('jury').title('Jurys').icon(FaUserFriends),
+				S.listItem()
+					.title('Jurys')
+					.icon(FaUserFriends)
+					.child(
+						S.list()
+							.title('Filtres des Jurys')
+							.items([
+								S.listItem()
+									.title('Tous les Jurys')
+									.child(
+										S.documentList()
+											.title('Tous les Jurys')
+											.filter('_type == "jury"'),
+									),
+								S.listItem()
+									.title('Jurys par Édition du Festival')
+									.child(
+										S.documentTypeList('festival')
+											.title('Éditions du Festival')
+											.child((festivalId) =>
+												S.documentList()
+													.title("Jurys de l'Édition")
+													.filter(
+														'_type == "jury" && edition._ref == $festivalId',
+													)
+													.params({ festivalId }),
+											),
+									),
+							]),
+					),
 				S.documentTypeListItem('genre').title('Genres').icon(FaTags),
 				S.divider(),
 

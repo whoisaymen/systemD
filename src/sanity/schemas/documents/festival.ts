@@ -53,12 +53,12 @@ export default defineType({
 		// 		},
 		// 	],
 		// }),
-		defineField({
-			name: 'jury',
-			title: 'Membres du jury',
-			type: 'array',
-			of: [{ type: 'reference', to: [{ type: 'jury' }] }],
-		}),
+		// defineField({
+		// 	name: 'jury',
+		// 	title: 'Membres du jury',
+		// 	type: 'array',
+		// 	of: [{ type: 'reference', to: [{ type: 'jury' }] }],
+		// }),
 		defineField({
 			name: 'photoGallery',
 			title: 'Galerie de photos',
