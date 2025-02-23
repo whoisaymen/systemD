@@ -33,3 +33,19 @@ export async function fetchTranslations(locale: string) {
 	const data = await client.fetch(query, params)
 	return data?.messages || {}
 }
+
+const rotationClasses = [
+	'rotate-2',
+	'rotate-3',
+	'rotate-6',
+	'rotate-12',
+	'-rotate-2',
+	'-rotate-3',
+	'-rotate-6',
+	'-rotate-12',
+]
+
+export function getRandomRotationClass() {
+	const randomIndex = Math.floor(Math.random() * rotationClasses.length)
+	return rotationClasses[randomIndex]
+}

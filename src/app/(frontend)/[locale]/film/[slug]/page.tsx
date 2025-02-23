@@ -5,10 +5,9 @@ import { notFound } from 'next/navigation'
 export default async function FilmPage({
 	params,
 }: {
-	params: { locale: string; slug: string }
+	params: Promise<{ locale: string; slug: string }>
 }) {
 	const { locale, slug } = await params
-	console.log(locale, slug, 'locale, slug')
 	const content = await getFilm(slug)
 
 	if (!content) {
@@ -28,7 +27,11 @@ async function getFilm(slug: string) {
       genre->{
         title
       },
-      poster,
+      synopsis,
+      city,
+      length,
+      playFilmUrl,
+      affiche,
       description
     }
   `

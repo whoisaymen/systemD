@@ -1,16 +1,14 @@
 import MemoireContent from '@/components/memoire/MemoireContent'
-import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 
 export default async function FestivalPage({
 	params,
 }: {
-	params: { locale: string }
+	params: Promise<{ locale: string }>
 }) {
 	const { locale } = await params
 	const content = await getMemoire()
 
-	// return <SystemD tab="memoire" content={content} locale={locale} />
 	return <MemoireContent memoire={content} language={locale} />
 }
 

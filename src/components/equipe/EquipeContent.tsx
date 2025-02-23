@@ -18,15 +18,20 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ person, language }) => {
 		: ''
 
 	return (
-		<div className="h-full w-full space-y-20 rounded-md bg-white pt-6">
-			<h1 className="text-3xl font-bold">{person.name}</h1>
+		<div className="mt-12 flex h-full w-full flex-col items-center space-y-20 rounded-md px-2 pt-6 sm:mt-0 sm:bg-white">
+			<div className="h-32"></div>
 			{imageUrl && (
-				<Img
-					image={person.image}
-					src={imageUrl}
-					alt={person.name}
-					className="my-4 h-48 w-48 rounded-md object-cover"
-				/>
+				<div className="relative">
+					<Img
+						image={person.image}
+						src={imageUrl}
+						alt={person.name}
+						className="my-4 h-48 w-48 rounded-md object-cover"
+					/>
+					<h1 className="bg-dark text-primary absolute right-10 top-0 w-full -rotate-12 rounded-md px-2 text-xl font-black uppercase italic tracking-tighter">
+						{person.name}
+					</h1>
+				</div>
 			)}
 			<h2 className="font-anisette text-xl font-semibold">
 				{getLocalizedValue(person.title, language)}

@@ -33,7 +33,7 @@ export default async function Image() {
 					justifyContent: 'center',
 				}}
 			>
-				<LogoShortTsx fillColor="#AAAAAF" />
+				<LogoShortTsx />
 			</div>
 		),
 		// ImageResponse options

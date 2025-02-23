@@ -1,4 +1,7 @@
+'use client'
+import React, { useState } from 'react'
 import ShortStory from './ShortStory'
+// import LongStory from './LongStory'
 
 interface BigBangContentProps {
 	shortStory: any
@@ -11,26 +14,37 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 	longStory,
 	locale,
 }) => {
+	const [activeTab, setActiveTab] = useState<'short' | 'long'>('short')
+
 	return (
-		<div className="w-full space-y-20 rounded-md bg-white pt-6">
-			<div className="flex items-center justify-center gap-2 text-lg font-bold uppercase tracking-tight">
-				<h2 className="h-full rounded-md border-[0px] border-black bg-[#DEFE04] px-4 py-0 text-[#8C8C8F]">
-					ShOrT StOrY
+		<div className="h-full w-full space-y-20 rounded-md bg-grayLight pt-24 sm:bg-white md:pt-6">
+			<div className="flex items-center justify-evenly gap-2 text-lg font-bold uppercase tracking-tight sm:justify-center">
+				<h2
+					className={`h-full cursor-pointer rounded-md border-2 border-grayDark bg-grayDark px-4 py-0 leading-none ${
+						activeTab === 'short'
+							? 'bg-grayDark text-primary'
+							: 'bg-primary text-grayDark'
+					}`}
+					onClick={() => setActiveTab('short')}
+				>
+					Short Story
 				</h2>
-				<h2 className="text-primary h-full rounded-md border-[0px] border-black bg-[#8C8C8F] bg-none px-4 py-0">
-					LOng StOrY
+				<h2
+					className={`h-full cursor-pointer rounded-md border-2 border-black border-grayDark bg-none px-4 py-0 leading-none ${
+						activeTab === 'long'
+							? 'bg-grayDark text-primary'
+							: 'bg-primary text-grayDark'
+					}`}
+					onClick={() => setActiveTab('long')}
+				>
+					Long Story
 				</h2>
-				{/* <h2 className="h-full rounded-md border-[0px] border-black px-4 py-0 text-[#8C8C8F]">
-					System
-				</h2>
-				<h2 className="-mx-6 -my-6 h-full rounded-md border-[0px] border-black py-0 text-[#8C8C8F]">
-					_
-				</h2>
-				<h2 className="h-full rounded-md border-[0px] border-black px-4 py-0 text-[#8C8C8F]">
-					D
-				</h2> */}
 			</div>
-			<ShortStory content={shortStory.body} lang={locale} />
+			{activeTab === 'short' ? (
+				<ShortStory content={shortStory.body} lang={locale} />
+			) : (
+				<div>Long story goes here.</div>
+			)}
 		</div>
 	)
 }

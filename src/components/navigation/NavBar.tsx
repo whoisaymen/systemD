@@ -20,12 +20,12 @@ import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa'
 
 const NavBar = ({ locale }: { locale: string }) => {
 	return (
-		<nav className="fixed left-0 top-0 z-30 flex h-svh w-full items-start justify-between overflow-hidden bg-cover bg-center text-center text-xl font-black tracking-tighter text-black">
+		<nav className="fixed left-0 top-0 z-30 hidden h-svh w-full items-start justify-between overflow-hidden bg-cover bg-center text-center text-xl font-black tracking-tighter text-black sm:flex">
 			<div className="flex h-full w-[var(--width-column-width)] flex-col">
 				<div className="flex w-full flex-grow flex-col items-center space-y-1 p-1">
 					<Link
 						href="/"
-						className="bg-primary hover:bg-dark group h-[3rem] w-full rounded-md"
+						className="group h-[3rem] w-full rounded-md bg-primary hover:bg-dark"
 					>
 						<div className="w-full px-2 py-3">
 							<Logo className="text-dark group-hover:text-primary" />
@@ -65,8 +65,8 @@ const NavBar = ({ locale }: { locale: string }) => {
 									}
 
 									return (
-										<div className="dark:bg-grayLight hover:dark:bg-primary relative flex cursor-pointer items-center justify-center rounded-md py-1">
-											<MenuArrows className="text-dark absolute right-2 top-2" />
+										<div className="relative flex cursor-pointer items-center justify-center rounded-md py-1 dark:bg-grayDark hover:dark:bg-primary">
+											<MenuArrows className="absolute right-2 top-2 text-dark" />
 											<div className="h-auto w-auto items-center px-3">
 												<BigBangLogo
 													theme={themeColors.dark}
@@ -90,7 +90,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 								href={`/${locale}/fabrique`}
 								className="h-full w-full cursor-pointer rounded-md"
 							>
-								<HoverableItem className="dark:bg-dark group relative flex h-full w-full items-center justify-center rounded-md bg-transparent py-12 pt-20 shadow-inner">
+								<HoverableItem className="group relative flex h-full w-full items-center justify-center rounded-md bg-transparent py-12 pt-20 shadow-inner dark:bg-dark">
 									{(isHovered) => {
 										const themeColors = {
 											dark: {
@@ -113,13 +113,13 @@ const NavBar = ({ locale }: { locale: string }) => {
 
 										return (
 											<>
-												<MenuArrows className="text-grayLight absolute right-2 top-2" />
-												<div className="text-grayDark absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 transform">
+												<MenuArrows className="absolute right-2 top-2 text-grayLight" />
+												<div className="absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 transform text-grayDark">
 													<FabriqueBracketsIcon
 														theme={{
 															fill: 'currentColor',
 														}}
-														className="group-hover:dark:text-primary group-hover:text-dark"
+														className="group-hover:text-dark group-hover:dark:text-primary"
 													/>
 												</div>
 												<FabriqueLogo
@@ -140,7 +140,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 							href={`/${locale}/equipe`}
 							className="group relative h-auto w-full cursor-pointer rounded-md"
 						>
-							<HoverableItem className="dark:bg-grayDark flex max-h-40 min-h-32 items-center justify-center rounded-md">
+							<HoverableItem className="flex max-h-40 min-h-32 items-center justify-center rounded-md dark:bg-grayDark">
 								{(isHovered) => {
 									const themeColors = {
 										dark: {
@@ -165,7 +165,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 									}
 									return (
 										<div className="flex items-center justify-center rounded-md px-4 pb-6 pt-12">
-											<MenuArrows className="text-dark absolute right-2 top-2" />
+											<MenuArrows className="absolute right-2 top-2 text-dark" />
 											<EquipeLogo
 												theme={themeColors.dark}
 												className="hidden w-full dark:block"
@@ -180,7 +180,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 							</HoverableItem>
 						</Link>
 					</div>
-					<div className="bg-dark flex h-[2.5rem] w-full items-center justify-between rounded-md p-1">
+					<div className="flex h-[2.5rem] w-full items-center justify-between rounded-md bg-dark p-1">
 						<ThemeSwitch />
 						<LocaleSwitcher />
 					</div>
@@ -231,9 +231,9 @@ const NavBar = ({ locale }: { locale: string }) => {
 									}
 
 									return (
-										<div className="dark:bg-dark relative flex h-full min-h-[70vh] w-full cursor-pointer items-center justify-center rounded-md px-2 pb-4 pt-8">
-											<MenuArrows className="text-grayLight absolute right-2 top-2" />
-											<div className="text-grayDark absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 transform">
+										<div className="relative flex h-full min-h-[70vh] w-full cursor-pointer items-center justify-center rounded-md px-2 pb-4 pt-8 dark:bg-dark">
+											<MenuArrows className="absolute right-2 top-2 text-grayLight" />
+											<div className="absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 transform text-grayDark">
 												<FestivalSparklesIcon
 													theme={themeColorsIcon.dark}
 													className="hidden dark:block"
@@ -288,8 +288,8 @@ const NavBar = ({ locale }: { locale: string }) => {
 										},
 									}
 									return (
-										<div className="hover:dark:bg-primary dark:bg-grayDark relative h-full w-full cursor-pointer rounded-md px-2 py-8">
-											<MenuArrows className="text-dark absolute right-2 top-2 z-50 hover:scale-105" />
+										<div className="relative h-full w-full cursor-pointer rounded-md px-2 py-8 dark:bg-grayDark hover:dark:bg-primary">
+											<MenuArrows className="absolute right-2 top-2 z-50 text-dark hover:scale-105" />
 											<div className="flex h-full items-center justify-center">
 												<MemoireLogo
 													theme={themeColors.dark}
@@ -306,7 +306,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 							</HoverableItem>
 						</Link>
 					</div>
-					<div className="bg-dark flex h-[2.5rem] w-full items-center justify-between rounded-md px-2">
+					<div className="flex h-[2.5rem] w-full items-center justify-between rounded-md bg-dark px-2">
 						<div className="flex items-center gap-2">
 							<FaInstagram className="text-primary" />
 							<FaFacebook className="text-primary" />
@@ -314,7 +314,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 						</div>
 						<Link
 							href={`/${locale}/contact`}
-							className="text-medium text-grayDark hover:border-grayDark rounded-full border-2 border-transparent px-2 text-base font-bold"
+							className="text-medium rounded-full border-2 border-transparent px-2 text-base font-bold text-grayDark hover:border-grayDark"
 						>
 							Contact
 						</Link>

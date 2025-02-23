@@ -1,16 +1,13 @@
 import ContactContent from '@/components/contact/ContactContent'
-import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 
 export default async function ContactPage({
 	params,
 }: {
-	params: { locale: string }
+	params: Promise<{ locale: string }>
 }) {
 	const { locale } = await params
 	const content = await getContact()
-
-	// return <SystemD tab="contact" content={content} locale={locale} />
 
 	return <ContactContent contact={content} language={locale} />
 }

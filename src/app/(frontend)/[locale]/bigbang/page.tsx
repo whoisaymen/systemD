@@ -1,17 +1,15 @@
 import BigBangContent from '@/components/bigbang/BigBangContent'
-import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { notFound } from 'next/navigation'
 
 export default async function BigBangPage({
 	params,
 }: {
-	params: { locale: string }
+	params: Promise<{ locale: string }>
 }) {
 	const { locale } = await params
 	const content = await getBigBang()
 
-	// return <SystemD tab="bigbang" content={content} locale={locale} />
 	return (
 		<BigBangContent
 			shortStory={content.shortStory}

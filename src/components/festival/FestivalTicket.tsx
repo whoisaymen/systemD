@@ -12,10 +12,10 @@ const FestivalTicket: React.FC<FestivalTicketProps> = ({
 	getLocalizedValue,
 }) => {
 	return (
-		<div className="relative mx-auto flex max-w-4xl items-center justify-center py-48">
-			<main className="grid w-full rotate-2 overflow-hidden rounded-md font-thin text-gray-400 sm:grid-cols-[4fr_1fr]">
+		<div className="relative flex h-full w-full items-center justify-center">
+			{/* <main className="grid w-full rotate-2 overflow-hidden rounded-md font-thin text-grayLight sm:grid-cols-[4fr_1fr]">
 				<div
-					className="inv-rad-r-2 inv-rad relative space-y-6 px-6 py-6 sm:space-y-12 sm:px-10"
+					className="inv-rad inv-rad-r-2 relative space-y-6 px-6 py-6 sm:space-y-12 sm:px-10"
 					style={{
 						backgroundColor: block.backgroundColor?.hex || '#DEFE04',
 						color: block.textColor?.hex || '#000000',
@@ -25,21 +25,21 @@ const FestivalTicket: React.FC<FestivalTicketProps> = ({
 						{items.map((item, index) => (
 							<div key={index}>
 								<h3>{item.smallTitle}</h3>
-								<time className="font-bold text-[#8C8C8F]">{item.text}</time>
+								<time className="font-bold text-dark">{item.text}</time>
 							</div>
 						))}
 					</section>
 				</div>
-				<div className="inv-rad-l-2 inv-rad grid place-content-center bg-white p-0">
+				<div className="inv-rad inv-rad-l-2 grid place-content-center bg-white p-0">
 					<div className="grid w-full place-content-center gap-4 py-6 sm:-rotate-90 sm:py-32">
-						{/* <section className="flex justify-between gap-4 text-center text-xs font-thin sm:text-sm">
+						<section className="flex justify-between gap-4 text-center text-xs font-thin sm:text-sm">
 							{items.map((item, index) => (
 								<div key={index}>
 									<h3>{item.smallTitle}</h3>
-									<time className="font-bold text-[#8C8C8F]">{item.text}</time>
+									<time className="font-bold text-dark">{item.text}</time>
 								</div>
 							))}
-						</section> */}
+						</section>
 						<svg
 							className="w-60 max-w-xs"
 							xmlns="http://www.w3.org/2000/svg"
@@ -338,6 +338,24 @@ const FestivalTicket: React.FC<FestivalTicketProps> = ({
 							/>
 						</svg>
 					</div>
+				</div>
+			</main> */}
+			<main className="grid h-[30vh] w-full overflow-hidden rounded-md font-thin text-grayLight sm:max-w-xl">
+				<div
+					className="inv-rad inv-rad-10 relative space-y-6 bg-primary px-6 py-6 shadow-md sm:space-y-12 sm:px-10"
+					// style={{
+					// 	backgroundColor: block.backgroundColor?.hex || '#DEFE04',
+					// 	color: block.textColor?.hex || '#000000',
+					// }}
+				>
+					<section className="grid grid-cols-2 gap-4 px-6 py-3 text-center text-sm font-thin sm:grid-cols-4 sm:text-base">
+						{items.map((item, index) => (
+							<div key={index}>
+								<h3>{item.smallTitle}</h3>
+								<time className="font-bold text-dark">{item.text}</time>
+							</div>
+						))}
+					</section>
 				</div>
 			</main>
 		</div>

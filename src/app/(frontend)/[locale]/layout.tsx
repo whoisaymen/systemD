@@ -19,6 +19,9 @@ import NavBar from '@/components/navigation/NavBar'
 import localFont from 'next/font/local'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Metadata } from 'next'
+import NavBarMobile from '@/components/navigation/NavBarMobile'
+import Link from 'next/link'
+import LogoShortAnimated from '@/components/svgs/LogoShortAnimated'
 
 export const metadata: Metadata = {
 	title: 'System_D | Empowering self-made filmmakers',
@@ -31,7 +34,7 @@ export default async function RootLayout({
 	params,
 }: {
 	children: React.ReactNode
-	params: { locale: string }
+	params: Promise<{ locale: string }>
 }) {
 	const { locale } = await params
 	const messages = await getMessages()
@@ -42,7 +45,7 @@ export default async function RootLayout({
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body
-					className={`${GeistSans.className} bg-[#DADADA] text-ink antialiased`}
+					className={`${GeistSans.className} bg-grayLight text-ink antialiased dark:bg-dark`}
 				>
 					<ThemeProvider attribute="class" defaultTheme="dark">
 						<NextIntlClientProvider messages={messages}>
@@ -50,12 +53,14 @@ export default async function RootLayout({
 								<SkipToContent />
 								<Announcement />
 								<NavBar locale={locale} />
+								<NavBarMobile locale={locale} />
+
 								{/* <Header /> */}
 								{/* <main id="main-content" role="main" tabIndex={-1}>
 						{children}
 					</main> */}
-								<main className="flex h-screen w-full items-center justify-center">
-									<div className="no-scrollbar z-40 flex h-[calc(100svh-0.50rem)] w-[calc(100vw-2*var(--width-column-width))] items-start justify-center overflow-y-scroll rounded-md">
+								<main className="flex h-dvh w-full items-center justify-center sm:h-screen">
+									<div className="no-scrollbar z-40 flex h-full w-full items-start justify-center overflow-y-scroll rounded-md sm:h-[calc(100svh-0.50rem)] md:w-[calc(100vw-2*var(--width-column-width))]">
 										{children}
 									</div>
 								</main>

@@ -9,7 +9,7 @@ import { FaInstagram } from 'react-icons/fa'
 
 export default function IndexRoute() {
 	return (
-		<div className="relative flex h-svh w-full items-center justify-center overflow-hidden tracking-tight">
+		<div className="relative flex h-dvh w-full items-center justify-center overflow-hidden tracking-tight">
 			{/* Rule of thirds grid */}
 			{/* <div className="pointer-events-none absolute inset-0 z-20">
 				<div className="absolute inset-0 grid grid-cols-3 grid-rows-3">

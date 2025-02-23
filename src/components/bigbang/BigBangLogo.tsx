@@ -97,12 +97,4 @@ const BigBangLogo: React.FC<BigBangLogoProps> = ({ theme, className }) => (
 	</svg>
 )
 
-BigBangLogo.defaultProps = {
-	theme: {
-		fill: '#1C1C1E',
-		stroke: '#DEFE04',
-		icon: '#8C8C8F',
-	},
-}
-
 export default BigBangLogo

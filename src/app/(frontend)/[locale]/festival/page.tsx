@@ -1,18 +1,15 @@
 import FestivalContent from '@/components/festival/FestivalContent'
-import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { notFound } from 'next/navigation'
 
 export default async function FestivalPage({
 	params,
 }: {
-	params: { locale: string }
+	params: Promise<{ locale: string }>
 }) {
 	const { locale } = await params
 	const content = await getFestival()
 
-	// return <SystemD tab="festival" content={content} locale={locale} />
-	console.log(content, 'content festival')
 	return <FestivalContent festival={content} language={locale} />
 }
 
@@ -23,6 +20,7 @@ async function getFestival() {
       // description,
       blocks[]{
         _type == 'mediaTeaserBlock' => {
+          _key,
           _type,
           color,
           image,
@@ -30,11 +28,13 @@ async function getFestival() {
           text
         },
         _type == 'yellowBannerBlock' => {
+          _key,
           _type,
           color,
           text
         },
         _type == 'whiteTextBlock' => {
+          _key,
           _type,
           backgroundColor,
           textColor,
@@ -42,11 +42,13 @@ async function getFestival() {
           show
         },
         _type == 'juryBlock' => {
+          _key,
           _type,
           backgroundColor,
           textColor,
           show,
           juryMembers[]->{
+            _id,
             name,
             image,
             biography,
@@ -55,6 +57,7 @@ async function getFestival() {
           }
         },
        _type == 'ticketBlock' => {
+          _key,
           _type,
           backgroundColor,
           textColor,
@@ -66,6 +69,7 @@ async function getFestival() {
           show
         },
          _type == 'onTourBlock' => {
+          _key, 
           _type,
           events[]->{
             title,

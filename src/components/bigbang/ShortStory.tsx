@@ -1,6 +1,7 @@
 import Img from '@/ui/Img'
 import Link from 'next/link'
 import LogoShortTsx from '../svgs/LogoShort'
+import { getRandomRotationClass } from '@/lib/utils'
 
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
@@ -8,7 +9,7 @@ const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 			{content.map((block: any) => (
 				<div
 					key={block._key}
-					className="flex w-full flex-col items-center justify-center space-y-12 text-center"
+					className="flex w-full flex-col items-center justify-center space-y-12 px-10 text-center"
 				>
 					{/* {block.title && (
 						<div>
@@ -23,7 +24,7 @@ const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 					)} */}
 
 					{block.text && (
-						<div className="max-w-[50vw]">
+						<div className="sm:max-w-[50vw]">
 							{block.text
 								.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key
 								.map((paragraph: any, index: number) => (
@@ -40,12 +41,12 @@ const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 						</div>
 					)}
 					{block.image && (
-						<div className="">
+						<div className="px-8">
 							<Img
 								image={block.image}
 								src={`/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`}
 								alt="Story Image"
-								className="h-auto w-[30vw]"
+								className="h-auto sm:w-[30vw]"
 							/>
 						</div>
 					)}
@@ -72,12 +73,11 @@ const renderParagraph = (paragraph: any, titles: string[]) => {
 					<>
 						<Link
 							href="/"
-							className="bg-grayLight absolute -left-10 top-0 h-auto w-[15rem] rounded-md px-4 py-1 dark:bg-[#DEFE04]"
-							style={{ transform: `rotate(${10}deg)` }}
+							className={`bg-dark inline-block h-auto w-[10rem] rounded-md px-4 py-1 dark:bg-[#DEFE04] sm:w-[15rem] ${getRandomRotationClass()}`}
 						>
-							<LogoShortTsx className="text-primary dark:text-grayLight w-full" />
+							<LogoShortTsx className="text-primary dark:text-dark w-full" />
 						</Link>
-						<span className="text-grayLight px-[6.5rem]"></span>
+						{/* <span className="text-grayLight px-[6.5rem]"></span> */}
 					</>
 				) : (
 					word

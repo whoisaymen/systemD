@@ -1,23 +1,22 @@
 import FestivalContent from '@/components/festival/FestivalContent'
 import FestivalEditionContent from '@/components/festival/FestivalEditionContent'
-import SystemD from '@/components/SystemD'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { notFound } from 'next/navigation'
+import Loading from './loading'
 
 export default async function FestivalEditionPage({
 	params,
 }: {
-	params: { locale: string; year: string }
+	params: Promise<{ locale: string; year: string }>
 }) {
 	const { locale, year } = await params
-	console.log(locale, year, 'locale, year')
 	const content = await getFestivalEdition(year)
 
 	if (!content) {
 		return <div>No content available for this festival edition</div>
 	}
 
-	console.log(content)
+	// return <Loading />
 	return <FestivalEditionContent festival={content} language={locale} />
 }
 
@@ -30,28 +29,24 @@ async function getFestivalEdition(year: string) {
     venue,
     visual,
     pressLink,
-    filmSelection[]->{
+    aftermovieLink,
+    "filmSelection": *[_type == 'film' && references(^._id)]{
       _id,
       slug,
       title,
       description,
       director,
-      releaseYear,
-      poster
+      year,
+      affiche
     },
     jury[]->{
       name,
       image,
       biography
     },
-    photoGallery[]{
+    "photoGallery": photoGallery[]{
       _type,
-      images[]{
-        asset->{
-          url,
-          metadata
-        }
-      }
+      photos[],
     },
     expoPhoto[]{
       _type,
