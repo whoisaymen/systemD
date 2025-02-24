@@ -11,7 +11,6 @@ export default async function FestivalPage({
 	const content = await getMemoire()
 
 	// return <Loading />
-
 	return <MemoireContent memoire={content} language={locale} />
 }
 
@@ -22,7 +21,7 @@ async function getMemoire() {
   *[_type == 'memoire'][0]{
     title,
     description,
-    "pastFestivals": *[_type == 'festival' && year != $currentYear]{
+    "pastFestivals": *[_type == 'festival']{
       title,
       description,
       year,
@@ -38,7 +37,7 @@ async function getMemoire() {
   }
 `
 
-	const data = await fetchSanityLive({ query, params: { currentYear } })
+	const data = await fetchSanityLive({ query })
 
 	if (!data) {
 		throw new Error(`No content found for festival"`)
