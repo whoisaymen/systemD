@@ -16,11 +16,13 @@ export default async function FestivalPage({
 }
 
 async function getMemoire() {
+	const currentYear = new Date().getFullYear()
+
 	const query = groq`
   *[_type == 'memoire'][0]{
     title,
     description,
-    "pastFestivals": *[_type == 'festival' && year != ${new Date().getFullYear()}]{
+    "pastFestivals": *[_type == 'festival' && year != $currentYear]{
       title,
       description,
       year,
@@ -36,7 +38,7 @@ async function getMemoire() {
   }
 `
 
-	const data = await fetchSanityLive({ query })
+	const data = await fetchSanityLive({ query, params: { currentYear } })
 
 	if (!data) {
 		throw new Error(`No content found for festival"`)

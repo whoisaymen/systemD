@@ -36,7 +36,7 @@ async function getBigBang() {
 
 	if (!data) {
 		notFound()
-		throw new Error(`No content found}"`)
+		throw new Error(`No content found"`)
 	}
 
 	return data
