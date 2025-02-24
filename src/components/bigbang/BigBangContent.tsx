@@ -17,7 +17,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 	const [activeTab, setActiveTab] = useState<'short' | 'long'>('short')
 
 	return (
-		<div className="h-full w-full space-y-20 rounded-md bg-grayLight pt-24 sm:bg-white md:pt-6">
+		<div className="h-full w-full space-y-20 rounded-md pt-24 sm:bg-white md:pt-6">
 			<div className="flex items-center justify-evenly gap-2 text-lg font-bold uppercase tracking-tight sm:justify-center">
 				<h2
 					className={`h-full cursor-pointer rounded-md border-2 border-grayDark bg-grayDark px-4 py-0 leading-none ${

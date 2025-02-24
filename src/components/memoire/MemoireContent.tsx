@@ -66,12 +66,12 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 			)} */}
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
-				<div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-3">
+				<div className="grid grid-cols-1 gap-4 pb-16 pt-4 sm:grid-cols-2 lg:grid-cols-3">
 					{memoire.pastFestivals.map((festival: any, index: number) => (
 						<Link
 							key={index}
 							href={`/${language}/festival/${festival.year}`}
-							className="relative block h-[30vh] rounded-md shadow-md transition-shadow duration-300 hover:shadow-lg"
+							className="relative block h-[40vh] overflow-hidden rounded-full border-2 border-primary shadow-md transition-shadow duration-300 hover:shadow-lg"
 						>
 							<div
 								className={`absolute left-[30%] top-[32.5%] z-10 rounded-md bg-primary px-2 text-5xl font-black text-dark ${getRandomRotationClass()}`}
@@ -90,7 +90,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 											? getLocalizedValue(festival.title, language)
 											: 'Festival image'
 									}
-									className="h-full w-full rounded-md object-cover"
+									className="h-full w-full object-cover"
 								/>
 							) : (
 								<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />

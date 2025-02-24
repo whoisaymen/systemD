@@ -8,6 +8,12 @@ import FestivalSparklesIcon from './FestivalSparklesIcon'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { IoCalendar, IoGrid, IoList } from 'react-icons/io5'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion'
 
 interface FestivalContentProps {
 	festival: any
@@ -64,10 +70,10 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="h-[40vh] w-auto rounded-md border-2 border-primary sm:h-[50vh]"
+									className="mx-0 h-[70vh] w-auto rounded-full rounded-b-md border-2 border-primary sm:h-[50vh]"
 								>
 									<video
-										className="h-full w-full transform rounded-md object-cover"
+										className="h-full w-full transform rounded-full rounded-b-md object-cover"
 										autoPlay
 										loop
 										muted
@@ -104,7 +110,6 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 						case 'yellowBannerBlock':
 							return (
 								<div key={index}>
-									{/* Highlighted Festival Info */}
 									<motion.div
 										initial={{
 											borderRadius: '0.375rem',
@@ -116,7 +121,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											repeat: Infinity,
 											repeatType: 'reverse',
 										}}
-										className="relative -mt-10 rounded-full border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
+										className="relative -mt-10 rounded-full border-2 border-dark px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
 										// style={{ backgroundColor: block.color?.hex || '#DEFE04' }}
 										style={{
 											backgroundColor: 'var(--color-secondary)',
@@ -148,54 +153,41 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 								<div
 									key={index}
 									className="flex flex-col items-center rounded-md px-2 text-xl font-medium leading-tight tracking-tighter sm:flex-row sm:px-32 sm:py-52 sm:text-2xl"
-									// style={{
-									// 	backgroundColor: block.backgroundColor?.hex || '#FFFFFF',
-									// 	color: block.textColor?.hex || '#000000',
-									// }}
 								>
-									<motion.h3
-										// initial={{ scale: 0 }}
-
-										animate={{
-											rotate: 1,
-											transition: {
-												duration: 0.3,
-												repeat: Infinity,
-												repeatType: 'reverse',
-												ease: 'easeInOut',
-											},
-										}}
-										className={`z-10 -mb-4 rounded-md border-2 border-primary bg-dark px-2 pr-4 text-center text-4xl font-black uppercase italic tracking-tighter text-primary ${getRandomRotationClass()}`}
-									>
-										Call for Entry!
-									</motion.h3>
-
-									<div className="z-0 w-full rounded-md border-2 border-dark bg-primary px-10 py-12 text-lg font-medium leading-[1.3] text-dark shadow-sm sm:w-1/2">
-										{block.content && block.content[language] && (
-											<PortableText value={block.content[language]} />
-										)}
-									</div>
+									<Accordion type="single" collapsible>
+										<AccordionItem
+											value="item-1"
+											className="flex flex-col items-center justify-center"
+										>
+											<AccordionTrigger
+												className={`${getRandomRotationClass()}`}
+											>
+												Call for Entry!
+											</AccordionTrigger>
+											<AccordionContent>
+												<div className="z-0 w-full rounded-md border-2 border-dark bg-primary px-10 py-12 text-lg font-medium leading-[1.3] text-dark shadow-sm sm:w-1/2">
+													{block.content && block.content[language] && (
+														<PortableText value={block.content[language]} />
+													)}
+												</div>
+											</AccordionContent>
+										</AccordionItem>
+									</Accordion>
 								</div>
 							)
 						case 'juryBlock':
 							if (!block.show) return null
 							return (
-								// <div
-								// 	key={index}
-								// 	className="relative rounded-md p-0 text-2xl font-medium leading-tight tracking-tight !text-[#8C8C8F]"
-								// 	style={{
-								// 		backgroundColor: block.backgroundColor?.hex || '#FFFFFF',
-								// 		color: block.textColor?.hex || '#000000',
-								// 	}}
-								// >
-								// </div>
-								<div key={index} className="relative my-0 h-auto w-full">
+								<div
+									key={index}
+									className="relative my-0 flex h-full w-full flex-col items-center px-6"
+								>
 									<h3
-										className={`relative z-50 mx-auto inline-block rounded-md border-2 border-dark bg-primary px-2 text-center text-4xl font-black italic text-dark ${getRandomRotationClass()}`}
+										className={`relative z-50 mx-auto inline-block rounded-md border-2 border-primary bg-dark px-2 text-center text-4xl font-black uppercase italic tracking-tighter text-primary ${getRandomRotationClass()}`}
 									>
 										Jury
 									</h3>
-									<div className="grid h-full grid-cols-2 gap-1 sm:grid-cols-6">
+									<div className="grid h-full grid-cols-2 gap-8 sm:grid-cols-6">
 										{block.juryMembers && block.juryMembers.length > 0 ? (
 											block.juryMembers.map(
 												(member: any, memberIndex: number) => (
@@ -204,7 +196,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 														className="h-full w-full rounded-md"
 													>
 														{/* <div className="absolute left-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div>
-													<div className="absolute right-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div> */}
+														<div className="absolute right-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div> */}
 														{member.image && (
 															<div className="relative">
 																<Img
@@ -228,16 +220,16 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 															</div>
 														)}
 														{member.name && (
-															<div className="flex items-center justify-between rounded-b-md bg-grayLight px-2 dark:bg-dark">
+															<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
 																<h3
-																	className={`z-10 -ml-1 rounded-full border-2 border-none bg-none px-2 py-2 text-left text-base font-semibold tracking-tighter text-dark dark:text-grayLight`}
+																	className={`z-10 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
 																>
 																	{member.name}
 																</h3>
-																<FestivalSparkleIcon
+																{/* <FestivalSparkleIcon
 																	theme={themeColors.sparkle}
 																	className="h-5 w-5"
-																/>
+																/> */}
 															</div>
 														)}
 														{/* {member.biography && (

@@ -9,10 +9,10 @@ const ReadMore: React.FC<ReadMoreProps> = ({ text, link }) => {
 	const [expanded, setExpanded] = useState(false)
 
 	return (
-		<div className="relative px-0 sm:px-4">
+		<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10">
 			<p
-				className={`transition-all duration-300 ${
-					expanded ? 'max-h-full' : 'max-h-20 overflow-hidden'
+				className={`mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl ${
+					expanded ? 'max-h-full' : 'max-h-24 overflow-hidden'
 				}`}
 			>
 				{text}
@@ -32,13 +32,13 @@ const ReadMore: React.FC<ReadMoreProps> = ({ text, link }) => {
 
 			{/* Fade effect only when collapsed */}
 			{!expanded && (
-				<div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-grayLight sm:to-white"></div>
+				<div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-grayLight dark:to-dark sm:to-white"></div>
 			)}
 
 			{/* Read More Button */}
 			<button
 				onClick={() => setExpanded(!expanded)}
-				className="relative z-50 mt-2 text-grayDark underline focus:outline-none"
+				className="absolute inset-x-0 z-50 mt-2 text-dark focus:outline-none"
 			>
 				{expanded ? 'Read Less' : 'Read More'}
 			</button>

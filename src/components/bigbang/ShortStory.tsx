@@ -1,3 +1,5 @@
+'use client'
+import { motion } from 'motion/react'
 import Img from '@/ui/Img'
 import Link from 'next/link'
 import LogoShortTsx from '../svgs/LogoShort'
@@ -70,15 +72,12 @@ const renderParagraph = (paragraph: any, titles: string[]) => {
 		return (
 			<span key={index} className={isTitle ? 'font-bold' : ''}>
 				{isSystemD ? (
-					<>
-						<Link
-							href="/"
-							className={`bg-dark inline-block h-auto w-[10rem] rounded-md px-4 py-1 dark:bg-[#DEFE04] sm:w-[15rem] ${getRandomRotationClass()}`}
-						>
-							<LogoShortTsx className="text-primary dark:text-dark w-full" />
-						</Link>
-						{/* <span className="text-grayLight px-[6.5rem]"></span> */}
-					</>
+					<Link
+						href="/"
+						className={`inline-block h-auto w-[10rem] rounded-md bg-dark px-4 py-1 dark:bg-[#DEFE04] sm:w-[15rem] ${getRandomRotationClass()}`}
+					>
+						<LogoShortTsx className="w-full text-primary dark:text-dark" />
+					</Link>
 				) : (
 					word
 				)}
