@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import Link from 'next/link'
 import BigBangLogoMobile from '../bigbang/BigBangLogoMobile'
 import FestivalLogoMobile from '../festival/FestivalLogoMobile'
@@ -22,6 +22,7 @@ interface MenuItemProps {
 	delay: number
 	locale: string
 	closeMenu: () => void
+	totalItems: number
 }
 
 interface LogoComponentProps {
@@ -65,28 +66,42 @@ const MenuItem: React.FC<MenuItemProps> = ({
 	delay,
 	locale,
 	closeMenu,
-}) => (
-	<Link
-		href={`/${locale}/${href}`}
-		className={`w-full ${getRandomRotationClass()}`}
-		onClick={closeMenu}
-	>
-		<motion.div
-			initial={{ opacity: 0, y: '50%' }}
-			animate={{
-				opacity: 1,
-				y: 0,
-				transition: { duration: 0.5, delay, ease: 'easeInOut' },
-			}}
-			className="group w-full rounded-md border-dark px-6 py-3"
+	totalItems,
+}) => {
+	// Calculate reverse delay for exit animation
+	const reverseDelay = totalItems * 0.05 - delay
+	return (
+		<Link
+			href={`/${locale}/${href}`}
+			className={`w-full ${getRandomRotationClass()}`}
+			onClick={closeMenu}
 		>
-			<Component
-				className="w-full overflow-visible text-primary group-hover:text-primary"
-				theme={theme.dark}
-			/>
-		</motion.div>
-	</Link>
-)
+			<motion.div
+				initial={{ opacity: 0, y: '50%' }}
+				animate={{
+					opacity: 1,
+					y: 0,
+					transition: { duration: 0.5, delay, ease: 'easeInOut' },
+				}}
+				exit={{
+					opacity: 0,
+					y: '50%',
+					transition: {
+						duration: 0.5,
+						delay: reverseDelay,
+						ease: 'easeInOut',
+					},
+				}}
+				className="group w-full rounded-md border-dark px-6 py-[0.82rem]"
+			>
+				<Component
+					className="h-full w-full overflow-visible text-primary group-hover:text-primary"
+					theme={theme.dark}
+				/>
+			</motion.div>
+		</Link>
+	)
+}
 
 interface MenuProps {
 	menuOpen: boolean
@@ -96,9 +111,23 @@ interface MenuProps {
 
 const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 	if (!menuOpen) return null
+	const footerDelay = Math.max(...menuItems.map((item) => item.delay)) + 0.1
 
 	return (
-		<motion.div className="absolute left-0 top-0 z-50 flex h-dvh w-full flex-col items-center justify-start overflow-hidden bg-grayLight px-0 pt-8 dark:bg-dark">
+		<motion.div
+			className="absolute left-0 top-0 z-50 flex h-dvh w-full flex-col items-center justify-start overflow-hidden bg-grayLight px-0 pt-8 dark:bg-dark"
+			initial={{ y: '-100%' }}
+			animate={{ y: '0%' }}
+			transition={{
+				duration: 0.5,
+				ease: [0.76, 0, 0.24, 1],
+			}}
+			exit={{
+				y: '-100%',
+				transition: { duration: 0.5, delay: 0.25, ease: [0.76, 0, 0.24, 1] },
+			}}
+		>
+			<div className="relative"></div>
 			{/* <div className="flex w-full justify-start">
 				<div className="group mx-4 flex h-auto w-[40vw] justify-start rounded-md border-2 border-dark bg-primary px-2 py-1 shadow-md dark:border-primary dark:bg-primary sm:hidden">
 					<LogoShortAnimated
@@ -116,23 +145,36 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 					delay={delay}
 					locale={locale}
 					closeMenu={closeMenu}
+					totalItems={menuItems.length}
 				/>
 			))}
 
-			<div className="flex h-full w-full items-center justify-center px-2 text-4xl">
-				{/* <div className="flex items-center justify-center gap-2 text-grayDark">
-					<AiFillInstagram className="text-[2.5rem]" />
-					<FaSquareFacebook />
-					<FaYoutube className="text-[2.75rem]" />
-				</div> */}
-
-				{/* <Link
-					href={`/${locale}/contact`}
-					className="text-medium rounded-full border-2 border-transparent px-2 text-base font-bold text-grayDark hover:border-grayDark"
-				>
-					Contact
-				</Link> */}
-			</div>
+			<motion.div
+				className="absolute top-[78%] flex h-full w-full items-start justify-center gap-4 pt-12 text-sm font-bold leading-[1.2] tracking-tighter text-dark underline dark:font-semibold dark:text-primary"
+				initial={{ opacity: 0, y: 20 }}
+				animate={{
+					opacity: 1,
+					y: 0,
+					transition: {
+						duration: 0.5,
+						delay: footerDelay, // Show after all menu items
+						ease: 'easeInOut',
+					},
+				}}
+				exit={{
+					opacity: 0,
+					y: 20,
+					transition: {
+						duration: 0.3,
+						delay: 0, // Exit first, before menu items
+						ease: 'easeInOut',
+					},
+				}}
+			>
+				<Link href={`/${locale}/contact`}>Mentions légales</Link>
+				<Link href={`/${locale}/contact`}>Contactez-nous</Link>
+				<span>Instagram</span>
+			</motion.div>
 		</motion.div>
 	)
 }

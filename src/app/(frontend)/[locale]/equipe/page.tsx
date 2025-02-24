@@ -9,13 +9,15 @@ export default async function EquipePage({
 	const { locale } = await params
 	const content = await getEquipe('person', locale)
 
-	return <EquipeContent person={content} language={locale} />
+	console.log(content)
+
+	return <EquipeContent persons={content} language={locale} />
 }
 
 async function getEquipe(tab: string, locale: string) {
 	const query = groq`
     {
-      "person": *[_type == 'person'][0]{
+      "person": *[_type == 'person']{
         _id,
         name,
         title,

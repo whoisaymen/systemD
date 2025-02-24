@@ -20,38 +20,50 @@ const AccordionItem = React.forwardRef<
 ))
 AccordionItem.displayName = 'AccordionItem'
 
+// Generate a random delay between min and max values
+const getRandomDelay = (min = 0.1, max = 0.8) => {
+	return Math.random() * (max - min) + min
+}
+
 const AccordionTrigger = React.forwardRef<
 	React.ElementRef<typeof AccordionPrimitive.Trigger>,
-	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-	<motion.div
-		className="z-10"
-		animate={{
-			rotate: 1,
-			transition: {
-				duration: 0.3,
-				repeat: Infinity,
-				delay: 0.2,
-				repeatType: 'reverse',
-				ease: 'easeInOut',
-			},
-		}}
-	>
-		<AccordionPrimitive.Header className="flex">
-			<AccordionPrimitive.Trigger
-				ref={ref}
-				className={cn(
-					'flex items-center justify-center gap-1 rounded-md border-2 border-primary bg-dark px-2 pr-4 text-center text-4xl font-black uppercase italic tracking-tighter text-primary transition-all [&[data-state=open]>svg]:rotate-180',
-					className,
-				)}
-				{...props}
-			>
-				{children}
-				{/* <ChevronDown className="text-muted-foreground h-full w-12 shrink-0 transition-transform duration-200" /> */}
-			</AccordionPrimitive.Trigger>
-		</AccordionPrimitive.Header>
-	</motion.div>
-))
+	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & {
+		animationDelay?: number
+	}
+>(({ className, children, animationDelay, ...props }, ref) => {
+	// Use provided delay or generate a random one if not specified
+	const delay = animationDelay !== undefined ? animationDelay : getRandomDelay()
+
+	return (
+		<motion.div
+			className="z-10"
+			animate={{
+				rotate: 1,
+				transition: {
+					duration: 0.3,
+					repeat: Infinity,
+					delay: delay,
+					repeatType: 'reverse',
+					ease: 'easeInOut',
+				},
+			}}
+		>
+			<AccordionPrimitive.Header className="flex">
+				<AccordionPrimitive.Trigger
+					ref={ref}
+					className={cn(
+						'flex items-center justify-center gap-1 rounded-md border-2 border-dark bg-primary px-2 pr-4 text-center text-4xl font-black uppercase italic tracking-tighter text-dark shadow-sm transition-all dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180',
+						className,
+					)}
+					{...props}
+				>
+					{children}
+					{/* <ChevronDown className="text-muted-foreground h-full w-12 shrink-0 transition-transform duration-200" /> */}
+				</AccordionPrimitive.Trigger>
+			</AccordionPrimitive.Header>
+		</motion.div>
+	)
+})
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
 const AccordionContent = React.forwardRef<
@@ -60,7 +72,7 @@ const AccordionContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<AccordionPrimitive.Content
 		ref={ref}
-		className="overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+		className="h-full w-full overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 		{...props}
 	>
 		<div className={cn('pb-4 pt-0', className)}>{children}</div>

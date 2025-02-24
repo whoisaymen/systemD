@@ -16,7 +16,7 @@ const FabriqueLogoMobile: React.FC<FabriqueLogoMobileProps> = ({
 }) => (
 	<svg
 		className={className}
-		viewBox="0 0 2679 509"
+		viewBox="0 0 2679 660"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 	>

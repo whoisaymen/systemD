@@ -11,6 +11,8 @@ export default async function FestivalPage({
 	const { locale } = await params
 	const content = await getFestival()
 
+	console.log(content)
+
 	// return <Loading />
 
 	return <FestivalContent festival={content} language={locale} />

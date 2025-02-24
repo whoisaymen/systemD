@@ -32,12 +32,6 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 
 	return (
 		<div className="no-scrollbar mt-12 flex h-full w-full flex-col space-y-1 overflow-y-scroll rounded-md px-4 tracking-tighter sm:mt-0 sm:bg-white">
-			{/* {memoire.title && (
-				<h1 className="mb-8 text-center text-3xl font-bold text-grayLight">
-					{getLocalizedValue(memoire.title, language)}
-				</h1>
-			)} */}
-
 			<motion.div
 				initial={{
 					borderRadius: '0.375rem',
@@ -49,21 +43,12 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					repeat: Infinity,
 					repeatType: 'reverse',
 				}}
-				className="relative rounded-full border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
-				// style={{ backgroundColor: block.color?.hex || '#DEFE04' }}
-				style={{
-					backgroundColor: 'var(--color-secondary)',
-				}}
+				className="relative rounded-full border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
 			>
 				<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
 					{getLocalizedValue(memoire.description, language)}
 				</p>
 			</motion.div>
-			{/* {memoire.description && (
-				<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
-					{getLocalizedValue(memoire.description, language)}
-				</p>
-			)} */}
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
 				<div className="grid grid-cols-1 gap-4 pb-16 pt-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -71,14 +56,14 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 						<Link
 							key={index}
 							href={`/${language}/festival/${festival.year}`}
-							className="relative block h-[40vh] overflow-hidden rounded-full border-2 border-primary shadow-md transition-shadow duration-300 hover:shadow-lg"
+							className="relative block h-[60vh] overflow-hidden rounded-full border-2 border-primary shadow-md transition-shadow duration-300 hover:shadow-lg"
 						>
 							<div
-								className={`absolute left-[30%] top-[32.5%] z-10 rounded-md bg-primary px-2 text-5xl font-black text-dark ${getRandomRotationClass()}`}
+								className={`absolute left-[30%] top-[45%] z-10 -rotate-6 rounded-md bg-primary px-2 text-5xl font-black text-dark`}
 							>
 								<span>{festival.year}</span>
 							</div>
-							<div className="absolute left-1/2 top-1/2 z-0 -translate-x-1/2 rounded-md bg-grayDark px-2 text-xl font-semibold text-dark">
+							<div className="absolute left-1/2 top-[54%] z-0 -translate-x-1/2 rounded-md bg-grayDark px-2 text-xl font-semibold text-dark">
 								<span>{festival.venue}</span>
 							</div>
 							{festival.visual ? (
@@ -95,16 +80,6 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 							) : (
 								<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
 							)}
-							{/* <h3 className="mt-4 text-xl font-semibold">
-									{festival.title
-										? getLocalizedValue(festival.title, language)
-										: 'No title available'}
-								</h3>
-								<p className="mt-2 text-sm">
-									{festival.description
-										? getLocalizedValue(festival.description, language)
-										: 'No description available'}
-								</p> */}
 						</Link>
 					))}
 				</div>

@@ -14,6 +14,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion'
+import LogoShortTsx from '../svgs/LogoShort'
 
 interface FestivalContentProps {
 	festival: any
@@ -24,7 +25,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	festival,
 	language,
 }) => {
-	const [view, setView] = useState<'calendar' | 'list'>('calendar')
+	const [view, setView] = useState<'calendar' | 'list'>('list')
 
 	const getLocalizedValue = (array: any[], lang: string) => {
 		if (!Array.isArray(array)) {
@@ -53,7 +54,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	return (
 		<div
 			key={festival._id}
-			className="mt-20 flex h-full w-full flex-col space-y-12 rounded-md p-2 sm:mt-0 sm:p-1"
+			className="mt-20 flex h-full w-full flex-col space-y-1 rounded-md p-2 sm:mt-0 sm:p-1"
 		>
 			{festival.title && (
 				<h1 className="text-3xl font-bold">{festival.title}</h1>
@@ -70,10 +71,10 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="mx-0 h-[70vh] w-auto rounded-full rounded-b-md border-2 border-primary sm:h-[50vh]"
+									className="mx-0 h-[80vh] w-auto pb-16 pt-2 sm:h-[50vh]"
 								>
 									<video
-										className="h-full w-full transform rounded-full rounded-b-md object-cover"
+										className="h-full w-full transform rounded-full border-2 border-primary object-cover"
 										autoPlay
 										loop
 										muted
@@ -108,8 +109,10 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 								</div>
 							)
 						case 'yellowBannerBlock':
+							const text = getLocalizedValue(block.text, language)
+							const paragraphs = text.split('\n\n')
 							return (
-								<div key={index}>
+								<div key={index} className="">
 									<motion.div
 										initial={{
 											borderRadius: '0.375rem',
@@ -121,11 +124,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											repeat: Infinity,
 											repeatType: 'reverse',
 										}}
-										className="relative -mt-10 rounded-full border-2 border-dark px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
-										// style={{ backgroundColor: block.color?.hex || '#DEFE04' }}
-										style={{
-											backgroundColor: 'var(--color-secondary)',
-										}}
+										className="relative rounded-full border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-primary sm:py-10"
 									>
 										{/* Camera Viewfinder Corners */}
 										<div className="pointer-events-none absolute inset-0 hidden px-4 py-4">
@@ -138,12 +137,34 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											<div className="absolute bottom-6 right-6 h-[40px] w-[40px] border-b-4 border-r-4 border-black"></div>
 										</div>
 
-										{/* Text Content */}
-										{block.text && (
-											<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
-												{getLocalizedValue(block.text, language)}
+										{paragraphs.map((paragraph: string, i: number) => (
+											<p
+												key={i}
+												className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl"
+											>
+												{paragraph.split(/(System D)/).map((part, index) =>
+													part === 'System D' ? (
+														<motion.span
+															key={index}
+															className="z-10 inline-block"
+															animate={{
+																rotate: 3,
+																transition: {
+																	ease: [0.76, 0, 0.24, 1],
+																	duration: 1.5,
+																	repeat: Infinity,
+																	repeatType: 'reverse',
+																},
+															}}
+														>
+															<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary dark:bg-dark sm:w-[15rem]" />
+														</motion.span>
+													) : (
+														part
+													),
+												)}
 											</p>
-										)}
+										))}
 									</motion.div>
 								</div>
 							)
@@ -159,9 +180,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											value="item-1"
 											className="flex flex-col items-center justify-center"
 										>
-											<AccordionTrigger
-												className={`${getRandomRotationClass()}`}
-											>
+											<AccordionTrigger className={`rotate-3`}>
 												Call for Entry!
 											</AccordionTrigger>
 											<AccordionContent>
@@ -182,68 +201,75 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 									key={index}
 									className="relative my-0 flex h-full w-full flex-col items-center px-6"
 								>
-									<h3
-										className={`relative z-50 mx-auto inline-block rounded-md border-2 border-primary bg-dark px-2 text-center text-4xl font-black uppercase italic tracking-tighter text-primary ${getRandomRotationClass()}`}
-									>
-										Jury
-									</h3>
-									<div className="grid h-full grid-cols-2 gap-8 sm:grid-cols-6">
-										{block.juryMembers && block.juryMembers.length > 0 ? (
-											block.juryMembers.map(
-												(member: any, memberIndex: number) => (
-													<div
-														key={member._id}
-														className="h-full w-full rounded-md"
-													>
-														{/* <div className="absolute left-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div>
-														<div className="absolute right-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div> */}
-														{member.image && (
-															<div className="relative">
-																<Img
-																	image={member.image}
-																	src={member.image.asset.url}
-																	alt={member.name}
-																	className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover"
-																	// style={{
-																	// 	maskImage: 'url(/assets/svg/Sparkle.svg)',
-																	// 	WebkitMaskImage:
-																	// 		'url(/assets/svg/Sparkle.svg)',
-																	// 	maskSize: 'contain',
-																	// 	WebkitMaskSize: 'contain',
-																	// 	maskRepeat: 'no-repeat',
-																	// 	WebkitMaskRepeat: 'no-repeat',
-																	// 	maskPosition: 'center',
-																	// 	WebkitMaskPosition: 'center',
-																	// }}
-																/>
-																<div className="absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-grayLight to-transparent dark:from-dark" />
-															</div>
-														)}
-														{member.name && (
-															<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
-																<h3
-																	className={`z-10 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
+									<Accordion type="single" collapsible>
+										<AccordionItem
+											value="item-1"
+											className="flex flex-col items-center justify-center"
+										>
+											<AccordionTrigger className={`-rotate-6`}>
+												Jury
+											</AccordionTrigger>
+											<AccordionContent>
+												<div className="grid h-full grid-cols-2 gap-8 sm:grid-cols-6">
+													{block.juryMembers && block.juryMembers.length > 0 ? (
+														block.juryMembers.map(
+															(member: any, memberIndex: number) => (
+																<div
+																	key={member._id}
+																	className="h-full w-full rounded-md"
 																>
-																	{member.name}
-																</h3>
-																{/* <FestivalSparkleIcon
+																	{/* <div className="absolute left-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div>
+														<div className="absolute right-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div> */}
+																	{member.image && (
+																		<div className="relative">
+																			<Img
+																				image={member.image}
+																				src={member.image.asset.url}
+																				alt={member.name}
+																				className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover"
+																				// style={{
+																				// 	maskImage: 'url(/assets/svg/Sparkle.svg)',
+																				// 	WebkitMaskImage:
+																				// 		'url(/assets/svg/Sparkle.svg)',
+																				// 	maskSize: 'contain',
+																				// 	WebkitMaskSize: 'contain',
+																				// 	maskRepeat: 'no-repeat',
+																				// 	WebkitMaskRepeat: 'no-repeat',
+																				// 	maskPosition: 'center',
+																				// 	WebkitMaskPosition: 'center',
+																				// }}
+																			/>
+																			<div className="absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-grayLight to-transparent dark:from-dark" />
+																		</div>
+																	)}
+																	{member.name && (
+																		<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
+																			<h3
+																				className={`z-10 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
+																			>
+																				{member.name}
+																			</h3>
+																			{/* <FestivalSparkleIcon
 																	theme={themeColors.sparkle}
 																	className="h-5 w-5"
 																/> */}
-															</div>
-														)}
-														{/* {member.biography && (
+																		</div>
+																	)}
+																	{/* {member.biography && (
 															<p className="truncate">
 																{getLocalizedValue(member.biography, language)}
 															</p>
 														)} */}
-													</div>
-												),
-											)
-										) : (
-											<p>No jury members found</p>
-										)}
-									</div>
+																</div>
+															),
+														)
+													) : (
+														<p>No jury members found</p>
+													)}
+												</div>
+											</AccordionContent>
+										</AccordionItem>
+									</Accordion>
 								</div>
 							)
 
@@ -256,20 +282,27 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="flex h-full w-full flex-col items-center pt-20"
+									className="flex h-full w-full flex-col items-center"
 								>
-									<h3
-										className={`z-10 rounded-md border-2 border-dark bg-primary px-2 text-center text-3xl font-black uppercase italic text-dark ${getRandomRotationClass()}`}
-									>
-										Save the Date
-									</h3>
-									<FestivalTicket
-										key={index}
-										items={ticketItems}
-										block={block}
-										language={language}
-										getLocalizedValue={getLocalizedValue}
-									/>
+									<Accordion type="single" collapsible className="w-full">
+										<AccordionItem
+											value="item-3"
+											className="flex h-full w-full flex-col items-center justify-center"
+										>
+											<AccordionTrigger className={`-rotate-1`}>
+												Save the Date!
+											</AccordionTrigger>
+											<AccordionContent className="w-full">
+												<FestivalTicket
+													key={index}
+													items={ticketItems}
+													block={block}
+													language={language}
+													getLocalizedValue={getLocalizedValue}
+												/>
+											</AccordionContent>
+										</AccordionItem>
+									</Accordion>
 								</div>
 							)
 						case 'onTourBlock':
@@ -277,96 +310,111 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="on-tour-block flex h-full w-full flex-col items-center py-20 pb-40"
+									className="on-tour-block flex h-full w-full flex-col items-center pb-36"
 								>
-									<h3
-										className={`rounded-md border-2 border-dark bg-primary px-2 text-center text-3xl font-black uppercase italic text-dark ${getRandomRotationClass()}`}
-									>
-										On Tour
-									</h3>
-									<div className="flex h-full w-1/2 items-center justify-end gap-1">
-										<button
-											onClick={() => setView('calendar')}
-											className={`rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors ${
-												view === 'calendar'
-													? 'border-primary bg-dark text-primary' // Active: Dark background, primary text & border
-													: 'border-grayDark bg-grayLight text-dark hover:bg-grayDark hover:text-white' // Inactive: Light gray, hover darkens
-											}`}
+									<Accordion type="single" collapsible className="w-full">
+										<AccordionItem
+											value="item-4"
+											className="flex h-full w-full flex-col items-center justify-center"
 										>
-											<IoCalendar />
-										</button>
+											<AccordionTrigger className={`rotate-6`}>
+												On Tour
+											</AccordionTrigger>
+											<AccordionContent className="w-full">
+												<div className="mt-4 flex h-full w-full items-center justify-center gap-1 text-4xl">
+													<button
+														onClick={() => setView('calendar')}
+														className={`rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors ${
+															view === 'calendar'
+																? 'border-dark bg-primary text-dark dark:border-dark dark:text-dark'
+																: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'
+														}`}
+													>
+														<IoCalendar />
+													</button>
 
-										<button
-											onClick={() => setView('list')}
-											className={`flex rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors ${
-												view === 'list'
-													? 'border-primary bg-dark text-primary' // Active: Strong contrast, bold secondary color
-													: 'border-grayDark bg-grayLight text-dark hover:bg-grayDark hover:text-white' // Inactive: Light gray, hover darkens
-											}`}
-										>
-											<IoList />
-										</button>
-									</div>
-									{view === 'calendar' ? (
-										<div className="mt-4">
-											{/* Calendar View */}
-											<p>MONTH YEAR</p>
-										</div>
-									) : (
-										<div className="mt-4 w-full">
-											{/* Grid List View */}
-											<table className="w-full table-auto border-collapse">
-												<thead className="hidden">
-													<tr>
-														<th className="border px-4 py-2">Date + Time</th>
-														<th className="border px-4 py-2">Event Title</th>
-														<th className="border px-4 py-2">Address</th>
-													</tr>
-												</thead>
-												<tbody>
-													{block.events.map(
-														(event: any, eventIndex: number) => (
-															<tr
-																key={eventIndex}
-																className="border-b border-t border-dark text-xs uppercase tracking-tighter text-dark dark:border-primary dark:text-primary"
-															>
-																<td className="flex flex-col px-4 py-2">
-																	<span>
-																		{new Date(event.date).toLocaleDateString(
-																			language,
-																			{
-																				weekday: 'long',
-																				day: 'numeric',
-																				month: 'long',
-																			},
-																		)}
-																	</span>
+													<button
+														onClick={() => setView('list')}
+														className={`flex rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors ${
+															view === 'list'
+																? 'border-dark bg-primary text-dark dark:border-dark dark:text-dark'
+																: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'
+														}`}
+													>
+														<IoList />
+													</button>
+												</div>
+												{view === 'calendar' ? (
+													<div className="mt-4">
+														{/* Calendar View */}
+														<p className="text-center font-bold tracking-tighter text-dark dark:text-primary">
+															Calendar Goes Here
+														</p>
+													</div>
+												) : (
+													<div className="mt-4 w-full">
+														{/* Grid List View */}
+														<table className="w-full table-auto border-collapse">
+															<thead className="hidden">
+																<tr>
+																	<th className="border px-4 py-2">
+																		Date + Time
+																	</th>
+																	<th className="border px-4 py-2">
+																		Event Title
+																	</th>
+																	<th className="border px-4 py-2">Address</th>
+																</tr>
+															</thead>
+															<tbody>
+																{block.events.map(
+																	(event: any, eventIndex: number) => (
+																		<tr
+																			key={eventIndex}
+																			className="border-b border-t border-dark text-xs uppercase tracking-tighter text-dark dark:border-primary dark:text-primary"
+																		>
+																			<td className="flex flex-col px-4 py-2">
+																				<span>
+																					{new Date(
+																						event.date,
+																					).toLocaleDateString(language, {
+																						weekday: 'long',
+																						day: 'numeric',
+																						month: 'long',
+																					})}
+																				</span>
 
-																	<span>
-																		{new Date(event.date).toLocaleTimeString(
-																			language,
-																			{
-																				hour: '2-digit',
-																				minute: '2-digit',
-																				hour12: true,
-																			},
-																		)}
-																	</span>
-																</td>
+																				<span>
+																					{new Date(
+																						event.date,
+																					).toLocaleTimeString(language, {
+																						hour: '2-digit',
+																						minute: '2-digit',
+																						hour12: true,
+																					})}
+																				</span>
+																			</td>
 
-																<td className="px-4 py-2 text-lg font-bold normal-case leading-[1]">
-																	{getLocalizedValue(event.title, language)}
-																</td>
-																<td className="px-4 py-2">
-																	{event.location || 'Location not specified'}
-																</td>
-															</tr>
-														),
-													)}
-												</tbody>
-											</table>
-										</div>
-									)}
+																			<td className="px-4 py-2 text-base font-bold normal-case italic leading-[1]">
+																				{getLocalizedValue(
+																					event.title,
+																					language,
+																				)}
+																			</td>
+																			<td className="px-4 py-2">
+																				{event.location ||
+																					'Location not specified'}
+																			</td>
+																		</tr>
+																	),
+																)}
+															</tbody>
+														</table>
+													</div>
+												)}
+											</AccordionContent>
+										</AccordionItem>
+									</Accordion>
 								</div>
 							)
 						default:

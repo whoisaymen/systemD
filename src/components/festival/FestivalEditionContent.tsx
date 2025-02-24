@@ -293,7 +293,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			<Accordion type="single" collapsible>
 				<AccordionItem
 					value="item-3"
-					className="flex flex-col items-center justify-center"
+					className="flex flex-col items-center justify-center pb-1"
 				>
 					<AccordionTrigger className={`${getRandomRotationClass()}`}>
 						Expo Photo

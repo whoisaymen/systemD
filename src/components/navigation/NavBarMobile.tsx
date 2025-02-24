@@ -52,7 +52,10 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 	const renderLogo = () => {
 		if (pathname.includes('/bigbang')) {
 			return (
-				<BigBangLogoMobile theme={themeColors.dark} className="text-dark" />
+				<BigBangLogoMobile
+					theme={themeColors.dark}
+					className="mt-6 overflow-visible text-dark"
+				/>
 			)
 		} else if (pathname.includes('/festival')) {
 			return (
@@ -78,20 +81,22 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 
 	return (
 		<div className="relative z-50 h-full">
-			<nav className="fixed left-0 top-0 z-50 mt-2 flex h-auto w-full items-start justify-center gap-2 !overflow-visible pl-2 pr-3 text-center text-xl font-black tracking-tighter text-black sm:hidden">
-				<Link href="/" className="h-full w-full overflow-visible">
-					<div className="w-full overflow-visible">{renderLogo()}</div>
-				</Link>
+			<nav className="fixed left-0 top-0 z-50 mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden">
+				{/* <Link href="/" className="h-full w-full"> */}
+				<div className="h-full w-full">{renderLogo()}</div>
+				{/* </Link> */}
 			</nav>
 
-			{menuOpen && (
-				<Menu
-					key="modal"
-					menuOpen={menuOpen}
-					closeMenu={closeMenu}
-					locale={locale}
-				/>
-			)}
+			<AnimatePresence mode="wait">
+				{menuOpen && (
+					<Menu
+						key="modal"
+						menuOpen={menuOpen}
+						closeMenu={closeMenu}
+						locale={locale}
+					/>
+				)}
+			</AnimatePresence>
 
 			<div className="fixed bottom-8 left-1/2 z-50 flex h-auto w-full -translate-x-1/2 items-center justify-center gap-1">
 				<div className="h-[2.5rem] overflow-hidden rounded-md border-2 border-dark shadow-md dark:border-primary">
@@ -101,7 +106,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					<div className="group flex h-[2.50rem] w-full rounded-lg border-2 border-dark bg-primary px-2 py-1 shadow-md dark:border-primary dark:bg-dark sm:hidden">
 
 						<LogoShortAnimated
-							className="h-full !overflow-visible text-dark group-hover:text-primary dark:text-primary"
+							className="h-full  text-dark group-hover:text-primary dark:text-primary"
 							theme={themeColors.dark}
 						/>
 					</div>

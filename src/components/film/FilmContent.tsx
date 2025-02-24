@@ -40,15 +40,8 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 							className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-0 border-grayLight bg-grayLight/70 text-4xl dark:border-primary"
 						>
 							<FaPlay className="pl-2 text-grayDark" />
-							{/* {film.playFilmUrl.includes('youtube')
-								? 'Watch Trailer'
-								: film.playFilmUrl.includes('instagram')
-									? 'Visit Instagram'
-									: 'Link'} */}
 						</a>
 					)}
-					{/* <div className="absolute -left-3 top-0 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_32px] bg-center bg-repeat-y"></div>
-					<div className="absolute -right-3 top-0 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_32px] bg-center bg-repeat-y"></div> */}
 
 					<div className="mx-1 overflow-hidden rounded-md border-2 border-primary shadow-md">
 						<Img
@@ -130,10 +123,6 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 						repeatType: 'reverse',
 					}}
 					className="relative mt-2 rounded-full border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
-					// style={{ backgroundColor: block.color?.hex || '#DEFE04' }}
-					style={{
-						backgroundColor: 'var(--color-secondary)',
-					}}
 				>
 					<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
 						{getLocalizedValue(film.synopsis, language)}

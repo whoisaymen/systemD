@@ -50,8 +50,8 @@ export default async function RootLayout({
 					<ThemeProvider attribute="class" defaultTheme="dark">
 						<NextIntlClientProvider messages={messages}>
 							<NuqsAdapter>
-								<SkipToContent />
-								<Announcement />
+								{/* <SkipToContent /> */}
+								{/* <Announcement /> */}
 								<NavBar locale={locale} />
 								<NavBarMobile locale={locale} />
 
