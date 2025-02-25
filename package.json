@@ -14,8 +14,6 @@
 	},
 	"dependencies": {
 		"@butterfail/tailwindcss-inverted-radius": "^0.1.2",
-		"@headlessui/react": "^2.2.0",
-		"@heroicons/react": "^2.2.0",
 		"@portabletext/to-html": "^2.0.13",
 		"@radix-ui/react-accordion": "^1.2.3",
 		"@sanity/code-input": "^5.0.0",
