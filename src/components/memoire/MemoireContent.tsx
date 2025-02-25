@@ -31,7 +31,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar mt-12 flex h-full w-full flex-col space-y-1 overflow-y-scroll rounded-md px-4 tracking-tighter sm:mt-0 sm:bg-white">
+		<div className="no-scrollbar mt-28 flex h-full w-full flex-col space-y-1 overflow-y-scroll rounded-md px-4 tracking-tighter sm:mt-0 sm:bg-white">
 			<motion.div
 				initial={{
 					borderRadius: '0.375rem',
@@ -59,11 +59,11 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 							className="relative block h-[60vh] overflow-hidden rounded-full border-2 border-primary shadow-md transition-shadow duration-300 hover:shadow-lg"
 						>
 							<div
-								className={`absolute left-[30%] top-[45%] z-10 -rotate-6 rounded-md bg-primary px-2 text-5xl font-black text-dark`}
+								className={`absolute left-[20%] top-[65%] z-10 -rotate-6 rounded-md bg-primary px-2 text-5xl font-black tracking-tighter text-dark`}
 							>
 								<span>{festival.year}</span>
 							</div>
-							<div className="absolute left-1/2 top-[54%] z-0 -translate-x-1/2 rounded-md bg-grayDark px-2 text-xl font-semibold text-dark">
+							<div className="absolute left-[58%] top-[70%] z-0 -translate-x-1/2 -rotate-12 rounded-md bg-grayDark px-2 text-5xl font-semibold tracking-tighter text-dark">
 								<span>{festival.venue}</span>
 							</div>
 							{festival.visual ? (

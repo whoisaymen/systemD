@@ -301,7 +301,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					<AccordionContent>
 						{festival.expoPhoto && festival.expoPhoto.length > 0 && (
 							<div className="my-4">
-								<h2 className="text-2xl font-bold">Expo Photo</h2>
+								<h2 className="text-center text-2xl font-bold">Expo Photo</h2>
 								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
 							</div>
 						)}

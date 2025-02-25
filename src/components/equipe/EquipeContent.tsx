@@ -19,7 +19,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 	}
 
 	return (
-		<div className="flex h-full w-full flex-col items-center space-y-20 rounded-md px-2 pb-32 pt-24 sm:mt-0">
+		<div className="flex h-full w-full flex-col items-center space-y-16 rounded-md px-2 py-24 sm:mt-0">
 			{persons.map((person) => {
 				const imageUrl = person.image?.asset?._ref
 					? `/${person.image.asset._ref.split('-')[1]}-${person.image.asset._ref.split('-')[2]}.${person.image.asset._ref.split('-')[3]}`
@@ -31,12 +31,12 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 						className="flex flex-col items-center space-y-0 px-2"
 					>
 						{imageUrl && (
-							<div className="relative px-12">
+							<div className="relative px-16">
 								<Img
 									image={person.image}
 									src={imageUrl}
 									alt={person.name}
-									className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover"
+									className="z-0 h-full w-full rounded-full border-2 border-primary object-cover"
 								/>
 								<div className="absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-grayLight to-transparent dark:from-dark" />
 
@@ -71,11 +71,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 												repeat: Infinity,
 												repeatType: 'reverse',
 											}}
-											className="relative rounded-full border-2 border-dark bg-[#fff] px-4 py-10 pt-12 shadow-sm dark:bg-secondary sm:py-10"
-											// style={{ backgroundColor: block.color?.hex || '#DEFE04' }}
-											style={{
-												backgroundColor: 'var(--color-secondary)',
-											}}
+											className="relative rounded-full border-2 border-dark bg-white px-4 py-10 pt-12 shadow-sm dark:bg-secondary sm:py-10"
 										>
 											<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
 												{getLocalizedValue(person.biography, language)}

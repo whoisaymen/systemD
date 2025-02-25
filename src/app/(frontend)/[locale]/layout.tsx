@@ -45,13 +45,11 @@ export default async function RootLayout({
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body
-					className={`${GeistSans.className} bg-grayLight text-ink antialiased dark:bg-dark`}
+					className={`${GeistSans.className} relative h-dvh bg-grayLight text-ink antialiased dark:bg-dark`}
 				>
 					<ThemeProvider attribute="class" defaultTheme="dark">
 						<NextIntlClientProvider messages={messages}>
 							<NuqsAdapter>
-								{/* <SkipToContent /> */}
-								{/* <Announcement /> */}
 								<NavBar locale={locale} />
 								<NavBarMobile locale={locale} />
 
@@ -59,13 +57,11 @@ export default async function RootLayout({
 								{/* <main id="main-content" role="main" tabIndex={-1}>
 						{children}
 					</main> */}
-								<main className="flex h-dvh w-full items-center justify-center sm:h-screen">
+								<main className="flex h-auto w-full items-center justify-center sm:h-screen">
 									<div className="no-scrollbar z-40 flex h-full w-full items-start justify-center overflow-y-scroll rounded-md sm:h-[calc(100svh-0.50rem)] md:w-[calc(100vw-2*var(--width-column-width))]">
 										{children}
 									</div>
 								</main>
-
-								{/* <Footer /> */}
 
 								<VisualEditingControls />
 							</NuqsAdapter>

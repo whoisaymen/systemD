@@ -115,7 +115,7 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 
 	return (
 		<motion.div
-			className="absolute left-0 top-0 z-50 flex h-dvh w-full flex-col items-center justify-start overflow-hidden bg-grayLight px-0 pt-8 dark:bg-dark"
+			className="fixed inset-0 z-50 flex h-dvh w-full flex-col items-center justify-start overflow-hidden bg-grayLight px-0 pt-8 dark:bg-dark"
 			initial={{ y: '-100%' }}
 			animate={{ y: '0%' }}
 			transition={{

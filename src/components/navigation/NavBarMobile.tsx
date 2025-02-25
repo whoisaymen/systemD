@@ -23,9 +23,17 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 
 	const toggleMenu = () => {
 		setMenuOpen(!menuOpen)
+		if (!menuOpen) {
+			document.body.style.overflow = 'hidden'
+		} else {
+			document.body.style.overflow = 'auto'
+		}
 	}
 
-	const closeMenu = () => setMenuOpen(false)
+	const closeMenu = () => {
+		setMenuOpen(false)
+		document.body.style.overflow = ''
+	}
 
 	const themeColors = {
 		dark: {
@@ -80,12 +88,12 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 	}
 
 	return (
-		<div className="relative z-50 h-full">
-			<nav className="fixed left-0 top-0 z-50 mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden">
-				{/* <Link href="/" className="h-full w-full"> */}
-				<div className="h-full w-full">{renderLogo()}</div>
-				{/* </Link> */}
-			</nav>
+		<>
+			<div className="fixed top-0 z-50 w-full">
+				<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden">
+					<div className="h-full w-full">{renderLogo()}</div>
+				</nav>
+			</div>
 
 			<AnimatePresence mode="wait">
 				{menuOpen && (
@@ -98,19 +106,10 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				)}
 			</AnimatePresence>
 
-			<div className="fixed bottom-8 left-1/2 z-50 flex h-auto w-full -translate-x-1/2 items-center justify-center gap-1">
+			<div className="fixed bottom-0 z-50 mb-8 flex h-auto w-full items-center justify-center gap-1">
 				<div className="h-[2.5rem] overflow-hidden rounded-md border-2 border-dark shadow-md dark:border-primary">
 					<LocaleSwitcher />
 				</div>
-				{/* <div onClick={toggleMenu} className="">
-					<div className="group flex h-[2.50rem] w-full rounded-lg border-2 border-dark bg-primary px-2 py-1 shadow-md dark:border-primary dark:bg-dark sm:hidden">
-
-						<LogoShortAnimated
-							className="h-full  text-dark group-hover:text-primary dark:text-primary"
-							theme={themeColors.dark}
-						/>
-					</div>
-				</div> */}
 				<div className="flex items-stretch justify-center gap-1">
 					<div className="flex aspect-square h-full overflow-hidden rounded-md border-2 border-dark dark:border-primary">
 						<ThemeSwitch />
@@ -143,7 +142,16 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					</button>
 				</div>
 			</div>
-		</div>
+			{/* <div className="fixed z-50 flex h-dvh w-full flex-col items-center justify-between overflow-hidden">
+				<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden">
+					<div className="h-full w-full">{renderLogo()}</div>
+				</nav>
+
+				
+
+
+			</div> */}
+		</>
 	)
 }
 

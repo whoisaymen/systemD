@@ -63,50 +63,6 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 			{festival.blocks &&
 				festival.blocks.map((block: any, index: number) => {
 					switch (block._type) {
-						case 'mediaTeaserBlock':
-							const imageUrl = block.image?.asset?._ref
-								? `/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`
-								: ''
-							return (
-								<div
-									key={index}
-									className="mx-0 h-[80vh] w-auto pb-16 pt-2 sm:h-[50vh]"
-								>
-									<video
-										className="h-full w-full transform rounded-full border-2 border-primary object-cover"
-										autoPlay
-										loop
-										muted
-										playsInline
-										// style={{
-										// 	maskImage: 'url(/assets/svg/Forward.svg)',
-										// 	WebkitMaskImage: 'url(/assets/svg/Forward.svg)',
-										// 	maskSize: 'cover',
-										// 	WebkitMaskSize: 'cover',
-										// }}
-									>
-										<source src="/assets/videos/teaser2.mp4" type="video/mp4" />
-										{/* <track
-                  src="/assets/videos/teaser.mp4"
-                  kind="subtitles"
-                  srcLang="en"
-                  label="English"
-                /> */}
-										Your browser does not support the video tag.
-									</video>
-									{/* {imageUrl && (
-										<Img
-											image={block.image}
-											src={imageUrl}
-											alt={block.text}
-											className="h-full w-full rounded-md object-cover"
-										/>
-									)}
-									{block.text && (
-										<p>{getLocalizedValue(block.text, language)}</p>
-									)} */}
-								</div>
-							)
 						case 'yellowBannerBlock':
 							const text = getLocalizedValue(block.text, language)
 							const paragraphs = text.split('\n\n')
@@ -167,6 +123,51 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 									</motion.div>
 								</div>
 							)
+						case 'mediaTeaserBlock':
+							const imageUrl = block.image?.asset?._ref
+								? `/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`
+								: ''
+							return (
+								<div
+									key={index}
+									className="mx-0 h-[80vh] w-auto pb-10 pt-2 sm:h-[50vh]"
+								>
+									<video
+										className="h-full w-full transform rounded-full border-2 border-primary object-cover"
+										autoPlay
+										loop
+										muted
+										playsInline
+										// style={{
+										// 	maskImage: 'url(/assets/svg/Forward.svg)',
+										// 	WebkitMaskImage: 'url(/assets/svg/Forward.svg)',
+										// 	maskSize: 'cover',
+										// 	WebkitMaskSize: 'cover',
+										// }}
+									>
+										<source src="/assets/videos/teaser2.mp4" type="video/mp4" />
+										{/* <track
+                  src="/assets/videos/teaser.mp4"
+                  kind="subtitles"
+                  srcLang="en"
+                  label="English"
+                /> */}
+										Your browser does not support the video tag.
+									</video>
+									{/* {imageUrl && (
+										<Img
+											image={block.image}
+											src={imageUrl}
+											alt={block.text}
+											className="h-full w-full rounded-md object-cover"
+										/>
+									)}
+									{block.text && (
+										<p>{getLocalizedValue(block.text, language)}</p>
+									)} */}
+								</div>
+							)
+
 						case 'whiteTextBlock':
 							if (!block.show) return null
 							return (
@@ -179,7 +180,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											value="item-1"
 											className="flex flex-col items-center justify-center"
 										>
-											<AccordionTrigger className={`rotate-3`}>
+											<AccordionTrigger className={`-mb-2 rotate-3`}>
 												Call for Entry!
 											</AccordionTrigger>
 											<AccordionContent>
@@ -309,7 +310,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="on-tour-block flex h-full w-full flex-col items-center pb-36"
+									className="on-tour-block flex h-full w-full flex-col items-center pb-28"
 								>
 									<Accordion type="single" collapsible className="w-full">
 										<AccordionItem
