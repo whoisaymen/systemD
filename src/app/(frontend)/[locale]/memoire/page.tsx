@@ -21,7 +21,7 @@ async function getMemoire() {
 	  *[_type == 'memoire'][0]{
 	    title,
 	    description,
-	    "pastFestivals": *[_type == 'festival']{
+	    pastFestivals[]->{
 	      title,
 	      description,
 	      year,
@@ -29,6 +29,14 @@ async function getMemoire() {
 	      visual,
 	      pressLink
 	    },
+      pastOnTourEvents[]->{
+        title,
+        description,
+        year,
+        venue,
+        visual,
+        pressLink
+      },
 	  }
 	`
 	const data = await fetchSanityLive({ query })
