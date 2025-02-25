@@ -9,8 +9,6 @@ export default async function EquipePage({
 	const { locale } = await params
 	const content = await getEquipe('person', locale)
 
-	console.log(content)
-
 	return <EquipeContent persons={content} language={locale} />
 }
 

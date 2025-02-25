@@ -13,8 +13,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 }) => {
 	if (!fabrique) return <p>No data available.</p>
 
-	console.log(fabrique, 'fabrique')
-
 	// Function to get localized values
 	const getLocalizedValue = (array: any[], lang: string) => {
 		if (!Array.isArray(array)) return ''

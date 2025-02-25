@@ -64,7 +64,6 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 				festival.blocks.map((block: any, index: number) => {
 					switch (block._type) {
 						case 'mediaTeaserBlock':
-							console.log(block, 'block')
 							const imageUrl = block.image?.asset?._ref
 								? `/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`
 								: ''

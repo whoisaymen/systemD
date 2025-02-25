@@ -10,7 +10,6 @@ export default async function BigBangPage({
 	const { locale } = await params
 	const content = await getBigBang()
 
-	console.log(content)
 	return (
 		<BigBangContent
 			shortStory={content.shortStory}

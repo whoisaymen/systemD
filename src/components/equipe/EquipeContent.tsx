@@ -13,7 +13,6 @@ interface EquipeContentProps {
 }
 
 const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
-	console.log(persons)
 	const getLocalizedValue = (array: any[], lang: string) => {
 		const item = array.find((entry) => entry._key === lang)
 		return item ? item.value : ''

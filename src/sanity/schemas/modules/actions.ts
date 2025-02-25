@@ -31,7 +31,6 @@ export default defineType({
 			media: 'image',
 		},
 		prepare({ title, text, media }) {
-			console.log(title, text)
 			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
 				return array.find((v) => v?._key === lang)?.value
