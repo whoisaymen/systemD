@@ -8,8 +8,8 @@ export default async function FestivalPage({
 	params: Promise<{ locale: string }>
 }) {
 	const { locale } = await params
-	const content = await getMemoire()
 
+	const content = await getMemoire()
 	// return <Loading />
 	return <MemoireContent memoire={content} language={locale} />
 }
@@ -18,29 +18,23 @@ async function getMemoire() {
 	const currentYear = new Date().getFullYear()
 
 	const query = groq`
-  *[_type == 'memoire'][0]{
-    title,
-    description,
-    "pastFestivals": *[_type == 'festival']{
-      title,
-      description,
-      year,
-      venue,
-      visual,
-      pressLink
-    },
-    pastOnTourEvents[]->{
-      title,
-      description,
-      date
-    }
-  }
-`
-
+	  *[_type == 'memoire'][0]{
+	    title,
+	    description,
+	    "pastFestivals": *[_type == 'festival']{
+	      title,
+	      description,
+	      year,
+	      venue,
+	      visual,
+	      pressLink
+	    },
+	  }
+	`
 	const data = await fetchSanityLive({ query })
 
 	if (!data) {
-		throw new Error(`No content found for festival"`)
+		throw new Error(`No content found for Memoire"`)
 	}
 
 	return data
