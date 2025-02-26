@@ -69,18 +69,29 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 			return (
 				<FestivalLogoMobile
 					theme={themeColors.festival}
-					className="text-dark"
+					className="overflow-visible text-dark"
 				/>
 			)
 		} else if (pathname.includes('/memoire') || pathname.includes('film')) {
 			return (
-				<MemoireLogoMobile theme={themeColors.memoire} className="text-dark" />
+				<MemoireLogoMobile
+					theme={themeColors.memoire}
+					className="overflow-visible text-dark"
+				/>
 			)
 		} else if (pathname.includes('/equipe')) {
-			return <EquipeLogoMobile theme={themeColors.dark} className="text-dark" />
+			return (
+				<EquipeLogoMobile
+					theme={themeColors.dark}
+					className="overflow-visible text-dark"
+				/>
+			)
 		} else if (pathname.includes('/fabrique')) {
 			return (
-				<FabriqueLogoMobile theme={themeColors.dark} className="text-dark" />
+				<FabriqueLogoMobile
+					theme={themeColors.dark}
+					className="overflow-visible text-dark"
+				/>
 			)
 		} else {
 			return
