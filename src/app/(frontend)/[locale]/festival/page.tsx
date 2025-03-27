@@ -1,7 +1,6 @@
 import FestivalContent from '@/components/festival/FestivalContent'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { notFound } from 'next/navigation'
-import Loading from './loading'
 
 export default async function FestivalPage({
 	params,

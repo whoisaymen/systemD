@@ -1,6 +1,5 @@
 import MemoireContent from '@/components/memoire/MemoireContent'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
-import Loading from './loading'
 
 export default async function FestivalPage({
 	params,
