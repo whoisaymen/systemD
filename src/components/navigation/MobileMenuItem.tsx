@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { circOut, motion } from 'motion/react'
 import Link from 'next/link'
 import BigBangLogoMobile from '../bigbang/BigBangLogoMobile'
 import FestivalLogoMobile from '../festival/FestivalLogoMobile'
@@ -52,12 +52,12 @@ const menuItems: {
 	Component: React.FC<LogoComponentProps>
 	delay: number
 }[] = [
-	{ href: '/', Component: LogoShortAnimated, delay: 0.05 },
-	{ href: 'bigbang', Component: BigBangLogoMobile, delay: 0.05 },
-	{ href: 'festival', Component: FestivalLogoMobile, delay: 0.1 },
-	{ href: 'memoire', Component: MemoireLogoMobile, delay: 0.15 },
-	{ href: 'equipe', Component: EquipeLogoMobile, delay: 0.2 },
-	{ href: 'fabrique', Component: FabriqueLogoMobile, delay: 0.25 },
+	{ href: '/', Component: LogoShortAnimated, delay: 0.15 },
+	{ href: 'bigbang', Component: BigBangLogoMobile, delay: 0.2 },
+	{ href: 'festival', Component: FestivalLogoMobile, delay: 0.25 },
+	{ href: 'memoire', Component: MemoireLogoMobile, delay: 0.3 },
+	{ href: 'equipe', Component: EquipeLogoMobile, delay: 0.35 },
+	{ href: 'fabrique', Component: FabriqueLogoMobile, delay: 0.4 },
 ]
 
 const MenuItem: React.FC<MenuItemProps> = ({
@@ -120,11 +120,17 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 			animate={{ y: '0%' }}
 			transition={{
 				duration: 0.5,
-				ease: [0.76, 0, 0.24, 1],
+				type: 'tween',
+				ease: circOut,
 			}}
 			exit={{
 				y: '-100%',
-				transition: { duration: 0.5, delay: 0.25, ease: [0.76, 0, 0.24, 1] },
+				transition: {
+					duration: 0.5,
+					delay: 0.2,
+					type: 'tween',
+					ease: circOut,
+				},
 			}}
 		>
 			<div className="relative"></div>
@@ -150,7 +156,7 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 			))}
 
 			<motion.div
-				className="absolute top-[78%] flex h-full w-full items-start justify-center gap-4 pt-12 text-sm font-bold leading-[1.2] tracking-tighter text-dark underline dark:font-semibold dark:text-primary"
+				className="absolute top-[79.5%] flex h-full w-full items-start justify-center gap-4 pt-12 text-sm font-bold leading-[1.2] tracking-tighter text-dark underline dark:font-semibold dark:text-primary"
 				initial={{ opacity: 0, y: 20 }}
 				animate={{
 					opacity: 1,

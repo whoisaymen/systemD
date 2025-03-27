@@ -23,7 +23,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	festival,
 	language,
 }) => {
-	const [view, setView] = useState<'grid' | 'list'>('grid')
+	const [view, setView] = useState<'grid' | 'list'>('list')
 	const [hoveredFilm, setHoveredFilm] = useState<string | null>(null)
 	const [expanded, setExpanded] = useState(false)
 
@@ -49,9 +49,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar flex h-full w-full flex-col space-y-4 overflow-y-scroll rounded-md px-4 py-24 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:space-y-0 sm:bg-white sm:px-0 sm:pt-0">
+		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 overflow-y-scroll rounded-md px-4 py-24 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
 			{festival.visual && (
-				<div className="-mb-12 h-[50vh] sm:h-[50vh]">
+				<div className="-mb-12 h-[50vh] sm:mb-0 sm:h-full">
 					<motion.div
 						initial={{
 							borderRadius: '0.375rem',
@@ -63,7 +63,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							repeat: Infinity,
 							repeatType: 'reverse',
 						}}
-						className="overflow-hidden border-2 border-primary shadow-md"
+						className="overflow-hidden rounded-md border-2 border-primary shadow-md sm:h-[65vh] sm:border-0"
 					>
 						<Img
 							image={festival.visual}
@@ -84,12 +84,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			)} */}
 			<div className="flex h-full w-full flex-col items-center justify-center">
 				<div
-					className={`z-10 rounded-md bg-grayDark px-2 text-6xl font-semibold text-dark sm:hidden ${getRandomRotationClass()} `}
+					className={`z-10 -rotate-6 rounded-md bg-grayDark px-2 text-6xl font-semibold text-dark sm:hidden`}
 				>
 					<span>{festival.venue}</span>
 				</div>
 				<div
-					className={`relative z-10 rounded-md bg-primary px-2 text-4xl font-black text-dark sm:hidden ${getRandomRotationClass()}`}
+					className={`z-10 rotate-6 rounded-md bg-primary px-2 text-4xl font-black text-dark sm:hidden`}
 				>
 					<span>{festival.year}</span>
 				</div>
@@ -108,7 +108,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						value="item-1"
 						className="flex flex-col items-center justify-center"
 					>
-						<AccordionTrigger className={`${getRandomRotationClass()}`}>
+						<AccordionTrigger className={`rotate-[3deg]`}>
 							Photo Gallery
 						</AccordionTrigger>
 						<AccordionContent>
@@ -140,7 +140,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							className="flex flex-col items-center justify-center"
 						>
 							<AccordionTrigger
-								className={`${getRandomRotationClass()} sticky left-0 top-0`}
+								className={`sticky left-0 top-0 -rotate-[3deg]`}
 							>
 								Film Selection
 							</AccordionTrigger>
@@ -179,12 +179,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																image={film.affiche}
 																src={film.affiche.asset.url}
 																alt={getLocalizedValue(film.title, language)}
-																className="aspect-square h-auto rounded-full border-2 border-primary object-cover"
+																className="aspect-square h-auto rounded-md border-2 border-primary object-cover"
 															/>
 														)}
 														<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
 															<h3
-																className={`z-10 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
+																className={`z-10 rounded-md border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
 															>
 																{getLocalizedValue(film.title, language)}
 																<span className="font-normal italic">
@@ -295,7 +295,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					value="item-3"
 					className="flex flex-col items-center justify-center pb-1"
 				>
-					<AccordionTrigger className={`${getRandomRotationClass()}`}>
+					<AccordionTrigger className={`rotate-[3deg]`}>
 						Expo Photo
 					</AccordionTrigger>
 					<AccordionContent>

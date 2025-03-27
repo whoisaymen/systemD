@@ -1,85 +1,71 @@
 'use client'
-import { motion } from 'motion/react'
+import { motion, useInView } from 'motion/react'
+import { useScroll, useTransform } from 'motion/react'
 import Img from '@/ui/Img'
-import Link from 'next/link'
 import LogoShortTsx from '../svgs/LogoShort'
-import { getRandomRotationClass } from '@/lib/utils'
-import FocusIcon from './FocusIcon'
+import { useRef } from 'react'
 
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
-	const theme = {
-		light: {
-			frame: 'var(--color-primary)',
-			focus: 'var(--color-dark)',
-			fill: 'var(--color-primary)',
-		},
-		dark: {
-			frame: 'var(--color-primary)',
-			focus: 'var(--color-primary)',
-			fill: 'var(--color-grayDark)',
-		},
-	}
+	return (
+		<div className="flex flex-col space-y-8 pb-28 sm:space-y-0 sm:py-0">
+			{content.map((block: any) => (
+				<StoryBlock key={block._key} block={block} lang={lang} />
+			))}
+		</div>
+	)
+}
+
+const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
+	const ref = useRef(null)
+
+	// Use scroll and transform for each individual block
+	const { scrollYProgress } = useScroll({
+		target: ref,
+		offset: ['start 00vh', 'end center'], // Animation starts when the block reaches the middle of the screen
+	})
+
+	// Transform the scroll progress into a border radius value
+	const borderRadius = useTransform(scrollYProgress, [0, 1], [10, 120])
 
 	return (
-		<div className="flex flex-col space-y-8 pb-28">
-			{content.map((block: any) => (
-				<div
-					key={block._key}
-					className="flex w-full flex-col items-center justify-center space-y-12 px-2 text-center"
+		<div
+			ref={ref}
+			className="flex w-full flex-col items-center justify-center space-y-12 px-2 text-center sm:my-0 sm:space-y-0 sm:bg-grayDark"
+		>
+			{block.text && (
+				<motion.div
+					style={{ borderRadius }}
+					transition={{
+						// duration: 2,
+						ease: [0.76, 0, 0.24, 1],
+					}}
+					className="relative mt-2 border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
 				>
-					{/* {block.title && (
-						<div>
-							{block.title
-								.map((title: any, index: number) => (
-									<h3 key={index} className="font-bold">
-										{title.value}
-									</h3>
-								))
-								.slice(0, 1)}
-						</div>
-					)} */}
-
-					{block.text && (
-						<motion.div
-							initial={{
-								borderRadius: '0.375rem',
-							}}
-							animate={{ borderRadius: '5rem' }}
-							transition={{
-								duration: 2,
-								ease: [0.76, 0, 0.24, 1],
-								repeat: Infinity,
-								repeatType: 'reverse',
-							}}
-							className="relative mt-2 rounded-full border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
-						>
-							{block.text
-								.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key
-								.map((paragraph: any, index: number) => (
-									<p
-										key={index}
-										className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl"
-									>
-										{renderParagraph(
-											paragraph,
-											block.title.map((title: any) => title.value),
-										)}
-									</p>
-								))}
-						</motion.div>
-					)}
-					{block.image && (
-						<div className="w-full px-2">
-							<Img
-								image={block.image}
-								src={`/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`}
-								alt="Story Image"
-								className="h-auto w-full"
-							/>
-						</div>
-					)}
+					{block.text
+						.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key
+						.map((paragraph: any, index: number) => (
+							<p
+								key={index}
+								className="py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-3xl"
+							>
+								{renderParagraph(
+									paragraph,
+									block.title.map((title: any) => title.value),
+								)}
+							</p>
+						))}
+				</motion.div>
+			)}
+			{block.image && (
+				<div className="w-full px-2 sm:px-8 sm:py-8">
+					<Img
+						image={block.image}
+						src={`/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`}
+						alt="Story Image"
+						className="h-auto w-full"
+					/>
 				</div>
-			))}
+			)}
 		</div>
 	)
 }

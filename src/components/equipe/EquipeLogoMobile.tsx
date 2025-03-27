@@ -25,9 +25,9 @@ const EquipeLogoMobile: React.FC<EquipeLogoMobileProps> = ({
 			stroke="currentColor"
 			strokeWidth="0"
 			fill={theme.icon}
-			style={{ originX: 2.1 }}
+			style={{ originX: 1.3 }}
 			animate={{
-				scaleX: [1, 1.3, 0.9, 1],
+				scaleX: [1, 1.2, 0.9, 1],
 				scaleY: [1, 0.8, 1.1, 1],
 				x: [0, -2, 2, 0], // Slight side-to-side motion
 				transition: {
@@ -42,14 +42,15 @@ const EquipeLogoMobile: React.FC<EquipeLogoMobileProps> = ({
 			d="M182.181 5C182.181 2.23858 184.42 0 187.181 0H204.362C207.123 0 209.362 2.23858 209.362 5V51C209.362 53.7614 207.123 56 204.362 56H187.181C184.42 56 182.181 53.7614 182.181 51V5Z"
 			fill={theme.icon}
 			stroke="currentColor"
+			style={{ originX: 0 }}
 			strokeWidth="0"
-			style={{ originX: 2 }}
 			animate={{
-				scaleX: [1, 0.8, 1.2, 1],
+				scaleX: [1, 0.8, 1.1, 1],
 				scaleY: [1, 1.1, 0.9, 1],
 				x: [0, 3, -3, 0], // Opposite direction wobble
 				transition: {
 					duration: 5,
+					// delay: 2,
 					ease: [0.76, 0, 0.24, 1],
 					repeat: Infinity,
 				},
@@ -59,6 +60,7 @@ const EquipeLogoMobile: React.FC<EquipeLogoMobileProps> = ({
 		<motion.path
 			d="M212.56 5C212.56 2.23858 214.798 0 217.56 0H237.939C240.7 0 242.939 2.23858 242.939 5V51C242.939 53.7614 240.7 56 237.939 56H217.56C214.798 56 212.56 53.7614 212.56 51V5Z"
 			fill={theme.icon}
+			style={{ originX: 0 }}
 			stroke="currentColor"
 			strokeWidth="0"
 			animate={{

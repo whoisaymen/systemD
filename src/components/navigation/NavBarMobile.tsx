@@ -83,7 +83,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 			return (
 				<EquipeLogoMobile
 					theme={themeColors.dark}
-					className="overflow-visible text-dark"
+					className="mt-2 overflow-visible text-dark"
 				/>
 			)
 		} else if (pathname.includes('/fabrique')) {
@@ -100,7 +100,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 
 	return (
 		<>
-			<div className="fixed top-0 z-50 w-full">
+			<div className="fixed top-0 z-50 w-full sm:hidden">
 				<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden">
 					<div className="h-full w-full">{renderLogo()}</div>
 				</nav>
@@ -117,7 +117,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				)}
 			</AnimatePresence>
 
-			<div className="fixed bottom-0 z-50 mb-8 flex h-auto w-full items-center justify-center gap-1">
+			<div className="fixed bottom-0 z-50 mb-8 flex h-auto w-full items-center justify-center gap-1 sm:hidden">
 				<div className="h-[2.5rem] overflow-hidden rounded-md border-2 border-dark shadow-md dark:border-primary">
 					<LocaleSwitcher />
 				</div>

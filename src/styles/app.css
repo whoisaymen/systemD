@@ -63,7 +63,8 @@
 		--color-dark: theme(colors.dark);
 		--color-grayLight: theme(colors.grayLight);
 		--color-grayDark: theme(colors.grayDark);
-		--width-column-width: 18rem;
+		/* --width-column-width: 18rem; */
+		--width-column-width: 17rem;
 	}
 }
 

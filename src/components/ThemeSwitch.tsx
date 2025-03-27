@@ -20,8 +20,10 @@ const ThemeSwitch = () => {
 	return (
 		<div
 			onClick={toggleTheme}
-			className={`toggler flex aspect-square h-[2.25rem] cursor-pointer items-stretch justify-center border-primary p-1 ${
-				theme === 'dark' ? 'bg-dark' : 'bg-primary'
+			className={`toggler flex aspect-square h-[2.25rem] cursor-pointer items-stretch justify-center border-primary p-1 sm:h-[2rem] ${
+				theme === 'dark'
+					? 'bg-dark sm:bg-transparent'
+					: 'bg-primary sm:bg-transparent'
 			}`}
 		>
 			<div className="h-full w-1/2 rounded-l-full border-2 border-dark dark:border-primary dark:bg-dark" />

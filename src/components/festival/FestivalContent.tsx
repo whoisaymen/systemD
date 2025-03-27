@@ -5,8 +5,8 @@ import FestivalTicket from './FestivalTicket'
 import { getRandomRotationClass } from '@/lib/utils'
 import FestivalSparkleIcon from './FestivalSparkleIcon'
 import FestivalSparklesIcon from './FestivalSparklesIcon'
-import { motion } from 'motion/react'
-import { useState } from 'react'
+import { motion, useScroll, useTransform } from 'motion/react'
+import { useEffect, useState } from 'react'
 import { IoCalendar, IoGrid, IoList } from 'react-icons/io5'
 import {
 	Accordion,
@@ -26,6 +26,14 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	language,
 }) => {
 	const [view, setView] = useState<'calendar' | 'list'>('list')
+	let { scrollY } = useScroll()
+	let borderRadius = useTransform(scrollY, (value) => Math.max(80 - value, 10))
+
+	// useEffect(() => {
+	// 	return scrollY.onChange((current) => {
+	// 		console.log(current)
+	// 	})
+	// }, [scrollY])
 
 	const getLocalizedValue = (array: any[], lang: string) => {
 		if (!Array.isArray(array)) {
@@ -54,7 +62,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	return (
 		<div
 			key={festival._id}
-			className="mt-20 flex h-full w-full flex-col space-y-1 rounded-md p-2 sm:mt-0 sm:p-1"
+			className="mt-20 flex h-full w-full flex-col space-y-1 rounded-md p-2 sm:mt-0 sm:h-svh sm:p-0"
 		>
 			{festival.title && (
 				<h1 className="text-3xl font-bold">{festival.title}</h1>
@@ -69,17 +77,18 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div key={index} className="">
 									<motion.div
-										initial={{
-											borderRadius: '0.375rem',
-										}}
-										animate={{ borderRadius: '5rem' }}
+										// initial={{
+										// 	borderRadius: '0.375rem',
+										// }}
+										style={{ borderRadius }}
+										// animate={{ borderRadius: '5rem' }}
 										transition={{
 											duration: 2,
 											ease: [0.76, 0, 0.24, 1],
-											repeat: Infinity,
-											repeatType: 'reverse',
+											// repeat: Infinity,
+											// repeatType: 'reverse',
 										}}
-										className="relative rounded-full border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-primary sm:py-10"
+										className="relative border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-primary sm:hidden sm:border-0 sm:py-10"
 									>
 										{/* Camera Viewfinder Corners */}
 										<div className="pointer-events-none absolute inset-0 hidden px-4 py-4">
@@ -95,7 +104,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 										{paragraphs.map((paragraph: string, i: number) => (
 											<p
 												key={i}
-												className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl"
+												className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-3xl"
 											>
 												{paragraph.split(/(System D)/).map((part, index) =>
 													part === 'System D' ? (
@@ -130,10 +139,10 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="mx-0 h-[80vh] w-auto pb-10 pt-2 sm:h-[50vh]"
+									className="mx-0 h-[80vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
 								>
 									<video
-										className="h-full w-full transform rounded-full border-2 border-primary object-cover"
+										className="h-full w-full transform rounded-full border-2 border-primary object-cover sm:rounded-full sm:border-0"
 										autoPlay
 										loop
 										muted
@@ -173,18 +182,20 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="flex flex-col items-center rounded-md px-2 text-xl font-medium leading-tight tracking-tighter sm:flex-row sm:px-32 sm:py-52 sm:text-2xl"
+									className="flex flex-col items-center rounded-md px-2 text-xl font-medium leading-tight tracking-tighter sm:h-full sm:px-0 sm:text-2xl"
 								>
 									<Accordion type="single" collapsible>
 										<AccordionItem
 											value="item-1"
 											className="flex flex-col items-center justify-center"
 										>
-											<AccordionTrigger className={`-mb-2 rotate-3`}>
+											<AccordionTrigger
+												className={`-mb-2 rotate-3 sm:text-7xl`}
+											>
 												Call for Entry!
 											</AccordionTrigger>
 											<AccordionContent>
-												<div className="z-0 w-full rounded-md border-2 border-dark bg-primary px-10 py-12 text-lg font-medium leading-[1.3] text-dark shadow-sm sm:w-1/2">
+												<div className="z-0 w-full rounded-md border-2 border-dark bg-primary px-10 py-12 text-lg font-medium leading-[1.3] text-dark shadow-sm sm:border-0 sm:bg-dark sm:text-xl sm:text-primary">
 													{block.content && block.content[language] && (
 														<PortableText value={block.content[language]} />
 													)}
@@ -199,18 +210,18 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={index}
-									className="relative my-0 flex h-full w-full flex-col items-center px-6"
+									className="relative my-0 flex h-full w-full flex-col items-center px-6 sm:px-0"
 								>
 									<Accordion type="single" collapsible>
 										<AccordionItem
 											value="item-1"
 											className="flex flex-col items-center justify-center"
 										>
-											<AccordionTrigger className={`-rotate-6`}>
+											<AccordionTrigger className={`-rotate-6 sm:text-7xl`}>
 												Jury
 											</AccordionTrigger>
 											<AccordionContent>
-												<div className="grid h-full grid-cols-2 gap-8 sm:grid-cols-6">
+												<div className="grid h-full grid-cols-2 gap-8 sm:grid-cols-6 sm:gap-2">
 													{block.juryMembers && block.juryMembers.length > 0 ? (
 														block.juryMembers.map(
 															(member: any, memberIndex: number) => (
@@ -226,7 +237,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																				image={member.image}
 																				src={member.image.asset.url}
 																				alt={member.name}
-																				className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover"
+																				className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover sm:rounded-md sm:border-0"
 																				// style={{
 																				// 	maskImage: 'url(/assets/svg/Sparkle.svg)',
 																				// 	WebkitMaskImage:
@@ -239,13 +250,13 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																				// 	WebkitMaskPosition: 'center',
 																				// }}
 																			/>
-																			<div className="absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-grayLight to-transparent dark:from-dark" />
+																			<div className="absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-grayLight to-transparent dark:from-dark sm:dark:from-dark" />
 																		</div>
 																	)}
 																	{member.name && (
-																		<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
+																		<div className="sm:dark:bg-darkGray flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-transparent">
 																			<h3
-																				className={`z-10 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
+																				className={`z-10 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark sm:border-0 ${getRandomRotationClass()}`}
 																			>
 																				{member.name}
 																			</h3>
@@ -289,7 +300,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											value="item-3"
 											className="flex h-full w-full flex-col items-center justify-center"
 										>
-											<AccordionTrigger className={`-rotate-1`}>
+											<AccordionTrigger className={`-rotate-1 sm:text-7xl`}>
 												Save the Date!
 											</AccordionTrigger>
 											<AccordionContent className="w-full">
@@ -317,14 +328,14 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											value="item-4"
 											className="flex h-full w-full flex-col items-center justify-center"
 										>
-											<AccordionTrigger className={`rotate-6`}>
+											<AccordionTrigger className={`rotate-6 sm:text-7xl`}>
 												On Tour
 											</AccordionTrigger>
 											<AccordionContent className="w-full">
 												<div className="mt-4 flex h-full w-full items-center justify-center gap-1 text-4xl">
 													<button
 														onClick={() => setView('calendar')}
-														className={`rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors ${
+														className={`rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors sm:border-0 ${
 															view === 'calendar'
 																? 'border-dark bg-primary text-dark dark:border-dark dark:text-dark'
 																: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'
@@ -335,7 +346,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 
 													<button
 														onClick={() => setView('list')}
-														className={`flex rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors ${
+														className={`flex rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors sm:border-0 ${
 															view === 'list'
 																? 'border-dark bg-primary text-dark dark:border-dark dark:text-dark'
 																: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'

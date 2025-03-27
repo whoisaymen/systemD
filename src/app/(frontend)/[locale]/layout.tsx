@@ -41,11 +41,11 @@ export default async function RootLayout({
 
 	return (
 		<ViewTransitions>
-			<html lang={locale} suppressHydrationWarning>
+			<html lang={locale} suppressHydrationWarning className="no-scrollbar">
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body
-					className={`${GeistSans.className} relative h-dvh bg-grayLight text-ink antialiased dark:bg-dark`}
+					className={`${GeistSans.className} sm:dark:bg-darkGray relative bg-grayLight text-ink antialiased dark:bg-dark`}
 				>
 					<ThemeProvider attribute="class" defaultTheme="dark">
 						<NextIntlClientProvider messages={messages}>
@@ -57,10 +57,9 @@ export default async function RootLayout({
 								{/* <main id="main-content" role="main" tabIndex={-1}>
 						{children}
 					</main> */}
-								<main className="flex h-auto w-full items-center justify-center sm:h-screen">
-									<div className="no-scrollbar z-40 flex h-full w-full items-start justify-center overflow-y-scroll rounded-md sm:h-[calc(100svh-0.50rem)] md:w-[calc(100vw-2*var(--width-column-width))]">
-										{children}
-									</div>
+
+								<main className="z-40 min-h-screen w-full rounded-md sm:min-h-[calc(100svh-0.50rem)] md:flex md:w-full md:items-center md:justify-center md:px-[calc(var(--width-column-width))]">
+									{children}
 								</main>
 
 								<VisualEditingControls />
