@@ -77,6 +77,7 @@ import whiteText from './modules/white-text'
 import juryBlock from './modules/jury-block'
 import ticketBlock from './modules/ticket-block'
 import onTourBlock from './modules/on-tour-block'
+import customTextBlock from './modules/custom-text-block'
 
 export const schemaTypes = [
 	// documents
@@ -157,4 +158,5 @@ export const schemaTypes = [
 	juryBlock,
 	ticketBlock,
 	onTourBlock,
+	customTextBlock,
 ]

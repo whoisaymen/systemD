@@ -18,5 +18,18 @@ export default defineType({
 			title: 'Caption',
 			type: 'internationalizedArrayString',
 		}),
+		defineField({
+			name: 'video',
+			title: 'Vidéo',
+			type: 'url',
+		}),
+		defineField({
+			name: 'uploadedVideo',
+			title: 'Vidéo (Upload)',
+			type: 'file',
+			options: {
+				accept: 'video/*',
+			},
+		}),
 	],
 })

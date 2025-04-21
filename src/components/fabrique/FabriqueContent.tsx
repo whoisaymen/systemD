@@ -10,10 +10,16 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion'
+import { renderParagraph } from '../common/RenderParagraph'
 
 interface FabriqueContentProps {
 	fabrique: any
 	language: string
+}
+
+const capitalizeFirstLetter = (str: string) => {
+	if (!str) return ''
+	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
 const FabriqueContent: React.FC<FabriqueContentProps> = ({
@@ -65,14 +71,26 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			ref={ref}
 			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll rounded-md px-4 py-32 text-base font-medium leading-[1.2] tracking-tighter text-dark sm:space-y-0 sm:px-0 sm:pt-0"
 		>
-			<h1 className="mx-auto rounded-md border-2 border-primary bg-dark px-4 py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
-				{getLocalizedValue(fabrique.title, language) || 'No title available'}
-			</h1>
+			<div className="relative mt-4 h-full py-0 pb-12">
+				<p className="px-12 pt-8 text-center text-2xl font-bold leading-[1] text-primary">
+					{getLocalizedValue(fabrique.title, language) || 'No title available'}
+				</p>
 
-			<div className="relative mt-2 rounded-full rounded-md border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10">
-				<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
-					{getLocalizedText(fabrique.description, language) ||
-						'No description available'}
+				<div className="absolute left-10 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
+				<div className="absolute right-10 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
+				<div className="absolute bottom-2 left-10 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
+				<div className="absolute bottom-2 right-10 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
+			</div>
+
+			{/* Description */}
+			<div className="relative mt-0 border-2 border-dark px-0 py-8 shadow-sm sm:py-10">
+				<p className="mx-auto py-2 text-2xl font-semibold leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
+					{fabrique.description
+						? renderParagraph(
+								{ value: getLocalizedValue(fabrique.description, language) },
+								[],
+							)
+						: 'No description available'}
 				</p>
 			</div>
 
@@ -87,10 +105,10 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			)}
 			{/* Actions */}
 			{fabrique.actions && (
-				<div className="mt-6 space-y-8">
+				<div className="">
 					{fabrique.actions.map((action: any, index: number) => (
 						<div key={index}>
-							<div className="relative mb-4 block h-auto overflow-hidden rounded-full border-2 border-dark shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-primary">
+							<div className="relative mb-4 block h-auto overflow-hidden rounded-md border-4 border-dark shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-primary">
 								{/* Action Image */}
 								{action.image?.asset && (
 									<Img
@@ -100,32 +118,26 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 										className="h-full w-full object-cover"
 									/>
 								)}
-								<div className="absolute left-1/2 top-1/2 flex w-auto w-full -translate-x-1/2 flex-col items-center">
-									<div
-										className={`z-10 inline-block -rotate-2 rounded-md bg-primary px-2 text-3xl font-black tracking-tighter text-dark`}
-									>
-										<span className="text-center">
-											{
-												getLocalizedValue(action.title, language).split(
-													' - ',
-												)[0]
-											}
-										</span>
-									</div>
+							</div>
+							<div className="flex flex-col items-center py-8">
+								<div
+									className={`z-10 inline-block w-fit -rotate-2 rounded-md bg-primary px-2 text-3xl font-black tracking-tighter text-dark`}
+								>
+									<span className="text-center">
+										{capitalizeFirstLetter(
+											getLocalizedValue(action.title, language).split(' - ')[0],
+										)}
+									</span>
+								</div>
 
-									<div className="z-0 inline-block rotate-[2deg] rounded-md bg-grayDark px-2 text-xl font-bold tracking-tighter text-dark">
-										<span>
-											{
-												getLocalizedValue(action.title, language).split(
-													' - ',
-												)[1]
-											}
-										</span>
-									</div>
+								<div className="z-0 inline-block rotate-[2deg] rounded-md bg-grayDark px-2 text-3xl font-bold tracking-tighter text-dark">
+									<span>
+										{getLocalizedValue(action.title, language).split(' - ')[1]}
+									</span>
 								</div>
 							</div>
 							{/* Action Text */}
-							<div className="relative rounded-md border-2 border-dark bg-white px-4 py-4 shadow-sm dark:bg-primary sm:py-10">
+							<div className="relative rounded-md border-2 border-dark bg-white px-0 py-4 pb-16 text-primary shadow-sm dark:bg-dark sm:py-10">
 								{action.text?.[language]?.map((block: any) => {
 									// Check if the block is a list item
 									if (block.listItem === 'bullet') {

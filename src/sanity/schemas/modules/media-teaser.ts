@@ -6,11 +6,6 @@ export default defineType({
 	type: 'object',
 	fields: [
 		defineField({
-			name: 'color',
-			title: 'Couleur',
-			type: 'color',
-		}),
-		defineField({
 			name: 'image',
 			title: 'Image',
 			type: 'image',
@@ -20,6 +15,14 @@ export default defineType({
 			name: 'video',
 			title: 'Vidéo',
 			type: 'url',
+		}),
+		defineField({
+			name: 'uploadedVideo',
+			title: 'Vidéo (Upload)',
+			type: 'file',
+			options: {
+				accept: 'video/*',
+			},
 		}),
 		defineField({
 			name: 'text',

@@ -21,16 +21,35 @@ export default async function BigBangPage({
 
 async function getBigBang() {
 	const query = groq`
-    {
-      "shortStory": *[_type == 'bigbangShortStory'][0]{
-        body,
+{
+  "shortStory": *[_type == 'bigbangShortStory'][0]{
+    body,
+  },
+  "longStory": *[_type == 'bigbangLongStory'][0]{
+    body[] {
+      _type == 'internationalizedCitationBlock' => {
+        _type,
+        text,
+        author
       },
-      "longStory": *[_type == 'bigbangLongStory'][0]{
-        title,
-        body,
+      _type == 'internationalizedParagraphBlock' => {
+        _type,
+        text
+      },
+      _type == 'internationalizedImageBlock' => {
+        _type,
+        file {
+          asset->{
+            url,
+            metadata
+          }
+        },
+        caption
       }
     }
-  `
+  }
+}
+`
 	const data = await fetchSanityLive({ query })
 
 	if (!data) {

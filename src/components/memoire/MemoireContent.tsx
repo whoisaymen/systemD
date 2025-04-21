@@ -8,6 +8,7 @@ import LogoShortTsx from '../svgs/LogoShort'
 
 import Link from 'next/link'
 import { getRandomRotationClass } from '@/lib/utils'
+import MemoireLogoMobile from './MemoireLogoMobile'
 
 interface MemoireContentProps {
 	memoire: any
@@ -33,8 +34,30 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	let { scrollY } = useScroll()
 	let borderRadius = useTransform(scrollY, (value) => Math.max(80 - value, 10))
 
+	const themeColors = {
+		dark: {
+			fill: 'var(--color-dark)',
+			stroke: 'var(--color-primary)',
+			icon: 'var(--color-primary)',
+		},
+		sparkle: {
+			fill: 'var(--color-primary)',
+			stroke: 'var(--color-dark)',
+		},
+		festival: {
+			fill: 'var(--color-dark)',
+			stroke: 'var(--color-primary)',
+			icon: 'var(--color-grayDark)',
+		},
+		memoire: {
+			fill: 'var(--color-grayDark)',
+			stroke: '',
+			icon: 'var(--color-primary)',
+		},
+	}
+
 	return (
-		<div className="no-scrollbar mt-[6.5rem] flex h-full w-full flex-col space-y-1 overflow-y-scroll rounded-md px-4 tracking-tighter sm:mt-1">
+		<div className="no-scrollbar mt-[6.5rem] flex h-svh w-full flex-col space-y-1 overflow-y-scroll rounded-md border-grayLight bg-transparent bg-gradient-to-b from-grayLight to-grayDark/25 px-4 tracking-tighter shadow-inner dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:px-0">
 			<motion.div
 				style={{ borderRadius }}
 				transition={{
@@ -43,9 +66,15 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					// repeat: Infinity,
 					// repeatType: 'reverse',
 				}}
-				className="relative border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-secondary sm:py-10"
+				className="relative w-full border-2 border-dark bg-primary px-8 py-10 shadow-sm dark:bg-secondary sm:border-0 sm:py-10 sm:dark:bg-transparent"
 			>
-				<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
+				<div className="hidden h-full w-full px-32 sm:block">
+					<MemoireLogoMobile
+						theme={themeColors.memoire}
+						className="overflow-visible text-dark"
+					/>
+				</div>
+				<p className="mx-auto py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-dark sm:hidden sm:py-4 sm:text-4xl">
 					{getLocalizedValue(memoire.description, language)}
 				</p>
 			</motion.div>

@@ -29,12 +29,6 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	let { scrollY } = useScroll()
 	let borderRadius = useTransform(scrollY, (value) => Math.max(80 - value, 10))
 
-	// useEffect(() => {
-	// 	return scrollY.onChange((current) => {
-	// 		console.log(current)
-	// 	})
-	// }, [scrollY])
-
 	const getLocalizedValue = (array: any[], lang: string) => {
 		if (!Array.isArray(array)) {
 			return ''
@@ -59,15 +53,53 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		},
 	}
 
+	console.log(festival)
 	return (
 		<div
 			key={festival._id}
-			className="mt-20 flex h-full w-full flex-col space-y-1 rounded-md p-2 sm:mt-0 sm:h-svh sm:p-0"
+			className="mt-20 flex h-full w-full flex-col space-y-1 rounded-md p-2 px-4 pb-32 sm:mt-0 sm:h-svh sm:p-0"
 		>
-			{festival.title && (
-				<h1 className="text-3xl font-bold">{festival.title}</h1>
+			{festival.description && (
+				<div className="relative mt-4 h-full py-6 pb-12">
+					{getLocalizedValue(festival.description, language)
+						.split('\n\n') // Split by double newlines for paragraphs
+						.map((paragraph: string, i: number) => (
+							<p
+								key={i}
+								className="px-8 text-2xl font-bold leading-[1] text-primary"
+							>
+								{/* Replace "System D" or variants with the logo */}
+								{paragraph.split(/(System[_ ]?D)/i).map((part, index) =>
+									/System[_ ]?D/i.test(part) ? (
+										<motion.span
+											key={index}
+											className="z-10 inline-block"
+											animate={{
+												rotate: 3,
+												transition: {
+													ease: [0.76, 0, 0.24, 1],
+													duration: 1.5,
+													repeat: Infinity,
+													repeatType: 'reverse',
+												},
+											}}
+										>
+											<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary dark:bg-primary dark:text-dark sm:w-[15rem]" />
+										</motion.span>
+									) : (
+										part
+									),
+								)}
+							</p>
+						))}
+
+					<div className="absolute left-0 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
+					<div className="absolute right-0 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
+					<div className="absolute bottom-2 left-0 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
+					<div className="absolute bottom-2 right-0 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
+				</div>
 			)}
-			{festival.description && <p>{festival.description}</p>}
+
 			{festival.blocks &&
 				festival.blocks.map((block: any, index: number) => {
 					switch (block._type) {
@@ -132,6 +164,36 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 									</motion.div>
 								</div>
 							)
+
+						case 'customTextBlock':
+							if (!block.show) return null
+							return (
+								<div
+									key={index}
+									className="flex flex-col items-center rounded-md px-2 text-xl font-medium leading-tight tracking-tighter sm:h-full sm:px-0 sm:text-2xl"
+								>
+									<Accordion type="single" collapsible>
+										<AccordionItem
+											value={`item-${index}`}
+											className="flex flex-col items-center justify-center"
+										>
+											<AccordionTrigger
+												className={`-mb-2 rotate-3 sm:text-7xl`}
+											>
+												{block.title}
+											</AccordionTrigger>
+											<AccordionContent>
+												<div className="z-0 w-full rounded-md border-2 border-dark bg-primary px-4 py-4 text-2xl font-medium leading-[1.2] text-dark shadow-sm sm:border-0 sm:bg-dark sm:text-xl sm:text-primary">
+													{block.content && block.content[language] && (
+														<PortableText value={block.content[language]} />
+													)}
+												</div>
+											</AccordionContent>
+										</AccordionItem>
+									</Accordion>
+								</div>
+							)
+
 						case 'mediaTeaserBlock':
 							const imageUrl = block.image?.asset?._ref
 								? `/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`
@@ -142,38 +204,15 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 									className="mx-0 h-[80vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
 								>
 									<video
-										className="h-full w-full transform rounded-full border-2 border-primary object-cover sm:rounded-full sm:border-0"
+										className="h-full w-full transform rounded-full border-4 border-primary object-cover sm:rounded-md sm:border-0"
 										autoPlay
 										loop
 										muted
 										playsInline
-										// style={{
-										// 	maskImage: 'url(/assets/svg/Forward.svg)',
-										// 	WebkitMaskImage: 'url(/assets/svg/Forward.svg)',
-										// 	maskSize: 'cover',
-										// 	WebkitMaskSize: 'cover',
-										// }}
 									>
 										<source src="/assets/videos/teaser2.mp4" type="video/mp4" />
-										{/* <track
-                  src="/assets/videos/teaser.mp4"
-                  kind="subtitles"
-                  srcLang="en"
-                  label="English"
-                /> */}
 										Your browser does not support the video tag.
 									</video>
-									{/* {imageUrl && (
-										<Img
-											image={block.image}
-											src={imageUrl}
-											alt={block.text}
-											className="h-full w-full rounded-md object-cover"
-										/>
-									)}
-									{block.text && (
-										<p>{getLocalizedValue(block.text, language)}</p>
-									)} */}
 								</div>
 							)
 
@@ -195,7 +234,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 												Call for Entry!
 											</AccordionTrigger>
 											<AccordionContent>
-												<div className="z-0 w-full rounded-md border-2 border-dark bg-primary px-10 py-12 text-lg font-medium leading-[1.3] text-dark shadow-sm sm:border-0 sm:bg-dark sm:text-xl sm:text-primary">
+												<div className="z-0 w-full rounded-md border-2 border-dark bg-primary px-10 py-12 text-2xl font-medium leading-[1.3] text-dark shadow-sm sm:border-0 sm:bg-dark sm:text-xl sm:text-primary">
 													{block.content && block.content[language] && (
 														<PortableText value={block.content[language]} />
 													)}
@@ -229,13 +268,11 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																	key={member._id}
 																	className="h-full w-full rounded-md"
 																>
-																	{/* <div className="absolute left-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div>
-														<div className="absolute right-0 top-0 z-30 h-full w-[2%] bg-[url('/assets/svg/filmroll.svg')] bg-[length:12px_30px] bg-center bg-repeat-y"></div> */}
 																	{member.image && (
 																		<div className="relative">
 																			<Img
 																				image={member.image}
-																				src={member.image.asset.url}
+																				src={member.image?.asset.url}
 																				alt={member.name}
 																				className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover sm:rounded-md sm:border-0"
 																				// style={{
@@ -284,44 +321,45 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 								</div>
 							)
 
-						case 'ticketBlock':
-							if (!block.show) return null
-							const ticketItems = block.items.map((item: any) => ({
-								smallTitle: getLocalizedValue(item.smallTitle, language),
-								text: getLocalizedValue(item.text, language),
-							}))
-							return (
-								<div
-									key={index}
-									className="flex h-full w-full flex-col items-center"
-								>
-									<Accordion type="single" collapsible className="w-full">
-										<AccordionItem
-											value="item-3"
-											className="flex h-full w-full flex-col items-center justify-center"
-										>
-											<AccordionTrigger className={`-rotate-1 sm:text-7xl`}>
-												Save the Date!
-											</AccordionTrigger>
-											<AccordionContent className="w-full">
-												<FestivalTicket
-													key={index}
-													items={ticketItems}
-													block={block}
-													language={language}
-													getLocalizedValue={getLocalizedValue}
-												/>
-											</AccordionContent>
-										</AccordionItem>
-									</Accordion>
-								</div>
-							)
+						// case 'ticketBlock':
+						// 	if (!block.show) return null
+						// 	const ticketItems = block.items.map((item: any) => ({
+						// 		smallTitle: getLocalizedValue(item.smallTitle, language),
+						// 		text: getLocalizedValue(item.text, language),
+						// 	}))
+						// 	return (
+						// 		<div
+						// 			key={index}
+						// 			className="flex h-full w-full flex-col items-center"
+						// 		>
+						// 			<Accordion type="single" collapsible className="w-full">
+						// 				<AccordionItem
+						// 					value="item-3"
+						// 					className="flex h-full w-full flex-col items-center justify-center"
+						// 				>
+						// 					<AccordionTrigger className={`-rotate-1 sm:text-7xl`}>
+						// 						Save the Date!
+						// 					</AccordionTrigger>
+						// 					<AccordionContent className="w-full">
+						// 						<FestivalTicket
+						// 							key={index}
+						// 							items={ticketItems}
+						// 							block={block}
+						// 							language={language}
+						// 							getLocalizedValue={getLocalizedValue}
+						// 						/>
+						// 					</AccordionContent>
+						// 				</AccordionItem>
+						// 			</Accordion>
+						// 		</div>
+						// 	)
+
 						case 'onTourBlock':
 							if (!block.show) return null
 							return (
 								<div
 									key={index}
-									className="on-tour-block flex h-full w-full flex-col items-center pb-28"
+									className="on-tour-block flex h-full w-full flex-col items-center"
 								>
 									<Accordion type="single" collapsible className="w-full">
 										<AccordionItem
@@ -332,97 +370,60 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 												On Tour
 											</AccordionTrigger>
 											<AccordionContent className="w-full">
-												<div className="mt-4 flex h-full w-full items-center justify-center gap-1 text-4xl">
-													<button
-														onClick={() => setView('calendar')}
-														className={`rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors sm:border-0 ${
-															view === 'calendar'
-																? 'border-dark bg-primary text-dark dark:border-dark dark:text-dark'
-																: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'
-														}`}
-													>
-														<IoCalendar />
-													</button>
-
-													<button
-														onClick={() => setView('list')}
-														className={`flex rounded-md border-2 px-3 py-2 text-center font-bold tracking-tight transition-colors sm:border-0 ${
-															view === 'list'
-																? 'border-dark bg-primary text-dark dark:border-dark dark:text-dark'
-																: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'
-														}`}
-													>
-														<IoList />
-													</button>
+												<div className="mt-4 w-full">
+													{/* List View */}
+													<table className="w-full table-auto border-collapse">
+														<thead className="hidden">
+															<tr>
+																<th className="border px-4 py-2">
+																	Date + Time
+																</th>
+																<th className="border px-4 py-2">
+																	Event Title
+																</th>
+																<th className="border px-4 py-2">Address</th>
+															</tr>
+														</thead>
+														<tbody>
+															{block.events.map(
+																(event: any, eventIndex: number) => (
+																	<tr
+																		key={eventIndex}
+																		className="border-b border-t border-dark text-xs uppercase tracking-tighter text-dark dark:border-primary dark:text-primary"
+																	>
+																		<td className="flex flex-col px-4 py-2">
+																			<span>
+																				{new Date(
+																					event.date,
+																				).toLocaleDateString(language, {
+																					weekday: 'long',
+																					day: 'numeric',
+																					month: 'long',
+																				})}
+																			</span>
+																			<span>
+																				{new Date(
+																					event.date,
+																				).toLocaleTimeString(language, {
+																					hour: '2-digit',
+																					minute: '2-digit',
+																					hour12: true,
+																				})}
+																			</span>
+																		</td>
+																		<td className="px-4 py-2 text-base font-bold normal-case leading-[1]">
+																			{getLocalizedValue(event.title, language)}
+																		</td>
+																		<td className="px-4 py-2">
+																			{event.location ||
+																				'Location not specified'}
+																		</td>
+																	</tr>
+																),
+															)}
+														</tbody>
+													</table>
 												</div>
-												{view === 'calendar' ? (
-													<div className="mt-4">
-														{/* Calendar View */}
-														<p className="text-center font-bold tracking-tighter text-dark dark:text-primary">
-															Calendar Goes Here
-														</p>
-													</div>
-												) : (
-													<div className="mt-4 w-full">
-														{/* Grid List View */}
-														<table className="w-full table-auto border-collapse">
-															<thead className="hidden">
-																<tr>
-																	<th className="border px-4 py-2">
-																		Date + Time
-																	</th>
-																	<th className="border px-4 py-2">
-																		Event Title
-																	</th>
-																	<th className="border px-4 py-2">Address</th>
-																</tr>
-															</thead>
-															<tbody>
-																{block.events.map(
-																	(event: any, eventIndex: number) => (
-																		<tr
-																			key={eventIndex}
-																			className="border-b border-t border-dark text-xs uppercase tracking-tighter text-dark dark:border-primary dark:text-primary"
-																		>
-																			<td className="flex flex-col px-4 py-2">
-																				<span>
-																					{new Date(
-																						event.date,
-																					).toLocaleDateString(language, {
-																						weekday: 'long',
-																						day: 'numeric',
-																						month: 'long',
-																					})}
-																				</span>
-
-																				<span>
-																					{new Date(
-																						event.date,
-																					).toLocaleTimeString(language, {
-																						hour: '2-digit',
-																						minute: '2-digit',
-																						hour12: true,
-																					})}
-																				</span>
-																			</td>
-
-																			<td className="px-4 py-2 text-base font-bold normal-case italic leading-[1]">
-																				{getLocalizedValue(
-																					event.title,
-																					language,
-																				)}
-																			</td>
-																			<td className="px-4 py-2">
-																				{event.location ||
-																					'Location not specified'}
-																			</td>
-																		</tr>
-																	),
-																)}
-															</tbody>
-														</table>
-													</div>
-												)}
 											</AccordionContent>
 										</AccordionItem>
 									</Accordion>

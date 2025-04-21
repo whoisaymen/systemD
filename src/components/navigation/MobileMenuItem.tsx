@@ -23,6 +23,7 @@ interface MenuItemProps {
 	locale: string
 	closeMenu: () => void
 	totalItems: number
+	rotation: string // Add rotation property
 }
 
 interface LogoComponentProps {
@@ -51,13 +52,44 @@ const menuItems: {
 	href: string
 	Component: React.FC<LogoComponentProps>
 	delay: number
+	rotation: string // Add rotation property
 }[] = [
-	{ href: '/', Component: LogoShortAnimated, delay: 0.15 },
-	{ href: 'bigbang', Component: BigBangLogoMobile, delay: 0.2 },
-	{ href: 'festival', Component: FestivalLogoMobile, delay: 0.25 },
-	{ href: 'memoire', Component: MemoireLogoMobile, delay: 0.3 },
-	{ href: 'equipe', Component: EquipeLogoMobile, delay: 0.35 },
-	{ href: 'fabrique', Component: FabriqueLogoMobile, delay: 0.4 },
+	{
+		href: '/',
+		Component: LogoShortAnimated,
+		delay: 0.15,
+		rotation: '-rotate-6',
+	},
+	{
+		href: 'bigbang',
+		Component: BigBangLogoMobile,
+		delay: 0.2,
+		rotation: 'rotate-3',
+	},
+	{
+		href: 'festival',
+		Component: FestivalLogoMobile,
+		delay: 0.25,
+		rotation: '-rotate-3',
+	},
+	{
+		href: 'memoire',
+		Component: MemoireLogoMobile,
+		delay: 0.3,
+		rotation: 'rotate-3',
+	},
+	{
+		href: 'equipe',
+		Component: EquipeLogoMobile,
+		delay: 0.35,
+		rotation: '-rotate-3',
+	},
+	{
+		href: 'fabrique',
+		Component: FabriqueLogoMobile,
+		delay: 0.4,
+		rotation: 'rotate-3',
+	},
 ]
 
 const MenuItem: React.FC<MenuItemProps> = ({
@@ -67,13 +99,14 @@ const MenuItem: React.FC<MenuItemProps> = ({
 	locale,
 	closeMenu,
 	totalItems,
+	rotation,
 }) => {
 	// Calculate reverse delay for exit animation
 	const reverseDelay = totalItems * 0.05 - delay
 	return (
 		<Link
 			href={`/${locale}/${href}`}
-			className={`w-full ${getRandomRotationClass()}`}
+			className={`w-full ${rotation}`}
 			onClick={closeMenu}
 		>
 			<motion.div
@@ -115,7 +148,7 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 
 	return (
 		<motion.div
-			className="fixed inset-0 z-50 flex h-dvh w-full flex-col items-center justify-start overflow-hidden bg-grayLight px-0 pt-8 dark:bg-dark"
+			className="fixed inset-0 z-50 flex w-full flex-col items-center justify-start overflow-y-auto overflow-x-hidden bg-grayLight px-0 pt-8 dark:bg-dark"
 			initial={{ y: '-100%' }}
 			animate={{ y: '0%' }}
 			transition={{
@@ -143,7 +176,7 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 				</div>
 			</div> */}
 
-			{menuItems.map(({ href, Component, delay }) => (
+			{menuItems.map(({ href, Component, delay, rotation }) => (
 				<MenuItem
 					key={href}
 					href={href}
@@ -152,11 +185,12 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 					locale={locale}
 					closeMenu={closeMenu}
 					totalItems={menuItems.length}
+					rotation={rotation}
 				/>
 			))}
 
 			<motion.div
-				className="absolute top-[79.5%] flex h-full w-full items-start justify-center gap-4 pt-12 text-sm font-bold leading-[1.2] tracking-tighter text-dark underline dark:font-semibold dark:text-primary"
+				className="flex gap-4 pb-32 pt-4 text-sm font-bold leading-[1.2] tracking-tighter text-dark underline dark:font-semibold dark:text-primary"
 				initial={{ opacity: 0, y: 20 }}
 				animate={{
 					opacity: 1,

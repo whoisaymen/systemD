@@ -1,19 +1,14 @@
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
-	name: 'whiteTextBlock',
-	title: 'Bloc de texte (old)',
+	name: 'customTextBlock',
+	title: 'Bloc de texte',
 	type: 'object',
 	fields: [
 		defineField({
-			name: 'backgroundColor',
-			title: 'Couleur de fond',
-			type: 'color',
-		}),
-		defineField({
-			name: 'textColor',
-			title: 'Couleur du texte',
-			type: 'color',
+			name: 'title',
+			title: 'Titre',
+			type: 'string',
 		}),
 		defineField({
 			name: 'content',
@@ -28,9 +23,12 @@ export default defineType({
 		}),
 	],
 	preview: {
-		prepare() {
+		select: {
+			title: 'title',
+		},
+		prepare({ title }) {
 			return {
-				title: 'Bloc de texte (old)',
+				title: title || 'Bloc de texte',
 			}
 		},
 	},

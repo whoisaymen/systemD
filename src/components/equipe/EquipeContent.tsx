@@ -19,7 +19,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 	}
 
 	return (
-		<div className="grid h-full w-full items-center space-y-16 rounded-md px-2 py-24 sm:mt-0 sm:grid-cols-3">
+		<div className="flex h-full w-full flex-col items-start space-y-16 rounded-md px-2 py-24 sm:mt-0 sm:flex-row sm:space-y-0">
 			{persons.map((person) => {
 				const imageUrl = person.image?.asset?._ref
 					? `/${person.image.asset._ref.split('-')[1]}-${person.image.asset._ref.split('-')[2]}.${person.image.asset._ref.split('-')[3]}`
@@ -28,15 +28,15 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 				return (
 					<div
 						key={person._id}
-						className="flex flex-col items-center space-y-0 px-2"
+						className="flex flex-col space-y-0 px-2 sm:w-1/4"
 					>
 						{imageUrl && (
-							<div className="relative px-16">
+							<div className="relative px-16 sm:px-0">
 								<Img
 									image={person.image}
 									src={imageUrl}
 									alt={person.name}
-									className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover"
+									className="z-0 aspect-square h-full w-full rounded-full border-2 border-primary object-cover sm:border-0"
 								/>
 								<div className="absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-grayLight to-transparent dark:from-dark" />
 

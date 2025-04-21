@@ -8,15 +8,19 @@ export default defineType({
 	type: 'document',
 	fields: [
 		defineField({
+			name: 'description',
+			title: 'Description',
+			type: 'internationalizedArrayText',
+		}),
+		defineField({
 			name: 'blocks',
 			title: 'Blocs',
 			type: 'array',
 			of: [
 				{ type: 'mediaTeaserBlock' },
-				{ type: 'yellowBannerBlock' },
-				{ type: 'whiteTextBlock' },
+				{ type: 'customTextBlock' },
 				{ type: 'juryBlock' },
-				{ type: 'ticketBlock' },
+				// { type: 'ticketBlock' },
 				{ type: 'onTourBlock' },
 			],
 		}),

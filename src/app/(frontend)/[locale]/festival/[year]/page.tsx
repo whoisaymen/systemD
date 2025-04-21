@@ -15,6 +15,8 @@ export default async function FestivalEditionPage({
 		return <div>No content available for this festival edition</div>
 	}
 
+	console.log('content', content)
+
 	// return <Loading />
 	return <FestivalEditionContent festival={content} language={locale} />
 }
@@ -29,14 +31,15 @@ async function getFestivalEdition(year: string) {
     visual,
     pressLink,
     aftermovieLink,
-    "filmSelection": *[_type == 'film' && references(^._id)]{
+    "filmSelection": *[_type == 'film' && references(^._id)] | order(year asc, title asc) {
       _id,
       slug,
       title,
       description,
       director,
       year,
-      affiche
+      affiche,
+      isWinner
     },
     jury[]->{
       name,

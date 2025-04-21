@@ -29,9 +29,12 @@ export default {
 				secondary: '#DEFE04',
 				tertiary: '#222223',
 				dark: '#123DA6',
+				// dark: '#2c1',
+
 				// dark: '#000',
 				grayLight: '#DADADA',
 				grayDark: '#8C8C8F',
+				// grayDark: '#DEFE04',
 			},
 			maxHeight: {
 				fold: 'calc(100svh - var(--header-height))',
@@ -69,6 +72,7 @@ export default {
 			)
 		}),
 		require('@butterfail/tailwindcss-inverted-radius'),
+		require('tailwindcss-text-fill-stroke'),
 	],
 	safelist: [
 		{ pattern: /action.*/ },

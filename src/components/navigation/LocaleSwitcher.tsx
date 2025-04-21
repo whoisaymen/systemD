@@ -1,6 +1,7 @@
 import { useLocale, useTranslations } from 'next-intl'
 import { routing } from '@/i18n/routing'
 import LocaleSwitcherSelect from './LocaleSwitcherSelect'
+import LocaleSwitcherDropdown from './LocaleSwitcherDropdown'
 
 export default function LocaleSwitcher() {
 	const locale = useLocale()
@@ -15,3 +16,13 @@ export default function LocaleSwitcher() {
 		</LocaleSwitcherSelect>
 	)
 }
+
+// 	return (
+// 		<LocaleSwitcherDropdown defaultValue={locale}>
+// 			{routing.locales.map((cur) => ({
+// 				value: cur,
+// 				label: cur.toUpperCase(),
+// 			}))}
+// 		</LocaleSwitcherDropdown>
+// 	)
+// }

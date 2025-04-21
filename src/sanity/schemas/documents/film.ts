@@ -102,6 +102,13 @@ export default defineType({
 			to: [{ type: 'festival' }],
 			description: 'Sélectionnez le festival auquel ce film appartient',
 		}),
+		defineField({
+			name: 'isWinner',
+			title: 'Film Gagnant',
+			type: 'boolean',
+			description: 'Indique si ce film est un gagnant.',
+			initialValue: false,
+		}),
 	],
 	preview: {
 		select: {
@@ -111,9 +118,11 @@ export default defineType({
 			festival: 'festival.year',
 			affiche: 'affiche',
 			gallery: 'gallery',
+			isWinner: 'isWinner',
 		},
 		prepare(selection) {
-			const { title, year, director, festival, affiche, gallery } = selection
+			const { title, year, director, festival, affiche, gallery, isWinner } =
+				selection
 
 			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
@@ -126,19 +135,13 @@ export default defineType({
 				getLocalizedValue(title, 'nl') ||
 				'Untitled'
 
-			// const displayDirector =
-			// 	getLocalizedValue(director, 'fr') ||
-			// 	getLocalizedValue(director, 'en') ||
-			// 	getLocalizedValue(director, 'nl') ||
-			// 	'Unknown Director'
-
 			const displayYear = festival ? `édition ${festival}` : `${year}`
 
 			const media =
 				affiche || (gallery && gallery.length > 0 ? gallery[0].photo : null)
 
 			return {
-				title: `${displayTitle} (${displayYear})`,
+				title: `${displayTitle} (${displayYear}) ${isWinner ? '★' : ''}`,
 				subtitle: `Réalisé par ${director}`,
 				media,
 			}

@@ -4,6 +4,7 @@ import { useScroll, useTransform } from 'motion/react'
 import Img from '@/ui/Img'
 import LogoShortTsx from '../svgs/LogoShort'
 import { useRef } from 'react'
+import BigBangLogoMobile from './BigBangLogoMobile'
 
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
@@ -26,11 +27,31 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 
 	// Transform the scroll progress into a border radius value
 	const borderRadius = useTransform(scrollYProgress, [0, 1], [10, 120])
-
+	const themeColors = {
+		dark: {
+			fill: 'var(--color-dark)',
+			stroke: 'var(--color-primary)',
+			icon: 'var(--color-primary)',
+		},
+		sparkle: {
+			fill: 'var(--color-primary)',
+			stroke: 'var(--color-dark)',
+		},
+		festival: {
+			fill: 'var(--color-dark)',
+			stroke: 'var(--color-primary)',
+			icon: 'var(--color-grayDark)',
+		},
+		memoire: {
+			fill: 'var(--color-dark)',
+			stroke: '',
+			icon: 'var(--color-primary)',
+		},
+	}
 	return (
 		<div
 			ref={ref}
-			className="flex w-full flex-col items-center justify-center space-y-12 px-2 text-center sm:my-0 sm:space-y-0 sm:bg-grayDark"
+			className="flex w-full flex-col items-center justify-center space-y-12 rounded-md px-2 text-center sm:my-0 sm:hidden sm:space-y-0 sm:bg-grayLight sm:dark:bg-grayDark"
 		>
 			{block.text && (
 				<motion.div
@@ -39,14 +60,14 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 						// duration: 2,
 						ease: [0.76, 0, 0.24, 1],
 					}}
-					className="relative mt-2 border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
+					className="relative mt-2 border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-secondary sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
 				>
 					{block.text
 						.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key
 						.map((paragraph: any, index: number) => (
 							<p
 								key={index}
-								className="py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-3xl"
+								className="py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-dark sm:py-4 sm:text-3xl"
 							>
 								{renderParagraph(
 									paragraph,

@@ -6,11 +6,6 @@ export default defineType({
 	type: 'object',
 	fields: [
 		defineField({
-			name: 'color',
-			title: 'Couleur',
-			type: 'color',
-		}),
-		defineField({
 			name: 'text',
 			title: 'Texte',
 			type: 'internationalizedArrayText',

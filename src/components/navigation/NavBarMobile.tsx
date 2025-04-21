@@ -1,8 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { AnimatePresence, motion } from 'motion/react'
+import {
+	AnimatePresence,
+	motion,
+	useMotionValueEvent,
+	useScroll,
+} from 'motion/react'
 import Link from 'next/link'
 
 import ThemeSwitch from '../ThemeSwitch'
@@ -17,9 +22,42 @@ import LogoShortAnimated from '../svgs/LogoShortAnimated'
 
 import Menu from './MobileMenuItem'
 
+const parentVariants = {
+	visible: { y: 0 },
+	hidden: { y: '-120%' },
+}
+
+const childVariants = {
+	visible: { opacity: 1, y: 0 },
+	hidden: { opacity: 0, y: '-2rem' },
+}
+
 const NavBarMobile = ({ locale }: { locale: string }) => {
 	const [menuOpen, setMenuOpen] = useState(false)
 	const pathname = usePathname()
+	const [hidden, setHidden] = useState(false)
+	const [prevScroll, setPrevScroll] = useState(0)
+
+	const { scrollY } = useScroll()
+
+	useMotionValueEvent(scrollY, 'change', (latest) => {
+		const isScrollingDown = latest > prevScroll
+		const isScrollingUp = latest < prevScroll
+		const maxScroll = document.body.scrollHeight - window.innerHeight
+
+		if (latest >= maxScroll - 10) {
+			// you're at the bottom, do nothing
+			return
+		}
+
+		if (isScrollingUp) {
+			setHidden(false)
+		} else if (latest > 50 && isScrollingDown) {
+			setHidden(true)
+		}
+
+		setPrevScroll(latest)
+	})
 
 	const toggleMenu = () => {
 		setMenuOpen(!menuOpen)
@@ -58,6 +96,8 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 	}
 
 	const renderLogo = () => {
+		const localizedFestivalPath = `/${locale}/festival`
+
 		if (pathname.includes('/bigbang')) {
 			return (
 				<BigBangLogoMobile
@@ -65,10 +105,17 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					className="mt-6 overflow-visible text-dark"
 				/>
 			)
-		} else if (pathname.includes('/festival')) {
+		} else if (pathname === localizedFestivalPath) {
 			return (
 				<FestivalLogoMobile
 					theme={themeColors.festival}
+					className="overflow-visible text-dark"
+				/>
+			)
+		} else if (pathname.startsWith(localizedFestivalPath)) {
+			return (
+				<MemoireLogoMobile
+					theme={themeColors.memoire}
 					className="overflow-visible text-dark"
 				/>
 			)
@@ -101,7 +148,19 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 	return (
 		<>
 			<div className="fixed top-0 z-50 w-full sm:hidden">
-				<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden">
+				{/* <div className="absolute inset-0 -z-10 h-28">
+					<div className="absolute inset-0 backdrop-blur-sm [-webkit-mask-image:linear-gradient(to_top,transparent_0%,white_20%,white_40%,transparent_50%)]" />
+					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_20%,white_40%,white_50%,transparent_75%)]" />
+					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_50%,white_60%,white_75%,transparent_100%)]" />
+				</div> */}
+				<nav
+					// variants={parentVariants}
+					// animate={hidden ? 'hidden' : 'visible'}
+					// transition={{
+					// 	duration: 0.2,
+					// }}
+					className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden"
+				>
 					<div className="h-full w-full">{renderLogo()}</div>
 				</nav>
 			</div>
@@ -153,15 +212,6 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					</button>
 				</div>
 			</div>
-			{/* <div className="fixed z-50 flex h-dvh w-full flex-col items-center justify-between overflow-hidden">
-				<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black sm:hidden">
-					<div className="h-full w-full">{renderLogo()}</div>
-				</nav>
-
-				
-
-
-			</div> */}
 		</>
 	)
 }
