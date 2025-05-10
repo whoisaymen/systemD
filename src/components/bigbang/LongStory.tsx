@@ -22,23 +22,26 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						if (!block.text && !block.author) return null
 						return (
 							<div className="relative mt-4 h-full py-0">
-								<blockquote key={index} className="px-8">
+								<blockquote key={index} className="relative px-8">
+									<span className="absolute left-0 top-0 text-[8rem] italic leading-[1] text-primary dark:text-primary/10">
+										“
+									</span>
 									{block.text && (
-										<p className="pr-8 pt-8 text-2xl font-bold leading-[1] text-primary">
-											“ {getLocalizedValue(block.text, lang)} ”
+										<p className="px-6 pt-8 text-2xl font-bold leading-[1] text-dark dark:text-primary">
+											{getLocalizedValue(block.text, lang)}
 										</p>
 									)}
 									{block.author && (
-										<footer className="mt-2 pb-8 pr-4 text-right text-sm font-bold text-primary">
+										<footer className="mt-2 pb-8 pr-4 text-right text-sm font-normal italic text-dark dark:text-primary">
 											{block.author}
 										</footer>
 									)}
 								</blockquote>
 								{/* Recording frame corners */}
 								<div className="absolute left-0 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-								<div className="absolute right-2 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
+								<div className="absolute right-0 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
 								<div className="absolute bottom-2 left-0 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
-								<div className="absolute bottom-2 right-2 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
+								<div className="absolute bottom-2 right-0 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
 							</div>
 						)
 
@@ -48,13 +51,15 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={index}
-								className="text-2xl leading-[1.2] tracking-tighter text-dark dark:text-primary"
+								className="text-xl leading-[1.2] tracking-tighter text-dark dark:text-primary"
 								style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 							>
 								{block.text
 									.filter((paragraph: any) => paragraph._key === lang)
 									.map((paragraph: any, idx: number) => (
-										<p key={idx}>{renderParagraph(paragraph, [])}</p>
+										<p key={idx}>
+											{renderParagraph(paragraph, [], 'bg-primary text-dark')}
+										</p>
 									))}
 							</div>
 						)

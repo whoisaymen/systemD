@@ -55,6 +55,7 @@ async function getFestival() {
           name,
           image {
             asset->{
+              _id,
               url,
               metadata
             }

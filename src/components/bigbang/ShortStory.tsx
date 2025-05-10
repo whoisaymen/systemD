@@ -60,7 +60,7 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 						// duration: 2,
 						ease: [0.76, 0, 0.24, 1],
 					}}
-					className="relative mt-2 border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-secondary sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
+					className="relative mt-2 border-2 border-dark bg-primary px-4 py-6 shadow-sm dark:bg-secondary sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
 				>
 					{block.text
 						.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key

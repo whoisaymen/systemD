@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/accordion'
 import FestivalPhotoGallery from './FestivalPhotoGallery'
 import FestivalCarousel from './FestivalCarousel'
+import BackToTopButton from '../common/BackToTop'
 
 interface FestivalEditionContentProps {
 	festival: any
@@ -92,6 +93,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		return 0
 	})
 
+	console.log(festival.expoPhoto, 'expoPhotos')
+
 	return (
 		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
 			{festival.visual && (
@@ -107,7 +110,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							repeat: Infinity,
 							repeatType: 'reverse',
 						}}
-						className="overflow-hidden rounded-md border-4 border-primary shadow-md sm:h-[65vh] sm:border-0"
+						className="overflow-hidden rounded-md border-[3px] border-primary shadow-md sm:h-[65vh] sm:border-0"
 					>
 						<Img
 							image={festival.visual}
@@ -149,7 +152,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				/>
 			)}
 
-			<div className="pt-8">
+			<div className="pt-8" id="photo-gallery">
 				<div className="sticky top-[6.5rem] z-10 flex justify-center">
 					<motion.div
 						animate={{
@@ -163,10 +166,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							},
 						}}
 						onClick={() => setIsPhotoGalleryOpen(!isPhotoGalleryOpen)}
-						className="flex w-fit items-center justify-center gap-1 rounded-md border-4 border-dark bg-primary px-2 pr-4 text-center text-4xl font-black uppercase italic tracking-tighter text-dark shadow-sm transition-all dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
+						className="flex w-fit items-center justify-center gap-1 rounded-md border-[3px] border-dark bg-primary px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter text-dark shadow-sm dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
 					>
 						<span>Photo Gallery</span>
 					</motion.div>
+					<BackToTopButton targetId="photo-gallery" />
 				</div>
 
 				{/* <Accordion type="single" collapsible>
@@ -207,15 +211,17 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								{/* Close Button */}
 								<button
 									onClick={closeLightbox}
-									className="absolute right-4 top-4 z-50 text-4xl font-bold text-primary"
+									className="absolute right-4 top-4 z-50 rounded-full border-2 border-primary bg-dark px-2 text-3xl font-medium text-primary"
 								>
 									✕
 								</button>
 
 								{/* Carousel */}
 								<FestivalCarousel
-									photos={festival.photoGallery.flatMap(
-										(gallery: any) => gallery.photos,
+									photos={festival.photoGallery.flatMap((gallery: any) =>
+										gallery.photos.map((photo: any) => ({
+											photo, // Wrap the photo object
+										})),
 									)}
 									initialIndex={currentImageIndex}
 								/>
@@ -401,24 +407,28 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			)} */}
 
 			{festival.filmSelection && festival.filmSelection.length > 0 && (
-				<div className="mb-8">
+				<div className="mb-8" id="film-selection">
 					<div className="sticky top-[5.5rem] z-10 flex flex-col items-center justify-center">
-						<motion.div
-							animate={{
-								rotate: 1,
-								transition: {
-									duration: 0.3,
-									repeat: Infinity,
-									delay: 5,
-									repeatType: 'reverse',
-									ease: 'easeInOut',
-								},
-							}}
-							onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-							className="flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-4 border-dark bg-white px-2 pr-4 text-center text-4xl font-black uppercase italic tracking-tighter text-dark shadow-sm transition-all dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
-						>
-							<span>Film Selection</span>
-						</motion.div>
+						<div className="flex items-center justify-center">
+							<motion.div
+								animate={{
+									rotate: 1,
+									transition: {
+										duration: 0.3,
+										repeat: Infinity,
+										delay: 5,
+										repeatType: 'reverse',
+										ease: 'easeInOut',
+									},
+								}}
+								onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
+								className="flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] border-dark bg-white px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter text-dark shadow-sm transition-all dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
+							>
+								<span>Film Selection</span>
+							</motion.div>
+							<BackToTopButton targetId="film-selection" />
+						</div>
+
 						{isFilmSectionOpen && (
 							<div className="flex">
 								<div className="mt-4 flex h-full w-full items-center justify-center gap-1">
@@ -606,12 +616,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 														</div>
 													)}
 													<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
-														<h3
+														{/* <h3
 															className={`absolute bottom-4 left-1 z-10 flex gap-x-1 rounded-md border-2 bg-primary bg-none px-2 py-0 text-base font-bold tracking-tighter text-dark dark:border-0 dark:border-primary dark:bg-transparent dark:text-primary`}
 															style={{
-																whiteSpace: 'nowrap', // Prevents wrapping to a new line
-																overflow: 'hidden', // Hides overflowing text
-																textOverflow: 'ellipsis', // Adds '...' for truncated text
+																whiteSpace: 'nowrap',
+																overflow: 'hidden',
+																textOverflow: 'ellipsis',
 															}}
 														>
 															{film.isWinner && <span>★</span>}
@@ -620,7 +630,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																{' '}
 																({film.year})
 															</span>
-														</h3>
+														</h3> */}
 													</div>
 													<div className="absolute bottom-0 left-0 h-16 w-full rounded-md bg-gradient-to-t from-grayLight to-transparent dark:from-dark"></div>
 												</Link>
@@ -745,7 +755,53 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						{festival.expoPhoto && festival.expoPhoto.length > 0 && (
 							<div className="my-4">
 								<h2 className="text-center text-2xl font-bold">Expo Photo</h2>
-								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+								<div className="grid grid-cols-3 gap-2 pt-4 sm:grid-cols-2 lg:grid-cols-3">
+									{festival.expoPhoto.flatMap((expo: any) =>
+										expo.photos.map((photo: any, index: number) => {
+											console.log(photo.photo, 'photo at index', index) // Debugging log
+											return (
+												<button
+													key={index}
+													onClick={() => {
+														setCurrentImageIndex(index)
+														setIsLightboxOpen(true)
+													}}
+													className="focus:outline-none"
+												>
+													<Img
+														image={photo.photo} // Pass the nested photo object
+														src={photo.photo.asset.url} // Correctly access the nested asset URL
+														alt={`Photo by ${photo.artistName || 'Unknown Artist'}`}
+														className="aspect-square h-auto w-full rounded-md object-cover"
+													/>
+												</button>
+											)
+										}),
+									)}
+								</div>
+
+								{/* Lightbox Modal */}
+								{isLightboxOpen && (
+									<div className="fixed inset-0 z-50 flex items-center justify-center bg-dark/95">
+										<button
+											onClick={closeLightbox}
+											className="absolute right-4 top-4 z-50 rounded-full border-2 border-primary bg-dark px-2 text-3xl font-medium text-primary"
+										>
+											✕
+										</button>
+
+										<FestivalCarousel
+											photos={festival.expoPhoto.flatMap((expo: any) =>
+												expo.photos.map((photo: any) => ({
+													photo: photo.photo,
+													artistName: photo.artistName,
+													curatorName: expo.curatorName,
+												})),
+											)}
+											initialIndex={currentImageIndex}
+										/>
+									</div>
+								)}
 							</div>
 						)}
 					</AccordionContent>

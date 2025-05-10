@@ -50,13 +50,19 @@ async function getFestivalEdition(year: string) {
       _type,
       photos[],
     },
-    expoPhoto[]{
+     expoPhoto[]{
       _type,
-      images[]{
-        asset->{
-          url,
-          metadata
-        }
+      curatorName,
+      photos[]{
+        photo{
+          asset->{
+            _id,
+            url,
+            metadata
+          }
+        },
+        artistName,
+        copyright
       }
     }
   }

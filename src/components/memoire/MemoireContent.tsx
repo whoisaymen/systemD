@@ -57,14 +57,13 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar mt-[6.5rem] flex h-svh w-full flex-col space-y-1 overflow-y-scroll rounded-md border-grayLight bg-transparent bg-gradient-to-b from-grayLight to-grayDark/25 px-4 tracking-tighter shadow-inner dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:px-0">
-			<motion.div
+		<div className="no-scrollbar mt-[6.5rem] flex h-svh w-full flex-col space-y-1 overflow-y-scroll rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:to-grayDark/25 sm:px-0 sm:shadow-inner">
+			{/* <motion.div
 				style={{ borderRadius }}
 				transition={{
 					duration: 2,
 					ease: [0.76, 0, 0.24, 1],
-					// repeat: Infinity,
-					// repeatType: 'reverse',
+		
 				}}
 				className="relative w-full border-2 border-dark bg-primary px-8 py-10 shadow-sm dark:bg-secondary sm:border-0 sm:py-10 sm:dark:bg-transparent"
 			>
@@ -77,7 +76,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 				<p className="mx-auto py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-dark sm:hidden sm:py-4 sm:text-4xl">
 					{getLocalizedValue(memoire.description, language)}
 				</p>
-			</motion.div>
+			</motion.div> */}
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
 				<div className="grid grid-cols-1 gap-4 pb-16 pt-4 sm:grid-cols-2 lg:grid-cols-1">

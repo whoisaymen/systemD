@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { renderParagraph } from './RenderParagraph'
 
 interface ReadMoreProps {
 	text: string
@@ -9,13 +10,17 @@ const ReadMore: React.FC<ReadMoreProps> = ({ text, link }) => {
 	const [expanded, setExpanded] = useState(false)
 
 	return (
-		<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10">
+		<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] p-6 pb-10 shadow-sm dark:bg-secondary sm:py-10">
 			<p
-				className={`mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl ${
+				className={`mx-auto py-2 text-justify text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl ${
 					expanded ? 'max-h-full' : 'max-h-24 overflow-hidden'
 				}`}
 			>
-				{text}
+				{renderParagraph(
+					{ value: text },
+					[], // No titles in this case
+					'bg-primary text-primary dark:bg-dark dark:text-primary',
+				)}
 
 				{/* Press Link inside the paragraph, only if link exists and expanded */}
 				{link && expanded && (

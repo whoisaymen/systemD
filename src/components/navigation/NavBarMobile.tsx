@@ -86,12 +86,12 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 		festival: {
 			fill: 'var(--color-dark)',
 			stroke: 'var(--color-primary)',
-			icon: 'var(--color-grayDark)',
+			icon: 'var(--color-primary)',
 		},
 		memoire: {
 			fill: 'var(--color-dark)',
 			stroke: 'var(--color-primary)',
-			icon: 'var(--color-grayDark)',
+			icon: 'var(--color-primary)',
 		},
 	}
 
