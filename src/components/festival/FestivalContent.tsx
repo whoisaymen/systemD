@@ -188,18 +188,18 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 										key={index}
 										className="mx-0 h-[80vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
 									>
-										<motion.video
-											initial={{
-												borderRadius: '0.375rem',
-											}}
-											animate={{ borderRadius: '15rem' }}
-											transition={{
-												duration: 2,
-												ease: [0.76, 0, 0.24, 1],
-												repeat: Infinity,
-												repeatType: 'reverse',
-											}}
-											className="h-full w-full transform rounded-full border-[3px] border-primary object-cover sm:rounded-md sm:border-0"
+										<video
+											// initial={{
+											// 	borderRadius: '0.375rem',
+											// }}
+											// animate={{ borderRadius: '15rem' }}
+											// transition={{
+											// 	duration: 2,
+											// 	ease: [0.76, 0, 0.24, 1],
+											// 	repeat: Infinity,
+											// 	repeatType: 'reverse',
+											// }}
+											className="h-full w-full transform rounded-md border-[3px] border-primary object-cover sm:rounded-md sm:border-0"
 											autoPlay
 											loop
 											muted
@@ -210,7 +210,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 												type="video/mp4"
 											/>
 											Your browser does not support the video tag.
-										</motion.video>
+										</video>
 									</div>
 									{/* {festival.description && (
 										<div className="relative mt-4 h-full py-6 pb-12">
@@ -283,7 +283,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 												Jury
 											</AccordionTrigger>
 											<AccordionContent>
-												<div className="grid h-full grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-2">
+												<div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-6 sm:gap-2">
 													{block.juryMembers && block.juryMembers.length > 0 ? (
 														block.juryMembers.map(
 															(member: any, memberIndex: number) => (
@@ -292,45 +292,46 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																	className="h-full w-full rounded-md"
 																>
 																	{member.image && (
-																		<div className="relative">
-																			<Img
-																				image={member.image}
-																				src={member.image?.asset.url}
-																				alt={member.name}
-																				className="z-0 aspect-square h-full w-full rounded-md border-2 border-primary object-cover saturate-0 hover:saturate-100 sm:rounded-md sm:border-0"
-																				// style={{
-																				// 	maskImage:
-																				// 		'url(/assets/svg/Sparkle.svg)',
-																				// 	WebkitMaskImage:
-																				// 		'url(/assets/svg/Sparkle.svg)',
-																				// 	maskSize: 'contain',
-																				// 	WebkitMaskSize: 'contain',
-																				// 	maskRepeat: 'no-repeat',
-																				// 	WebkitMaskRepeat: 'no-repeat',
-																				// 	maskPosition: 'center',
-																				// 	WebkitMaskPosition: 'center',
-																				// }}
-																			/>
-																			<div className="absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-grayLight to-transparent dark:from-dark sm:dark:from-dark" />
-																		</div>
-																	)}
-																	{member.name && (
-																		<div className="sm:dark:bg-darkGray flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-transparent">
-																			<h3
-																				className={`z-10 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark sm:border-0 ${getRandomRotationClass()}`}
-																			>
-																				{member.name}
-																			</h3>
-																		</div>
-																	)}
-																	{/* {member.biography && (
-																		<p className="truncate">
-																			{getLocalizedValue(
-																				member.biography,
-																				language,
+																		<div className="relative flex rounded-md border-[3px] border-primary bg-primary">
+																			<div className="relative w-1/3">
+																				<div className="absolute inset-0 z-10 rounded-md bg-gradient-to-t from-primary to-dark opacity-75 sm:rounded-md" />
+																				<Img
+																					image={member.image}
+																					src={member.image?.asset.url}
+																					alt={member.name}
+																					className="z-0 aspect-square h-full w-full rounded-md object-cover saturate-0 sm:rounded-md sm:border-0"
+																					// style={{
+																					// 	maskImage:
+																					// 		'url(/assets/svg/Sparkle.svg)',
+																					// 	WebkitMaskImage:
+																					// 		'url(/assets/svg/Sparkle.svg)',
+																					// 	maskSize: 'contain',
+																					// 	WebkitMaskSize: 'contain',
+																					// 	maskRepeat: 'no-repeat',
+																					// 	WebkitMaskRepeat: 'no-repeat',
+																					// 	maskPosition: 'center',
+																					// 	WebkitMaskPosition: 'center',
+																					// }}
+																				/>
+																			</div>
+
+																			{member.biography && (
+																				<div className="w-2/3 p-2 text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-3xl">
+																					{member.name && (
+																						<h3 className="text-2xl">
+																							{member.name}
+																						</h3>
+																					)}
+																					<p className="truncate">
+																						{getLocalizedValue(
+																							member.biography,
+																							language,
+																						)}
+																					</p>
+																				</div>
 																			)}
-																		</p>
-																	)} */}
+																		</div>
+																	)}
 																</div>
 															),
 														)

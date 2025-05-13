@@ -57,13 +57,18 @@ const FestivalCarousel: React.FC<{
 
 			{/* Main image */}
 			<div className="relative w-full overflow-hidden">
-				<div className="px-8">
-					<Img
-						image={photos[currentIndex].photo}
-						src={photos[currentIndex].photo.asset.url}
-						alt={`Photo ${currentIndex + 1}`}
-						className="h-auto w-full rounded-md border-[3px] border-primary object-cover"
-					/>
+				<div className="py-8">
+					<div className="relative">
+						<div className="absolute top-1 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:20px_12px] bg-center bg-repeat-x sm:w-full"></div>
+
+						<div className="absolute bottom-1 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:20px_12px] bg-center bg-repeat-x sm:w-full"></div>
+						<Img
+							image={photos[currentIndex].photo}
+							src={photos[currentIndex].photo.asset.url}
+							alt={`Photo ${currentIndex + 1}`}
+							className="h-auto w-full object-cover"
+						/>
+					</div>
 				</div>
 
 				{/* Artist Name (only for expoPhoto) */}
@@ -78,13 +83,13 @@ const FestivalCarousel: React.FC<{
 					<>
 						<button
 							onClick={handlePrev}
-							className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border-2 border-primary bg-dark px-2 py-1 text-3xl text-primary"
+							className="absolute left-4 top-1/2 z-10 -translate-y-1/2 px-2 py-1 text-3xl text-primary"
 						>
 							←
 						</button>
 						<button
 							onClick={handleNext}
-							className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border-2 border-primary bg-dark px-2 py-1 text-3xl text-primary"
+							className="absolute right-4 top-1/2 z-10 -translate-y-1/2 px-2 py-1 text-3xl text-primary"
 						>
 							→
 						</button>
@@ -95,8 +100,11 @@ const FestivalCarousel: React.FC<{
 			{/* Thumbnail preview bar */}
 			<div
 				ref={thumbContainerRef}
-				className="no-scrollbar absolute inset-x-0 bottom-4 mt-4 flex w-full gap-2 overflow-x-auto px-4"
+				className="no-scrollbar absolute inset-x-0 bottom-4 mt-4 flex w-full gap-2 overflow-x-auto bg-black"
 			>
+				<div className="absolute top-0.5 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:10px_6px] bg-center bg-repeat-x sm:w-full"></div>
+
+				<div className="absolute bottom-0.5 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:10px_6px] bg-center bg-repeat-x sm:w-full"></div>
 				{photos.map((photo, index) => {
 					const isActive = index === currentIndex
 
@@ -113,7 +121,7 @@ const FestivalCarousel: React.FC<{
 								image={photo.photo}
 								src={photo.photo.asset.url}
 								alt={`Thumbnail ${index + 1}`}
-								className="h-full w-full rounded-md object-cover"
+								className="h-full w-full object-cover"
 							/>
 						</button>
 					)

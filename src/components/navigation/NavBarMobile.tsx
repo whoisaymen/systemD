@@ -186,7 +186,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					</div>
 					<button
 						onClick={toggleMenu}
-						className="relative aspect-square min-h-[2.25rem] rounded-md border-2 border-dark bg-primary bg-none text-dark focus:outline-none dark:border-primary dark:bg-dark dark:text-primary"
+						className="relative aspect-square min-h-[2.25rem] rounded-md border-2 border-dark bg-grayDark bg-none text-dark focus:outline-none dark:border-primary dark:bg-dark dark:text-primary"
 					>
 						<span className="sr-only">Open main menu</span>
 						<div className="absolute left-1/2 top-1/2 block w-6 -translate-x-1/2 -translate-y-1/2 transform">

@@ -39,6 +39,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	const [isLightboxOpen, setIsLightboxOpen] = useState(false)
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 	const [showWinnersOnly, setShowWinnersOnly] = useState(false)
+	const [selectedArtist, setSelectedArtist] = useState<string | null>(null)
 
 	const openLightbox = (index: number) => {
 		setCurrentImageIndex(index)
@@ -97,19 +98,37 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 	return (
 		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
-			{festival.visual && (
+			<div className="relative h-full">
+				<div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
+				<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
+				{festival.visual ? (
+					<Img
+						image={festival.visual}
+						src={festival.visual.asset.url}
+						alt={
+							festival.title
+								? getLocalizedValue(festival.title, language)
+								: 'Festival image'
+						}
+						className="h-full w-full object-cover"
+					/>
+				) : (
+					<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
+				)}
+			</div>
+			{/* {festival.visual && (
 				<div className="-mb-12 h-[50vh] sm:mb-0 sm:h-full">
-					<motion.div
-						initial={{
-							borderRadius: '0.375rem',
-						}}
-						animate={{ borderRadius: '15rem' }}
-						transition={{
-							duration: 2,
-							ease: [0.76, 0, 0.24, 1],
-							repeat: Infinity,
-							repeatType: 'reverse',
-						}}
+					<div
+						// initial={{
+						// 	borderRadius: '0.375rem',
+						// }}
+						// animate={{ borderRadius: '15rem' }}
+						// transition={{
+						// 	duration: 2,
+						// 	ease: [0.76, 0, 0.24, 1],
+						// 	repeat: Infinity,
+						// 	repeatType: 'reverse',
+						// }}
 						className="overflow-hidden rounded-md border-[3px] border-primary shadow-md sm:h-[65vh] sm:border-0"
 					>
 						<Img
@@ -122,9 +141,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							}
 							className="h-full w-full object-cover sm:rounded-b-none"
 						/>
-					</motion.div>
+					</div>
 				</div>
-			)}
+			)} */}
 
 			{/* {festival.aftermovieLink && (
 				<h1 className="text-3xl font-bold">{festival.aftermovieLink}</h1>
@@ -166,7 +185,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							},
 						}}
 						onClick={() => setIsPhotoGalleryOpen(!isPhotoGalleryOpen)}
-						className="flex w-fit items-center justify-center gap-1 rounded-md border-[3px] border-dark bg-primary px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter text-dark shadow-sm dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
+						className="flex w-fit items-center justify-center gap-1 rounded-md border-[3px] border-dark bg-grayLight px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter text-dark shadow-sm dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
 					>
 						<span>Photo Gallery</span>
 					</motion.div>
@@ -186,14 +205,20 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				{isPhotoGalleryOpen && (
 					<div className="relative">
 						{/* Photo Gallery */}
-						<div className="grid w-full grid-cols-3 gap-2 pt-4 sm:grid-cols-2 lg:grid-cols-3">
+						<div className="grid w-full grid-cols-3 gap-2 bg-black pt-4 sm:grid-cols-2 lg:grid-cols-3">
 							{festival.photoGallery.flatMap((gallery: any) =>
 								gallery.photos.map((photo: any, index: number) => (
 									<button
 										key={index}
 										onClick={() => openLightbox(index)}
-										className="focus:outline-none"
+										className="relative focus:outline-none"
 									>
+										{/* Left Film Roll */}
+										<div className="absolute top-1 z-30 h-[2.5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:15px_11px] bg-center bg-repeat-x sm:w-full"></div>
+
+										{/* Right Film Roll */}
+										<div className="absolute bottom-1 z-30 h-[2.5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:15px_11px] bg-center bg-repeat-x sm:w-full"></div>
+
 										<Img
 											image={photo}
 											src={photo.asset.url}
@@ -211,7 +236,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								{/* Close Button */}
 								<button
 									onClick={closeLightbox}
-									className="absolute right-4 top-4 z-50 rounded-full border-2 border-primary bg-dark px-2 text-3xl font-medium text-primary"
+									className="absolute right-4 top-4 z-50 px-2 text-3xl font-medium text-primary"
 								>
 									✕
 								</button>
@@ -422,7 +447,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									},
 								}}
 								onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-								className="flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] border-dark bg-white px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter text-dark shadow-sm transition-all dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
+								className="flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] border-dark bg-primary px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter text-dark shadow-sm transition-all dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
 							>
 								<span>Film Selection</span>
 							</motion.div>
@@ -599,7 +624,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							</div> */}
 
 							{view === 'grid' ? (
-								<ul className="sticky top-32 grid grid-cols-2 gap-4 px-2 sm:grid-cols-2 sm:px-4 lg:grid-cols-5">
+								<ul className="sticky top-32 grid grid-cols-1 gap-4 px-2 sm:grid-cols-2 sm:px-4 lg:grid-cols-5">
 									{sortedFilms.map((film: any, index: number) => (
 										<li key={index} className="relative h-full w-full">
 											{film.slug?.current ? (
@@ -610,7 +635,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																image={film.affiche}
 																src={film.affiche.asset.url}
 																alt={getLocalizedValue(film.title, language)}
-																className="aspect-square h-auto rounded-md border-0 border-primary object-cover"
+																className="aspect-square h-auto rounded-md border-[3px] border-grayDark object-cover dark:border-primary"
 															/>
 															{/* <div className="absolute inset-0 bg-dark/70"></div> */}
 														</div>
@@ -631,8 +656,33 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																({film.year})
 															</span>
 														</h3> */}
+														<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
+															{film.title && (
+																<h1
+																	className={`z-10 -rotate-6 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary`}
+																>
+																	{getLocalizedValue(film.title, language)}
+																</h1>
+															)}
+
+															{film.director && (
+																<p
+																	className={`z-10 mt-2 inline-block w-auto rotate-3 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark`}
+																>
+																	{film.director}
+																</p>
+															)}
+
+															{film.year && (
+																<p
+																	className={`z-0 mt-2 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+																>
+																	{film.year}
+																</p>
+															)}
+														</div>
 													</div>
-													<div className="absolute bottom-0 left-0 h-16 w-full rounded-md bg-gradient-to-t from-grayLight to-transparent dark:from-dark"></div>
+													{/* <div className="absolute bottom-0 left-0 h-16 w-full rounded-md bg-gradient-to-t from-grayLight to-transparent dark:from-dark"></div> */}
 												</Link>
 											) : (
 												// Fallback UI when there's no slug (just showing image & title)
@@ -642,20 +692,67 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															image={film.affiche}
 															src={film.affiche.asset.url}
 															alt={getLocalizedValue(film.title, language)}
-															className="aspect-square h-auto rounded-full border-2 border-primary object-cover"
+															className="aspect-square h-auto rounded-md border-2 border-primary object-cover"
 														/>
 													)}
 													<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
-														<h3
-															className={`z-10 flex gap-x-1 rounded-full border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
+														{/* <div className="relative -mt-4 mb-8 flex flex-col items-center">
+															{film.title && (
+																<h1
+																	className={`z-10 rounded-md border-2 border-dark bg-primary px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary ${getRandomRotationClass()}`}
+																>
+																	{getLocalizedValue(film.title, language)}
+																</h1>
+															)}
+
+															{film.director && (
+																<p
+																	className={`z-10 inline-block w-auto rounded-md border-2 border-primary bg-dark px-2 py-0 text-center font-medium tracking-tight text-primary ${getRandomRotationClass()}`}
+																>
+																	{film.director}
+																</p>
+															)}
+
+															{film.year && (
+																<p
+																	className={`absolute right-[10%] top-10 z-10 rounded-md bg-grayDark px-2 text-4xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden ${getRandomRotationClass()}`}
+																>
+																	{film.year}
+																</p>
+															)}
+														</div> */}
+
+														<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
+															{film.title && (
+																<h1
+																	className={`z-10 -rotate-6 rounded-md border-2 border-dark bg-primary px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary`}
+																>
+																	{getLocalizedValue(film.title, language)}
+																</h1>
+															)}
+
+															{film.director && (
+																<p
+																	className={`z-10 mt-2 inline-block w-auto rotate-3 rounded-md border-2 border-primary bg-dark px-2 py-0 text-center font-medium tracking-tight text-primary`}
+																>
+																	{film.director}
+																</p>
+															)}
+
+															{film.year && (
+																<p
+																	className={`z-0 mt-2 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+																>
+																	{film.year}
+																</p>
+															)}
+														</div>
+														{/* <h3
+															className={`z-10 flex gap-x-1 rounded-md border-2 bg-primary bg-none px-2 py-0 text-center text-base font-semibold tracking-tighter text-dark dark:border-primary dark:bg-primary dark:text-dark ${getRandomRotationClass()}`}
 														>
 															{film.isWinner && <span>★</span>}
 															{getLocalizedValue(film.title, language)}
-															<span className="font-normal italic">
-																{' '}
-																({film.year})
-															</span>
-														</h3>
+														</h3> */}
 													</div>
 												</>
 											)}
@@ -754,31 +851,69 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					<AccordionContent>
 						{festival.expoPhoto && festival.expoPhoto.length > 0 && (
 							<div className="my-4">
-								<h2 className="text-center text-2xl font-bold">Expo Photo</h2>
-								<div className="grid grid-cols-3 gap-2 pt-4 sm:grid-cols-2 lg:grid-cols-3">
-									{festival.expoPhoto.flatMap((expo: any) =>
-										expo.photos.map((photo: any, index: number) => {
-											console.log(photo.photo, 'photo at index', index) // Debugging log
-											return (
-												<button
-													key={index}
-													onClick={() => {
-														setCurrentImageIndex(index)
-														setIsLightboxOpen(true)
-													}}
-													className="focus:outline-none"
-												>
-													<Img
-														image={photo.photo} // Pass the nested photo object
-														src={photo.photo.asset.url} // Correctly access the nested asset URL
-														alt={`Photo by ${photo.artistName || 'Unknown Artist'}`}
-														className="aspect-square h-auto w-full rounded-md object-cover"
-													/>
-												</button>
-											)
-										}),
-									)}
-								</div>
+								{/* Curator Name */}
+								{festival.expoPhoto.map((expo: any, expoIndex: number) => {
+									// Group photos by artist
+									const photosByArtist = expo.photos.reduce(
+										(acc: any, photo: any) => {
+											const artistName = photo.artistName || 'Unknown Artist'
+											if (!acc[artistName]) {
+												acc[artistName] = []
+											}
+											acc[artistName].push(photo)
+											return acc
+										},
+										{},
+									)
+
+									return (
+										<div key={expoIndex} className="mb-4">
+											<h3 className="text-xl font-bold text-primary">
+												Curated by: {expo.curatorName || 'Unknown Curator'}
+											</h3>
+
+											{/* Artist Names */}
+											<ul className="mt-2 pl-5 text-base text-dark dark:text-primary">
+												{Object.keys(photosByArtist).map(
+													(artistName, artistIndex) => (
+														<li
+															key={artistIndex}
+															className="cursor-pointer hover:underline"
+															onClick={() => setSelectedArtist(artistName)}
+														>
+															{artistName}
+														</li>
+													),
+												)}
+											</ul>
+
+											{/* Photos for Selected Artist */}
+											{selectedArtist && photosByArtist[selectedArtist] && (
+												<div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+													{photosByArtist[selectedArtist].map(
+														(photo: any, photoIndex: number) => (
+															<button
+																key={photoIndex}
+																onClick={() => {
+																	setCurrentImageIndex(photoIndex)
+																	setIsLightboxOpen(true)
+																}}
+																className="focus:outline-none"
+															>
+																<Img
+																	image={photo.photo}
+																	src={photo.photo.asset.url}
+																	alt={`Photo by ${selectedArtist}`}
+																	className="aspect-square h-auto w-full rounded-md object-cover"
+																/>
+															</button>
+														),
+													)}
+												</div>
+											)}
+										</div>
+									)
+								})}
 
 								{/* Lightbox Modal */}
 								{isLightboxOpen && (

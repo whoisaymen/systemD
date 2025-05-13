@@ -12,7 +12,7 @@ const ReadMore: React.FC<ReadMoreProps> = ({ text, link }) => {
 	return (
 		<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] p-6 pb-10 shadow-sm dark:bg-secondary sm:py-10">
 			<p
-				className={`mx-auto py-2 text-justify text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl ${
+				className={`mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl ${
 					expanded ? 'max-h-full' : 'max-h-24 overflow-hidden'
 				}`}
 			>
@@ -43,9 +43,9 @@ const ReadMore: React.FC<ReadMoreProps> = ({ text, link }) => {
 			{/* Read More Button */}
 			<button
 				onClick={() => setExpanded(!expanded)}
-				className="absolute inset-x-0 z-40 mt-2 text-dark focus:outline-none"
+				className="absolute inset-x-0 z-40 mt-1 rotate-90 text-2xl font-black text-primary focus:outline-none"
 			>
-				{expanded ? 'Read Less' : 'Read More'}
+				{expanded ? '↑' : '▶︎'}
 			</button>
 		</div>
 	)

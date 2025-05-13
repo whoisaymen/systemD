@@ -40,7 +40,7 @@ const ThemeSwitch = () => {
 			className={`${commonClass} ${
 				theme === 'dark'
 					? 'bg-dark sm:bg-transparent'
-					: 'bg-primary sm:bg-transparent'
+					: 'bg-grayDark sm:bg-transparent'
 			}`}
 		>
 			<ColorSwitch

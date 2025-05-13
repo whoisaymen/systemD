@@ -32,7 +32,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										</p>
 									)}
 									{block.author && (
-										<footer className="mt-2 pb-8 pr-4 text-right text-sm font-normal italic text-dark dark:text-primary">
+										<footer className="mt-2 pb-8 pr-4 text-right text-sm font-normal text-dark dark:text-primary">
 											{block.author}
 										</footer>
 									)}
