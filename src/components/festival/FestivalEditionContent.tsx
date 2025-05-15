@@ -447,21 +447,25 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									},
 								}}
 								onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-								className="flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] border-dark bg-primary px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter text-dark shadow-sm transition-all dark:border-primary dark:bg-dark dark:text-primary [&[data-state=open]>svg]:rotate-180"
+								className={`flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all ${
+									isFilmSectionOpen
+										? 'border-primary bg-dark text-primary dark:border-dark dark:bg-primary dark:text-dark'
+										: 'border-dark bg-primary text-dark dark:border-primary dark:bg-dark dark:text-primary'
+								}`}
 							>
 								<span>Film Selection</span>
 							</motion.div>
-							<BackToTopButton targetId="film-selection" />
+							{/* <BackToTopButton targetId="film-selection" /> */}
 						</div>
 
 						{isFilmSectionOpen && (
-							<div className="flex">
-								<div className="mt-4 flex h-full w-full items-center justify-center gap-1">
+							<div className="flex rounded-md bg-dark">
+								<div className="mt-1 flex h-full w-full items-center justify-center gap-1">
 									<button
 										onClick={() => setView('grid')}
-										className={`rounded-md border-2 p-2 text-center font-bold tracking-tight transition-colors ${
+										className={`p-2 text-center font-bold tracking-tight transition-colors ${
 											view === 'grid'
-												? 'border-dark bg-primary dark:border-dark dark:text-dark'
+												? 'border-dark dark:border-dark dark:text-grayDark'
 												: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'
 										}`}
 									>
@@ -470,9 +474,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 									<button
 										onClick={() => setView('list')}
-										className={`flex rounded-md border-2 p-2 text-center font-bold tracking-tight transition-colors ${
+										className={`flex p-2 text-center font-bold tracking-tight transition-colors ${
 											view === 'list'
-												? 'border-dark bg-primary dark:border-dark dark:text-dark'
+												? 'border-dark dark:border-dark dark:text-dark'
 												: 'border-dark bg-none text-dark dark:border-primary dark:text-primary'
 										}`}
 									>
@@ -484,11 +488,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												setSortField('year')
 												setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
 											}}
-											className={`rounded-md border-2 p-1 px-2 ${
-												sortField === 'year'
-													? 'bg-primary text-dark'
-													: 'bg-dark text-primary'
-											}`}
+											className={`p-1 px-2 ${sortField === 'year' ? '' : ''}`}
 										>
 											Year{' '}
 											{sortField === 'year' &&
@@ -499,11 +499,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												setSortField('title')
 												setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
 											}}
-											className={`rounded-md border-2 p-1 px-2 ${
-												sortField === 'title'
-													? 'bg-primary text-dark'
-													: 'bg-dark text-primary'
-											}`}
+											className={`p-1 px-2 ${sortField === 'title' ? '' : ''}`}
 										>
 											Title{' '}
 											{sortField === 'title' &&
@@ -514,10 +510,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												setSortField('director')
 												setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
 											}}
-											className={`rounded-md border-2 p-1 px-2 ${
-												sortField === 'director'
-													? 'bg-primary text-dark'
-													: 'bg-dark text-primary'
+											className={`p-1 px-2 ${
+												sortField === 'director' ? '' : ''
 											}`}
 										>
 											Director{' '}
@@ -526,11 +520,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										</button>
 										<button
 											onClick={() => setShowWinnersOnly(!showWinnersOnly)}
-											className={`rounded-md border-2 p-1 px-2 ${
-												showWinnersOnly
-													? 'bg-primary text-dark'
-													: 'bg-dark text-primary'
-											}`}
+											className={`p-1 px-2 ${showWinnersOnly ? '' : ''}`}
 										>
 											{showWinnersOnly ? 'Show All' : 'Winners'}
 										</button>
@@ -635,7 +625,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																image={film.affiche}
 																src={film.affiche.asset.url}
 																alt={getLocalizedValue(film.title, language)}
-																className="aspect-square h-auto rounded-md border-[3px] border-grayDark object-cover dark:border-primary"
+																className="aspect-square h-auto rounded-md border-[0px] border-grayDark object-cover dark:border-primary"
 															/>
 															{/* <div className="absolute inset-0 bg-dark/70"></div> */}
 														</div>
@@ -692,7 +682,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															image={film.affiche}
 															src={film.affiche.asset.url}
 															alt={getLocalizedValue(film.title, language)}
-															className="aspect-square h-auto rounded-md border-2 border-primary object-cover"
+															className="aspect-square h-auto rounded-md border-0 border-primary object-cover"
 														/>
 													)}
 													<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
@@ -867,50 +857,63 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									)
 
 									return (
-										<div key={expoIndex} className="mb-4">
-											<h3 className="text-xl font-bold text-primary">
-												Curated by: {expo.curatorName || 'Unknown Curator'}
+										<div key={expoIndex} className="mb-4 flex flex-col">
+											<h3 className="z-10 mt-2 w-full rotate-3 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tighter text-dark">
+												Curated by {expo.curatorName || 'Unknown Curator'}
 											</h3>
 
 											{/* Artist Names */}
-											<ul className="mt-2 pl-5 text-base text-dark dark:text-primary">
+											<ul className="mt-2 text-base text-dark dark:text-primary">
 												{Object.keys(photosByArtist).map(
-													(artistName, artistIndex) => (
-														<li
-															key={artistIndex}
-															className="cursor-pointer hover:underline"
-															onClick={() => setSelectedArtist(artistName)}
-														>
-															{artistName}
-														</li>
-													),
+													(artistName, artistIndex) => {
+														const isExpanded = selectedArtist === artistName
+
+														return (
+															<li
+																key={artistIndex}
+																className="border-b border-dark dark:border-primary"
+															>
+																<div
+																	className="flex cursor-pointer items-center justify-between py-2"
+																	onClick={() =>
+																		setSelectedArtist(
+																			isExpanded ? null : artistName,
+																		)
+																	}
+																>
+																	<span>{artistName}</span>
+																	<span>{isExpanded ? '-' : '+'}</span>
+																</div>
+
+																{/* Photos for Selected Artist */}
+																{isExpanded && photosByArtist[artistName] && (
+																	<div className="my-2 mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+																		{photosByArtist[artistName].map(
+																			(photo: any, photoIndex: number) => (
+																				<button
+																					key={photoIndex}
+																					onClick={() => {
+																						setCurrentImageIndex(photoIndex)
+																						setIsLightboxOpen(true)
+																					}}
+																					className="focus:outline-none"
+																				>
+																					<Img
+																						image={photo.photo}
+																						src={photo.photo.asset.url}
+																						alt={`Photo by ${artistName}`}
+																						className="aspect-square h-auto w-full rounded-md object-cover"
+																					/>
+																				</button>
+																			),
+																		)}
+																	</div>
+																)}
+															</li>
+														)
+													},
 												)}
 											</ul>
-
-											{/* Photos for Selected Artist */}
-											{selectedArtist && photosByArtist[selectedArtist] && (
-												<div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-													{photosByArtist[selectedArtist].map(
-														(photo: any, photoIndex: number) => (
-															<button
-																key={photoIndex}
-																onClick={() => {
-																	setCurrentImageIndex(photoIndex)
-																	setIsLightboxOpen(true)
-																}}
-																className="focus:outline-none"
-															>
-																<Img
-																	image={photo.photo}
-																	src={photo.photo.asset.url}
-																	alt={`Photo by ${selectedArtist}`}
-																	className="aspect-square h-auto w-full rounded-md object-cover"
-																/>
-															</button>
-														),
-													)}
-												</div>
-											)}
 										</div>
 									)
 								})}

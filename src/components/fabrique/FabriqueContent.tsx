@@ -71,24 +71,22 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			ref={ref}
 			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll rounded-md px-4 py-32 text-base font-medium leading-[1.2] tracking-tighter text-dark sm:space-y-0 sm:px-0 sm:pt-0"
 		>
-			<div className="relative mt-4 h-full py-0 pb-12">
-				<p className="px-12 pt-8 text-center text-2xl font-bold leading-[1] text-primary">
-					{getLocalizedValue(fabrique.title, language) || 'No title available'}
+			<div className="relative -mt-4 h-full">
+				<p className="pt-8 text-left text-3xl font-bold uppercase leading-[1.2] text-primary">
+					{/* {getLocalizedValue(fabrique.title, language) || 'No title available'} */}
+					For our Brussels stories, <br />
+					resourceful and proud
 				</p>
-
-				<div className="absolute left-10 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-				<div className="absolute right-10 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-				<div className="absolute bottom-2 left-10 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
-				<div className="absolute bottom-2 right-10 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
 			</div>
 
 			{/* Description */}
-			<div className="relative mt-0 border-2 border-dark px-0 py-8 shadow-sm sm:py-10">
-				<p className="mx-auto py-2 text-2xl font-semibold leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
+			<div className="relative mt-4 border-2 border-dark px-0 pb-8 shadow-sm sm:py-10">
+				<p className="mx-auto py-2 text-xl font-semibold leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
 					{fabrique.description
 						? renderParagraph(
 								{ value: getLocalizedValue(fabrique.description, language) },
 								[],
+								'bg-primary text-dark',
 							)
 						: 'No description available'}
 				</p>
@@ -108,7 +106,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				<div className="">
 					{fabrique.actions.map((action: any, index: number) => (
 						<div key={index}>
-							<div className="relative mb-4 block h-auto overflow-hidden rounded-md border-4 border-dark shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-primary">
+							<div className="relative mb-4 block h-auto overflow-hidden rounded-none border-0 border-dark shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-primary">
 								{/* Action Image */}
 								{action.image?.asset && (
 									<Img
@@ -143,7 +141,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 									if (block.listItem === 'bullet') {
 										return (
 											<ul key={block._key} className="list-disc pl-6">
-												<li className="mt-4 text-lg font-normal leading-[1.25] tracking-tighter">
+												<li className="mt-4 text-xl font-normal leading-[1.2] tracking-tighter">
 													{block.children
 														.map((child: any) => child.text)
 														.join('')}
@@ -156,7 +154,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 									return (
 										<p
 											key={block._key}
-											className="mt-4 text-justify text-lg font-normal leading-[1.25] tracking-tighter first:mt-0"
+											className="mt-4 text-xl font-normal leading-[1.2] tracking-tighter first:mt-0"
 										>
 											{block.children.map((child: any) => child.text).join('')}
 										</p>
