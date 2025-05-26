@@ -63,7 +63,9 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 				{persons.map((person) => (
 					<div
 						key={person._id}
-						ref={(el) => (refs.current[person._id] = el)}
+						ref={(el) => {
+							refs.current[person._id] = el
+						}}
 						className="flex w-full flex-col items-center justify-center px-0"
 					>
 						{/* Photo */}
