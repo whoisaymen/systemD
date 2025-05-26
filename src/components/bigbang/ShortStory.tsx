@@ -5,6 +5,7 @@ import Img from '@/ui/Img'
 import LogoShortTsx from '../svgs/LogoShort'
 import { useRef } from 'react'
 import BigBangLogoMobile from './BigBangLogoMobile'
+import BackToTopButton from '../common/BackToTop'
 
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
@@ -52,7 +53,11 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 		<div
 			ref={ref}
 			className="flex w-full flex-col items-center justify-center space-y-12 rounded-md px-2 text-center sm:my-0 sm:hidden sm:space-y-0 sm:bg-grayLight sm:dark:bg-grayDark"
+			id="short-story"
 		>
+			<div className="fixed bottom-8 right-12 z-50">
+				<BackToTopButton targetId="short-story" />
+			</div>
 			{block.text && (
 				<motion.div
 					style={{ borderRadius }}
@@ -103,10 +108,21 @@ const renderParagraph = (paragraph: any, titles: string[]) => {
 			const isSystemD = part.trim().toLowerCase() === 'system d'
 
 			return isSystemD ? (
-				<LogoShortTsx
+				<motion.span
 					key={index}
-					className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary dark:bg-dark sm:w-[15rem]"
-				/>
+					className="z-10 inline-block"
+					animate={{
+						rotate: 3,
+						transition: {
+							ease: [0.76, 0, 0.24, 1],
+							duration: 1.5,
+							repeat: Infinity,
+							repeatType: 'reverse',
+						},
+					}}
+				>
+					<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary dark:bg-dark sm:w-[15rem]" />
+				</motion.span>
 			) : (
 				<span key={index} className={isTitle ? 'font-bold' : ''}>
 					{part}

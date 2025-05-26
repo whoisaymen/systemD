@@ -26,6 +26,7 @@ async function getFestivalEdition(year: string) {
   *[_type == 'festival' && year == ${year}][0]{
     title,
     description,
+    text,
     year,
     venue,
     visual,

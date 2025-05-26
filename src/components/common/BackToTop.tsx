@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import FilterIcon from '../svgs/FilterIcon'
+import ArrowIcon from '../svgs/ArrowIcon'
 
 interface BackToTopButtonProps {
 	targetId: string // Section ID (e.g. "photo-gallery")
@@ -38,7 +40,7 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: isVisible ? 1 : 0 }}
 			transition={{ duration: 0.3 }}
-			className="ml-2 flex cursor-pointer items-center justify-center rounded-md border-[3px] border-primary bg-dark px-3 text-3xl font-black text-primary"
+			className="flex w-10 items-center justify-center rounded-md border-2 border-primary bg-dark"
 		>
 			{isVisible && (
 				<motion.button
@@ -46,7 +48,12 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 					onClick={scrollToTop}
 					aria-label="Scroll to top of section"
 				>
-					↑
+					<ArrowIcon
+						theme={{
+							fill: 'var(--color-primary)',
+						}}
+						className="h-full w-full p-1"
+					/>
 				</motion.button>
 			)}
 		</motion.div>

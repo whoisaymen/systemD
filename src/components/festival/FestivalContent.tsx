@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/accordion'
 import LogoShortTsx from '../svgs/LogoShort'
 import { renderParagraph } from '../common/RenderParagraph'
+import FallingSparkle from './FallingSparkle'
+import BackToTopButton from '../common/BackToTop'
 
 interface FestivalContentProps {
 	festival: any
@@ -58,8 +60,9 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	return (
 		<div
 			key={festival._id}
-			className="mt-20 flex h-full w-full flex-col space-y-1 rounded-md p-2 px-4 pb-32 sm:mt-0 sm:h-svh sm:p-0"
+			className="flex h-full w-full flex-col space-y-1 rounded-md p-2 px-4 pb-32 sm:mt-0 sm:h-svh sm:p-0"
 		>
+			{/* <FallingSparkle /> */}
 			{/* {festival.description && (
 				<div className="relative mt-4 h-full py-6 pb-12">
 					{getLocalizedValue(festival.description, language)
@@ -91,7 +94,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							const text = getLocalizedValue(block.text, language)
 							const paragraphs = text.split('\n\n')
 							return (
-								<div key={index} className="">
+								<div key={`yellowBannerBlock-${index}`} className="">
 									<motion.div
 										// initial={{
 										// 	borderRadius: '0.375rem',
@@ -153,7 +156,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							if (!block.show) return null
 							return (
 								<div
-									key={index}
+									key={`customTextBlock-${index}`}
 									className="flex flex-col items-center rounded-md px-0 text-xl font-medium leading-tight tracking-tighter sm:h-full sm:px-0 sm:text-2xl"
 								>
 									<Accordion type="single" collapsible>
@@ -185,7 +188,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<>
 									<div
-										key={index}
+										key={`mediaTeaserBlock-${index}`}
 										className="mx-0 h-[80vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
 									>
 										<video
@@ -199,7 +202,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											// 	repeat: Infinity,
 											// 	repeatType: 'reverse',
 											// }}
-											className="h-full w-full transform rounded-md border-[3px] border-primary object-cover sm:rounded-md sm:border-0"
+											className="h-full w-full transform rounded-3xl border-[3px] border-primary object-cover sm:rounded-md sm:border-0"
 											autoPlay
 											loop
 											muted
@@ -271,9 +274,13 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							if (!block.show) return null
 							return (
 								<div
-									key={index}
+									key={`juryBlock-${index}`}
 									className="relative my-0 flex h-full w-full flex-col items-center sm:px-0"
+									id="jury-block"
 								>
+									<div className="fixed bottom-8 right-12 z-50">
+										<BackToTopButton targetId="jury-block" />
+									</div>
 									<Accordion type="single" collapsible>
 										<AccordionItem
 											value="item-1"
@@ -283,58 +290,51 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 												Jury
 											</AccordionTrigger>
 											<AccordionContent>
-												<div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-6 sm:gap-2">
+												<div className="flex flex-wrap gap-8 pb-16">
 													{block.juryMembers && block.juryMembers.length > 0 ? (
-														block.juryMembers.map(
-															(member: any, memberIndex: number) => (
-																<div
-																	key={member._id}
-																	className="h-full w-full rounded-md"
-																>
-																	{member.image && (
-																		<div className="relative flex rounded-md border-[3px] border-primary bg-primary">
-																			<div className="relative w-1/3">
-																				<div className="absolute inset-0 z-10 rounded-md bg-gradient-to-t from-primary to-dark opacity-75 sm:rounded-md" />
-																				<Img
-																					image={member.image}
-																					src={member.image?.asset.url}
-																					alt={member.name}
-																					className="z-0 aspect-square h-full w-full rounded-md object-cover saturate-0 sm:rounded-md sm:border-0"
-																					// style={{
-																					// 	maskImage:
-																					// 		'url(/assets/svg/Sparkle.svg)',
-																					// 	WebkitMaskImage:
-																					// 		'url(/assets/svg/Sparkle.svg)',
-																					// 	maskSize: 'contain',
-																					// 	WebkitMaskSize: 'contain',
-																					// 	maskRepeat: 'no-repeat',
-																					// 	WebkitMaskRepeat: 'no-repeat',
-																					// 	maskPosition: 'center',
-																					// 	WebkitMaskPosition: 'center',
-																					// }}
-																				/>
-																			</div>
+														block.juryMembers.map((member: any) => (
+															<div
+																key={member._id}
+																className="flex w-full flex-col items-center justify-center px-0 sm:w-1/2"
+															>
+																{/* Jury Member Image */}
+																{member.image && (
+																	<div className="relative w-1/2 overflow-hidden pl-16 sm:px-0">
+																		<Img
+																			image={member.image}
+																			src={member.image?.asset.url}
+																			alt={member.name}
+																			className="z-0 h-full w-full border-0 border-dark object-cover dark:border-primary sm:border-0"
+																		/>
+																	</div>
+																)}
 
-																			{member.biography && (
-																				<div className="w-2/3 p-2 text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-3xl">
-																					{member.name && (
-																						<h3 className="text-2xl">
-																							{member.name}
-																						</h3>
-																					)}
-																					<p className="truncate">
-																						{getLocalizedValue(
-																							member.biography,
-																							language,
-																						)}
-																					</p>
-																				</div>
+																{/* Biography */}
+																{member.biography && (
+																	<div className="relative mt-8 flex">
+																		{/* Person Title */}
+																		{member.name && (
+																			<p
+																				className="absolute bottom-0 left-6 z-30 inline-block -rotate-90 text-2xl font-bold uppercase leading-[0] tracking-tighter text-primary"
+																				style={{
+																					transformOrigin: 'left bottom',
+																				}}
+																			>
+																				{member.name}
+																			</p>
+																		)}
+
+																		{/* Biography Text */}
+																		<p className="ml-16 py-2 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+																			{getLocalizedValue(
+																				member.biography,
+																				language,
 																			)}
-																		</div>
-																	)}
-																</div>
-															),
-														)
+																		</p>
+																	</div>
+																)}
+															</div>
+														))
 													) : (
 														<p>No jury members found</p>
 													)}
@@ -382,7 +382,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							if (!block.show) return null
 							return (
 								<div
-									key={index}
+									key={`onTourBlock-${index}`}
 									className="on-tour-block flex h-full w-full flex-col items-center"
 								>
 									<Accordion type="single" collapsible className="w-full">

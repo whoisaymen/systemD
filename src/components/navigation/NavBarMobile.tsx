@@ -27,6 +27,10 @@ const parentVariants = {
 	hidden: { y: '-120%' },
 }
 
+const parentVariantsFooter = {
+	visible: { y: 0 },
+	hidden: { y: '200%' },
+}
 const childVariants = {
 	visible: { opacity: 1, y: 0 },
 	hidden: { opacity: 0, y: '-2rem' },
@@ -75,6 +79,11 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 
 	const themeColors = {
 		dark: {
+			fill: 'var(--color-dark)',
+			stroke: 'var(--color-primary)',
+			icon: 'var(--color-primary)',
+		},
+		fabrique: {
 			fill: 'var(--color-dark)',
 			stroke: 'var(--color-primary)',
 			icon: 'var(--color-primary)',
@@ -136,7 +145,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 		} else if (pathname.includes('/fabrique')) {
 			return (
 				<FabriqueLogoMobile
-					theme={themeColors.dark}
+					theme={themeColors.fabrique}
 					className="overflow-visible text-dark"
 				/>
 			)
@@ -147,7 +156,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 
 	return (
 		<>
-			<div className="fixed top-0 z-50 w-full sm:hidden">
+			<div className="z-50 w-full sm:hidden">
 				{/* <div className="absolute inset-0 -z-10 h-28">
 					<div className="absolute inset-0 backdrop-blur-sm [-webkit-mask-image:linear-gradient(to_top,transparent_0%,white_20%,white_40%,transparent_50%)]" />
 					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_20%,white_40%,white_50%,transparent_75%)]" />
@@ -176,7 +185,14 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				)}
 			</AnimatePresence>
 
-			<div className="fixed bottom-0 z-50 mb-8 flex h-auto w-full items-center justify-center gap-1 sm:hidden">
+			<motion.div
+				variants={parentVariantsFooter}
+				animate={hidden ? 'hidden' : 'visible'}
+				transition={{
+					duration: 0.2,
+				}}
+				className="fixed bottom-0 z-50 mb-8 flex h-auto w-full items-center justify-center gap-1 sm:hidden"
+			>
 				<div className="h-[2.5rem] overflow-hidden rounded-md border-2 border-dark shadow-md dark:border-primary">
 					<LocaleSwitcher />
 				</div>
@@ -211,7 +227,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 						</div>
 					</button>
 				</div>
-			</div>
+			</motion.div>
 		</>
 	)
 }

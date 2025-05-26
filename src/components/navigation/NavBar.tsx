@@ -176,7 +176,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 						</HoverableItem>
 					</Link>
 				</div>
-				<div className="flex h-auto w-full items-center justify-start rounded-md p-1">
+				<div className="flex h-auto w-full items-center justify-start rounded-md bg-grayDark p-1">
 					<ThemeSwitch />
 					<LocaleSwitcher />
 				</div>
@@ -221,7 +221,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 							return (
 								<Link
 									href={`/${locale}/festival`}
-									className="relative flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-gradient-to-b from-grayLight to-grayDark/25 py-32 pt-4 shadow-inner dark:bg-dark dark:from-dark dark:to-grayDark/25"
+									className="relative flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-gradient-to-b from-grayLight to-grayDark/25 py-32 pt-4 shadow-inner dark:bg-grayDark dark:from-dark dark:to-grayDark/25"
 								>
 									<MenuArrows className="absolute right-2 top-2 text-grayDark" />
 									<div className="hidden">
@@ -300,15 +300,15 @@ const NavBar = ({ locale }: { locale: string }) => {
 					</Link>
 				</div>
 
-				<div className="flex h-[2.5rem] w-full items-center justify-between rounded-md px-2">
+				<div className="flex h-[2.5rem] w-full items-center justify-between rounded-md bg-grayDark px-2">
 					<div className="flex items-center gap-2">
-						<FaInstagram className="text-primary" />
-						<FaFacebook className="text-primary" />
-						<FaYoutube className="text-primary" />
+						<FaInstagram className="text-dark" />
+						<FaFacebook className="text-dark" />
+						<FaYoutube className="text-dark" />
 					</div>
 					<Link
 						href={`/${locale}/contact`}
-						className="rounded-md border-2 border-dark bg-primary px-2 text-center text-base font-semibold tracking-tighter text-dark shadow-sm"
+						className="bg-primary px-2 text-center text-base font-semibold tracking-tighter text-dark shadow-sm"
 					>
 						Contact
 					</Link>

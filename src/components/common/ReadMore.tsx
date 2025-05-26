@@ -43,9 +43,9 @@ const ReadMore: React.FC<ReadMoreProps> = ({ text, link }) => {
 			{/* Read More Button */}
 			<button
 				onClick={() => setExpanded(!expanded)}
-				className="absolute inset-x-0 z-40 mt-1 rotate-90 text-2xl font-black text-primary focus:outline-none"
+				className="absolute inset-x-0 z-40 mt-2 text-dark focus:outline-none"
 			>
-				{expanded ? '↑' : '▶︎'}
+				{expanded ? 'Read Less' : 'Read More'}
 			</button>
 		</div>
 	)

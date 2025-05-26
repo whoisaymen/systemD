@@ -26,7 +26,7 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 	}
 
 	return (
-		<div className="no-scrollbar relative mt-28 flex h-[calc(100svh-7rem)] w-full flex-col overflow-y-scroll rounded-md px-5 tracking-tighter sm:mt-0 sm:min-h-screen sm:overflow-y-visible sm:py-1">
+		<div className="no-scrollbar relative mt-4 flex h-[calc(100svh-7rem)] w-full flex-col overflow-y-scroll rounded-md px-5 tracking-tighter sm:mt-0 sm:min-h-screen sm:overflow-y-visible sm:py-1">
 			<div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:-left-0 sm:h-full"></div>
 			<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:-right-0 sm:h-full"></div>
 

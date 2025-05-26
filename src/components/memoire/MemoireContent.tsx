@@ -34,6 +34,8 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	let { scrollY } = useScroll()
 	let borderRadius = useTransform(scrollY, (value) => Math.max(80 - value, 10))
 
+	console.log(memoire.pastFestivals, 'memoirePastFestivals')
+
 	const themeColors = {
 		dark: {
 			fill: 'var(--color-dark)',
@@ -57,7 +59,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar mt-[6.5rem] flex h-svh w-full flex-col space-y-1 overflow-y-scroll rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:to-grayDark/25 sm:px-0 sm:shadow-inner">
+		<div className="no-scrollbar rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:to-grayDark/25 sm:px-0 sm:shadow-inner">
 			{/* <motion.div
 				style={{ borderRadius }}
 				transition={{
@@ -79,41 +81,44 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 			</motion.div> */}
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
-				<div className="grid grid-cols-1 gap-4 pb-16 pt-4 sm:grid-cols-2 lg:grid-cols-1">
-					{memoire.pastFestivals.map((festival: any, index: number) => (
-						<Link
-							key={index}
-							href={`/${language}/festival/${festival.year}`}
-							className="relative block h-[60vh] overflow-hidden rounded-md border-2 border-transparent shadow-md transition-shadow duration-300 hover:shadow-lg"
-						>
-							<div
-								className={`absolute left-1/2 top-[65%] z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 text-5xl font-black tracking-tighter text-dark`}
+				<div className="grid grid-cols-1 gap-4 pb-16 pt-4 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0">
+					{/* {memoire.pastFestivals.map((festival: any, index: number) => ( */}
+					{[...memoire.pastFestivals, ...memoire.pastFestivals].map(
+						(festival: any, index: number) => (
+							<Link
+								key={index}
+								href={`/${language}/festival/${festival.year}`}
+								className="relative block h-[60vh] overflow-hidden rounded-md border-2 border-transparent shadow-md transition-shadow duration-300 hover:shadow-lg"
 							>
-								<span>{festival.year}</span>
-							</div>
-							<div className="absolute left-[50%] top-[74%] z-10 -translate-x-1/2 rotate-6 rounded-md bg-grayDark px-2 text-5xl font-semibold tracking-tighter text-dark">
-								<span>{festival.venue}</span>
-							</div>
-							<div className="relative h-full">
-								<div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
-								<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
-								{festival.visual ? (
-									<Img
-										image={festival.visual}
-										src={festival.visual.asset.url}
-										alt={
-											festival.title
-												? getLocalizedValue(festival.title, language)
-												: 'Festival image'
-										}
-										className="h-full w-full object-cover"
-									/>
-								) : (
-									<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
-								)}
-							</div>
-						</Link>
-					))}
+								<div
+									className={`absolute left-1/2 top-[65%] z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 text-5xl font-black tracking-tighter text-dark`}
+								>
+									<span>{festival.year}</span>
+								</div>
+								<div className="absolute left-[50%] top-[74%] z-10 -translate-x-1/2 rotate-6 rounded-md bg-grayDark px-2 text-5xl font-semibold tracking-tighter text-dark">
+									<span>{festival.venue}</span>
+								</div>
+								<div className="relative h-full">
+									<div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
+									<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
+									{festival.visual ? (
+										<Img
+											image={festival.visual}
+											src={festival.visual.asset.url}
+											alt={
+												festival.title
+													? getLocalizedValue(festival.title, language)
+													: 'Festival image'
+											}
+											className="h-full w-full object-cover"
+										/>
+									) : (
+										<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
+									)}
+								</div>
+							</Link>
+						),
+					)}
 				</div>
 			)}
 		</div>

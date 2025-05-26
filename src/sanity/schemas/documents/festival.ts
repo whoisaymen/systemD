@@ -32,6 +32,11 @@ export default defineType({
 			validation: (Rule) => Rule.max(250),
 		}),
 		defineField({
+			name: 'text',
+			title: 'Texte',
+			type: 'internationalizedBlock',
+		}),
+		defineField({
 			name: 'pressLink',
 			title: 'Lien de presse',
 			type: 'url',

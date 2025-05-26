@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import Image from 'next/image'
 import { PortableText } from '@portabletext/react'
 import { renderParagraph } from '../common/RenderParagraph'
+import BackToTopButton from '../common/BackToTop'
 
 interface LongStoryProps {
 	content: any[]
@@ -14,20 +15,23 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 		array?.find((v) => v?._key === lang)?.value
 
 	return (
-		<div className="space-y-8 px-4 py-4">
+		<div className="space-y-0 px-4 pt-2" id="long-story">
+			<div className="fixed bottom-8 right-12 z-50">
+				<BackToTopButton targetId="long-story" />
+			</div>
 			{content.map((block, index) => {
 				switch (block._type) {
 					case 'internationalizedCitationBlock':
 						// Handle cases where text or author is null
 						if (!block.text && !block.author) return null
 						return (
-							<div className="relative mt-4 h-full py-0">
+							<div className="relative h-full py-0 pt-2">
 								<blockquote key={index} className="relative px-8">
 									<span className="absolute left-0 top-0 text-[8rem] italic leading-[1] text-primary dark:text-primary/10">
 										“
 									</span>
 									{block.text && (
-										<p className="px-6 pt-8 text-2xl font-bold leading-[1] text-dark dark:text-primary">
+										<p className="px-6 pt-8 text-xl font-bold leading-[1] text-dark dark:text-primary">
 											{getLocalizedValue(block.text, lang)}
 										</p>
 									)}
@@ -51,7 +55,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={index}
-								className="text-xl leading-[1.2] tracking-tighter text-dark dark:text-primary"
+								className="pt-8 text-lg leading-[1.2] tracking-tighter text-dark dark:text-primary"
 								style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 							>
 								{block.text

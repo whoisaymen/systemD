@@ -11,6 +11,8 @@ import {
 	AccordionTrigger,
 } from '@/components/ui/accordion'
 import { renderParagraph } from '../common/RenderParagraph'
+import BrusselsMap from './BrusselsMap'
+import FabriqueAnimated from '../homepage/FabriqueAnimated'
 
 interface FabriqueContentProps {
 	fabrique: any
@@ -69,19 +71,74 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	return (
 		<div
 			ref={ref}
-			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll rounded-md px-4 py-32 text-base font-medium leading-[1.2] tracking-tighter text-dark sm:space-y-0 sm:px-0 sm:pt-0"
+			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll py-32 pt-0 text-base font-medium leading-[1.2] tracking-tighter text-dark sm:space-y-0 sm:px-0 sm:pt-0"
 		>
-			<div className="relative -mt-4 h-full">
-				<p className="pt-8 text-left text-3xl font-bold uppercase leading-[1.2] text-primary">
-					{/* {getLocalizedValue(fabrique.title, language) || 'No title available'} */}
-					For our Brussels stories, <br />
-					resourceful and proud
+			{/* <div className="relative mt-2 h-full rounded-full bg-primary p-6 py-32">
+				<p className="text-left text-3xl font-bold leading-[1.2] tracking-tighter text-dark">
+					{getLocalizedValue(fabrique.title, language) || 'No title available'}
+		
 				</p>
+			</div> */}
+			<div className="relative mt-4 px-4 lg:mt-1 lg:px-1">
+				<BrusselsMap
+					// theme={{ fill: 'var(--color-primary)' }}
+					className="w-full rounded-3xl border-[3px] border-dark bg-grayDark fill-current text-dark dark:border-primary dark:text-primary lg:w-1/2 lg:dark:border-grayDark lg:dark:text-dark"
+				/>
+
+				<div className="relative z-50 hidden w-full flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:absolute lg:left-1/2 lg:top-1/2 lg:flex lg:-translate-x-1/2 lg:-translate-y-1/2 lg:px-16">
+					{(getLocalizedValue(fabrique.title, language) || 'No title available')
+						.split(' ')
+						.map((word, index) => {
+							// Generate random rotation and position
+							const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
+							const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
+							const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
+
+							return (
+								<span
+									key={index}
+									className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-primary dark:text-primary lg:text-8xl"
+									style={{
+										transform: `rotate(${randomRotation}deg)`,
+										marginTop: `${randomMarginTop}px`,
+										marginLeft: `${randomMarginLeft}px`,
+									}}
+								>
+									{word}
+								</span>
+							)
+						})}
+				</div>
+			</div>
+
+			<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
+				{(getLocalizedValue(fabrique.title, language) || 'No title available')
+					.split(' ')
+					.map((word, index) => {
+						// Generate random rotation and position
+						const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
+						const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
+						const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
+
+						return (
+							<span
+								key={index}
+								className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl"
+								style={{
+									transform: `rotate(${randomRotation}deg)`,
+									marginTop: `${randomMarginTop}px`,
+									marginLeft: `${randomMarginLeft}px`,
+								}}
+							>
+								{word}
+							</span>
+						)
+					})}
 			</div>
 
 			{/* Description */}
-			<div className="relative mt-4 border-2 border-dark px-0 pb-8 shadow-sm sm:py-10">
-				<p className="mx-auto py-2 text-xl font-semibold leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
+			<div className="relative px-0 pb-8 sm:py-10">
+				<p className="mx-auto py-2 text-center text-xl font-semibold leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
 					{fabrique.description
 						? renderParagraph(
 								{ value: getLocalizedValue(fabrique.description, language) },
@@ -101,66 +158,109 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 					className="my-4 h-48 w-48 rounded-md object-cover"
 				/>
 			)}
-			{/* Actions */}
+
 			{fabrique.actions && (
 				<div className="">
 					{fabrique.actions.map((action: any, index: number) => (
-						<div key={index}>
-							<div className="relative mb-4 block h-auto overflow-hidden rounded-none border-0 border-dark shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-primary">
-								{/* Action Image */}
-								{action.image?.asset && (
-									<Img
-										image={action.image}
-										src={`/${action.image.asset._ref.split('-')[1]}-${action.image.asset._ref.split('-')[2]}.${action.image.asset._ref.split('-')[3]}`}
-										alt={getLocalizedValue(action.title, language)}
-										className="h-full w-full object-cover"
-									/>
+						<div key={index} className="mb-2">
+							{/* <h1 className="mx-auto px-2 py-24 text-center text-5xl font-black uppercase leading-[1] tracking-tighter text-primary sm:py-4 sm:text-4xl">
+								{capitalizeFirstLetter(
+									getLocalizedValue(action.title, language).split(' - ')[0],
 								)}
-							</div>
-							<div className="flex flex-col items-center py-8">
-								<div
-									className={`z-10 inline-block w-fit -rotate-2 rounded-md bg-primary px-2 text-3xl font-black tracking-tighter text-dark`}
+							</h1> */}
+							<Accordion type="single" collapsible>
+								<AccordionItem
+									value={`action-${index}`}
+									className="flex flex-col items-center justify-center"
 								>
-									<span className="text-center">
-										{capitalizeFirstLetter(
-											getLocalizedValue(action.title, language).split(' - ')[0],
-										)}
-									</span>
-								</div>
+									{/* Accordion Trigger for Action Title */}
+									<AccordionTrigger className={`-rotate-2 sm:text-3xl`}>
+										<div className="flex flex-col items-center">
+											<div
+												className={`z-10 inline-block w-fit text-3xl tracking-tighter`}
+											>
+												<span className="text-center">
+													{capitalizeFirstLetter(
+														getLocalizedValue(action.title, language).split(
+															' - ',
+														)[0],
+													)}
+												</span>
+											</div>
+										</div>
+									</AccordionTrigger>
 
-								<div className="z-0 inline-block rotate-[2deg] rounded-md bg-grayDark px-2 text-3xl font-bold tracking-tighter text-dark">
-									<span>
-										{getLocalizedValue(action.title, language).split(' - ')[1]}
-									</span>
-								</div>
-							</div>
-							{/* Action Text */}
-							<div className="relative rounded-md border-2 border-dark bg-white px-0 py-4 pb-16 text-primary shadow-sm dark:bg-dark sm:py-10">
-								{action.text?.[language]?.map((block: any) => {
-									// Check if the block is a list item
-									if (block.listItem === 'bullet') {
-										return (
-											<ul key={block._key} className="list-disc pl-6">
-												<li className="mt-4 text-xl font-normal leading-[1.2] tracking-tighter">
-													{block.children
-														.map((child: any) => child.text)
-														.join('')}
-												</li>
-											</ul>
-										)
-									}
+									{/* Accordion Content for Action Text */}
+									<AccordionContent>
+										<div className="relative px-0 py-4 text-primary sm:py-10">
+											<div className="mb-4 flex h-auto items-center justify-center px-4">
+												{/* Action Image */}
+												{action.image?.asset && (
+													<>
+														{/* <Img
+															image={action.image}
+															src={`/${action.image.asset._ref.split('-')[1]}-${action.image.asset._ref.split('-')[2]}.${action.image.asset._ref.split('-')[3]}`}
+															alt={getLocalizedValue(action.title, language)}
+															className="h-full w-full rounded-none object-cover"
+														/> */}
+														<span
+															className={`w-full -rotate-0 rounded-md border-[0px] border-primary text-center text-3xl font-normal tracking-tight text-primary`}
+														>
+															{
+																getLocalizedValue(action.title, language).split(
+																	' - ',
+																)[1]
+															}
+														</span>
+													</>
+												)}
+											</div>
+											{/* <p
+												className="absolute bottom-0 left-6 z-30 inline-block -rotate-90 text-xl font-bold uppercase leading-[0] tracking-tighter text-primary"
+												style={{
+													transformOrigin: 'left bottom',
+												}}
+											>
+												<span>
+													{
+														getLocalizedValue(action.title, language).split(
+															' - ',
+														)[1]
+													}
+												</span>
+											</p> */}
 
-									// Render regular paragraphs for non-list items
-									return (
-										<p
-											key={block._key}
-											className="mt-4 text-xl font-normal leading-[1.2] tracking-tighter first:mt-0"
-										>
-											{block.children.map((child: any) => child.text).join('')}
-										</p>
-									)
-								})}
-							</div>{' '}
+											{action.text?.[language]?.map((block: any) => {
+												// Check if the block is a list item
+												if (block.listItem === 'bullet') {
+													return (
+														<ul key={block._key} className="pl-20 pr-4">
+															<li className="relative mt-4 text-lg font-normal leading-[1.2] tracking-tighter">
+																{block.children
+																	.map((child: any) => child.text)
+																	.join('')}
+																<div className="absolute -left-5 top-2 h-2 w-2 rounded-sm bg-primary"></div>
+															</li>
+														</ul>
+													)
+												}
+
+												// Render regular paragraphs for non-list items
+												return (
+													<p
+														key={block._key}
+														className="mt-4 pl-20 pr-4 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
+													>
+														{block.children
+															.map((child: any) => child.text)
+															.join('')}
+													</p>
+												)
+											})}
+										</div>
+									</AccordionContent>
+								</AccordionItem>
+							</Accordion>
 						</div>
 					))}
 				</div>
@@ -168,19 +268,30 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 
 			{/* Vision */}
 			{fabrique.vision && (
-				<div className="mt-8 space-y-8">
-					<h1 className="mx-auto rounded-md border-2 border-primary bg-dark px-2 py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
-						Our Vision
-					</h1>
+				<div className="mt-16">
+					<div className="relative">
+						<FabriqueAnimated
+							theme={{
+								icon: 'var(--color-grayDark)',
+							}}
+							className="h-auto w-full"
+						/>
+						<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-black uppercase leading-[1] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+							Our Vision
+						</h1>
+					</div>
 					{fabrique.vision.map((vision: any, index: number) => (
-						<div key={index} className="space-y-4">
+						<div key={index} className="mt-24">
 							{/* Vision Title */}
-							<h2 className="mx-auto rounded-md border-2 border-primary bg-dark px-2 py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
+							{/* <h2 className="mx-auto px-2 py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
 								{getLocalizedValue(vision.title, language)}
-							</h2>
+							</h2> */}
 
-							<div className="relative mt-2 rounded-full rounded-md border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10">
-								<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
+							<div className="relative rounded-t-3xl px-4">
+								<h2 className="text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
+									{getLocalizedValue(vision.title, language)}
+								</h2>
+								<p className="mx-auto py-2 pl-16 text-lg font-normal leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
 									{getLocalizedText(vision.text, language) ||
 										'No description available'}
 								</p>
