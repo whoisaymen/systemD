@@ -88,7 +88,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				<div className="relative z-50 hidden w-full flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:absolute lg:left-1/2 lg:top-1/2 lg:flex lg:-translate-x-1/2 lg:-translate-y-1/2 lg:px-16">
 					{(getLocalizedValue(fabrique.title, language) || 'No title available')
 						.split(' ')
-						.map((word, index) => {
+						.map((word: string, index: number) => {
 							// Generate random rotation and position
 							const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
 							const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
@@ -114,7 +114,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
 				{(getLocalizedValue(fabrique.title, language) || 'No title available')
 					.split(' ')
-					.map((word, index) => {
+					.map((word: string, index: number) => {
 						// Generate random rotation and position
 						const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
 						const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
