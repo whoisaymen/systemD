@@ -103,7 +103,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				<BackToTopButton targetId="film-selection" />
 			</div>
 
-			<div className="relative h-[80vh] w-full">
+			{/* <div className="relative h-[80vh] w-full">
 				<div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
 				<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
 				{festival.visual ? (
@@ -132,7 +132,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				) : (
 					<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
 				)}
-			</div>
+			</div> */}
 
 			{/* {festival.description && (
 				<ReadMore

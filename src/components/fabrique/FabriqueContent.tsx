@@ -13,6 +13,7 @@ import {
 import { renderParagraph } from '../common/RenderParagraph'
 import BrusselsMap from './BrusselsMap'
 import FabriqueAnimated from '../homepage/FabriqueAnimated'
+import LogoShortTsx from '../svgs/LogoShort'
 
 interface FabriqueContentProps {
 	fabrique: any
@@ -80,10 +81,9 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				</p>
 			</div> */}
 			<div className="relative mt-4 px-4 lg:mt-1 lg:px-1">
-				<BrusselsMap
-					// theme={{ fill: 'var(--color-primary)' }}
+				{/* <BrusselsMap
 					className="w-full rounded-3xl border-[3px] border-dark bg-grayDark fill-current text-dark dark:border-primary dark:text-primary lg:w-1/2 lg:dark:border-grayDark lg:dark:text-dark"
-				/>
+				/> */}
 
 				<div className="relative z-50 hidden w-full flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:absolute lg:left-1/2 lg:top-1/2 lg:flex lg:-translate-x-1/2 lg:-translate-y-1/2 lg:px-16">
 					{(getLocalizedValue(fabrique.title, language) || 'No title available')
@@ -111,39 +111,15 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				</div>
 			</div>
 
-			<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
-				{(getLocalizedValue(fabrique.title, language) || 'No title available')
-					.split(' ')
-					.map((word: string, index: number) => {
-						// Generate random rotation and position
-						const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
-						const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
-						const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
-
-						return (
-							<span
-								key={index}
-								className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl"
-								style={{
-									transform: `rotate(${randomRotation}deg)`,
-									marginTop: `${randomMarginTop}px`,
-									marginLeft: `${randomMarginLeft}px`,
-								}}
-							>
-								{word}
-							</span>
-						)
-					})}
-			</div>
-
 			{/* Description */}
-			<div className="relative px-0 pb-8 sm:py-10">
-				<p className="mx-auto py-2 text-center text-xl font-semibold leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+			{/* <div className="relative px-0 pb-8 sm:py-10"> */}
+			<div className="relative mx-4 mb-12 rounded-md bg-primary p-6 sm:py-10">
+				<p className="mx-auto py-2 text-center text-xl font-semibold leading-[1.2] tracking-tighter text-dark dark:text-dark sm:py-4 sm:text-4xl">
 					{fabrique.description
 						? renderParagraph(
 								{ value: getLocalizedValue(fabrique.description, language) },
 								[],
-								'bg-primary text-dark',
+								'bg-dark text-primary',
 							)
 						: 'No description available'}
 				</p>
@@ -269,10 +245,10 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			{/* Vision */}
 			{fabrique.vision && (
 				<div className="mt-16">
-					<div className="relative">
+					<div className="relative mb-20">
 						<FabriqueAnimated
 							theme={{
-								icon: 'var(--color-grayDark)',
+								icon: 'var(--color-primary)',
 							}}
 							className="h-auto w-full"
 						/>
@@ -281,17 +257,17 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 						</h1>
 					</div>
 					{fabrique.vision.map((vision: any, index: number) => (
-						<div key={index} className="mt-24">
+						<div key={index} className="mt-8">
 							{/* Vision Title */}
 							{/* <h2 className="mx-auto px-2 py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
 								{getLocalizedValue(vision.title, language)}
 							</h2> */}
 
-							<div className="relative rounded-t-3xl px-4">
+							<div className="relative rounded-t-3xl px-8">
 								<h2 className="text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
 									{getLocalizedValue(vision.title, language)}
 								</h2>
-								<p className="mx-auto py-2 pl-16 text-lg font-normal leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+								<p className="mx-auto py-2 text-lg font-normal leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
 									{getLocalizedText(vision.text, language) ||
 										'No description available'}
 								</p>
@@ -300,6 +276,51 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 					))}
 				</div>
 			)}
+
+			<div className="relative z-50 mt-16 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
+				{(getLocalizedValue(fabrique.title, language) || 'No title available')
+					.split(' ')
+					.map((word: string, index: number) => {
+						// Generate random rotation and position
+						const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
+						const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
+						const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
+
+						return (
+							<span
+								key={index}
+								className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl"
+								style={{
+									transform: `rotate(${randomRotation}deg)`,
+									marginTop: `${randomMarginTop}px`,
+									marginLeft: `${randomMarginLeft}px`,
+								}}
+							>
+								{word}
+							</span>
+						)
+					})}
+
+				<div className="relative mt-24 flex h-[20vh] w-full items-center justify-center">
+					{/* Top left */}
+					<LogoShortTsx className="absolute right-16 top-0 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[-50deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
+					{/* Top right */}
+					<LogoShortTsx className="absolute left-20 top-0 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[25deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
+
+					<LogoShortTsx className="absolute bottom-2 right-8 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[-40deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
+
+					{/* Middle right */}
+					<LogoShortTsx className="absolute right-0 top-12 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[50deg] rounded-md bg-primary px-2 py-1" />
+
+					<LogoShortTsx className="absolute left-0 top-12 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[-60deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
+
+					{/* Bottom left */}
+					<LogoShortTsx className="absolute bottom-0 left-8 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[60deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
+
+					{/* Center bottom */}
+					<LogoShortTsx className="absolute -bottom-16 left-1/2 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] -translate-x-1/2 rotate-[-15deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
+				</div>
+			</div>
 		</div>
 	)
 }
