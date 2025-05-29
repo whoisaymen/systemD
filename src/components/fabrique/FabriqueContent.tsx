@@ -66,6 +66,15 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 		offset: ['start 00vh', 'end center'], // Animation starts when the block reaches the middle of the screen
 	})
 
+	const triggerRotations = [
+		'-rotate-6',
+		'rotate-3',
+		'-rotate-3',
+		'rotate-1',
+		'-rotate-2',
+		'rotate-3',
+	]
+
 	// Transform the scroll progress into a border radius value
 	const borderRadius = useTransform(scrollYProgress, [0, 1], [10, 120])
 
@@ -138,7 +147,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			{fabrique.actions && (
 				<div className="">
 					{fabrique.actions.map((action: any, index: number) => (
-						<div key={index} className="mb-2">
+						<div key={index} className="mb-0">
 							{/* <h1 className="mx-auto px-2 py-24 text-center text-5xl font-black uppercase leading-[1] tracking-tighter text-primary sm:py-4 sm:text-4xl">
 								{capitalizeFirstLetter(
 									getLocalizedValue(action.title, language).split(' - ')[0],
@@ -150,7 +159,9 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 									className="flex flex-col items-center justify-center"
 								>
 									{/* Accordion Trigger for Action Title */}
-									<AccordionTrigger className={`-rotate-2 sm:text-3xl`}>
+									<AccordionTrigger
+										className={`${triggerRotations[index % triggerRotations.length]} sm:text-3xl`}
+									>
 										<div className="flex flex-col items-center">
 											<div
 												className={`z-10 inline-block w-fit text-3xl tracking-tighter`}
@@ -169,7 +180,16 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 									{/* Accordion Content for Action Text */}
 									<AccordionContent>
 										<div className="relative px-0 py-4 text-primary sm:py-10">
-											<div className="mb-4 flex h-auto items-center justify-center px-4">
+											<span
+												className={`px-8 text-left text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary`}
+											>
+												{
+													getLocalizedValue(action.title, language).split(
+														' - ',
+													)[1]
+												}
+											</span>
+											<div className="mb-4 flex h-auto items-center justify-center px-8">
 												{/* Action Image */}
 												{action.image?.asset && (
 													<>
@@ -179,15 +199,15 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 															alt={getLocalizedValue(action.title, language)}
 															className="h-full w-full rounded-none object-cover"
 														/> */}
-														<span
-															className={`w-full -rotate-0 rounded-md border-[0px] border-primary text-center text-3xl font-normal tracking-tight text-primary`}
+														{/* <span
+															className={`text-left text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary`}
 														>
 															{
 																getLocalizedValue(action.title, language).split(
 																	' - ',
 																)[1]
 															}
-														</span>
+														</span> */}
 													</>
 												)}
 											</div>
@@ -210,7 +230,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 												// Check if the block is a list item
 												if (block.listItem === 'bullet') {
 													return (
-														<ul key={block._key} className="pl-20 pr-4">
+														<ul key={block._key} className="px-10">
 															<li className="relative mt-4 text-lg font-normal leading-[1.2] tracking-tighter">
 																{block.children
 																	.map((child: any) => child.text)
@@ -225,7 +245,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 												return (
 													<p
 														key={block._key}
-														className="mt-4 pl-20 pr-4 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
+														className="mt-4 px-8 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
 													>
 														{block.children
 															.map((child: any) => child.text)
@@ -245,7 +265,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			{/* Vision */}
 			{fabrique.vision && (
 				<div className="mt-16">
-					<div className="relative mb-20">
+					<div className="relative mb-12">
 						<FabriqueAnimated
 							theme={{
 								icon: 'var(--color-primary)',

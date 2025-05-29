@@ -141,7 +141,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				/>
 			)} */}
 
-			{festival.description && (
+			{/* {festival.description && (
 				<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] p-6 shadow-sm dark:bg-secondary sm:py-10">
 					<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl">
 						{renderParagraph(
@@ -151,80 +151,42 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						)}
 					</p>
 				</div>
-			)}
-			<div className="flex h-full w-full flex-col items-center justify-center pt-16">
-				<div
-					className={`z-10 -rotate-6 rounded-md bg-grayDark px-2 text-6xl font-semibold text-dark sm:hidden`}
-				>
-					<span>{festival.venue}</span>
-				</div>
-				<div
-					className={`z-10 rotate-6 rounded-md bg-primary px-2 text-4xl font-black text-dark sm:hidden`}
-				>
-					<span>{festival.year}</span>
-				</div>
+			)} */}
+			<div
+				className={`absolute -top-4 z-50 -rotate-6 rounded-md bg-grayDark px-2 text-3xl font-semibold text-dark sm:hidden`}
+			>
+				<span>{festival.venue}</span>
 			</div>
-			<div className="py-4 lg:max-w-[50%]">
-				{festival.text?.[language]?.map((block: any) => {
-					// Check if the block is a list item
-					if (block.listItem === 'bullet') {
-						return (
-							<ul key={block._key} className="list-disc pl-16 pr-4">
-								<li className="mt-4 text-lg font-normal leading-[1.2] tracking-tighter">
-									{block.children.map((child: any) => child.text).join('')}
-								</li>
-							</ul>
-						)
-					}
-
-					// Render regular paragraphs for non-list items
-					return (
-						<p
-							key={block._key}
-							className="mt-4 pl-16 pr-4 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
-						>
-							{block.children.map((child: any) => child.text).join('')}
-						</p>
-					)
-				})}
+			<div
+				className={`absolute -top-1 right-2 z-50 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
+			>
+				<span>{festival.year}</span>
 			</div>
-
-			{festival.pressLink && (
-				<a
-					href={festival.pressLink}
-					target="_blank"
-					rel="noopener noreferrer"
-					className="mt-4 inline-block pl-16 text-primary underline"
-				>
-					Press Link
-				</a>
-			)}
-
 			{festival.filmSelection && festival.filmSelection.length > 0 && (
 				<div className="mb-8 pt-8" id="film-selection">
-					<div className="flex items-center justify-center">
-						<motion.div
-							animate={{
-								rotate: 1,
-								transition: {
-									duration: 0.3,
-									repeat: Infinity,
-									delay: 5,
-									repeatType: 'reverse',
-									ease: 'easeInOut',
-								},
-							}}
-							onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-							className={`flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all ${
-								isFilmSectionOpen
-									? 'border-dark bg-dark text-grayDark dark:border-dark dark:bg-primary dark:text-dark'
-									: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
-							}`}
-						>
-							<span>Film Selection</span>
-						</motion.div>
-					</div>
-					<div className="sticky top-[0] z-10 flex flex-col items-center justify-center">
+					<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark">
+						<div className="flex items-center justify-center">
+							<motion.div
+								animate={{
+									rotate: 1,
+									transition: {
+										duration: 0.3,
+										repeat: Infinity,
+										delay: 5,
+										repeatType: 'reverse',
+										ease: 'easeInOut',
+									},
+								}}
+								onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
+								className={`flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all ${
+									isFilmSectionOpen
+										? 'border-dark bg-dark text-grayDark dark:border-dark dark:bg-primary dark:text-dark'
+										: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
+								}`}
+							>
+								<span>Film Selection</span>
+							</motion.div>
+						</div>
 						{/* <div className="flex items-center justify-center"> */}
 
 						{/* <BackToTopButton targetId="film-selection" /> */}
@@ -513,7 +475,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			<Accordion type="single" collapsible>
 				<AccordionItem
 					value="item-3"
-					className="flex flex-col items-center justify-center pb-1"
+					className="-mt-5 flex flex-col items-center justify-center pb-1"
 				>
 					<AccordionTrigger className={`rotate-[3deg]`}>
 						Expo Photo
@@ -636,7 +598,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</Accordion>
 
 			<div className="pt-0" id="photo-gallery">
-				<div className="z-10 flex justify-center">
+				<div className="z-10 -mt-5 flex justify-center">
 					<motion.div
 						animate={{
 							rotate: 1,
@@ -661,6 +623,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 				{isPhotoGalleryOpen && (
 					<div className="relative">
+						<div className="flex justify-center">
+							<h3 className="z-10 mt-2 inline-block -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tighter text-dark">
+								Photos by Soumaya Pheline
+							</h3>
+						</div>
 						{/* Photo Gallery */}
 						<div className="grid w-full grid-cols-3 gap-y-2 bg-grayLight pt-4 dark:bg-dark sm:grid-cols-2 lg:grid-cols-3">
 							{festival.photoGallery.flatMap((gallery: any) =>
@@ -714,11 +681,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 						{/* Lightbox Modal */}
 						{isLightboxOpen && (
-							<div className="fixed inset-0 z-50 flex items-center justify-center bg-dark/95">
+							<div className="fixed inset-0 z-40 flex items-center justify-center bg-dark/95">
 								{/* Close Button */}
 								<button
 									onClick={closeLightbox}
-									className="absolute right-4 top-4 z-50 px-2 text-3xl font-medium text-primary"
+									className="absolute right-4 top-4 z-40 px-2 text-3xl font-medium text-primary"
 								>
 									✕
 								</button>
@@ -737,6 +704,42 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					</div>
 				)}
 			</div>
+
+			<div className="py-4 lg:max-w-[50%] [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
+				{festival.text?.[language]?.map((block: any) => {
+					// Check if the block is a list item
+					if (block.listItem === 'bullet') {
+						return (
+							<ul key={block._key} className="list-disc">
+								<li className="mt-4 text-lg font-normal leading-[1.2] tracking-tighter">
+									{block.children.map((child: any) => child.text).join('')}
+								</li>
+							</ul>
+						)
+					}
+
+					// Render regular paragraphs for non-list items
+					return (
+						<p
+							key={block._key}
+							className="mt-4 text-base font-normal leading-[1.2] tracking-tighter first:mt-0"
+						>
+							{block.children.map((child: any) => child.text).join('')}
+						</p>
+					)
+				})}
+			</div>
+
+			{festival.pressLink && (
+				<a
+					href={festival.pressLink}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="mt-4 inline-block text-primary underline"
+				>
+					Press Link
+				</a>
+			)}
 		</div>
 	)
 }

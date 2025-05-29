@@ -52,7 +52,7 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 	return (
 		<div
 			ref={ref}
-			className="flex w-full flex-col items-center justify-center space-y-12 rounded-md px-2 text-center sm:my-0 sm:hidden sm:space-y-0 sm:bg-grayLight sm:dark:bg-grayDark"
+			className="space= -mt-12 flex w-full flex-col items-center justify-center space-y-12 rounded-md px-2 text-center sm:my-0 sm:hidden sm:space-y-0 sm:bg-grayLight sm:dark:bg-grayDark"
 			id="short-story"
 		>
 			<div className="fixed bottom-8 right-12 z-50">
