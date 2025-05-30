@@ -15,7 +15,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 		array?.find((v) => v?._key === lang)?.value
 
 	return (
-		<div className="space-y-0 px-4 pt-2" id="long-story">
+		<div className="space-y-0 pt-2" id="long-story">
 			<div className="fixed bottom-8 right-12 z-50">
 				<BackToTopButton targetId="long-story" />
 			</div>
@@ -25,27 +25,51 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						// Handle cases where text or author is null
 						if (!block.text && !block.author) return null
 						return (
-							<div className="relative h-full py-0 pt-2">
-								<blockquote key={index} className="relative px-8">
-									<span className="absolute left-0 top-0 text-[8rem] italic leading-[1] text-primary dark:text-primary/10">
-										“
-									</span>
-									{block.text && (
-										<p className="px-6 pt-8 text-xl font-bold leading-[1] text-dark dark:text-primary">
-											{getLocalizedValue(block.text, lang)}
-										</p>
-									)}
-									{block.author && (
-										<footer className="mt-2 pb-8 pr-4 text-right text-sm font-normal text-dark dark:text-primary">
-											{block.author}
-										</footer>
-									)}
-								</blockquote>
-								{/* Recording frame corners */}
-								<div className="absolute left-0 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-								<div className="absolute right-0 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-								<div className="absolute bottom-2 left-0 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
-								<div className="absolute bottom-2 right-0 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
+							// <div className="relative h-full py-0 pt-2">
+							// 	<blockquote key={index} className="relative px-8">
+							// 		<span className="absolute left-0 top-0 text-[8rem] italic leading-[1] text-primary dark:text-primary/10">
+							// 			“
+							// 		</span>
+							// 		{block.text && (
+							// 			<p className="px-6 pt-8 text-xl font-bold leading-[1] text-dark dark:text-primary">
+							// 				{getLocalizedValue(block.text, lang)}
+							// 			</p>
+							// 		)}
+							// 		{block.author && (
+							// 			<footer className="mt-2 pb-8 pr-4 text-right text-sm font-normal text-dark dark:text-primary">
+							// 				{block.author}
+							// 			</footer>
+							// 		)}
+							// 	</blockquote>
+
+							// 	<div className="absolute left-0 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
+							// 	<div className="absolute right-0 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
+							// 	<div className="absolute bottom-2 left-0 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
+							// 	<div className="absolute bottom-2 right-0 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
+							// </div>
+							<div className="relative flex flex-wrap items-center justify-center gap-2 rounded-none py-8 lg:hidden">
+								{getLocalizedValue(block.text, lang)
+									.split(' ')
+									.map((word: string, index: number) => {
+										// Generate random rotation and position
+										const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
+										const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
+										const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
+
+										return (
+											<span
+												key={index}
+												className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl"
+												style={{
+													transform: `rotate(${randomRotation}deg)`,
+													marginTop: `${randomMarginTop}px`,
+													marginLeft: `${randomMarginLeft}px`,
+												}}
+											>
+												{word}
+											</span>
+										)
+									})}
 							</div>
 						)
 
@@ -55,14 +79,14 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={index}
-								className="pt-8 text-lg leading-[1.2] tracking-tighter text-dark dark:text-primary"
+								className="px-4 pt-8 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary"
 								style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 							>
 								{block.text
 									.filter((paragraph: any) => paragraph._key === lang)
 									.map((paragraph: any, idx: number) => (
 										<p key={idx}>
-											{renderParagraph(paragraph, [], 'bg-primary text-dark')}
+											{renderParagraph(paragraph, [], 'bg-primary text-dark ')}
 										</p>
 									))}
 							</div>
@@ -111,19 +135,19 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 
 						if (block.file?.asset) {
 							return (
-								<motion.div
+								<div
 									key={index}
-									className="overflow-hidden rounded-md border-4 border-primary shadow-md sm:h-[65vh] sm:border-0"
-									initial={{
-										borderRadius: '0.375rem',
-									}}
-									animate={{ borderRadius: '15rem' }}
-									transition={{
-										duration: 3.4,
-										ease: [0.76, 0, 0.24, 1],
-										repeat: Infinity,
-										repeatType: 'reverse',
-									}}
+									className="overflow-hidden rounded-none border-0 border-primary shadow-md sm:h-[65vh] sm:border-0"
+									// initial={{
+									// 	borderRadius: '0.375rem',
+									// }}
+									// animate={{ borderRadius: '15rem' }}
+									// transition={{
+									// 	duration: 3.4,
+									// 	ease: [0.76, 0, 0.24, 1],
+									// 	repeat: Infinity,
+									// 	repeatType: 'reverse',
+									// }}
 								>
 									<Image
 										src={block.file.asset.url}
@@ -137,7 +161,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 											{getLocalizedValue(block.caption, lang)}
 										</p>
 									)}
-								</motion.div>
+								</div>
 							)
 						}
 

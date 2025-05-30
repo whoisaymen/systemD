@@ -164,8 +164,8 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 									</>
 								) : (
 									<>
-										<div className="relative flex aspect-square w-full items-center justify-center overflow-visible">
-											<AnimatedRect className="h-full w-full overflow-visible" />
+										<div className="relative flex aspect-square h-[50vh] w-full items-center justify-center rounded-md bg-primary">
+											{/* <AnimatedRect className="h-full w-full overflow-visible" /> */}
 										</div>
 										{/* {person.title && (
 											<p className="mt-4 text-center text-xl font-bold uppercase tracking-tighter text-primary">

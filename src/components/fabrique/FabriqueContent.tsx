@@ -148,11 +148,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				<div className="">
 					{fabrique.actions.map((action: any, index: number) => (
 						<div key={index} className="mb-0">
-							{/* <h1 className="mx-auto px-2 py-24 text-center text-5xl font-black uppercase leading-[1] tracking-tighter text-primary sm:py-4 sm:text-4xl">
-								{capitalizeFirstLetter(
-									getLocalizedValue(action.title, language).split(' - ')[0],
-								)}
-							</h1> */}
 							<Accordion type="single" collapsible>
 								<AccordionItem
 									value={`action-${index}`}
@@ -180,15 +175,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 									{/* Accordion Content for Action Text */}
 									<AccordionContent>
 										<div className="relative px-0 py-4 text-primary sm:py-10">
-											<span
-												className={`px-8 text-left text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary`}
-											>
-												{
-													getLocalizedValue(action.title, language).split(
-														' - ',
-													)[1]
-												}
-											</span>
 											<div className="mb-4 flex h-auto items-center justify-center px-8">
 												{/* Action Image */}
 												{action.image?.asset && (
@@ -225,6 +211,13 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 													}
 												</span>
 											</p> */}
+											<h2 className="px-4 text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
+												{
+													getLocalizedValue(action.title, language).split(
+														' - ',
+													)[1]
+												}
+											</h2>
 
 											{action.text?.[language]?.map((block: any) => {
 												// Check if the block is a list item
@@ -245,7 +238,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 												return (
 													<p
 														key={block._key}
-														className="mt-4 px-8 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
+														className="mt-4 px-4 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
 													>
 														{block.children
 															.map((child: any) => child.text)
@@ -276,13 +269,36 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 							Our Vision
 						</h1>
 					</div>
+
+					<div className="relative z-50 mt-16 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
+						{(
+							getLocalizedValue(fabrique.title, language) ||
+							'No title available'
+						)
+							.split(' ')
+							.map((word: string, index: number) => {
+								// Generate random rotation and position
+								const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
+								const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
+								const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
+
+								return (
+									<span
+										key={index}
+										className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl"
+										style={{
+											transform: `rotate(${randomRotation}deg)`,
+											marginTop: `${randomMarginTop}px`,
+											marginLeft: `${randomMarginLeft}px`,
+										}}
+									>
+										{word}
+									</span>
+								)
+							})}
+					</div>
 					{fabrique.vision.map((vision: any, index: number) => (
 						<div key={index} className="mt-8">
-							{/* Vision Title */}
-							{/* <h2 className="mx-auto px-2 py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
-								{getLocalizedValue(vision.title, language)}
-							</h2> */}
-
 							<div className="relative rounded-t-3xl px-8">
 								<h2 className="text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
 									{getLocalizedValue(vision.title, language)}
@@ -297,30 +313,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				</div>
 			)}
 
-			<div className="relative z-50 mt-16 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
-				{(getLocalizedValue(fabrique.title, language) || 'No title available')
-					.split(' ')
-					.map((word: string, index: number) => {
-						// Generate random rotation and position
-						const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
-						const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
-						const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
-
-						return (
-							<span
-								key={index}
-								className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl"
-								style={{
-									transform: `rotate(${randomRotation}deg)`,
-									marginTop: `${randomMarginTop}px`,
-									marginLeft: `${randomMarginLeft}px`,
-								}}
-							>
-								{word}
-							</span>
-						)
-					})}
-
+			<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
 				<div className="relative mt-24 flex h-[20vh] w-full items-center justify-center">
 					{/* Top left */}
 					<LogoShortTsx className="absolute right-16 top-0 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[-50deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />

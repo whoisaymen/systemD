@@ -4,7 +4,7 @@ import { motion } from 'motion/react'
 import Img from '@/ui/Img'
 import Link from 'next/link'
 import { getRandomRotationClass } from '@/lib/utils'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { IoGrid, IoList } from 'react-icons/io5'
 import ReadMore from '../common/ReadMore'
 import {
@@ -18,6 +18,7 @@ import FestivalCarousel from './FestivalCarousel'
 import BackToTopButton from '../common/BackToTop'
 import FilterIcon from '../svgs/FilterIcon'
 import { renderParagraph } from '../common/RenderParagraph'
+import { useRouter } from 'next/navigation'
 
 interface FestivalEditionContentProps {
 	festival: any
@@ -51,6 +52,21 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	const closeLightbox = () => {
 		setIsLightboxOpen(false)
 	}
+
+	function chunkArray(array: any[], size: number) {
+		return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
+			array.slice(i * size, i * size + size),
+		)
+	}
+
+	const photoRows = useMemo(
+		() =>
+			chunkArray(
+				festival.photoGallery.flatMap((gallery: any) => gallery.photos),
+				3,
+			),
+		[festival.photoGallery],
+	)
 
 	const handleAccordionToggle = (value: string) => {
 		setTimeout(() => {
@@ -95,6 +111,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		}
 		return 0
 	})
+
+	const router = useRouter()
 
 	return (
 		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
@@ -141,29 +159,30 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				/>
 			)} */}
 
-			{/* {festival.description && (
-				<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] p-6 shadow-sm dark:bg-secondary sm:py-10">
-					<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl">
-						{renderParagraph(
-							{ value: getLocalizedValue(festival.description, language) },
-							[],
-							'bg-primary text-primary dark:bg-dark dark:text-primary',
-						)}
-					</p>
-				</div>
-			)} */}
 			<div
-				className={`absolute -top-4 z-50 -rotate-6 rounded-md bg-grayDark px-2 text-3xl font-semibold text-dark sm:hidden`}
+				className={`absolute -top-4 rounded-md bg-primary px-2 text-3xl font-semibold text-dark sm:hidden`}
+			>
+				<button
+					onClick={() => router.push(`/${language}/memoire`)}
+					className=""
+					aria-label="Go back"
+				>
+					←
+				</button>
+			</div>
+			<div
+				className={`absolute -top-5 right-[4rem] -rotate-6 rounded-md bg-grayDark px-2 text-3xl font-semibold text-dark sm:hidden`}
 			>
 				<span>{festival.venue}</span>
 			</div>
 			<div
-				className={`absolute -top-1 right-2 z-50 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
+				className={`absolute -top-1 right-[0.5rem] rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
 			>
 				<span>{festival.year}</span>
 			</div>
+
 			{festival.filmSelection && festival.filmSelection.length > 0 && (
-				<div className="mb-8 pt-8" id="film-selection">
+				<div className="mb-8 pt-16" id="film-selection">
 					<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark">
 						<div className="flex items-center justify-center">
 							<motion.div
@@ -194,106 +213,141 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 						{isFilmSectionOpen && (
 							<div className="mt-0 flex w-full items-center justify-between gap-1 rounded-none border-0 border-b-2 border-primary bg-grayLight py-4 pb-2 dark:bg-dark lg:pt-0">
-								<div className="flex items-center justify-center">
+								<div className="flex items-center justify-center gap-2">
 									<button
 										onClick={() => setView('grid')}
-										className={`p-2 text-center font-bold tracking-tight transition-colors ${
-											view === 'grid'
-												? 'border-dark dark:border-dark dark:text-primary'
-												: 'border-dark bg-none text-dark dark:border-primary dark:text-grayDark'
-										}`}
+										className="relative p-2 text-center font-bold tracking-tight transition-colors"
+										aria-label="Grid view"
 									>
-										<IoGrid />
+										<motion.span
+											animate={
+												view === 'grid'
+													? {
+															scale: 1.25,
+															rotate: -8,
+															filter:
+																'drop-shadow(0 2px 8px var(--color-primary))',
+															opacity: 1,
+														}
+													: {
+															scale: 0.95,
+															rotate: 0,
+															filter: 'none',
+															opacity: 0.5,
+														}
+											}
+											transition={{
+												type: 'spring',
+												stiffness: 400,
+												damping: 22,
+											}}
+											className="inline-block"
+										>
+											<IoGrid
+												className={
+													view === 'grid'
+														? 'text-primary'
+														: 'text-dark dark:text-grayDark'
+												}
+												size={36}
+											/>
+										</motion.span>
 									</button>
 
 									<button
 										onClick={() => setView('list')}
-										className={`flex border-2 text-center font-bold tracking-tight transition-colors ${
-											view === 'list'
-												? 'border-dark dark:border-dark dark:text-primary'
-												: 'border-dark bg-none text-dark dark:border-primary dark:text-grayDark'
-										}`}
+										className="relative p-2 text-center font-bold tracking-tight transition-colors"
+										aria-label="List view"
 									>
-										<IoList />
+										<motion.span
+											animate={
+												view === 'list'
+													? {
+															scale: 1.25,
+															rotate: 8,
+															filter:
+																'drop-shadow(0 2px 8px var(--color-primary))',
+															opacity: 1,
+														}
+													: {
+															scale: 0.95,
+															rotate: 0,
+															filter: 'none',
+															opacity: 0.5,
+														}
+											}
+											transition={{
+												type: 'spring',
+												stiffness: 400,
+												damping: 22,
+											}}
+											className="inline-block"
+										>
+											<IoList
+												className={
+													view === 'list'
+														? 'text-primary'
+														: 'text-dark dark:text-grayDark'
+												}
+												size={36}
+											/>
+										</motion.span>
 									</button>
 								</div>
 
-								<div className="flex gap-6 tracking-tighter">
-									<button
-										onClick={() => {
-											setSortField('year')
-											setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-										}}
-										className={`relative flex items-center justify-center p-1 px-2 ${sortField === 'year' ? '' : ''}`}
-									>
-										{sortField === 'year' && (
-											<FilterIcon
-												theme={{
-													upArrow:
-														sortOrder === 'asc'
-															? 'var(--color-primary)'
-															: 'var(--color-grayDark)', // Use variable for ascending
-													downArrow:
-														sortOrder === 'desc'
-															? 'var(--color-primary)'
-															: 'var(--color-grayDark)', // Use variable for descending
+								<div className="flex gap-6 text-sm tracking-tighter">
+									{[
+										{ field: 'year', label: 'Year' },
+										{ field: 'title', label: 'Title' },
+										{ field: 'director', label: 'Director' },
+									].map(({ field, label }) => (
+										<button
+											key={field}
+											onClick={() => {
+												setSortField(field as any)
+												setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+											}}
+											className={`relative flex items-center justify-center p-1 px-2`}
+										>
+											<motion.span
+												animate={
+													sortField === field
+														? {
+																scale: 1.2,
+																rotate: sortOrder === 'asc' ? -15 : 15,
+																color: 'var(--color-primary)',
+															}
+														: { scale: 1, rotate: 0, color: 'inherit' }
+												}
+												transition={{
+													type: 'spring',
+													stiffness: 400,
+													damping: 22,
 												}}
-												className="absolute -left-2 h-3"
-											/>
-										)}
-										Year
-									</button>
-									<button
-										onClick={() => {
-											setSortField('title')
-											setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-										}}
-										className={`relative flex items-center justify-center p-1 px-2 ${sortField === 'title' ? '' : ''}`}
-									>
-										{sortField === 'title' && (
-											<FilterIcon
-												theme={{
-													upArrow:
-														sortOrder === 'asc'
-															? 'var(--color-primary)'
-															: 'var(--color-grayDark)', // Use variable for ascending
-													downArrow:
-														sortOrder === 'desc'
-															? 'var(--color-primary)'
-															: 'var(--color-grayDark)', // Use variable for descending
-												}}
-												className="absolute -left-2 h-3"
-											/>
-										)}
-										Title
-									</button>
-									<button
-										onClick={() => {
-											setSortField('director')
-											setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-										}}
-										className={`relative flex items-center justify-center p-1 px-2 ${sortField === 'director' ? '' : ''}`}
-									>
-										Director
-										{sortField === 'director' && (
-											<FilterIcon
-												theme={{
-													upArrow:
-														sortOrder === 'asc'
-															? 'var(--color-primary)'
-															: 'var(--color-grayDark)', // Use variable for ascending
-													downArrow:
-														sortOrder === 'desc'
-															? 'var(--color-primary)'
-															: 'var(--color-grayDark)', // Use variable for descending
-												}}
-												className="absolute -left-2 h-3"
-											/>
-										)}
-									</button>
+												className="flex items-center"
+											>
+												{sortField === field && (
+													<FilterIcon
+														theme={{
+															upArrow:
+																sortOrder === 'asc'
+																	? 'var(--color-primary)'
+																	: 'var(--color-grayDark)',
+															downArrow:
+																sortOrder === 'desc'
+																	? 'var(--color-primary)'
+																	: 'var(--color-grayDark)',
+														}}
+														className="mr-1 h-3"
+													/>
+												)}
+												<span className="font-bold">{label}</span>
+											</motion.span>
+										</button>
+									))}
 									<button
 										onClick={() => setShowWinnersOnly(!showWinnersOnly)}
-										className={`p-1 px-2 ${showWinnersOnly ? '' : ''}`}
+										className={`p-1 px-2`}
 									>
 										{showWinnersOnly ? 'Show All' : 'Winners'}
 									</button>
@@ -597,7 +651,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				</AccordionItem>
 			</Accordion>
 
-			<div className="pt-0" id="photo-gallery">
+			<div className="pb-6 pt-0" id="photo-gallery">
 				<div className="z-10 -mt-5 flex justify-center">
 					<motion.div
 						animate={{
@@ -629,7 +683,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							</h3>
 						</div>
 						{/* Photo Gallery */}
-						<div className="grid w-full grid-cols-3 gap-y-2 bg-grayLight pt-4 dark:bg-dark sm:grid-cols-2 lg:grid-cols-3">
+						{/* <div className="grid w-full grid-cols-3 gap-y-2 bg-grayLight pt-4 dark:bg-dark sm:grid-cols-2 lg:grid-cols-3">
 							{festival.photoGallery.flatMap((gallery: any) =>
 								gallery.photos.map((photo: any, index: number) => (
 									<button
@@ -637,8 +691,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										onClick={() => openLightbox(index)}
 										className="relative focus:outline-none"
 									>
-										{/* Left Film Roll */}
-										{/* <div className="absolute top-1 h-[2.5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:15px_11px] bg-center bg-repeat-x sm:w-full"></div> */}
 										<div
 											className="absolute top-1 h-[2.5%] w-full sm:w-full"
 											style={{
@@ -651,9 +703,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												backgroundColor: 'var(--color-dark)', // Control the color here
 											}}
 										></div>
-
-										{/* Right Film Roll */}
-										{/* <div className="absolute bottom-1 h-[2.5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:15px_11px] bg-center bg-repeat-x sm:w-full"></div> */}
 
 										<div
 											className="absolute bottom-1 h-[2.5%] w-full sm:w-full"
@@ -677,6 +726,44 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									</button>
 								)),
 							)}
+						</div> */}
+						<div className="relative -space-y-4 pt-4">
+							{photoRows.map((row, rowIndex) => (
+								<div
+									key={rowIndex}
+									className="relative flex flex-col items-center justify-center rounded-md bg-grayDark py-4"
+								>
+									{/* Top perforation */}
+									<div className="absolute left-0 top-1 flex w-full justify-between px-2">
+										{[...Array(12)].map((_, i) => (
+											<div key={i} className="h-2 w-4 rounded-sm bg-dark" />
+										))}
+									</div>
+									{/* Bottom perforation */}
+									<div className="absolute bottom-1 left-0 flex w-full justify-between px-2">
+										{[...Array(12)].map((_, i) => (
+											<div key={i} className="h-2 w-4 rounded-sm bg-dark" />
+										))}
+									</div>
+									{/* Images */}
+									<div className="z-10 grid w-full max-w-3xl grid-cols-3">
+										{row.map((photo: any, index: number) => (
+											<button
+												key={index}
+												onClick={() => openLightbox(rowIndex * 3 + index)}
+												className="focus:outline-none"
+											>
+												<Img
+													image={photo}
+													src={photo.asset.url}
+													alt={`Photo ${rowIndex * 3 + index + 1}`}
+													className="aspect-square h-auto w-full rounded-none object-cover"
+												/>
+											</button>
+										))}
+									</div>
+								</div>
+							))}
 						</div>
 
 						{/* Lightbox Modal */}
@@ -729,6 +816,18 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					)
 				})}
 			</div>
+
+			{festival.description && (
+				<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] p-6 shadow-sm dark:bg-secondary sm:py-10">
+					<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl">
+						{renderParagraph(
+							{ value: getLocalizedValue(festival.description, language) },
+							[],
+							'bg-primary text-primary dark:bg-dark dark:text-primary',
+						)}
+					</p>
+				</div>
+			)}
 
 			{festival.pressLink && (
 				<a

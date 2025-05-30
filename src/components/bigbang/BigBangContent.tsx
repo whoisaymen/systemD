@@ -71,7 +71,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 				</button>
 			</div>
 
-			<div className="flex w-full flex-col space-y-1 rounded-md p-2 sm:my-1 sm:min-h-svh sm:p-0">
+			<div className="flex w-full flex-col space-y-1 rounded-md sm:my-1 sm:min-h-svh sm:p-0">
 				<div className="hidden h-full w-full bg-gradient-to-b from-grayLight to-grayDark/25 px-64 py-20 shadow-inner dark:from-dark dark:to-grayDark/25 sm:block">
 					<BigBangLogoMobile
 						theme={themeColors.memoire}
