@@ -55,7 +55,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 						activeTab === 'short'
 							? 'bg-primary text-dark'
 							: 'border-dark bg-dark text-primary dark:border-primary dark:bg-dark dark:text-primary'
-					} rounded-full transition-all`}
+					} rounded-md transition-all`}
 				>
 					Short Story
 				</button>
@@ -65,7 +65,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 						activeTab === 'long'
 							? 'bg-primary text-dark'
 							: 'bg-primary text-dark dark:bg-dark dark:text-primary'
-					} rounded-full transition-all`}
+					} rounded-md transition-all`}
 				>
 					Long Story
 				</button>

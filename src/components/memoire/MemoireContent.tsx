@@ -9,6 +9,7 @@ import LogoShortTsx from '../svgs/LogoShort'
 import Link from 'next/link'
 import { getRandomRotationClass } from '@/lib/utils'
 import MemoireLogoMobile from './MemoireLogoMobile'
+import EmptyCinema from './EmptyCinema'
 
 interface MemoireContentProps {
 	memoire: any
@@ -58,6 +59,11 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		},
 	}
 
+	const emptyCinemaTheme = {
+		fill: 'var(--color-primary)',
+		shadow: 'var(--color-grayDark)',
+	}
+
 	return (
 		<div className="no-scrollbar rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:to-grayDark/25 sm:px-0 sm:shadow-inner">
 			{/* <motion.div
@@ -79,6 +85,10 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					{getLocalizedValue(memoire.description, language)}
 				</p>
 			</motion.div> */}
+			{/* <EmptyCinema
+				theme={emptyCinemaTheme}
+				className="w-full scale-150 text-dark"
+			/> */}
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
 				<div className="grid grid-cols-1 gap-4 pb-16 pt-4 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0">

@@ -189,7 +189,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 								<>
 									<div
 										key={`mediaTeaserBlock-${index}`}
-										className="mx-0 h-[80vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
+										className="mx-0 h-[75vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
 									>
 										<video
 											// initial={{

@@ -212,7 +212,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						{/* </div> */}
 
 						{isFilmSectionOpen && (
-							<div className="mt-0 flex w-full items-center justify-between gap-1 rounded-none border-0 border-b-2 border-primary bg-grayLight py-4 pb-2 dark:bg-dark lg:pt-0">
+							<div className="mt-0 flex w-full items-center justify-between gap-1 rounded-none border-0 border-b-2 border-primary bg-grayLight py-4 pb-2 pt-0 dark:bg-dark lg:pt-0">
 								<div className="flex items-center justify-center gap-2">
 									<button
 										onClick={() => setView('grid')}
@@ -225,8 +225,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													? {
 															scale: 1.25,
 															rotate: -8,
-															filter:
-																'drop-shadow(0 2px 8px var(--color-primary))',
+															// filter:
+															// 	'drop-shadow(0 2px 8px var(--color-primary))',
 															opacity: 1,
 														}
 													: {
@@ -265,8 +265,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													? {
 															scale: 1.25,
 															rotate: 8,
-															filter:
-																'drop-shadow(0 2px 8px var(--color-primary))',
+															// filter:
+															// 	'drop-shadow(0 2px 8px var(--color-primary))',
 															opacity: 1,
 														}
 													: {
@@ -357,7 +357,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					</div>
 
 					{isFilmSectionOpen && (
-						<div className="-mt-1">
+						<div className="-mt-1 pb-16">
 							{view === 'grid' ? (
 								<ul className="sticky top-32 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:px-4 lg:grid-cols-3">
 									{sortedFilms.map((film: any, index: number) => (
@@ -727,7 +727,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								)),
 							)}
 						</div> */}
-						<div className="relative -space-y-4 pt-4">
+						<div className="relative space-y-4 pt-4">
 							{photoRows.map((row, rowIndex) => (
 								<div
 									key={rowIndex}

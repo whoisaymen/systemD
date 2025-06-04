@@ -67,25 +67,6 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 	return (
 		<div className="relative flex h-full w-full flex-col items-center justify-center">
 			<div className="relative flex h-full w-full max-w-5xl items-start justify-center">
-				{/* <button
-					onClick={prev}
-					className="absolute left-4 top-32 z-40 rounded-md bg-transparent p-0"
-					aria-label="Previous"
-				>
-					<span className="block -rotate-0">
-						<AnimatedRect className="h-full w-12 overflow-visible" />
-					</span>
-				</button>
-				<button
-					onClick={next}
-					className="absolute right-2 top-32 z-40 rounded-md bg-transparent p-0"
-					aria-label="Next"
-				>
-					<span className="block">
-						<AnimatedRect className="h-full w-12 overflow-visible" />
-					</span>
-				</button> */}
-				{/* Cards */}
 				<AnimatePresence initial={false} custom={direction}>
 					{[-1, 0, 1].map((offset) => {
 						const idx = getIdx(offset)
@@ -97,7 +78,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 						return (
 							<motion.div
 								key={person._id}
-								className="absolute m-4 mt-8 flex flex-col items-center justify-center"
+								className="absolute m-4 mt-8 flex flex-col items-center justify-center pb-20"
 								style={{
 									width: isActive ? CARD_WIDTH : CARD_WIDTH * 0.7,
 									zIndex: isActive ? 30 : 20,
@@ -126,7 +107,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 							>
 								{isActive ? (
 									<>
-										<div className="aspect-square w-full overflow-hidden rounded-3xl border-2 border-dark dark:border-primary">
+										<div className="aspect-square w-full rounded-3xl border-2 border-dark dark:border-primary">
 											<Img
 												image={person.image}
 												src={
@@ -135,7 +116,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 														: ''
 												}
 												alt={person.name}
-												className="h-full w-full object-cover"
+												className="h-full w-full rounded-3xl object-cover"
 											/>
 										</div>
 										<div className="relative mt-8">
@@ -165,20 +146,27 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 								) : (
 									<>
 										<div className="relative flex aspect-square h-[50vh] w-full items-center justify-center rounded-md bg-primary">
-											{/* <AnimatedRect className="h-full w-full overflow-visible" /> */}
+											<button
+												onClick={prev}
+												className="absolute bottom-1/2 left-2 z-40 px-3 py-1 text-2xl font-bold text-dark hover:bg-primary"
+												aria-label="Previous"
+											>
+												›
+											</button>
+											<button
+												onClick={next}
+												className="absolute bottom-1/2 right-2 z-40 px-3 py-1 text-2xl font-bold text-dark hover:bg-primary"
+												aria-label="Next"
+											>
+												‹
+											</button>
 										</div>
-										{/* {person.title && (
-											<p className="mt-4 text-center text-xl font-bold uppercase tracking-tighter text-primary">
-												{getLocalizedValue(person.title, language)}
-											</p>
-										)} */}
 									</>
 								)}
 							</motion.div>
 						)
 					})}
 				</AnimatePresence>
-				{/* Navigation arrows */}
 			</div>
 			<button
 				onClick={prev}
