@@ -28,9 +28,9 @@ export default {
 				primary: '#DEFE04',
 				secondary: '#DEFE04',
 				tertiary: '#222223',
-				// dark: '#123DA6',
+				dark: '#123DA6',
 				// dark: '#2c1',
-				dark: '#222223',
+				// dark: '#222223',
 
 				// dark: '#000',
 				grayLight: '#DADADA',
