@@ -15,7 +15,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 		array?.find((v) => v?._key === lang)?.value
 
 	return (
-		<div className="space-y-0 pt-2" id="long-story">
+		<div className="space-y-0 pb-16 pt-2" id="long-story">
 			<div className="fixed bottom-8 right-12 z-50">
 				<BackToTopButton targetId="long-story" />
 			</div>
@@ -47,7 +47,10 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 							// 	<div className="absolute bottom-2 left-0 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
 							// 	<div className="absolute bottom-2 right-0 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
 							// </div>
-							<div className="relative flex flex-wrap items-center justify-center gap-2 rounded-none py-8 lg:hidden">
+							<div className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-2 py-8 lg:hidden">
+								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl">
+									"
+								</span>
 								{getLocalizedValue(block.text, lang)
 									.split(' ')
 									.map((word: string, index: number) => {
@@ -70,6 +73,14 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 											</span>
 										)
 									})}
+								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl">
+									"
+								</span>
+								{block.author && (
+									<div className="w-full pr-4 pt-0 text-right text-sm font-normal tracking-tighter text-dark dark:text-primary">
+										{block.author}
+									</div>
+								)}
 							</div>
 						)
 
@@ -79,14 +90,19 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={index}
-								className="px-4 pt-8 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary"
+								className="px-4 pb-8 pt-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary"
 								style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 							>
 								{block.text
 									.filter((paragraph: any) => paragraph._key === lang)
 									.map((paragraph: any, idx: number) => (
 										<p key={idx}>
-											{renderParagraph(paragraph, [], 'bg-primary text-dark ')}
+											{renderParagraph(
+												paragraph,
+												[],
+												'bg-primary text-dark',
+												'w-[6rem] sm:w-40',
+											)}
 										</p>
 									))}
 							</div>
@@ -137,7 +153,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 							return (
 								<div
 									key={index}
-									className="overflow-hidden rounded-none border-0 border-primary shadow-md sm:h-[65vh] sm:border-0"
+									className="overflow-hidden rounded-none border-0 border-primary px-4 shadow-md sm:h-[65vh] sm:border-0"
 									// initial={{
 									// 	borderRadius: '0.375rem',
 									// }}

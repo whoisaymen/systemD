@@ -157,7 +157,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 							return (
 								<div
 									key={`customTextBlock-${index}`}
-									className="flex flex-col items-center rounded-md px-0 text-xl font-medium leading-tight tracking-tighter sm:h-full sm:px-0 sm:text-2xl"
+									className="flex flex-col items-center rounded-md px-0"
 								>
 									<Accordion type="single" collapsible>
 										<AccordionItem
@@ -170,7 +170,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 												{block.title}
 											</AccordionTrigger>
 											<AccordionContent>
-												<div className="z-0 w-full rounded-md border-2 border-dark bg-primary p-6 text-xl font-medium leading-[1.2] text-dark shadow-sm sm:border-0 sm:bg-dark sm:text-xl sm:text-primary">
+												<div className="px-2 pb-0 pt-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary">
 													{block.content && block.content[language] && (
 														<PortableText value={block.content[language]} />
 													)}
@@ -189,7 +189,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 								<>
 									<div
 										key={`mediaTeaserBlock-${index}`}
-										className="mx-0 h-[75vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
+										className="mx-0 h-[65vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
 									>
 										<video
 											// initial={{
@@ -295,37 +295,32 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 														block.juryMembers.map((member: any) => (
 															<div
 																key={member._id}
-																className="flex w-full flex-col items-center justify-center px-0 sm:w-1/2"
+																className="flex w-full flex-col items-start justify-center px-0 sm:w-1/2"
 															>
-																{/* Jury Member Image */}
-																{member.image && (
-																	<div className="relative w-1/2 overflow-hidden pl-16 sm:px-0">
-																		<Img
-																			image={member.image}
-																			src={member.image?.asset.url}
-																			alt={member.name}
-																			className="z-0 h-full w-full border-0 border-dark object-cover dark:border-primary sm:border-0"
-																		/>
-																	</div>
+																<div className="relative flex items-center justify-center">
+																	{member.image && (
+																		<div className="relative w-[35%] overflow-hidden sm:px-0">
+																			<Img
+																				image={member.image}
+																				src={member.image?.asset.url}
+																				alt={member.name}
+																				className="z-0 h-full w-full border-0 border-dark object-cover dark:border-primary sm:border-0"
+																			/>
+																		</div>
+																	)}
+																</div>
+																{member.name && (
+																	<p className="z-30 inline-block w-full text-center text-xl font-bold uppercase tracking-tighter text-primary">
+																		{member.name}
+																	</p>
 																)}
+																{/* Jury Member Image */}
 
 																{/* Biography */}
 																{member.biography && (
-																	<div className="relative mt-8 flex">
-																		{/* Person Title */}
-																		{member.name && (
-																			<p
-																				className="absolute bottom-0 left-6 z-30 inline-block -rotate-90 text-2xl font-bold uppercase leading-[0] tracking-tighter text-primary"
-																				style={{
-																					transformOrigin: 'left bottom',
-																				}}
-																			>
-																				{member.name}
-																			</p>
-																		)}
-
+																	<div className="relative mt-4">
 																		{/* Biography Text */}
-																		<p className="ml-16 py-2 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+																		<p className="px-2 py-2 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
 																			{getLocalizedValue(
 																				member.biography,
 																				language,

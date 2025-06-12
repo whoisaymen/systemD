@@ -5,6 +5,7 @@ export const renderParagraph = (
 	paragraph: any,
 	titles: string[],
 	logoStyle?: string,
+	logoSize?: string,
 ) => {
 	if (!paragraph?.value) return null
 
@@ -75,7 +76,7 @@ export const renderParagraph = (
 						}}
 					>
 						<LogoShortTsx
-							className={`mr-[0.10rem] inline-block h-auto w-[9rem] rounded-md px-2 py-1 sm:w-[15rem] ${randomRotation} ${logoStyle}`}
+							className={`mr-[0.10rem] inline-block h-auto w-[9rem] rounded-md px-2 py-1 sm:w-[15rem] ${randomRotation} ${logoStyle} ${logoSize || 'w-[9rem] sm:w-[15rem]'}`}
 						/>
 					</motion.span>
 				)
