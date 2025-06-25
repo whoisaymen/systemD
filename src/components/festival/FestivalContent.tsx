@@ -5,7 +5,7 @@ import FestivalTicket from './FestivalTicket'
 import { getRandomRotationClass } from '@/lib/utils'
 import FestivalSparkleIcon from './FestivalSparkleIcon'
 import FestivalSparklesIcon from './FestivalSparklesIcon'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { IoCalendar, IoGrid, IoList } from 'react-icons/io5'
 import {
@@ -19,6 +19,8 @@ import { renderParagraph } from '../common/RenderParagraph'
 import FallingSparkle from './FallingSparkle'
 import BackToTopButton from '../common/BackToTop'
 
+import Snowfall from 'react-snowfall'
+
 interface FestivalContentProps {
 	festival: any
 	language: string
@@ -29,6 +31,8 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	language,
 }) => {
 	const [view, setView] = useState<'calendar' | 'list'>('list')
+	const [isFullscreen, setIsFullscreen] = useState(false)
+
 	let { scrollY } = useScroll()
 	let borderRadius = useTransform(scrollY, (value) => Math.max(80 - value, 10))
 
@@ -44,8 +48,6 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		return <div>No content available</div>
 	}
 
-	console.log(festival.blocks)
-
 	const themeColors = {
 		dark: {
 			fill: 'var(--color-dark)',
@@ -57,12 +59,37 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 			stroke: 'var(--color-dark)',
 		},
 	}
+
+	const sparkleImg = new window.Image()
+	sparkleImg.src = '/assets/svg/SparkleSnow2.svg'
+
 	return (
 		<div
 			key={festival._id}
+			id="festival-content"
 			className="flex h-full w-full flex-col space-y-1 rounded-md p-2 px-4 pb-32 sm:mt-0 sm:h-svh sm:p-0"
 		>
-			{/* <FallingSparkle /> */}
+			{/* <div className="fixed bottom-8 right-12 z-50">
+				<BackToTopButton targetId="festival-content" />
+			</div> */}
+
+			<Snowfall
+				// style={{
+				// 	position: 'fixed',
+				// 	zIndex: 1000,
+				// 	top: 0,
+				// 	left: 0,
+				// 	width: '100%',
+				// 	height: '100%',
+				// 	pointerEvents: 'none',
+				// }}
+				snowflakeCount={10}
+				speed={[0.2, 0.5]}
+				wind={[0, 0]}
+				radius={[10, 40]}
+				rotationSpeed={[0.2, 0.5]}
+				images={[sparkleImg]}
+			/>
 			{/* {festival.description && (
 				<div className="relative mt-4 h-full py-6 pb-12">
 					{getLocalizedValue(festival.description, language)
@@ -187,21 +214,12 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 								: ''
 							return (
 								<>
-									<div
+									{/* <div
 										key={`mediaTeaserBlock-${index}`}
 										className="mx-0 h-[65vh] w-auto pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0"
 									>
 										<video
-											// initial={{
-											// 	borderRadius: '0.375rem',
-											// }}
-											// animate={{ borderRadius: '15rem' }}
-											// transition={{
-											// 	duration: 2,
-											// 	ease: [0.76, 0, 0.24, 1],
-											// 	repeat: Infinity,
-											// 	repeatType: 'reverse',
-											// }}
+										
 											className="h-full w-full transform rounded-3xl border-[3px] border-primary object-cover sm:rounded-md sm:border-0"
 											autoPlay
 											loop
@@ -214,30 +232,59 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											/>
 											Your browser does not support the video tag.
 										</video>
-									</div>
-									{/* {festival.description && (
-										<div className="relative mt-4 h-full py-6 pb-12">
-											{getLocalizedValue(festival.description, language)
-												.split('\n\n')
-												.map((paragraph: string, i: number) => (
-													<p
-														key={i}
-														className="px-8 text-xl font-semibold leading-[1] text-dark dark:text-primary"
-													>
-														{renderParagraph(
-															{ value: paragraph },
-															[],
-															'bg-dark text-primary dark:bg-primary dark:text-dark',
-														)}
-													</p>
-												))}
+									</div> */}
 
-											<div className="absolute left-0 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-											<div className="absolute right-0 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-											<div className="absolute bottom-2 left-0 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
-											<div className="absolute bottom-2 right-0 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
-										</div>
-									)} */}
+									<motion.div
+										key={`mediaTeaserBlock-${index}`}
+										layout
+										className={`mx-0 w-auto cursor-pointer overflow-hidden rounded-lg pb-10 pt-2 sm:h-[50vh] sm:pb-0 sm:pt-0 ${
+											isFullscreen
+												? 'fixed inset-0 z-50 w-screen rounded-none bg-dark'
+												: ''
+										}`}
+										style={{
+											height: isFullscreen ? '100%' : '65vh',
+											width: isFullscreen ? '100%' : '100%',
+										}}
+										onClick={() => !isFullscreen && setIsFullscreen(true)}
+										transition={{
+											duration: 0.6,
+											ease: [0.32, 0.72, 0, 1],
+										}}
+									>
+										<video
+											className="h-full w-full transform rounded-3xl border-[3px] border-primary object-cover sm:rounded-md sm:border-0"
+											autoPlay
+											muted
+											loop
+											playsInline
+										>
+											<source
+												src="/assets/videos/teaser2.mp4"
+												type="video/mp4"
+											/>
+											Your browser does not support the video tag.
+										</video>
+
+										{/* Close button for fullscreen */}
+										<AnimatePresence>
+											{isFullscreen && (
+												<motion.button
+													initial={{ opacity: 0, scale: 0.8 }}
+													animate={{ opacity: 1, scale: 1 }}
+													exit={{ opacity: 0, scale: 0.8 }}
+													transition={{ delay: 0.3 }}
+													onClick={(e) => {
+														e.stopPropagation()
+														setIsFullscreen(false)
+													}}
+													className="absolute right-2 top-2 z-10 p-3 text-primary"
+												>
+													Close
+												</motion.button>
+											)}
+										</AnimatePresence>
+									</motion.div>
 								</>
 							)
 
@@ -271,6 +318,23 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 						// 	)
 
 						case 'juryBlock':
+							const [selectedMemberId, setSelectedMemberId] = useState<
+								string | null
+							>(null)
+
+							const toggleMember = (id: string) => {
+								setSelectedMemberId((prev) => (prev === id ? null : id))
+							}
+
+							useEffect(() => {
+								if (
+									block.juryMembers?.length > 0 &&
+									selectedMemberId === null
+								) {
+									setSelectedMemberId(block.juryMembers[0]._id)
+								}
+							}, [block.juryMembers, selectedMemberId])
+
 							if (!block.show) return null
 							return (
 								<div
@@ -278,9 +342,9 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 									className="relative my-0 flex h-full w-full flex-col items-center sm:px-0"
 									id="jury-block"
 								>
-									<div className="fixed bottom-8 right-12 z-50">
+									{/* <div className="fixed bottom-8 right-12 z-50">
 										<BackToTopButton targetId="jury-block" />
-									</div>
+									</div> */}
 									<Accordion type="single" collapsible>
 										<AccordionItem
 											value="item-1"
@@ -290,50 +354,71 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 												Jury
 											</AccordionTrigger>
 											<AccordionContent>
-												<div className="flex flex-wrap gap-8 pb-16">
+												{/* Jury Grid */}
+												<div className="grid w-full grid-cols-3 gap-1">
 													{block.juryMembers && block.juryMembers.length > 0 ? (
 														block.juryMembers.map((member: any) => (
 															<div
 																key={member._id}
-																className="flex w-full flex-col items-start justify-center px-0 sm:w-1/2"
+																className="flex cursor-pointer flex-col items-center px-0"
+																onClick={() => toggleMember(member._id)}
 															>
-																<div className="relative flex items-center justify-center">
-																	{member.image && (
-																		<div className="relative w-[35%] overflow-hidden sm:px-0">
-																			<Img
-																				image={member.image}
-																				src={member.image?.asset.url}
-																				alt={member.name}
-																				className="z-0 h-full w-full border-0 border-dark object-cover dark:border-primary sm:border-0"
-																			/>
-																		</div>
+																<div
+																	className={`relative h-full w-full overflow-hidden rounded-lg border-[3px] sm:px-0 ${
+																		selectedMemberId === member._id
+																			? 'border-primary'
+																			: 'border-dark'
+																	}`}
+																>
+																	<Img
+																		image={member.image}
+																		src={member.image?.asset.url}
+																		alt={member.name}
+																		className="z-0 h-full w-full border-0 border-dark object-cover dark:border-primary sm:border-0"
+																	/>
+																	{selectedMemberId !== member._id && (
+																		<div className="absolute inset-0 z-10 bg-dark/80" />
+																		// Use your darkGray color here, e.g. bg-grayDark/70 if you have it in Tailwind config
 																	)}
 																</div>
-																{member.name && (
-																	<p className="z-30 inline-block w-full text-center text-xl font-bold uppercase tracking-tighter text-primary">
-																		{member.name}
-																	</p>
-																)}
-																{/* Jury Member Image */}
-
-																{/* Biography */}
-																{member.biography && (
-																	<div className="relative mt-4">
-																		{/* Biography Text */}
-																		<p className="px-2 py-2 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
-																			{getLocalizedValue(
-																				member.biography,
-																				language,
-																			)}
-																		</p>
-																	</div>
-																)}
+																{/* <h2 className="mt-2 text-left text-base font-bold leading-tight tracking-tighter text-primary">
+																	{member.name}
+																</h2> */}
 															</div>
 														))
 													) : (
 														<p>No jury members found</p>
 													)}
 												</div>
+
+												{/* Full-width bio section */}
+												{selectedMemberId && (
+													<div className="mt-4 w-full px-0 sm:px-12">
+														{(() => {
+															const selectedMember = block.juryMembers.find(
+																(m: any) => m._id === selectedMemberId,
+															)
+															if (!selectedMember) return null
+															return (
+																<div className="w-full text-primary">
+																	{selectedMember.name && (
+																		<h2 className="mb-2 text-2xl font-bold tracking-tight">
+																			{selectedMember.name}
+																		</h2>
+																	)}
+																	{selectedMember.biography && (
+																		<p className="text-base leading-tight tracking-tighter">
+																			{getLocalizedValue(
+																				selectedMember.biography,
+																				language,
+																			)}
+																		</p>
+																	)}
+																</div>
+															)
+														})()}
+													</div>
+												)}
 											</AccordionContent>
 										</AccordionItem>
 									</Accordion>

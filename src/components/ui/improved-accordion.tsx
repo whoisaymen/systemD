@@ -2,8 +2,6 @@
 import { motion } from 'motion/react'
 import * as React from 'react'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { ChevronDown } from 'lucide-react'
-
 import { cn } from '@/lib/utils'
 
 const Accordion = AccordionPrimitive.Root
@@ -17,56 +15,70 @@ const AccordionItem = React.forwardRef<
 		className={cn('border-b-none', className)}
 		{...props}
 	/>
-	// <div ref={ref}>
-	// 	<AccordionPrimitive.Item
-	// 		className={cn('border-b-none', className)}
-	// 		{...props}
-	// 	/>
-	// </div>
 ))
 AccordionItem.displayName = 'AccordionItem'
-
-// Generate a random delay between min and max values
-const getRandomDelay = (min = 0.1, max = 0.8) => {
-	return Math.random() * (max - min) + min
-}
 
 const AccordionTrigger = React.forwardRef<
 	React.ElementRef<typeof AccordionPrimitive.Trigger>,
 	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & {
-		animationDelay?: number
+		rotation?: number
+		onOpenChange?: (isOpen: boolean) => void
 	}
->(({ className, children, animationDelay, ...props }, ref) => {
-	// Use provided delay or generate a random one if not specified
-	const delay = animationDelay !== undefined ? animationDelay : getRandomDelay()
+>(({ className, children, rotation = 0, onOpenChange, ...props }, ref) => {
+	const triggerRef = React.useRef<HTMLButtonElement>(null)
+
+	React.useEffect(() => {
+		const trigger = triggerRef.current
+		if (!trigger) return
+
+		const handleClick = () => {
+			// Small delay to ensure the accordion state has updated
+			setTimeout(() => {
+				const isOpen = trigger.getAttribute('data-state') === 'open'
+				if (isOpen) {
+					// Scroll the trigger to near the top of the viewport
+					trigger.scrollIntoView({
+						behavior: 'smooth',
+						block: 'start',
+						inline: 'nearest',
+					})
+				}
+				onOpenChange?.(isOpen)
+			}, 50)
+		}
+
+		trigger.addEventListener('click', handleClick)
+		return () => trigger.removeEventListener('click', handleClick)
+	}, [onOpenChange])
 
 	return (
 		<motion.div
 			className="z-10"
-			animate={{
-				rotate: 1,
-				transition: {
-					duration: 0.3,
-					repeat: Infinity,
-					delay: delay,
-					repeatType: 'reverse',
-					ease: 'easeInOut',
-				},
-			}}
+			style={{ rotate: rotation }}
+			whileHover={{ scale: 1.02 }}
+			whileTap={{ scale: 0.98 }}
+			transition={{ duration: 0.2, ease: 'easeInOut' }}
 		>
 			<AccordionPrimitive.Header className="flex">
 				<AccordionPrimitive.Trigger
-					ref={ref}
+					ref={(node) => {
+						triggerRef.current = node
+						if (typeof ref === 'function') {
+							ref(node)
+						} else if (ref) {
+							ref.current = node
+						}
+					}}
 					className={cn(
-						'flex items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all',
+						'flex items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all duration-300',
 						'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary',
 						'data-[state=open]:border-primary data-[state=open]:bg-dark data-[state=open]:text-primary data-[state=open]:dark:bg-primary data-[state=open]:dark:text-dark',
+						'hover:shadow-lg',
 						className,
 					)}
 					{...props}
 				>
 					{children}
-					{/* <ChevronDown className="text-muted-foreground h-full w-12 shrink-0 transition-transform duration-200" /> */}
 				</AccordionPrimitive.Trigger>
 			</AccordionPrimitive.Header>
 		</motion.div>
@@ -80,10 +92,10 @@ const AccordionContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<AccordionPrimitive.Content
 		ref={ref}
-		className="h-full w-full overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+		className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 		{...props}
 	>
-		<div className={cn('pb-4 pt-0', className)}>{children}</div>
+		<div className={cn('pb-8 pt-4', className)}>{children}</div>
 	</AccordionPrimitive.Content>
 ))
 AccordionContent.displayName = AccordionPrimitive.Content.displayName

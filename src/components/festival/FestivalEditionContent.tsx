@@ -4,7 +4,7 @@ import { motion } from 'motion/react'
 import Img from '@/ui/Img'
 import Link from 'next/link'
 import { getRandomRotationClass } from '@/lib/utils'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { IoGrid, IoList } from 'react-icons/io5'
 import ReadMore from '../common/ReadMore'
 import {
@@ -18,7 +18,8 @@ import FestivalCarousel from './FestivalCarousel'
 import BackToTopButton from '../common/BackToTop'
 import FilterIcon from '../svgs/FilterIcon'
 import { renderParagraph } from '../common/RenderParagraph'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import ArrowRight from '../common/ArrowRight'
 
 interface FestivalEditionContentProps {
 	festival: any
@@ -113,6 +114,45 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	})
 
 	const router = useRouter()
+	const searchParams = useSearchParams()
+
+	function updateQuery(params: Record<string, string | undefined>) {
+		const newParams = new URLSearchParams(searchParams.toString())
+		Object.entries(params).forEach(([key, value]) => {
+			if (value === undefined) {
+				newParams.delete(key)
+			} else {
+				newParams.set(key, value)
+			}
+		})
+		router.replace(`?${newParams.toString()}`, { scroll: false })
+	}
+
+	useEffect(() => {
+		const sort = searchParams.get('sort') as 'year' | 'title' | 'director'
+		const order = searchParams.get('order') as 'asc' | 'desc'
+		const winners = searchParams.get('winners') === '1'
+		const view = searchParams.get('view') as 'grid' | 'list'
+
+		if (sort) setSortField(sort)
+		if (order) setSortOrder(order)
+		setShowWinnersOnly(winners)
+		if (view) setView(view)
+
+		// Always open dropdown if coming back from a film (scroll position exists)
+		const scroll = sessionStorage.getItem('festivalScroll')
+		if (scroll) {
+			setIsFilmSectionOpen(true)
+			window.scrollTo(0, parseInt(scroll, 10))
+			sessionStorage.removeItem('festivalScroll')
+			return
+		}
+
+		// Otherwise, open dropdown if any filter/sort/view param is present
+		if (sort || order || winners || view) {
+			setIsFilmSectionOpen(true)
+		}
+	}, [])
 
 	return (
 		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
@@ -160,32 +200,58 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			)} */}
 
 			<div
-				className={`absolute -top-4 rounded-md bg-primary px-2 text-3xl font-semibold text-dark sm:hidden`}
+				className={`absolute -top-4 rounded-md text-3xl font-semibold text-dark sm:hidden`}
 			>
 				<button
 					onClick={() => router.push(`/${language}/memoire`)}
 					className=""
 					aria-label="Go back"
 				>
-					←
+					<ArrowRight
+						theme={{ fill: 'var(--color-primary)' }}
+						className="h-auto w-10 -rotate-180 lg:w-9"
+					/>
 				</button>
 			</div>
-			<div
-				className={`absolute -top-5 right-[4rem] -rotate-6 rounded-md bg-grayDark px-2 text-3xl font-semibold text-dark sm:hidden`}
+			<motion.div
+				className={`absolute -top-5 right-[4rem] z-10 -rotate-6 rounded-md bg-grayDark px-2 text-3xl font-semibold text-dark sm:hidden`}
+				initial={{ rotate: -6 }}
+				animate={{
+					scale: [1, 0.9, 1, 1, 1],
+					rotate: [-6, 360, -6, -6, -6],
+					transition: {
+						duration: 5,
+						ease: [0.76, 0, 0.24, 1],
+						// repeat: Infinity,
+						// delay: 2.5,
+					},
+				}}
 			>
 				<span>{festival.venue}</span>
-			</div>
-			<div
-				className={`absolute -top-1 right-[0.5rem] rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
+			</motion.div>
+			<motion.div
+				className={`absolute -top-1 right-[0.5rem] z-20 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
+				initial={{ rotate: 6 }}
+				animate={{
+					scale: [1, 0.9, 1, 1, 1],
+					rotate: [6, 360, 6, 6, 6],
+					transition: {
+						duration: 5,
+						ease: [0.76, 0, 0.24, 1],
+						// repeat: Infinity,
+						// delay: 2.5,
+					},
+				}}
 			>
 				<span>{festival.year}</span>
-			</div>
+			</motion.div>
 
 			{festival.filmSelection && festival.filmSelection.length > 0 && (
-				<div className="mb-8 pt-16" id="film-selection">
+				<div className="mb-8 pt-8" id="film-selection">
 					<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark">
 						<div className="flex items-center justify-center">
 							<motion.div
+								initial={{ rotate: -1 }}
 								animate={{
 									rotate: 1,
 									transition: {
@@ -197,7 +263,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									},
 								}}
 								onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-								className={`flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all ${
+								className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all ${
 									isFilmSectionOpen
 										? 'border-dark bg-dark text-grayDark dark:border-dark dark:bg-primary dark:text-dark'
 										: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
@@ -212,25 +278,105 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						{/* </div> */}
 
 						{isFilmSectionOpen && (
-							<div className="mt-0 flex w-full items-center justify-between gap-1 rounded-none border-0 border-b-2 border-primary bg-grayLight py-4 pb-2 pt-0 dark:bg-dark lg:pt-0">
-								<div className="flex items-center justify-center gap-2">
+							<div className="mt-0 flex w-full items-center justify-between gap-2 rounded-none border-0 border-b-0 border-primary bg-grayLight dark:bg-dark lg:pt-0">
+								{/* <div className="flex w-full justify-between gap-2 text-sm tracking-tighter"> */}
+								{[
+									{ field: 'year', label: 'Year' },
+									{ field: 'title', label: 'Title' },
+									{ field: 'director', label: 'Director' },
+								].map(({ field, label }) => (
 									<button
-										onClick={() => setView('grid')}
-										className="relative p-2 text-center font-bold tracking-tight transition-colors"
+										key={field}
+										onClick={() => {
+											setSortField(field as any)
+											setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+											updateQuery({
+												sort: field,
+												order: sortOrder === 'asc' ? 'desc' : 'asc',
+											})
+										}}
+										className={`relative flex items-center justify-center p-1 px-2`}
+									>
+										<motion.span
+											animate={
+												sortField === field
+													? {
+															scale: 1.05,
+															// rotate: sortOrder === 'asc' ? -15 : 15,
+															color: 'var(--color-primary)',
+														}
+													: { scale: 1, rotate: 0, color: 'inherit' }
+											}
+											transition={{
+												type: 'spring',
+												stiffness: 400,
+												damping: 22,
+											}}
+											className="flex items-center"
+										>
+											{sortField === field && (
+												<FilterIcon
+													theme={{
+														upArrow:
+															sortOrder === 'asc'
+																? 'var(--color-primary)'
+																: 'var(--color-grayDark)',
+														downArrow:
+															sortOrder === 'desc'
+																? 'var(--color-primary)'
+																: 'var(--color-grayDark)',
+													}}
+													className="mr-1 h-3"
+												/>
+											)}
+											<span className={sortField === field ? 'font-bold' : ''}>
+												{label}
+											</span>{' '}
+										</motion.span>
+									</button>
+								))}
+								<button
+									onClick={() => {
+										setShowWinnersOnly(!showWinnersOnly)
+										updateQuery({
+											winners: !showWinnersOnly ? '1' : undefined,
+										})
+									}}
+									className={`p-1 px-2`}
+								>
+									{showWinnersOnly ? (
+										<div className="flex items-center gap-1">
+											<span className="text-grayDark">x</span>
+											<span className="font-bold"> Winners</span>
+										</div>
+									) : (
+										<>
+											<span> Winners</span>
+										</>
+									)}
+								</button>
+								{/* </div> */}
+								<div className="flex items-center justify-center gap-0">
+									<button
+										onClick={() => {
+											setView('grid')
+											updateQuery({ view: 'grid' })
+										}}
+										className="relative p-0 text-center font-bold tracking-tight transition-colors"
 										aria-label="Grid view"
 									>
 										<motion.span
 											animate={
 												view === 'grid'
 													? {
-															scale: 1.25,
-															rotate: -8,
+															scale: 0.65,
+															rotate: 0,
 															// filter:
 															// 	'drop-shadow(0 2px 8px var(--color-primary))',
 															opacity: 1,
 														}
 													: {
-															scale: 0.95,
+															scale: 0.5,
 															rotate: 0,
 															filter: 'none',
 															opacity: 0.5,
@@ -255,22 +401,25 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									</button>
 
 									<button
-										onClick={() => setView('list')}
-										className="relative p-2 text-center font-bold tracking-tight transition-colors"
+										onClick={() => {
+											setView('list')
+											updateQuery({ view: 'list' })
+										}}
+										className="relative p-0 text-center font-bold tracking-tight transition-colors"
 										aria-label="List view"
 									>
 										<motion.span
 											animate={
 												view === 'list'
 													? {
-															scale: 1.25,
-															rotate: 8,
+															scale: 0.85,
+															rotate: 0,
 															// filter:
 															// 	'drop-shadow(0 2px 8px var(--color-primary))',
 															opacity: 1,
 														}
 													: {
-															scale: 0.95,
+															scale: 0.75,
 															rotate: 0,
 															filter: 'none',
 															opacity: 0.5,
@@ -294,107 +443,103 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										</motion.span>
 									</button>
 								</div>
-
-								<div className="flex gap-6 text-sm tracking-tighter">
-									{[
-										{ field: 'year', label: 'Year' },
-										{ field: 'title', label: 'Title' },
-										{ field: 'director', label: 'Director' },
-									].map(({ field, label }) => (
-										<button
-											key={field}
-											onClick={() => {
-												setSortField(field as any)
-												setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-											}}
-											className={`relative flex items-center justify-center p-1 px-2`}
-										>
-											<motion.span
-												animate={
-													sortField === field
-														? {
-																scale: 1.2,
-																rotate: sortOrder === 'asc' ? -15 : 15,
-																color: 'var(--color-primary)',
-															}
-														: { scale: 1, rotate: 0, color: 'inherit' }
-												}
-												transition={{
-													type: 'spring',
-													stiffness: 400,
-													damping: 22,
-												}}
-												className="flex items-center"
-											>
-												{sortField === field && (
-													<FilterIcon
-														theme={{
-															upArrow:
-																sortOrder === 'asc'
-																	? 'var(--color-primary)'
-																	: 'var(--color-grayDark)',
-															downArrow:
-																sortOrder === 'desc'
-																	? 'var(--color-primary)'
-																	: 'var(--color-grayDark)',
-														}}
-														className="mr-1 h-3"
-													/>
-												)}
-												<span className="font-bold">{label}</span>
-											</motion.span>
-										</button>
-									))}
-									<button
-										onClick={() => setShowWinnersOnly(!showWinnersOnly)}
-										className={`p-1 px-2`}
-									>
-										{showWinnersOnly ? 'Show All' : 'Winners'}
-									</button>
-								</div>
 							</div>
 						)}
 					</div>
 
 					{isFilmSectionOpen && (
-						<div className="-mt-1 pb-16">
+						<div className="mt-4 pb-16">
 							{view === 'grid' ? (
 								<ul className="sticky top-32 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:px-4 lg:grid-cols-3">
 									{sortedFilms.map((film: any, index: number) => (
 										<li key={index} className="relative h-full w-full">
 											{film.slug?.current ? (
-												<Link href={`/${language}/film/${film.slug.current}`}>
+												<Link
+													href={{
+														pathname: `/${language}/film/${film.slug.current}`,
+														// query: {
+														// 	filmSlugs: sortedFilms
+														// 		.map((f) => f.slug?.current)
+														// 		.filter(Boolean),
+														// 	sort: sortField,
+														// 	order: sortOrder,
+														// 	winners: showWinnersOnly ? '1' : undefined,
+														// 	view,
+														// },
+													}}
+													onClick={() => {
+														sessionStorage.setItem(
+															'festivalScroll',
+															window.scrollY.toString(),
+														)
+													}}
+												>
 													{film.affiche && (
 														<div className="relative">
 															<Img
 																image={film.affiche}
 																src={film.affiche.asset.url}
 																alt={getLocalizedValue(film.title, language)}
-																className="aspect-square h-auto rounded-none border-2 border-grayDark object-cover dark:border-primary"
+																className="aspect-square h-auto rounded-lg border-2 border-grayDark object-cover dark:border-primary"
 															/>
 														</div>
 													)}
 													<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
 														<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
-															{film.title && (
+															{/* {film.title && (
 																<h1
 																	className={`z-10 -rotate-6 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-xl`}
 																>
 																	{getLocalizedValue(film.title, language)}
 																</h1>
+															)} */}
+															{film.title && (
+																<>
+																	{splitTitle(
+																		getLocalizedValue(film.title, language),
+																		20,
+																	).map((line, idx) => (
+																		<h1
+																			key={idx}
+																			className={[
+																				'z-10 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-xl',
+																				idx === 0 ? '' : '-z-0 -mt-1',
+																				idx % 2 === 0
+																					? '-rotate-1'
+																					: 'rotate-1',
+																			].join(' ')}
+																		>
+																			{line}
+																		</h1>
+																	))}
+																</>
 															)}
 
 															{film.director && (
-																<p
-																	className={`z-10 mt-2 inline-block w-auto rotate-3 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark`}
-																>
-																	{film.director}
-																</p>
+																<>
+																	{splitTitle(film.director, 26).map(
+																		(line, idx) => (
+																			<p
+																				key={idx}
+																				className={[
+																					'z-10 mt-0 inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark',
+
+																					idx === 0 ? '' : '-z-0 -mt-[0.15rem]',
+																					idx % 2 === 0
+																						? '-rotate-1'
+																						: 'rotate-1',
+																				].join(' ')}
+																			>
+																				{line}
+																			</p>
+																		),
+																	)}
+																</>
 															)}
 
 															{film.year && (
 																<p
-																	className={`z-0 mt-2 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+																	className={`z-0 mt-0 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
 																>
 																	{film.year}
 																</p>
@@ -651,9 +796,10 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				</AccordionItem>
 			</Accordion>
 
-			<div className="pb-6 pt-0" id="photo-gallery">
+			<div className="pb-0 pt-0" id="photo-gallery">
 				<div className="z-10 -mt-5 flex justify-center">
 					<motion.div
+						initial={{ rotate: -3 }}
 						animate={{
 							rotate: 1,
 							transition: {
@@ -665,7 +811,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							},
 						}}
 						onClick={() => setIsPhotoGalleryOpen(!isPhotoGalleryOpen)}
-						className={`flex w-fit -rotate-6 items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all ${
+						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all ${
 							isPhotoGalleryOpen
 								? 'border-primary bg-dark text-primary dark:border-dark dark:bg-primary dark:text-dark'
 								: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
@@ -792,7 +938,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				)}
 			</div>
 
-			<div className="py-4 lg:max-w-[50%] [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
+			<div className="py-4 pt-2 lg:max-w-[50%] [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
 				{festival.text?.[language]?.map((block: any) => {
 					// Check if the block is a list item
 					if (block.listItem === 'bullet') {
@@ -817,7 +963,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				})}
 			</div>
 
-			{festival.description && (
+			{/* {festival.description && (
 				<div className="relative mt-2 rounded-md border-2 border-dark bg-[#fff] p-6 shadow-sm dark:bg-secondary sm:py-10">
 					<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tighter text-dark transition-all duration-300 sm:py-4 sm:text-4xl">
 						{renderParagraph(
@@ -827,9 +973,38 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						)}
 					</p>
 				</div>
+			)} */}
+
+			{festival.description && (
+				<div className="relative rounded-md border-dark bg-grayDark p-5 sm:py-10">
+					<div className="flex flex-wrap items-center justify-center gap-2">
+						{(getLocalizedValue(festival.description, language) || '')
+							.split(' ')
+							.map((word: string, index: number) => {
+								// Generate random rotation and position
+								const randomRotation = Math.floor(Math.random() * 21) - 10 // -10 to 10 deg
+								const randomMarginTop = Math.floor(Math.random() * 10) - 5 // -5px to 5px
+								const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // -5px to 5px
+
+								return (
+									<span
+										key={index}
+										className="inline-block text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-dark sm:text-4xl"
+										style={{
+											transform: `rotate(${randomRotation}deg)`,
+											marginTop: `${randomMarginTop}px`,
+											marginLeft: `${randomMarginLeft}px`,
+										}}
+									>
+										{word}
+									</span>
+								)
+							})}
+					</div>
+				</div>
 			)}
 
-			{festival.pressLink && (
+			{/* {festival.pressLink && (
 				<a
 					href={festival.pressLink}
 					target="_blank"
@@ -838,9 +1013,24 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				>
 					Press Link
 				</a>
-			)}
+			)} */}
 		</div>
 	)
 }
 
 export default FestivalEditionContent
+
+// Split a string into chunks of maxLength (default 20)
+function splitTitle(title: string, maxLength = 18) {
+	const result = []
+	let str = title
+
+	while (str.length > maxLength) {
+		let idx = str.lastIndexOf(' ', maxLength)
+		if (idx === -1) idx = maxLength // no space found, hard cut
+		result.push(str.slice(0, idx).trim())
+		str = str.slice(idx).trim()
+	}
+	if (str.length) result.push(str)
+	return result
+}

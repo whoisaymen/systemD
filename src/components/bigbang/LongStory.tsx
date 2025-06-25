@@ -25,29 +25,10 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						// Handle cases where text or author is null
 						if (!block.text && !block.author) return null
 						return (
-							// <div className="relative h-full py-0 pt-2">
-							// 	<blockquote key={index} className="relative px-8">
-							// 		<span className="absolute left-0 top-0 text-[8rem] italic leading-[1] text-primary dark:text-primary/10">
-							// 			“
-							// 		</span>
-							// 		{block.text && (
-							// 			<p className="px-6 pt-8 text-xl font-bold leading-[1] text-dark dark:text-primary">
-							// 				{getLocalizedValue(block.text, lang)}
-							// 			</p>
-							// 		)}
-							// 		{block.author && (
-							// 			<footer className="mt-2 pb-8 pr-4 text-right text-sm font-normal text-dark dark:text-primary">
-							// 				{block.author}
-							// 			</footer>
-							// 		)}
-							// 	</blockquote>
-
-							// 	<div className="absolute left-0 top-0 z-30 h-8 w-8 border-l-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-							// 	<div className="absolute right-0 top-0 z-30 h-8 w-8 border-r-[2px] border-t-[2px] border-[#fff] mix-blend-overlay"></div>
-							// 	<div className="absolute bottom-2 left-0 z-30 h-8 w-8 border-b-[2px] border-l-[2px] border-[#fff] mix-blend-overlay"></div>
-							// 	<div className="absolute bottom-2 right-0 z-30 h-8 w-8 border-b-[2px] border-r-[2px] border-[#fff] mix-blend-overlay"></div>
-							// </div>
-							<div className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-2 py-8 lg:hidden">
+							<div
+								key={block._key || index}
+								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-2 py-8 lg:hidden"
+							>
 								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl">
 									"
 								</span>

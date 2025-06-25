@@ -1,4 +1,5 @@
 import FestivalContent from '@/components/festival/FestivalContent'
+import FestivalContentImproved from '@/components/festival/festivalcontent-improved'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { notFound } from 'next/navigation'
 
@@ -12,6 +13,7 @@ export default async function FestivalPage({
 
 	// return <Loading />
 	return <FestivalContent festival={content} language={locale} />
+	// return <FestivalContentImproved festival={content} language={locale} />
 }
 
 async function getFestival() {
