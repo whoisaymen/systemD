@@ -41,7 +41,11 @@ export default async function RootLayout({
 
 	return (
 		<ViewTransitions>
-			<html lang={locale} suppressHydrationWarning className="no-scrollbar">
+			<html
+				lang={locale}
+				suppressHydrationWarning
+				className="no-scrollbar dark"
+			>
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body

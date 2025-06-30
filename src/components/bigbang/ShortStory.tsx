@@ -23,11 +23,15 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 	// Use scroll and transform for each individual block
 	const { scrollYProgress } = useScroll({
 		target: ref,
-		offset: ['start 00vh', 'end center'], // Animation starts when the block reaches the middle of the screen
+		offset: ['start 25vh', 'end center'], // Animation starts when the block reaches the middle of the screen
 	})
 
 	// Transform the scroll progress into a border radius value
 	const borderRadius = useTransform(scrollYProgress, [0, 1], [10, 120])
+
+	const scale = useTransform(scrollYProgress, [0, 1], [0.75, 1])
+	const rotate = useTransform(scrollYProgress, [0, 1], [-10, 10])
+
 	const themeColors = {
 		dark: {
 			fill: 'var(--color-dark)',
@@ -52,11 +56,11 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 	return (
 		<div
 			ref={ref}
-			className="space= -mt-12 flex w-full flex-col items-center justify-center space-y-12 rounded-md px-2 text-center sm:my-0 sm:hidden sm:space-y-0 sm:bg-grayLight sm:dark:bg-grayDark"
+			className="flex w-full flex-col items-center justify-center space-y-4 rounded-md px-4 text-center sm:my-0 sm:space-y-0 sm:bg-grayLight sm:dark:bg-grayDark"
 			id="short-story"
 		>
-			<div className="fixed bottom-8 right-12 z-50">
-				<BackToTopButton targetId="short-story" />
+			<div className="fixed bottom-4 right-12 z-50">
+				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 			{block.text && (
 				<motion.div
@@ -65,14 +69,14 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 						// duration: 2,
 						ease: [0.76, 0, 0.24, 1],
 					}}
-					className="relative mt-2 border-2 border-dark bg-primary px-4 py-6 shadow-sm dark:bg-secondary sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
+					className="relative border-2 border-dark bg-primary px-4 py-6 shadow-sm dark:bg-secondary sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
 				>
 					{block.text
 						.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key
 						.map((paragraph: any, index: number) => (
 							<p
 								key={index}
-								className="py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-dark sm:py-4 sm:text-3xl"
+								className="py-0 text-center text-xl font-bold leading-[1.1] tracking-tighter text-dark dark:text-dark sm:py-4 sm:text-3xl"
 							>
 								{renderParagraph(
 									paragraph,
@@ -83,14 +87,26 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 				</motion.div>
 			)}
 			{block.image && (
-				<div className="w-full px-2 sm:px-8 sm:py-8">
+				<motion.div
+					className="w-full px-2 pt-6 sm:px-8 sm:py-8"
+					style={{ scale }}
+
+					// animate={{
+					// 	scale: [1, 0.75, 1],
+					// 	transition: {
+					// 		duration: 6,
+					// 		ease: [0.76, 0, 0.24, 1],
+					// 		repeat: Infinity,
+					// 	},
+					// }}
+				>
 					<Img
 						image={block.image}
 						src={`/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`}
 						alt="Story Image"
 						className="h-auto w-full"
 					/>
-				</div>
+				</motion.div>
 			)}
 		</div>
 	)
@@ -121,7 +137,7 @@ const renderParagraph = (paragraph: any, titles: string[]) => {
 						},
 					}}
 				>
-					<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary dark:bg-dark sm:w-[15rem]" />
+					<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[8rem] -rotate-6 rounded-md bg-dark px-2 py-1 leading-[0] text-primary dark:bg-dark sm:w-[15rem]" />
 				</motion.span>
 			) : (
 				<span key={index} className={isTitle ? 'font-bold' : ''}>

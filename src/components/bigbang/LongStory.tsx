@@ -15,9 +15,9 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 		array?.find((v) => v?._key === lang)?.value
 
 	return (
-		<div className="space-y-0 pb-16 pt-2" id="long-story">
-			<div className="fixed bottom-8 right-12 z-50">
-				<BackToTopButton targetId="long-story" />
+		<div className="space-y-0 pb-16" id="long-story">
+			<div className="fixed bottom-4 right-12 z-50">
+				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 			{content.map((block, index) => {
 				switch (block._type) {
@@ -27,9 +27,9 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={block._key || index}
-								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-2 py-8 lg:hidden"
+								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 lg:px-32"
 							>
-								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl">
+								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-7xl">
 									"
 								</span>
 								{getLocalizedValue(block.text, lang)
@@ -43,7 +43,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										return (
 											<span
 												key={index}
-												className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-9xl"
+												className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-7xl"
 												style={{
 													transform: `rotate(${randomRotation}deg)`,
 													marginTop: `${randomMarginTop}px`,
@@ -58,7 +58,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									"
 								</span>
 								{block.author && (
-									<div className="w-full pr-4 pt-0 text-right text-sm font-normal tracking-tighter text-dark dark:text-primary">
+									<div className="w-full pr-4 pt-0 text-right text-sm font-normal tracking-tighter text-dark dark:text-grayDark lg:text-base">
 										{block.author}
 									</div>
 								)}
@@ -71,21 +71,25 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={index}
-								className="px-4 pb-8 pt-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary"
-								style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
+								className="flex flex-col items-center justify-center"
 							>
-								{block.text
-									.filter((paragraph: any) => paragraph._key === lang)
-									.map((paragraph: any, idx: number) => (
-										<p key={idx}>
-											{renderParagraph(
-												paragraph,
-												[],
-												'bg-primary text-dark',
-												'w-[6rem] sm:w-40',
-											)}
-										</p>
-									))}
+								<div
+									className="px-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary lg:max-w-[50vw] lg:text-xl"
+									style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
+								>
+									{block.text
+										.filter((paragraph: any) => paragraph._key === lang)
+										.map((paragraph: any, idx: number) => (
+											<p key={idx}>
+												{renderParagraph(
+													paragraph,
+													[],
+													'bg-grayDark text-dark',
+													'!w-[5rem] !md:w-[10rem] !px-1 !py-0.5 !rounded-[0.15rem]',
+												)}
+											</p>
+										))}
+								</div>
 							</div>
 						)
 
@@ -134,17 +138,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 							return (
 								<div
 									key={index}
-									className="overflow-hidden rounded-none border-0 border-primary px-4 shadow-md sm:h-[65vh] sm:border-0"
-									// initial={{
-									// 	borderRadius: '0.375rem',
-									// }}
-									// animate={{ borderRadius: '15rem' }}
-									// transition={{
-									// 	duration: 3.4,
-									// 	ease: [0.76, 0, 0.24, 1],
-									// 	repeat: Infinity,
-									// 	repeatType: 'reverse',
-									// }}
+									className="mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:h-[65vh] sm:border-0"
 								>
 									<Image
 										src={block.file.asset.url}

@@ -25,16 +25,20 @@ export default {
 				ink: '#1d1d1f',
 				canvas: '#fff',
 				accent: '#1d1d1f',
-				primary: '#DEFE04',
+				// primary: '#DEFE04',
+				primary: 'var(--color-primary)',
 				secondary: '#DEFE04',
 				tertiary: '#222223',
-				dark: '#123DA6',
+				// dark: '#123DA6',
+				dark: 'var(--color-dark)',
+
 				// dark: '#2c1',
 				// dark: '#222223',
 
 				// dark: '#000',
 				grayLight: '#DADADA',
-				grayDark: '#8C8C8F',
+				// grayDark: '#8C8C8F',
+				grayDark: 'var(--color-grayDark)',
 				// grayDark: '#DEFE04',
 			},
 			maxHeight: {

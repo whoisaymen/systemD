@@ -12,19 +12,27 @@ interface BackToTopButtonProps {
 const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 	const [isVisible, setIsVisible] = useState(false)
 
+	// useEffect(() => {
+	// 	const handleScroll = () => {
+	// 		const target = document.getElementById(targetId)
+	// 		if (!target) return
+
+	// 		const rect = target.getBoundingClientRect()
+	// 		const inView = rect.top <= 100 && rect.bottom >= 200 // adjust as needed
+	// 		setIsVisible(inView)
+	// 	}
+
+	// 	window.addEventListener('scroll', handleScroll)
+	// 	return () => window.removeEventListener('scroll', handleScroll)
+	// }, [targetId])
+
 	useEffect(() => {
 		const handleScroll = () => {
-			const target = document.getElementById(targetId)
-			if (!target) return
-
-			const rect = target.getBoundingClientRect()
-			const inView = rect.top <= 100 && rect.bottom >= 200 // adjust as needed
-			setIsVisible(inView)
+			setIsVisible(window.scrollY > 200) // Show after scrolling 200px
 		}
-
 		window.addEventListener('scroll', handleScroll)
 		return () => window.removeEventListener('scroll', handleScroll)
-	}, [targetId])
+	}, [])
 
 	const scrollToTop = () => {
 		const target = document.getElementById(targetId)
@@ -57,7 +65,7 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 						className="h-full w-full p-1"
 					/> */}
 					<ArrowRight
-						theme={{ fill: 'var(--color-primary)' }}
+						theme={{ fill: 'var(--color-grayDark)' }}
 						className="h-auto w-10 -rotate-90 lg:w-9"
 					/>
 				</motion.button>

@@ -40,10 +40,10 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 	const router = useRouter()
 
 	return (
-		<div className="no-scrollbar relative mt-1 flex min-h-screen w-full flex-col overflow-y-visible rounded-md px-5 tracking-tighter sm:mt-0 sm:min-h-screen sm:overflow-y-visible sm:py-1">
-			<div className="relative mb-1 flex w-full items-start justify-between">
+		<div className="no-scrollbar relative mt-1 flex h-full w-full flex-col overflow-y-visible rounded-md px-5 tracking-tighter sm:mt-0 sm:min-h-screen sm:overflow-y-visible sm:py-1">
+			<div className="relative my-4 flex w-full items-start justify-between">
 				<div
-					className={`rounded-md bg-dark p-0.5 text-3xl font-semibold sm:hidden`}
+					className={`rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold sm:hidden`}
 				>
 					<button
 						onClick={() => router.back()}
@@ -52,28 +52,27 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 					>
 						<ArrowRight
 							theme={{ fill: 'var(--color-primary)' }}
-							className="h-auto w-9 -rotate-180 lg:w-9"
+							className="h-auto w-8 -rotate-180 lg:w-9"
 						/>
 					</button>
 				</div>
-				<div className="flex items-center justify-start gap-2">
+				<div className="flex flex-col items-end justify-start gap-0 px-2">
 					{film.title && (
 						<h1
-							className={`z-10 rounded-md border-0 border-dark bg-primary p-0 text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary`}
+							className={`z-10 rounded-md border-0 border-dark bg-primary p-0 text-right text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary`}
 						>
 							{getLocalizedValue(film.title, language)}
-							<span className="font-normal italic">, ({film.year})</span>
+							<span className="font-extralight italic">, ({film.year})</span>
 						</h1>
 					)}
+					{film.director && (
+						<p
+							className={`z-10 -mt-1 inline-block w-auto rounded-md border-0 border-primary bg-dark px-1 py-0 text-center font-medium tracking-tighter text-primary`}
+						>
+							{film.director}
+						</p>
+					)}
 				</div>
-
-				{/* {film.director && (
-					<p
-						className={`z-10 -mt-1 inline-block w-auto rounded-md border-0 border-primary bg-dark px-1 py-0 text-center font-medium tracking-tight text-primary`}
-					>
-						{film.director}
-					</p>
-				)} */}
 
 				{/* {film.year && (
 					<p
@@ -83,8 +82,8 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 					</p>
 				)} */}
 			</div>
-			<div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:-left-0 sm:h-full"></div>
-			<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:-right-0 sm:h-full"></div>
+			{/* <div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:-left-0 sm:h-full"></div>
+			<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:-right-0 sm:h-full"></div> */}
 
 			{isYoutubeOrVimeo ? (
 				showPlayer ? (
@@ -132,39 +131,54 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 				)
 			)}
 
-			<div className="my-6 flex w-full flex-wrap items-center justify-center gap-2 px-6 text-sm font-medium leading-[1.2]">
-				{film.genre.title && (
-					<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
-						<FaTag />
-						{getLocalizedValue(film.genre.title, language)}
-					</span>
-				)}
+			<div className="mb-0 mt-6 flex w-full flex-col items-center justify-center gap-1 px-6 text-xs font-medium leading-[1.2]">
+				<div className="flex items-center justify-center gap-1">
+					{film.length && (
+						<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<GoClockFill />
+							<span>{film.length} minutes</span>
+						</span>
+					)}
 
-				{film.production && (
-					<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
-						<BiSolidCameraMovie />
-						{film.production}
-					</span>
-				)}
+					{film.city && (
+						<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<FaLocationDot />
+							<span>{getLocalizedValue(film.city, language)}</span>
+						</span>
+					)}
+				</div>
 
-				{film.length && (
-					<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
-						<GoClockFill />
-						<span>{film.length} minutes</span>
-					</span>
-				)}
-
-				{film.city && (
-					<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
-						<FaLocationDot />
-						<span>{getLocalizedValue(film.city, language)}</span>
-					</span>
-				)}
+				<div className="flex items-center justify-center gap-1">
+					{film.genre && film.genre.title && (
+						<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<FaTag />
+							{getLocalizedValue(film.genre.title, language) ||
+								// fallback: show the first available value
+								(Array.isArray(film.genre.title) &&
+									film.genre.title[0]?.value) ||
+								''}
+						</span>
+					)}
+					{film.production && (
+						<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<BiSolidCameraMovie />
+							{film.production}
+						</span>
+					)}
+				</div>
 			</div>
 
-			{film.synopsis && (
+			{/* {film.synopsis && (
 				<div className="relative mt-2 rounded-full rounded-md border-2 border-dark bg-[#fff] px-4 py-10 shadow-sm dark:bg-secondary sm:py-10">
 					<p className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl">
+						{getLocalizedValue(film.synopsis, language)}
+					</p>
+				</div>
+			)} */}
+
+			{film.synopsis && (
+				<div className="relative px-2 py-6 sm:py-10">
+					<p className="mx-auto py-2 text-left text-base leading-[1.2] tracking-tighter text-primary sm:py-4 sm:text-4xl">
 						{getLocalizedValue(film.synopsis, language)}
 					</p>
 				</div>

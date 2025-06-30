@@ -10,6 +10,10 @@ import Link from 'next/link'
 import { getRandomRotationClass } from '@/lib/utils'
 import MemoireLogoMobile from './MemoireLogoMobile'
 import EmptyCinema from './EmptyCinema'
+import { useState } from 'react'
+import { IoGrid, IoList } from 'react-icons/io5'
+import FilterIcon from '../svgs/FilterIcon'
+import { BiSolidSquareRounded } from 'react-icons/bi'
 
 interface MemoireContentProps {
 	memoire: any
@@ -28,6 +32,11 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		return item ? item.value : ''
 	}
 
+	const [view, setView] = useState<'grid' | 'list'>('grid')
+	const [sortField, setSortField] = useState<'year'>('year')
+	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+	const [yearFilter, setYearFilter] = useState<string | null>(null)
+
 	if (!memoire) {
 		return <div>No content available</div>
 	}
@@ -35,7 +44,9 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	let { scrollY } = useScroll()
 	let borderRadius = useTransform(scrollY, (value) => Math.max(80 - value, 10))
 
-	console.log(memoire.pastFestivals, 'memoirePastFestivals')
+	const years = Array.from(
+		new Set(memoire.pastFestivals.map((f: any) => f.year)),
+	).sort((a, b) => b - a)
 
 	const themeColors = {
 		dark: {
@@ -64,8 +75,112 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		shadow: 'var(--color-grayDark)',
 	}
 
+	let filteredFestivals = memoire.pastFestivals
+	if (yearFilter) {
+		filteredFestivals = filteredFestivals.filter(
+			(f: any) => String(f.year) === yearFilter,
+		)
+	}
+	filteredFestivals = [...filteredFestivals].sort((a: any, b: any) =>
+		sortOrder === 'asc' ? a.year - b.year : b.year - a.year,
+	)
+
 	return (
-		<div className="no-scrollbar rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:to-grayDark/25 sm:px-0 sm:shadow-inner">
+		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner">
+			{/* <div className="mb-4 flex flex-wrap items-center gap-2">
+				<span className="font-bold">Year:</span>
+				<button
+					onClick={() => setYearFilter(null)}
+					className={`rounded px-2 py-1 ${!yearFilter ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
+				>
+					All
+				</button>
+				{years.map((year) => (
+					<button
+						key={year}
+						onClick={() => setYearFilter(String(year))}
+						className={`rounded px-2 py-1 ${yearFilter === String(year) ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
+					>
+						{year}
+					</button>
+				))}
+				<span className="ml-4 font-bold">View:</span>
+				<button
+					onClick={() => setView('grid')}
+					className={`rounded px-2 py-1 ${view === 'grid' ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
+				>
+					Grid
+				</button>
+				<button
+					onClick={() => setView('list')}
+					className={`rounded px-2 py-1 ${view === 'list' ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
+				>
+					List
+				</button>
+			</div> */}
+
+			<div className="mt-2 flex flex-wrap items-center justify-end gap-2">
+				{/* <span className="text-primary">Éditions précédentes</span> */}
+				{/* View toggle */}
+				<div className="flex items-center justify-center gap-0">
+					<button
+						onClick={() => setView('grid')}
+						className="relative p-0 text-center font-bold tracking-tight transition-colors"
+						aria-label="Grid view"
+					>
+						<motion.span
+							animate={
+								view === 'grid'
+									? { scale: 0.65, opacity: 1 }
+									: { scale: 0.5, opacity: 0.5 }
+							}
+							transition={{
+								type: 'spring',
+								stiffness: 400,
+								damping: 22,
+							}}
+							className="inline-block"
+						>
+							<IoGrid
+								className={
+									view === 'grid'
+										? 'text-primary'
+										: 'text-dark dark:text-grayDark'
+								}
+								size={36}
+							/>
+						</motion.span>
+					</button>
+					<button
+						onClick={() => setView('list')}
+						className="relative -ml-2 p-0 text-center font-bold tracking-tight transition-colors"
+						aria-label="List view"
+					>
+						<motion.span
+							animate={
+								view === 'list'
+									? { scale: 0.85, opacity: 1 }
+									: { scale: 0.75, opacity: 0.5 }
+							}
+							transition={{
+								type: 'spring',
+								stiffness: 400,
+								damping: 22,
+							}}
+							className="inline-block"
+						>
+							<BiSolidSquareRounded
+								className={
+									view === 'list'
+										? 'text-primary'
+										: 'text-dark dark:text-grayDark'
+								}
+								size={30}
+							/>
+						</motion.span>
+					</button>
+				</div>
+			</div>
 			{/* <motion.div
 				style={{ borderRadius }}
 				transition={{
@@ -91,26 +206,31 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 			/> */}
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
-				<div className="grid grid-cols-1 gap-4 pb-16 pt-4 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0">
-					{/* {memoire.pastFestivals.map((festival: any, index: number) => ( */}
-					{[...memoire.pastFestivals, ...memoire.pastFestivals].map(
-						(festival: any, index: number) => (
+				<div
+					className={`grid ${view === 'list' ? 'grid-cols-1' : 'grid-cols-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0`}
+				>
+					{/* {filteredFestivals.map((festival: any, index: number) => ( */}
+					{[...Array(5)]
+						.fill(filteredFestivals)
+						.flat()
+						.slice(0, 5)
+						.map((festival: any, index: number) => (
 							<Link
-								key={index}
+								key={festival._id || index}
 								href={`/${language}/festival/${festival.year}`}
-								className="relative block h-[60vh] overflow-hidden rounded-md border-2 border-transparent shadow-md transition-shadow duration-300 hover:shadow-lg"
+								className={`relative block ${view === 'list' ? 'h-[60vh]' : 'h-full'} overflow-hidden rounded-xl border-[2.5px] border-primary shadow-xl transition-shadow duration-300 hover:shadow-lg`}
 							>
 								<div
-									className={`absolute left-1/2 top-[65%] z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 text-5xl font-black tracking-tighter text-dark`}
+									className={`absolute left-1/2 ${view === 'list' ? 'top-[65%] text-5xl' : 'top-[38%] text-2xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tighter text-dark`}
 								>
 									<span>{festival.year}</span>
 								</div>
-								<div className="absolute left-[50%] top-[74%] z-10 -translate-x-1/2 rotate-6 rounded-md bg-grayDark px-2 text-5xl font-semibold tracking-tighter text-dark">
+								<div
+									className={`absolute left-1/2 ${view === 'list' ? 'top-[74%] text-5xl' : 'top-[54%] text-2xl'} z-10 -translate-x-1/2 rotate-6 rounded-md bg-dark px-2 font-semibold tracking-tighter text-primary`}
+								>
 									<span>{festival.venue}</span>
 								</div>
-								<div className="relative h-full">
-									{/* <div className="absolute left-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div>
-									<div className="absolute right-1 z-30 h-full w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y sm:h-full"></div> */}
+								<div className="relative h-full overflow-hidden">
 									{festival.visual ? (
 										<Img
 											image={festival.visual}
@@ -127,8 +247,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 									)}
 								</div>
 							</Link>
-						),
-					)}
+						))}
 				</div>
 			)}
 		</div>

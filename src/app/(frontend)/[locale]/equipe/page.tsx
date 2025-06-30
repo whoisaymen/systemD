@@ -1,5 +1,14 @@
-import EquipeContent from '@/components/equipe/EquipeContent'
+// import EquipeContent from '@/components/equipe/EquipeContent'
+import dynamic from 'next/dynamic'
+
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
+
+const EquipeContent = dynamic(
+	() => import('@/components/equipe/EquipeContent'),
+	{
+		ssr: !!false,
+	},
+)
 
 export default async function EquipePage({
 	params,

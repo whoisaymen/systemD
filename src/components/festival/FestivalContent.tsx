@@ -192,14 +192,23 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 											className="flex flex-col items-center justify-center"
 										>
 											<AccordionTrigger
-												className={`-mb-2 rotate-3 sm:text-7xl`}
+												className={`-mb-0 rotate-3 sm:text-7xl`}
 											>
 												{block.title}
 											</AccordionTrigger>
 											<AccordionContent>
 												<div className="px-2 pb-0 pt-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary">
 													{block.content && block.content[language] && (
-														<PortableText value={block.content[language]} />
+														<PortableText
+															value={block.content[language]}
+															components={{
+																block: {
+																	normal: ({ children }) => (
+																		<p className="mb-4 last:mb-0">{children}</p>
+																	),
+																},
+															}}
+														/>
 													)}
 												</div>
 											</AccordionContent>
@@ -268,7 +277,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 
 										{/* Close button for fullscreen */}
 										<AnimatePresence>
-											{isFullscreen && (
+											{/* {isFullscreen && (
 												<motion.button
 													initial={{ opacity: 0, scale: 0.8 }}
 													animate={{ opacity: 1, scale: 1 }}
@@ -278,10 +287,19 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 														e.stopPropagation()
 														setIsFullscreen(false)
 													}}
-													className="absolute right-2 top-2 z-10 p-3 text-primary"
+													className="absolute h-full w-full bottom-11 right-1 z-10 p-3 text-primary"
 												>
 													Close
 												</motion.button>
+											)} */}
+											{isFullscreen && (
+												<div
+													onClick={(e) => {
+														e.stopPropagation()
+														setIsFullscreen(false)
+													}}
+													className="fixed inset-0 z-50 h-full w-full"
+												/>
 											)}
 										</AnimatePresence>
 									</motion.div>
@@ -377,7 +395,13 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																		className="z-0 h-full w-full border-0 border-dark object-cover dark:border-primary sm:border-0"
 																	/>
 																	{selectedMemberId !== member._id && (
-																		<div className="absolute inset-0 z-10 bg-dark/80" />
+																		<div
+																			className="bg-dark/50 absolute inset-0 z-10"
+																			style={{
+																				backgroundColor: 'var(--color-dark)',
+																				opacity: 0.9,
+																			}}
+																		/>
 																		// Use your darkGray color here, e.g. bg-grayDark/70 if you have it in Tailwind config
 																	)}
 																</div>
@@ -393,7 +417,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 
 												{/* Full-width bio section */}
 												{selectedMemberId && (
-													<div className="mt-4 w-full px-0 sm:px-12">
+													<div className="mb-4 mt-4 w-full px-0 sm:px-12">
 														{(() => {
 															const selectedMember = block.juryMembers.find(
 																(m: any) => m._id === selectedMemberId,
@@ -402,9 +426,14 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 															return (
 																<div className="w-full text-primary">
 																	{selectedMember.name && (
-																		<h2 className="mb-2 text-2xl font-bold tracking-tight">
-																			{selectedMember.name}
-																		</h2>
+																		<div className="flex items-center justify-center">
+																			<h2 className="mb-3 -rotate-0 rounded-md border-[0px] border-primary px-2 text-2xl font-semibold tracking-tighter text-primary">
+																				{selectedMember.name}
+																			</h2>
+																		</div>
+																		// <h2 className="mb-2 text-2xl font-bold tracking-tight">
+																		// 	{selectedMember.name}
+																		// </h2>
 																	)}
 																	{selectedMember.biography && (
 																		<p className="text-base leading-tight tracking-tighter">
@@ -493,7 +522,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																(event: any, eventIndex: number) => (
 																	<tr
 																		key={eventIndex}
-																		className="border-b border-t border-dark text-xs uppercase tracking-tighter text-dark dark:border-primary dark:text-primary"
+																		className="border-b border-t border-dark text-sm tracking-tighter text-dark dark:border-primary dark:text-primary"
 																	>
 																		<td className="flex flex-col px-4 py-2">
 																			<span>
@@ -515,7 +544,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																				})}
 																			</span>
 																		</td>
-																		<td className="px-4 py-2 text-base font-bold normal-case leading-[1]">
+																		<td className="px-4 py-2 text-sm normal-case leading-[1]">
 																			{getLocalizedValue(event.title, language)}
 																		</td>
 																		<td className="px-4 py-2">

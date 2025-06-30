@@ -211,15 +211,75 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 													}
 												</span>
 											</p> */}
-											<h2 className="px-4 text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
-												{
-													getLocalizedValue(action.title, language).split(
-														' - ',
-													)[1]
-												}
-											</h2>
+											{/* <h2 className="px-4 text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary"> */}
+											<div className="flex items-center justify-center">
+												{' '}
+												<h2 className="-z-10 -mt-7 inline-block -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-lg font-medium tracking-tighter text-dark">
+													{
+														getLocalizedValue(action.title, language).split(
+															' - ',
+														)[1]
+													}
+												</h2>
+											</div>
 
 											{action.text?.[language]?.map((block: any) => {
+												// Render h6 blocks as bold paragraphs
+												if (block.style === 'h6' && !block.listItem) {
+													return (
+														<div className="flex justify-start">
+															{' '}
+															<p
+																key={block._key}
+																className="-z-10 m-4 -mb-4 -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-lg font-medium tracking-tighter text-dark"
+															>
+																{block.children.map(
+																	(child: any, idx: number) => (
+																		<span key={child._key || idx}>
+																			{child.text}
+																		</span>
+																	),
+																)}
+															</p>
+														</div>
+													)
+												}
+
+												// Render bullet list items, bold if style is h6, with custom bullet
+												if (block.listItem === 'bullet') {
+													const isBold = block.style === 'h6'
+													return (
+														<ul key={block._key} className="px-10">
+															<li
+																className={`relative mt-4 text-lg font-normal leading-[1.2] tracking-tighter ${isBold ? 'font-bold' : ''}`}
+															>
+																{block.children.map(
+																	(child: any, idx: number) => (
+																		<span key={child._key || idx}>
+																			{child.text}
+																		</span>
+																	),
+																)}
+																<div className="absolute -left-5 top-2 h-2 w-2 rounded-sm bg-primary"></div>
+															</li>
+														</ul>
+													)
+												}
+
+												// Render regular paragraphs for other blocks
+												return (
+													<p
+														key={block._key}
+														className="mt-4 px-4 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
+													>
+														{block.children.map((child: any, idx: number) => (
+															<span key={child._key || idx}>{child.text}</span>
+														))}
+													</p>
+												)
+											})}
+
+											{/* {action.text?.[language]?.map((block: any) => {
 												// Check if the block is a list item
 												if (block.listItem === 'bullet') {
 													return (
@@ -245,7 +305,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 															.join('')}
 													</p>
 												)
-											})}
+											})} */}
 										</div>
 									</AccordionContent>
 								</AccordionItem>
@@ -299,7 +359,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 					</div>
 					{fabrique.vision.map((vision: any, index: number) => (
 						<div key={index} className="mt-8">
-							<div className="relative rounded-t-3xl px-8">
+							<div className="relative rounded-t-3xl px-4">
 								<h2 className="text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
 									{getLocalizedValue(vision.title, language)}
 								</h2>

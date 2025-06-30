@@ -47,46 +47,46 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 	}
 
 	return (
-		<>
-			<div className="sticky left-0 top-0 z-10 flex w-full justify-between gap-2 px-4 py-4 text-xl font-bold tracking-tighter">
+		<div className="w-full">
+			<div className="sticky left-0 top-0 z-10 flex w-full justify-between gap-2 px-4 py-2 text-lg font-bold tracking-tighter lg:py-1">
 				<button
 					onClick={() => setActiveTab('short')}
-					className={`w-auto border-[2.5px] border-primary px-4 py-0 pb-0.5 ${
+					className={`w-auto border-[2.5px] border-grayDark px-4 py-0 pb-0.5 ${
 						activeTab === 'short'
-							? 'bg-primary text-dark'
-							: 'border-dark bg-dark text-primary dark:border-primary dark:bg-dark dark:text-primary'
+							? 'bg-grayDark text-dark'
+							: 'border-grayDark bg-grayDark text-primary dark:border-grayDark dark:bg-dark dark:text-grayDark'
 					} rounded-md transition-all`}
 				>
 					Short Story
 				</button>
 				<button
 					onClick={() => setActiveTab('long')}
-					className={`w-auto border-[2.5px] border-primary px-4 py-0 pb-0.5 ${
+					className={`w-auto border-[2.5px] border-grayDark px-4 py-0 pb-0.5 ${
 						activeTab === 'long'
-							? 'bg-primary text-dark'
-							: 'bg-primary text-dark dark:bg-dark dark:text-primary'
+							? 'bg-grayDark text-dark'
+							: 'bg-dark text-dark dark:bg-dark dark:text-grayDark'
 					} rounded-md transition-all`}
 				>
 					Long Story
 				</button>
 			</div>
 
-			<div className="flex w-full flex-col space-y-1 rounded-md sm:my-1 sm:min-h-svh sm:p-0">
-				<div className="hidden h-full w-full bg-gradient-to-b from-grayLight to-grayDark/25 px-64 py-20 shadow-inner dark:from-dark dark:to-grayDark/25 sm:block">
+			<div className="flex flex-col space-y-1 rounded-md sm:my-1 sm:min-h-svh sm:p-0">
+				{/* <div className="hidden h-full w-full bg-gradient-to-b from-grayLight to-grayDark/25 px-64 py-20 shadow-inner dark:from-dark dark:to-grayDark/25 sm:block">
 					<BigBangLogoMobile
 						theme={themeColors.memoire}
 						className="overflow-visible text-grayDark dark:text-dark"
 					/>
 
 					<FestivalDesktopWithBorder theme={themeColors.memoire} className="" />
-				</div>
+				</div> */}
 				{activeTab === 'short' ? (
 					<ShortStory content={shortStory.body} lang={locale} />
 				) : (
 					<LongStory content={longStory.body} lang={locale} />
 				)}
 			</div>
-		</>
+		</div>
 	)
 }
 

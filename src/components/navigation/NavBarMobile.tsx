@@ -154,9 +154,19 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 		}
 	}
 
+	const isFilmPage = pathname.includes('/film')
+
 	return (
 		<>
-			<div className="z-50 w-full sm:hidden">
+			{isFilmPage && (
+				<>
+					<div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>
+					<div className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>
+				</>
+			)}
+			{/* <div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>
+			<div className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div> */}
+			<div className="z-50 w-full sm:hidden" id="navbar-mobile">
 				{/* <div className="absolute inset-0 -z-10 h-28">
 					<div className="absolute inset-0 backdrop-blur-sm [-webkit-mask-image:linear-gradient(to_top,transparent_0%,white_20%,white_40%,transparent_50%)]" />
 					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_20%,white_40%,white_50%,transparent_75%)]" />
@@ -191,7 +201,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				transition={{
 					duration: 0.2,
 				}}
-				className="fixed bottom-0 z-50 mb-8 flex h-auto w-full items-center justify-center gap-1 sm:hidden"
+				className="fixed bottom-0 z-50 mb-4 flex h-auto w-full items-center justify-center gap-1 sm:hidden"
 			>
 				<div className="h-[2.5rem] overflow-hidden rounded-md border-2 border-dark shadow-md dark:border-primary">
 					<LocaleSwitcher />

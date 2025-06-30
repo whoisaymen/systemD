@@ -96,7 +96,7 @@ export default function IndexRoute() {
 				}}
 			/> */}
 
-			<div className="h-full w-auto py-1 sm:mx-0">
+			<div className="h-full w-auto sm:mx-0">
 				<video
 					className="h-full w-full transform rounded-none border-0 object-cover sm:rounded-md"
 					autoPlay

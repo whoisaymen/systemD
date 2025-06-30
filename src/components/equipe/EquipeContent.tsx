@@ -1,7 +1,177 @@
+// 'use client'
+// import { motion } from 'motion/react'
+// import Img from '@/ui/Img'
+// import { useState, useEffect, useRef } from 'react'
+// import ArrowRight from '../common/ArrowRight'
+
+// interface EquipeContentProps {
+// 	persons: any[]
+// 	language: string
+// }
+
+// const theme = {
+// 	icon: 'var(--color-primary)',
+// 	fill: 'var(--color-primary)',
+// 	stroke: 'var(--color-grayDark)',
+// }
+// const CARD_WIDTH = 330
+// const CARD_GAP = 0 // unchanged
+
+// const getLocalizedValue = (array: any[], lang: string) => {
+// 	const item = array.find((entry) => entry._key === lang)
+// 	return item ? item.value : ''
+// }
+
+// const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
+// 	const n = persons.length
+
+// 	// displayIndex runs over [0 .. n+1], where
+// 	//   0          => clone of last
+// 	//   1..n       => real persons[0..n-1]
+// 	//   n+1        => clone of first
+// 	const [displayIndex, setDisplayIndex] = useState(1)
+// 	const containerRef = useRef<HTMLDivElement>(null)
+
+// 	// navigation
+// 	const prev = () => setDisplayIndex((i) => i - 1)
+// 	const next = () => setDisplayIndex((i) => i + 1)
+
+// 	// build extended array
+// 	const extended = [
+// 		persons[n - 1], // clone last
+// 		...persons,
+// 		persons[0], // clone first
+// 	]
+
+// 	// compute center‐offset translateX
+// 	const containerW = containerRef.current?.offsetWidth || window.innerWidth
+// 	const translateX =
+// 		-displayIndex * (CARD_WIDTH + CARD_GAP) + containerW / 2 - CARD_WIDTH / 2
+
+// 	// when the spring finishes on a clone, immediately jump
+// 	// (no transition) back to the real index
+// 	const handleAnimationComplete = () => {
+// 		if (displayIndex === 0) {
+// 			setDisplayIndex(n)
+// 		} else if (displayIndex === n + 1) {
+// 			setDisplayIndex(1)
+// 		}
+// 	}
+
+// 	return (
+// 		<>
+// 			<div className="fixed top-32 flex w-full items-center justify-between px-1 pt-4">
+// 				<button
+// 					onClick={prev}
+// 					className="z-40 text-primary"
+// 					aria-label="Previous"
+// 				>
+// 					<ArrowRight
+// 						theme={{ fill: 'var(--color-primary' }}
+// 						className="h-9 w-9 rotate-180"
+// 					/>
+// 				</button>
+// 				<button onClick={next} className="z-40 text-primary" aria-label="Next">
+// 					<ArrowRight
+// 						theme={{ fill: 'var(--color-primary' }}
+// 						className="h-9 w-9"
+// 					/>
+// 				</button>
+// 			</div>
+// 			<div className="relative flex h-full w-full flex-col items-center">
+// 				{/* Carousel Container */}
+// 				<div
+// 					ref={containerRef}
+// 					className="relative flex w-full justify-center overflow-hidden"
+// 				>
+// 					<motion.div
+// 						className="flex items-start"
+// 						style={{ gap: CARD_GAP }}
+// 						animate={{ x: translateX }}
+// 						transition={{
+// 							type: 'spring',
+// 							stiffness: 300,
+// 							damping: 30,
+// 							// snap instantly if we're on a clone
+// 							duration:
+// 								displayIndex === 0 || displayIndex === n + 1 ? 0 : undefined,
+// 						}}
+// 						onAnimationComplete={handleAnimationComplete}
+// 					>
+// 						{extended.map((person, idx) => {
+// 							// map extended idx back to real 0..n-1
+// 							const realIdx = idx === 0 ? n - 1 : idx === n + 1 ? 0 : idx - 1
+// 							const isActive = realIdx === (displayIndex - 1 + n) % n
+
+// 							return (
+// 								<motion.div
+// 									key={`${person._id}-${idx}`}
+// 									className="mt-4 flex-shrink-0 cursor-pointer"
+// 									style={{ width: CARD_WIDTH }}
+// 									animate={{
+// 										scale: isActive ? 1 : 0.85,
+// 										opacity: isActive ? 1 : 0.7,
+// 									}}
+// 									onClick={() => setDisplayIndex(idx)}
+// 								>
+// 									{isActive ? (
+// 										<div className="pt-2">
+// 											<div className="w-full overflow-hidden rounded-3xl border-2 border-dark dark:border-primary">
+// 												<Img
+// 													image={person.image}
+// 													src={
+// 														person.image?.asset?._ref
+// 															? `/${person.image.asset._ref.split('-')[1]}-${person.image.asset._ref.split('-')[2]}.${person.image.asset._ref.split('-')[3]}`
+// 															: ''
+// 													}
+// 													alt={person.name}
+// 													className="aspect-square h-full w-full object-cover"
+// 												/>
+// 											</div>
+
+// 											<div className="mt-8">
+// 												<div className="mb-4 flex flex-col">
+// 													{person.name && (
+// 														<h3 className="inline-block text-2xl font-bold tracking-tighter text-primary">
+// 															{person.name}
+// 														</h3>
+// 													)}
+// 													{person.title && (
+// 														<p className="mt-0 inline-block self-start rounded-md bg-grayDark px-1 text-left text-xs font-bold uppercase tracking-tighter text-dark">
+// 															{getLocalizedValue(person.title, language)}
+// 														</p>
+// 													)}
+// 												</div>
+// 												{person.biography && (
+// 													<p className="text-sm leading-tight tracking-tighter text-dark dark:text-primary">
+// 														{getLocalizedValue(person.biography, language)}
+// 													</p>
+// 												)}
+// 											</div>
+// 										</div>
+// 									) : (
+// 										<div
+// 											className="hover:bg-primary/90 mt-16 aspect-square w-full cursor-pointer rounded-3xl bg-primary transition-colors"
+// 											title={person.name}
+// 										/>
+// 									)}
+// 								</motion.div>
+// 							)
+// 						})}
+// 					</motion.div>
+// 				</div>
+// 			</div>
+// 		</>
+// 	)
+// }
+
+// export default EquipeContent
+
 'use client'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion } from 'motion/react'
 import Img from '@/ui/Img'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import ArrowRight from '../common/ArrowRight'
 
 interface EquipeContentProps {
 	persons: any[]
@@ -14,175 +184,178 @@ const theme = {
 	stroke: 'var(--color-grayDark)',
 }
 
-const AnimatedRect: React.FC<{ className?: string }> = ({ className }) => (
-	<svg
-		className={className}
-		viewBox="0 0 24 56"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-	>
-		<path
-			d="M2 5C2 2.23858 4.239 0 7 0H17C19.7614 0 22 2.23858 22 5V51C22 53.7614 19.7614 56 17 56H7C4.239 56 2 53.7614 2 51V5Z"
-			stroke="currentColor"
-			strokeWidth="0"
-			fill={theme.icon}
-			// style={{ originX: 1.3 }}
-			// animate={{
-			// 	scaleX: [1, 1.2, 0.9, 1],
-			// 	scaleY: [1, 0.8, 1.1, 1],
-			// 	x: [0, -2, 2, 0],
-			// 	transition: {
-			// 		duration: 4,
-			// 		ease: [0.76, 0, 0.24, 1],
-			// 		repeat: Infinity,
-			// 	},
-			// }}
-		/>
-	</svg>
-)
-
 const getLocalizedValue = (array: any[], lang: string) => {
 	const item = array.find((entry) => entry._key === lang)
 	return item ? item.value : ''
 }
 
-const CARD_WIDTH = 290
-
 const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
-	const [active, setActive] = useState(0)
-	const [direction, setDirection] = useState(0) // -1 for left, 1 for right
+	const n = persons.length
+	const [displayIndex, setDisplayIndex] = useState(1)
+	const [cardWidth, setCardWidth] = useState(330)
+	const containerRef = useRef<HTMLDivElement>(null)
 
-	const prev = () => {
-		setDirection(-1)
-		setActive((i) => (i - 1 + persons.length) % persons.length)
-	}
-	const next = () => {
-		setDirection(1)
-		setActive((i) => (i + 1) % persons.length)
-	}
+	// Calculate responsive card width
+	useEffect(() => {
+		const updateCardWidth = () => {
+			const screenWidth = window.innerWidth
+			let newWidth = 330 // default desktop
 
-	const getIdx = (offset: number) =>
-		(active + offset + persons.length) % persons.length
+			if (screenWidth < 480) {
+				// Small phones
+				newWidth = Math.min(280, screenWidth - 80) // Leave 40px padding on each side
+			} else if (screenWidth < 640) {
+				// Larger phones
+				newWidth = Math.min(320, screenWidth - 100)
+			} else if (screenWidth < 768) {
+				// Small tablets
+				newWidth = 330
+			}
+
+			setCardWidth(newWidth)
+		}
+
+		updateCardWidth()
+		window.addEventListener('resize', updateCardWidth)
+		return () => window.removeEventListener('resize', updateCardWidth)
+	}, [])
+
+	const CARD_GAP = 0
+
+	// navigation
+	const prev = () => setDisplayIndex((i) => i - 1)
+	const next = () => setDisplayIndex((i) => i + 1)
+
+	// build extended array
+	const extended = [
+		persons[n - 1], // clone last
+		...persons,
+		persons[0], // clone first
+	]
+
+	// compute center‐offset translateX
+	const containerW = containerRef.current?.offsetWidth || window.innerWidth
+	const translateX =
+		-displayIndex * (cardWidth + CARD_GAP) + containerW / 2 - cardWidth / 2
+
+	// when the spring finishes on a clone, immediately jump
+	// (no transition) back to the real index
+	const handleAnimationComplete = () => {
+		if (displayIndex === 0) {
+			setDisplayIndex(n)
+		} else if (displayIndex === n + 1) {
+			setDisplayIndex(1)
+		}
+	}
 
 	return (
-		<div className="relative flex h-full w-full flex-col items-center justify-center">
-			<div className="relative flex h-full w-full max-w-5xl items-start justify-center">
-				<AnimatePresence initial={false} custom={direction}>
-					{[-1, 0, 1].map((offset) => {
-						const idx = getIdx(offset)
-						const person = persons[idx]
-						const isActive = offset === 0
-						const isPrev = offset === -1
-						const isNext = offset === 1
+		<>
+			<div className="relative flex h-full w-full flex-col items-center">
+				<div className="absolute top-12 flex w-full items-center justify-between px-1 pt-4">
+					<button
+						onClick={prev}
+						className="z-40 text-primary"
+						aria-label="Previous"
+					>
+						<ArrowRight
+							theme={{ fill: 'var(--color-primary' }}
+							className="h-9 w-9 rotate-180"
+						/>
+					</button>
+					<button
+						onClick={next}
+						className="z-40 text-primary"
+						aria-label="Next"
+					>
+						<ArrowRight
+							theme={{ fill: 'var(--color-primary' }}
+							className="h-9 w-9"
+						/>
+					</button>
+				</div>
+				{/* Carousel Container */}
+				<div
+					ref={containerRef}
+					className="relative flex w-full justify-center overflow-hidden"
+				>
+					<motion.div
+						className="flex items-start"
+						style={{ gap: CARD_GAP }}
+						animate={{ x: translateX }}
+						transition={{
+							type: 'spring',
+							stiffness: 300,
+							damping: 30,
+							// snap instantly if we're on a clone
+							duration:
+								displayIndex === 0 || displayIndex === n + 1 ? 0 : undefined,
+						}}
+						onAnimationComplete={handleAnimationComplete}
+					>
+						{extended.map((person, idx) => {
+							// map extended idx back to real 0..n-1
+							const realIdx = idx === 0 ? n - 1 : idx === n + 1 ? 0 : idx - 1
+							const isActive = realIdx === (displayIndex - 1 + n) % n
 
-						return (
-							<motion.div
-								key={person._id}
-								className="absolute m-4 mt-8 flex flex-col items-center justify-center pb-20"
-								style={{
-									width: isActive ? CARD_WIDTH : CARD_WIDTH * 0.7,
-									zIndex: isActive ? 30 : 20,
-									cursor: isActive ? 'default' : 'pointer',
-								}}
-								initial={{
-									x: offset * 260,
-									scale: isActive ? 1 : 0.85,
-									opacity: 1,
-									filter: isActive ? 'none' : 'none',
-								}}
-								animate={{
-									x: offset * 260,
-									scale: isActive ? 1 : 0.85,
-									opacity: 1,
-									filter: isActive ? 'none' : 'none',
-									skewY: isPrev ? 0 : isNext ? 0 : 0,
-								}}
-								exit={{
-									x: direction === 1 ? -260 : 260,
-									opacity: 0,
-									scale: 0.8,
-								}}
-								transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-								onClick={() => !isActive && setActive(idx)}
-							>
-								{isActive ? (
-									<>
-										<div className="aspect-square w-full rounded-3xl border-2 border-dark dark:border-primary">
-											<Img
-												image={person.image}
-												src={
-													person.image?.asset?._ref
-														? `/${person.image.asset._ref.split('-')[1]}-${person.image.asset._ref.split('-')[2]}.${person.image.asset._ref.split('-')[3]}`
-														: ''
-												}
-												alt={person.name}
-												className="h-full w-full rounded-3xl object-cover"
-											/>
-										</div>
-										<div className="relative mt-8">
-											{person.title && (
-												<p className="mt-0 text-left text-xl font-bold uppercase tracking-tighter text-primary">
-													{getLocalizedValue(person.title, language)}
-												</p>
-											)}
-											{person.biography && (
-												<p className="mt-2 text-base leading-tight tracking-tighter text-dark dark:text-primary">
-													{getLocalizedValue(person.biography, language)}
-												</p>
-											)}
+							return (
+								<motion.div
+									key={`${person._id}-${idx}`}
+									className="mt-4 flex-shrink-0 cursor-pointer"
+									style={{ width: cardWidth }}
+									animate={{
+										scale: isActive ? 1 : 0.85,
+										// opacity: isActive ? 1 : 0.7,
+									}}
+									onClick={() => setDisplayIndex(idx)}
+								>
+									{isActive ? (
+										<div className="pt-2">
+											<div className="w-full overflow-hidden rounded-3xl border-2 border-dark dark:border-primary">
+												<Img
+													image={person.image}
+													src={
+														person.image?.asset?._ref
+															? `/${person.image.asset._ref.split('-')[1]}-${person.image.asset._ref.split('-')[2]}.${person.image.asset._ref.split('-')[3]}`
+															: ''
+													}
+													alt={person.name}
+													className="aspect-square h-full w-full object-cover"
+												/>
+											</div>
 
-											{person.name && (
-												<p
-													className="absolute -left-12 top-32 z-30 inline-block rotate-90 text-2xl font-bold uppercase leading-[0] tracking-tighter text-primary"
-													style={{
-														transformOrigin: 'left bottom',
-													}}
-												>
-													{person.name}
-												</p>
-											)}
+											<div className="mt-8">
+												<div className="mb-4 flex flex-col">
+													{person.name && (
+														<h3 className="inline-block text-xl font-bold tracking-tighter text-primary sm:text-2xl">
+															{person.name}
+														</h3>
+													)}
+													{person.title && (
+														<p className="mt-0 inline-block self-start rounded-md bg-grayDark px-1 text-left text-xs font-bold uppercase tracking-tighter text-dark">
+															{getLocalizedValue(person.title, language)}
+														</p>
+													)}
+												</div>
+												{person.biography && (
+													<p className="text-base leading-tight tracking-tighter text-dark dark:text-primary sm:text-sm">
+														{getLocalizedValue(person.biography, language)}
+													</p>
+												)}
+											</div>
 										</div>
-									</>
-								) : (
-									<>
-										<div className="relative flex aspect-square h-[50vh] w-full items-center justify-center rounded-md bg-primary">
-											<button
-												onClick={prev}
-												className="absolute bottom-1/2 left-2 z-40 px-3 py-1 text-2xl font-bold text-dark hover:bg-primary"
-												aria-label="Previous"
-											>
-												›
-											</button>
-											<button
-												onClick={next}
-												className="absolute bottom-1/2 right-2 z-40 px-3 py-1 text-2xl font-bold text-dark hover:bg-primary"
-												aria-label="Next"
-											>
-												‹
-											</button>
-										</div>
-									</>
-								)}
-							</motion.div>
-						)
-					})}
-				</AnimatePresence>
+									) : (
+										<div
+											className="mt-20 aspect-square w-full cursor-pointer rounded-3xl bg-primary"
+											title={person.name}
+										/>
+									)}
+								</motion.div>
+							)
+						})}
+					</motion.div>
+				</div>
 			</div>
-			<button
-				onClick={prev}
-				className="fixed bottom-[60%] left-2 z-40 px-3 py-1 text-2xl font-bold text-dark hover:bg-primary"
-				aria-label="Previous"
-			>
-				‹
-			</button>
-			<button
-				onClick={next}
-				className="fixed bottom-[60%] right-2 z-40 px-3 py-1 text-2xl font-bold text-dark hover:bg-primary"
-				aria-label="Next"
-			>
-				›
-			</button>
-		</div>
+		</>
 	)
 }
 
