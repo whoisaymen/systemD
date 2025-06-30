@@ -45,7 +45,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	let borderRadius = useTransform(scrollY, (value) => Math.max(80 - value, 10))
 
 	const years = Array.from(
-		new Set(memoire.pastFestivals.map((f: any) => f.year)),
+		new Set<number>(memoire.pastFestivals.map((f: any) => Number(f.year))),
 	).sort((a, b) => b - a)
 
 	const themeColors = {

@@ -81,7 +81,7 @@ const ThemeSwitch = () => {
 	}: {
 		primary: string
 		dark: string
-		grayDark?: string
+		grayDark: string
 	}) {
 		if (typeof window !== 'undefined') {
 			const root = document.documentElement
