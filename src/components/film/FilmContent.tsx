@@ -131,7 +131,26 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 				)
 			)}
 
-			<div className="mb-0 mt-6 flex w-full flex-col items-center justify-center gap-1 px-6 text-xs font-medium leading-[1.2]">
+			<div className="relative mb-0 mt-6 flex w-full flex-col items-center justify-center gap-2 px-6 text-xs font-medium leading-[1.2]">
+				<button className="absolute bottom-1/2 left-1" aria-label="Go back">
+					<ArrowRight
+						theme={{
+							fill: 'var(--color-dark)',
+							stroke: 'var(--color-grayDark)',
+						}}
+						className="h-auto w-8 -rotate-180 lg:w-9"
+					/>
+				</button>
+
+				<button className="absolute bottom-1/2 right-1" aria-label="Go back">
+					<ArrowRight
+						theme={{
+							fill: 'var(--color-dark)',
+							stroke: 'var(--color-grayDark)',
+						}}
+						className="h-auto w-8 lg:w-9"
+					/>
+				</button>
 				<div className="flex items-center justify-center gap-1">
 					{film.length && (
 						<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
@@ -183,6 +202,21 @@ const FilmContent: React.FC<FilmContentProps> = ({ film, language }) => {
 					</p>
 				</div>
 			)}
+
+			<div className="mx-2 flex items-center justify-center gap-1 pb-32">
+				<span className="w-fit -rotate-2 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
+					Press link
+				</span>
+				<span className="w-fit rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
+					Instagram
+				</span>
+				<span className="w-fit -rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
+					Prod
+				</span>
+				<span className="w-fit rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
+					Facebook
+				</span>
+			</div>
 		</div>
 	)
 }

@@ -60,7 +60,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 							return (
 								<Link
 									href={`/${locale}/bigbang`}
-									className="flex h-full w-full cursor-pointer overflow-hidden rounded-md bg-gradient-to-b from-grayLight to-grayDark/25 py-1 shadow-inner dark:from-dark dark:to-grayDark/25"
+									className="to-grayDark/25 dark:to-grayDark/25 flex h-full w-full cursor-pointer overflow-hidden rounded-md bg-gradient-to-b from-grayLight py-1 shadow-inner dark:from-dark"
 								>
 									<div className="relative flex cursor-pointer items-center justify-center rounded-md border-dark">
 										<MenuArrows className="absolute right-2 top-2 text-grayDark" />
@@ -104,7 +104,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 							return (
 								<Link
 									href={`/${locale}/fabrique`}
-									className="dark:bg-gray group relative flex h-full w-full items-center justify-center rounded-md border-grayLight bg-transparent bg-gradient-to-b from-grayLight to-grayDark/25 py-12 shadow-inner dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50"
+									className="dark:bg-gray to-grayDark/25 dark:to-grayDark/25 dark:hover:bg-dark/50 group relative flex h-full w-full items-center justify-center rounded-md border-grayLight bg-transparent bg-gradient-to-b from-grayLight py-12 shadow-inner dark:border-0 dark:from-dark"
 								>
 									<MenuArrows className="absolute right-2 top-2 text-grayDark" />
 									<div className="z-0 text-grayDark">
@@ -132,7 +132,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 						href={`/${locale}/equipe`}
 						className="group relative w-full grow cursor-pointer rounded-md"
 					>
-						<HoverableItem className="flex h-full w-full items-center justify-center rounded-md border-0 border-primary bg-gradient-to-b from-grayLight to-grayDark/25 py-1 py-12 shadow-inner dark:bg-grayDark dark:from-dark dark:to-grayDark/25 sm:dark:bg-dark">
+						<HoverableItem className="to-grayDark/25 dark:to-grayDark/25 flex h-full w-full items-center justify-center rounded-md border-0 border-primary bg-gradient-to-b from-grayLight py-1 py-12 shadow-inner dark:bg-grayDark dark:from-dark sm:dark:bg-dark">
 							{(isHovered) => {
 								const themeColors = {
 									dark: {
@@ -221,7 +221,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 							return (
 								<Link
 									href={`/${locale}/festival`}
-									className="relative flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-gradient-to-b from-grayLight to-grayDark/25 py-32 pt-4 shadow-inner dark:bg-grayDark dark:from-dark dark:to-grayDark/25"
+									className="to-grayDark/25 dark:to-grayDark/25 relative flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-gradient-to-b from-grayLight py-32 pt-4 shadow-inner dark:bg-grayDark dark:from-dark"
 								>
 									<MenuArrows className="absolute right-2 top-2 text-grayDark" />
 									<div className="hidden">
@@ -281,7 +281,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 									},
 								}
 								return (
-									<div className="relative h-full w-full cursor-pointer rounded-md bg-gradient-to-b from-grayLight to-grayDark/25 px-2 py-4 shadow-inner dark:bg-dark dark:from-dark dark:to-grayDark/25">
+									<div className="to-grayDark/25 dark:to-grayDark/25 relative h-full w-full cursor-pointer rounded-md bg-gradient-to-b from-grayLight px-2 py-4 shadow-inner dark:bg-dark dark:from-dark">
 										<MenuArrows className="absolute right-2 top-2 z-50 text-grayDark hover:scale-105" />
 										<div className="flex h-full items-center justify-center">
 											<MemoireLogo

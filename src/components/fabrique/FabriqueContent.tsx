@@ -213,8 +213,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 											</p> */}
 											{/* <h2 className="px-4 text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary"> */}
 											<div className="flex items-center justify-center">
-												{' '}
-												<h2 className="-z-10 -mt-7 inline-block -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-lg font-medium tracking-tighter text-dark">
+												<h2 className="-z-10 -mt-8 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tighter text-dark">
 													{
 														getLocalizedValue(action.title, language).split(
 															' - ',

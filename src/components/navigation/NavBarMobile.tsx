@@ -203,7 +203,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				}}
 				className="fixed bottom-0 z-50 mb-4 flex h-auto w-full items-center justify-center gap-1 sm:hidden"
 			>
-				<div className="h-[2.5rem] overflow-hidden rounded-md border-2 border-dark shadow-md dark:border-primary">
+				<div className="h-[2.5rem] rounded-md border-2 border-dark shadow-md dark:border-primary">
 					<LocaleSwitcher />
 				</div>
 				<div className="flex items-stretch justify-center gap-1">

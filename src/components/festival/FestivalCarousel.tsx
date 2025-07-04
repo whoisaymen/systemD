@@ -1,6 +1,8 @@
 import Img from '@/ui/Img'
+import ArrowRight from '../common/ArrowRight'
 import { motion } from 'motion/react'
 import { useRef, useEffect, useState } from 'react'
+import ArrowGallery from '../common/ArrowGallery'
 
 const FestivalCarousel: React.FC<{
 	photos: { photo: any; artistName?: string; curatorName?: string }[]
@@ -8,6 +10,8 @@ const FestivalCarousel: React.FC<{
 }> = ({ photos, initialIndex = 0 }) => {
 	const [currentIndex, setCurrentIndex] = useState(initialIndex)
 	const thumbContainerRef = useRef<HTMLDivElement>(null)
+	const [isLandscape, setIsLandscape] = useState(true)
+
 	const activeThumbRef = useRef<HTMLButtonElement>(null)
 
 	// Center the active thumbnail in the preview bar
@@ -38,6 +42,16 @@ const FestivalCarousel: React.FC<{
 		}
 	}, [])
 
+	useEffect(() => {
+		const img = photos[currentIndex]?.photo
+		if (img?.asset?.metadata?.dimensions) {
+			const { width, height } = img.asset.metadata.dimensions
+			setIsLandscape(width >= height)
+		} else {
+			setIsLandscape(true) // fallback
+		}
+	}, [currentIndex, photos])
+
 	const handleNext = () => {
 		setCurrentIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1))
 	}
@@ -47,64 +61,71 @@ const FestivalCarousel: React.FC<{
 	}
 
 	return (
-		<div className="flex h-full items-center justify-center">
-			{/* Curator Name (only for expoPhoto) */}
-			{photos[currentIndex].curatorName && (
-				<div className="absolute top-4 text-center text-2xl font-bold text-primary">
-					{photos[currentIndex].curatorName}
-				</div>
-			)}
+		<div className="relative flex h-full w-full flex-col items-center justify-center">
+			<button
+				className="fixed bottom-1/2 left-4 z-50"
+				aria-label="Go back"
+				onClick={handlePrev}
+			>
+				<ArrowRight
+					theme={{ fill: 'var(--color-dark)', stroke: 'var(--color-grayDark)' }}
+					className="h-auto w-9 -rotate-180 lg:w-9"
+				/>
+			</button>
 
-			{/* Main image */}
-			<div className="relative w-full overflow-hidden">
-				<div className="py-8">
-					<div className="relative">
-						<div className="absolute top-1 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:20px_12px] bg-center bg-repeat-x sm:w-full"></div>
+			<button
+				className="fixed bottom-1/2 right-4 z-50"
+				aria-label="Go back"
+				onClick={handleNext}
+			>
+				<ArrowRight
+					theme={{ fill: 'var(--color-dark)', stroke: 'var(--color-grayDark)' }}
+					className="h-auto w-9 lg:w-9"
+				/>
+			</button>
 
-						<div className="absolute bottom-1 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:20px_12px] bg-center bg-repeat-x sm:w-full"></div>
+			<div
+				className={`pointer-events-none relative flex items-start justify-end px-0`}
+			>
+				<div className="relative flex flex-col items-center justify-center rounded-none bg-grayDark py-4">
+					<div className="absolute left-0 top-1 flex w-full justify-between px-2">
+						{[...Array(12)].map((_, i) => (
+							<div key={i} className="h-2 w-4 rounded-sm bg-dark" />
+						))}
+					</div>
+					<div className="absolute bottom-1 left-0 flex w-full justify-between px-2">
+						{[...Array(12)].map((_, i) => (
+							<div key={i} className="h-2 w-4 rounded-sm bg-dark" />
+						))}
+					</div>
+
+					<a
+						href={photos[currentIndex].photo.asset.url}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="pointer-events-auto relative block w-full"
+						tabIndex={0}
+						aria-label="Open image in new tab"
+					>
 						<Img
 							image={photos[currentIndex].photo}
 							src={photos[currentIndex].photo.asset.url}
 							alt={`Photo ${currentIndex + 1}`}
-							className="h-auto w-full object-cover"
+							className="max-h-[60vh] w-full object-cover object-top"
 						/>
-					</div>
+						<h3
+							className={`absolute -top-12 left-[1rem] -rotate-3 rounded-md border-[3px] border-dark bg-grayDark px-2 text-lg font-medium tracking-tighter text-dark sm:hidden`}
+						>
+							Photos by Maya B
+						</h3>
+					</a>
 				</div>
-
-				{/* Artist Name (only for expoPhoto) */}
-				{photos[currentIndex].artistName && (
-					<div className="mt-4 text-center text-lg font-medium text-primary">
-						{photos[currentIndex].artistName || 'Unknown Artist'}
-					</div>
-				)}
-
-				{/* Navigation buttons */}
-				{photos.length > 1 && (
-					<>
-						<button
-							onClick={handlePrev}
-							className="absolute left-4 top-1/2 z-10 -translate-y-1/2 px-2 py-1 text-3xl text-primary"
-						>
-							←
-						</button>
-						<button
-							onClick={handleNext}
-							className="absolute right-4 top-1/2 z-10 -translate-y-1/2 px-2 py-1 text-3xl text-primary"
-						>
-							→
-						</button>
-					</>
-				)}
 			</div>
 
-			{/* Thumbnail preview bar */}
 			<div
 				ref={thumbContainerRef}
-				className="no-scrollbar absolute inset-x-0 bottom-4 mt-4 flex w-full gap-2 overflow-x-auto bg-black"
+				className="no-scrollbar pointer-events-none mt-2 flex h-20 w-full items-center justify-center gap-1 overflow-visible overflow-x-auto"
 			>
-				<div className="absolute top-0.5 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:10px_6px] bg-center bg-repeat-x sm:w-full"></div>
-
-				<div className="absolute bottom-0.5 z-30 h-[5%] w-full rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:10px_6px] bg-center bg-repeat-x sm:w-full"></div>
 				{photos.map((photo, index) => {
 					const isActive = index === currentIndex
 
@@ -113,15 +134,17 @@ const FestivalCarousel: React.FC<{
 							key={index}
 							ref={isActive ? activeThumbRef : null}
 							onClick={() => setCurrentIndex(index)}
-							className={`aspect-square h-16 flex-shrink-0 ${
-								isActive ? 'rounded-md border-2 border-primary' : ''
+							className={`pointer-events-auto aspect-square h-14 flex-shrink-0 ${
+								isActive
+									? 'scale-125 overflow-visible rounded-md border-2 border-primary'
+									: ''
 							}`}
 						>
 							<Img
 								image={photo.photo}
 								src={photo.photo.asset.url}
 								alt={`Thumbnail ${index + 1}`}
-								className="h-full w-full object-cover"
+								className="h-full w-full overflow-visible rounded-md object-cover"
 							/>
 						</button>
 					)

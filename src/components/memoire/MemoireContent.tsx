@@ -11,7 +11,7 @@ import { getRandomRotationClass } from '@/lib/utils'
 import MemoireLogoMobile from './MemoireLogoMobile'
 import EmptyCinema from './EmptyCinema'
 import { useState } from 'react'
-import { IoGrid, IoList } from 'react-icons/io5'
+import { IoGrid } from 'react-icons/io5'
 import FilterIcon from '../svgs/FilterIcon'
 import { BiSolidSquareRounded } from 'react-icons/bi'
 
@@ -32,7 +32,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		return item ? item.value : ''
 	}
 
-	const [view, setView] = useState<'grid' | 'list'>('grid')
+	const [view, setView] = useState<'grid' | 'single'>('single')
 	const [sortField, setSortField] = useState<'year'>('year')
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 	const [yearFilter, setYearFilter] = useState<string | null>(null)
@@ -112,20 +112,70 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					Grid
 				</button>
 				<button
-					onClick={() => setView('list')}
-					className={`rounded px-2 py-1 ${view === 'list' ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
+					onClick={() => setView('single')}
+					className={`rounded px-2 py-1 ${view === 'single' ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
 				>
-					List
+					single
 				</button>
 			</div> */}
 
-			<div className="mt-2 flex flex-wrap items-center justify-end gap-2">
-				{/* <span className="text-primary">Éditions précédentes</span> */}
+			<div className="mt-1 flex flex-wrap items-center justify-between">
+				<span className="px-2 py-3 text-5xl font-bold leading-[1] text-primary">
+					{/* {'Éditions'.split('').map((char, idx) => {
+						// Skip rendering for spaces (if any)
+						if (char === ' ') return <span key={idx}>&nbsp;</span>
+						// Random rotation and position for each character
+						const randomRotation = Math.floor(Math.random() * 21) - 10 // -10 to 10 deg
+						const randomMarginTop = Math.floor(Math.random() * 10) - 5 // -5px to 5px
+						const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // -5px to 5px
+						return (
+							<span
+								key={idx}
+								className="inline-block p-0.5"
+								style={{
+									transform: `rotate(${randomRotation}deg)`,
+									marginTop: `${randomMarginTop}px`,
+									marginLeft: `${randomMarginLeft}px`,
+								}}
+							>
+								{char}
+							</span>
+						)
+					})} */}
+				</span>
 				{/* View toggle */}
 				<div className="flex items-center justify-center gap-0">
 					<button
+						onClick={() => setView('single')}
+						className="relative flex items-center justify-center p-0 text-center font-bold tracking-tight transition-colors"
+						aria-label="Single view"
+					>
+						<motion.span
+							animate={
+								view === 'single'
+									? { scale: 0.85, opacity: 1 }
+									: { scale: 0.75, opacity: 0.5 }
+							}
+							transition={{
+								type: 'spring',
+								stiffness: 400,
+								damping: 22,
+							}}
+							className="inline-block"
+						>
+							<BiSolidSquareRounded
+								className={
+									view === 'single'
+										? 'text-primary'
+										: 'text-dark dark:text-grayDark'
+								}
+								size={30}
+							/>
+						</motion.span>
+					</button>
+					<button
 						onClick={() => setView('grid')}
-						className="relative p-0 text-center font-bold tracking-tight transition-colors"
+						className="relative -ml-2 flex items-center justify-center p-0 text-center font-bold tracking-tight transition-colors"
 						aria-label="Grid view"
 					>
 						<motion.span
@@ -151,103 +201,52 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 							/>
 						</motion.span>
 					</button>
-					<button
-						onClick={() => setView('list')}
-						className="relative -ml-2 p-0 text-center font-bold tracking-tight transition-colors"
-						aria-label="List view"
-					>
-						<motion.span
-							animate={
-								view === 'list'
-									? { scale: 0.85, opacity: 1 }
-									: { scale: 0.75, opacity: 0.5 }
-							}
-							transition={{
-								type: 'spring',
-								stiffness: 400,
-								damping: 22,
-							}}
-							className="inline-block"
-						>
-							<BiSolidSquareRounded
-								className={
-									view === 'list'
-										? 'text-primary'
-										: 'text-dark dark:text-grayDark'
-								}
-								size={30}
-							/>
-						</motion.span>
-					</button>
 				</div>
 			</div>
-			{/* <motion.div
-				style={{ borderRadius }}
-				transition={{
-					duration: 2,
-					ease: [0.76, 0, 0.24, 1],
-		
-				}}
-				className="relative w-full border-2 border-dark bg-primary px-8 py-10 shadow-sm dark:bg-secondary sm:border-0 sm:py-10 sm:dark:bg-transparent"
-			>
-				<div className="hidden h-full w-full px-32 sm:block">
-					<MemoireLogoMobile
-						theme={themeColors.memoire}
-						className="overflow-visible text-dark"
-					/>
-				</div>
-				<p className="mx-auto py-2 text-center text-2xl font-bold leading-[1.2] tracking-tighter text-dark sm:hidden sm:py-4 sm:text-4xl">
-					{getLocalizedValue(memoire.description, language)}
-				</p>
-			</motion.div> */}
-			{/* <EmptyCinema
-				theme={emptyCinemaTheme}
-				className="w-full scale-150 text-dark"
-			/> */}
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
 				<div
-					className={`grid ${view === 'list' ? 'grid-cols-1' : 'grid-cols-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0`}
+					className={`mt-1 grid ${view === 'single' ? 'grid-cols-1' : 'grid-cols-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0`}
 				>
-					{/* {filteredFestivals.map((festival: any, index: number) => ( */}
-					{[...Array(5)]
-						.fill(filteredFestivals)
-						.flat()
-						.slice(0, 5)
-						.map((festival: any, index: number) => (
-							<Link
-								key={festival._id || index}
-								href={`/${language}/festival/${festival.year}`}
-								className={`relative block ${view === 'list' ? 'h-[60vh]' : 'h-full'} overflow-hidden rounded-xl border-[2.5px] border-primary shadow-xl transition-shadow duration-300 hover:shadow-lg`}
+					{filteredFestivals.map((festival: any, index: number) => (
+						// {[...Array(5)]
+						// 	.fill(filteredFestivals)
+						// 	.flat()
+						// 	.slice(0, 5)
+						// 	.map((festival: any, index: number) => (
+						<Link
+							key={festival._id || index}
+							href={`/${language}/festival/${festival.year}`}
+							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-primary shadow-xl transition-shadow duration-300 hover:shadow-lg`}
+						>
+							<div
+								className={`absolute left-1/2 ${view === 'single' ? 'top-[65%] text-3xl' : 'top-[38%] text-xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tighter text-dark`}
 							>
-								<div
-									className={`absolute left-1/2 ${view === 'list' ? 'top-[65%] text-5xl' : 'top-[38%] text-2xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tighter text-dark`}
-								>
-									<span>{festival.year}</span>
-								</div>
-								<div
-									className={`absolute left-1/2 ${view === 'list' ? 'top-[74%] text-5xl' : 'top-[54%] text-2xl'} z-10 -translate-x-1/2 rotate-6 rounded-md bg-dark px-2 font-semibold tracking-tighter text-primary`}
-								>
-									<span>{festival.venue}</span>
-								</div>
-								<div className="relative h-full overflow-hidden">
-									{festival.visual ? (
-										<Img
-											image={festival.visual}
-											src={festival.visual.asset.url}
-											alt={
-												festival.title
-													? getLocalizedValue(festival.title, language)
-													: 'Festival image'
-											}
-											className="h-full w-full object-cover"
-										/>
-									) : (
-										<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
-									)}
-								</div>
-							</Link>
-						))}
+								<span>{festival.year}</span>
+							</div>
+							<div
+								className={`absolute left-1/2 ${view === 'single' ? 'top-[72%] text-3xl' : 'top-[50%] text-xl'} z-10 -translate-x-1/2 rotate-6 rounded-md bg-dark px-2 font-semibold tracking-tighter text-primary`}
+							>
+								<span>{festival.venue}</span>
+							</div>
+							<div className="relative h-full overflow-hidden">
+								{festival.visual ? (
+									<Img
+										image={festival.visual}
+										src={festival.visual.asset.url}
+										alt={
+											festival.title
+												? getLocalizedValue(festival.title, language)
+												: 'Festival image'
+										}
+										className="h-full w-full object-cover"
+									/>
+								) : (
+									<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
+								)}
+							</div>
+						</Link>
+					))}
 				</div>
 			)}
 		</div>

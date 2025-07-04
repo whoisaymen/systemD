@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import FilterIcon from '../svgs/FilterIcon'
 import ArrowIcon from '../svgs/ArrowIcon'
 import ArrowRight from './ArrowRight'
@@ -28,7 +28,7 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 
 	useEffect(() => {
 		const handleScroll = () => {
-			setIsVisible(window.scrollY > 200) // Show after scrolling 200px
+			setIsVisible(window.scrollY > 50) // Show after scrolling 200px
 		}
 		window.addEventListener('scroll', handleScroll)
 		return () => window.removeEventListener('scroll', handleScroll)
