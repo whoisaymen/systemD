@@ -1,49 +1,3 @@
-// import { useLocale, useTranslations } from 'next-intl'
-// import { routing } from '@/i18n/routing'
-// import LocaleSwitcherSelect from './LocaleSwitcherSelect'
-// import LocaleSwitcherDropdown from './LocaleSwitcherDropdown'
-
-// export default function LocaleSwitcher() {
-// 	const locale = useLocale()
-
-// 	return (
-// 		<LocaleSwitcherSelect defaultValue={locale} label="Select language">
-// 			{routing.locales.map((cur) => (
-// 				<option key={cur} value={cur}>
-// 					{cur.toUpperCase()}
-// 				</option>
-// 			))}
-// 		</LocaleSwitcherSelect>
-// 	)
-// }
-
-// import { useLocale, useTranslations } from 'next-intl'
-// import { routing } from '@/i18n/routing'
-// import LocaleSwitcherDropdown from './LocaleSwitcherSelect'
-
-// export default function LocaleSwitcher() {
-// 	const locale = useLocale()
-
-// 	const languageOptions = routing.locales.map((cur) => ({
-// 		value: cur,
-// 		label: cur.toUpperCase(),
-// 	}))
-
-// 	return (
-// 		<LocaleSwitcherDropdown
-// 			defaultValue={locale}
-// 			label="Select language"
-// 			options={languageOptions}
-// 		>
-// 			{routing.locales.map((cur) => (
-// 				<option key={cur} value={cur}>
-// 					{cur.toUpperCase()}
-// 				</option>
-// 			))}
-// 		</LocaleSwitcherDropdown>
-// 	)
-// }
-
 'use client'
 
 import { useLocale } from 'next-intl'
@@ -95,19 +49,12 @@ export default function LocaleSwitcher() {
 				onClick={() => setIsOpen(!isOpen)}
 				disabled={isPending}
 				className={clsx(
-					'flex h-full items-center justify-between gap-2 rounded-md bg-grayDark px-3 text-base font-bold tracking-tighter text-dark transition-all duration-200 dark:bg-dark dark:text-primary sm:text-2xl',
+					'flex h-full items-center justify-between gap-2 rounded-md bg-grayDark px-2 text-base font-bold tracking-tighter text-dark transition-all duration-200 dark:bg-dark dark:text-primary sm:text-2xl',
 					isPending && 'opacity-30',
-					isOpen && 'ring-2 ring-primary',
+					// isOpen && 'border-2 border-primary',
 				)}
 			>
 				<span>{locale.toUpperCase()}</span>
-				{/* <motion.span
-					className="text-current"
-					animate={{ rotate: isOpen ? 0 : 180 }}
-					transition={{ duration: 0.2 }}
-				>
-					↓
-				</motion.span> */}
 			</button>
 
 			<AnimatePresence>
@@ -117,7 +64,7 @@ export default function LocaleSwitcher() {
 						animate={{ opacity: 1, y: 0, scale: 1 }}
 						exit={{ opacity: 0, y: 10, scale: 0.95 }}
 						transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-						className="absolute bottom-full left-0 right-0 z-50 mb-2 w-full overflow-hidden rounded-md border-2 border-dark bg-grayDark shadow-lg dark:border-primary dark:bg-dark"
+						className="absolute bottom-full left-0 right-0 z-50 mb-2 w-full rounded-md border-2 border-dark bg-grayDark shadow-lg dark:border-primary dark:bg-dark"
 					>
 						{routing.locales.map((lang) => (
 							<button
@@ -130,18 +77,8 @@ export default function LocaleSwitcher() {
 										: 'text-dark dark:text-primary',
 								)}
 							>
-								<div className="flex items-center justify-center py-2">
+								<div className="flex h-full items-center justify-center py-2">
 									<span>{lang.toUpperCase()}</span>
-									{/* {lang === locale && (
-										<motion.span
-											className="text-current"
-											initial={{ scale: 0 }}
-											animate={{ scale: 1 }}
-											transition={{ delay: 0.1 }}
-										>
-											✓
-										</motion.span>
-									)} */}
 								</div>
 							</button>
 						))}

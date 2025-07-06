@@ -14,6 +14,7 @@ import { renderParagraph } from '../common/RenderParagraph'
 import BrusselsMap from './BrusselsMap'
 import FabriqueAnimated from '../homepage/FabriqueAnimated'
 import LogoShortTsx from '../svgs/LogoShort'
+import FabriqueBracketsIcon from './FabriqueBracketsIcon'
 
 interface FabriqueContentProps {
 	fabrique: any
@@ -25,10 +26,58 @@ const capitalizeFirstLetter = (str: string) => {
 	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
+const logoCollage = [
+	{
+		className:
+			'absolute right-16 top-0 mr-[0.10rem] w-20 w-[9rem] sm:w-[15rem]',
+		delay: 0.1,
+		rotate: -50,
+	},
+	{
+		className: 'absolute left-20 top-0 mr-[0.10rem] w-20 w-[9rem] sm:w-[15rem]',
+		delay: 0.3,
+		rotate: 25,
+	},
+	{
+		className:
+			'absolute bottom-2 right-8 mr-[0.10rem] w-20 w-[9rem] sm:w-[15rem]',
+		delay: 0.5,
+		rotate: -40,
+	},
+	{
+		className: 'absolute right-0 top-12 mr-[0.10rem] w-20 w-[9rem]',
+		delay: 0.7,
+		rotate: 50,
+	},
+	{
+		className: 'absolute left-0 top-12 mr-[0.10rem] w-20 w-[9rem] sm:w-[15rem]',
+		delay: 0.9,
+		rotate: -60,
+	},
+	{
+		className:
+			'absolute bottom-0 left-8 mr-[0.10rem] w-20 w-[9rem] sm:w-[15rem]',
+		delay: 1.1,
+		rotate: 60,
+	},
+	{
+		className:
+			'absolute -bottom-16 left-1/2 mr-[0.10rem] w-20 w-[9rem] sm:w-[15rem] -translate-x-1/2',
+		delay: 1.3,
+		rotate: -15,
+	},
+]
+
 const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	fabrique,
 	language,
 }) => {
+	const collageRef = useRef(null)
+	const isInView = useInView(collageRef, {
+		once: true,
+		margin: '-20% 0px -20% 0px',
+	}) // triggers a bit before fully in view
+
 	if (!fabrique) return <p>No data available.</p>
 
 	// Function to get localized values
@@ -119,7 +168,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 						})}
 				</div>
 			</div>
-
 			{/* Description */}
 			{/* <div className="relative px-0 pb-8 sm:py-10"> */}
 			<div className="relative mx-4 mb-12 rounded-md bg-primary p-6 sm:py-10">
@@ -133,7 +181,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 						: 'No description available'}
 				</p>
 			</div>
-
 			{/* Image */}
 			{fabrique.image?.asset && (
 				<Img
@@ -143,7 +190,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 					className="my-4 h-48 w-48 rounded-md object-cover"
 				/>
 			)}
-
 			{fabrique.actions && (
 				<div className="">
 					{fabrique.actions.map((action: any, index: number) => (
@@ -230,7 +276,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 															{' '}
 															<p
 																key={block._key}
-																className="-z-10 m-4 -mb-4 -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-lg font-medium tracking-tighter text-dark"
+																className="-z-10 m-4 -mb-4 -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tighter text-dark"
 															>
 																{block.children.map(
 																	(child: any, idx: number) => (
@@ -250,7 +296,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 													return (
 														<ul key={block._key} className="px-10">
 															<li
-																className={`relative mt-4 text-lg font-normal leading-[1.2] tracking-tighter ${isBold ? 'font-bold' : ''}`}
+																className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tighter ${isBold ? 'font-bold' : ''}`}
 															>
 																{block.children.map(
 																	(child: any, idx: number) => (
@@ -269,7 +315,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 												return (
 													<p
 														key={block._key}
-														className="mt-4 px-4 text-lg font-normal leading-[1.2] tracking-tighter first:mt-0"
+														className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tighter first:mt-0"
 													>
 														{block.children.map((child: any, idx: number) => (
 															<span key={child._key || idx}>{child.text}</span>
@@ -313,23 +359,53 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 					))}
 				</div>
 			)}
-
 			{/* Vision */}
 			{fabrique.vision && (
-				<div className="mt-16">
+				<div className="mt-20">
 					<div className="relative mb-12">
-						<FabriqueAnimated
-							theme={{
-								icon: 'var(--color-primary)',
-							}}
-							className="h-auto w-full"
-						/>
-						<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-black uppercase leading-[1] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
-							Our Vision
+						<div className="flex items-center justify-center">
+							<FabriqueBracketsIcon
+								className="w-[75vw]"
+								theme={{
+									fill: 'var(--color-primary)',
+								}}
+							/>
+						</div>
+
+						<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+							{
+								getLocalizedValue(fabrique.visionTitle, language) ||
+									'Our Vision'
+								// .split(' ')
+								// .map((word, wordIdx) => (
+								// 	<div key={wordIdx} className="block w-full">
+								// 		{[...word].map((char, charIdx) => {
+								// 			const randomRotation = Math.floor(Math.random() * 21) - 10
+								// 			const randomMarginTop = Math.floor(Math.random() * 10) - 5
+								// 			const randomMarginLeft =
+								// 				Math.floor(Math.random() * 10) - 5
+								// 			return (
+								// 				<span
+								// 					key={charIdx}
+								// 					className="mx-1 inline-block"
+								// 					style={{
+								// 						transform: `rotate(${randomRotation}deg)`,
+								// 						marginTop: `${randomMarginTop}px`,
+								// 						marginLeft: `${randomMarginLeft}px`,
+								// 					}}
+								// 				>
+								// 					{char}
+								// 				</span>
+								// 			)
+								// 		})}
+								// 	</div>
+								// )
+								// )
+							}
 						</h1>
 					</div>
 
-					<div className="relative z-50 mt-16 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
+					{/* <div className="relative z-50 mt-16 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
 						{(
 							getLocalizedValue(fabrique.title, language) ||
 							'No title available'
@@ -355,43 +431,84 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 									</span>
 								)
 							})}
-					</div>
-					{fabrique.vision.map((vision: any, index: number) => (
-						<div key={index} className="mt-8">
-							<div className="relative rounded-t-3xl px-4">
-								<h2 className="text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
-									{getLocalizedValue(vision.title, language)}
-								</h2>
-								<p className="mx-auto py-2 text-lg font-normal leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
-									{getLocalizedText(vision.text, language) ||
-										'No description available'}
-								</p>
+					</div> */}
+					<div className="pt-2">
+						{fabrique.vision.map((vision: any, index: number) => (
+							<div key={index} className="mt-8">
+								<div className="relative rounded-t-3xl px-4">
+									<h2 className="text-lg font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary">
+										{getLocalizedValue(vision.title, language)}
+									</h2>
+									<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+										{getLocalizedText(vision.text, language) ||
+											'No description available'}
+									</p>
+								</div>
 							</div>
-						</div>
-					))}
+						))}
+					</div>
 				</div>
 			)}
 
-			<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-12 lg:hidden">
-				<div className="relative mt-24 flex h-[20vh] w-full items-center justify-center">
-					{/* Top left */}
+			<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-4 lg:hidden">
+				<div
+					className="relative mt-24 flex h-[20vh] w-full items-center justify-center"
+					ref={collageRef}
+				>
+					{logoCollage.map((logo, i) => (
+						<motion.div
+							key={i}
+							initial={{ y: '-100vh', opacity: 0, rotate: logo.rotate }}
+							animate={
+								isInView
+									? {
+											y: 0,
+											opacity: 1,
+											rotate: logo.rotate,
+											x: i === 6 ? '-50%' : 0,
+										}
+									: {
+											y: '-100vh',
+											opacity: 0,
+											rotate: logo.rotate,
+											x: i === 6 ? '-50%' : 0,
+										}
+							}
+							transition={{
+								type: 'spring',
+								stiffness: 60,
+								damping: 12,
+								delay: logo.delay,
+							}}
+							className={
+								logo.className.replace('-translate-x-1/2', '') + // Remove Tailwind's translate-x
+								' inline-block h-auto rounded-md bg-primary px-2 py-1'
+							}
+							style={{ position: 'absolute' }}
+						>
+							<LogoShortTsx />
+						</motion.div>
+					))}
+				</div>
+				{/* <div className="relative mt-24 flex h-[20vh] w-full items-center justify-center">
 					<LogoShortTsx className="absolute right-16 top-0 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[-50deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
-					{/* Top right */}
+
 					<LogoShortTsx className="absolute left-20 top-0 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[25deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
 
 					<LogoShortTsx className="absolute bottom-2 right-8 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[-40deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
 
-					{/* Middle right */}
 					<LogoShortTsx className="absolute right-0 top-12 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[50deg] rounded-md bg-primary px-2 py-1" />
 
 					<LogoShortTsx className="absolute left-0 top-12 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[-60deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
 
-					{/* Bottom left */}
 					<LogoShortTsx className="absolute bottom-0 left-8 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] rotate-[60deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
 
-					{/* Center bottom */}
 					<LogoShortTsx className="absolute -bottom-16 left-1/2 mr-[0.10rem] inline-block h-auto w-20 w-[9rem] -translate-x-1/2 rotate-[-15deg] rounded-md bg-primary px-2 py-1 sm:w-[15rem]" />
-				</div>
+				</div> */}
+
+				<p className="mx-auto py-2 pt-32 text-center text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+					For our Brussels stories, resourceful and proud.
+				</p>
 			</div>
 		</div>
 	)

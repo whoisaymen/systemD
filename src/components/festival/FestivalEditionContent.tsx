@@ -1,6 +1,6 @@
 'use client'
 import { motion } from 'motion/react'
-
+import { useTranslations } from 'next-intl'
 import Img from '@/ui/Img'
 import Link from 'next/link'
 import { getRandomRotationClass } from '@/lib/utils'
@@ -31,6 +31,10 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	festival,
 	language,
 }) => {
+	const tExpo = useTranslations('expo')
+	const tFilmSelection = useTranslations('filmSelection')
+	const tPhotoGallery = useTranslations('photoGallery')
+
 	const [view, setView] = useState<'grid' | 'list'>('grid')
 	const [hoveredFilm, setHoveredFilm] = useState<string | null>(null)
 	const [expanded, setExpanded] = useState(false)
@@ -60,7 +64,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			array.slice(i * size, i * size + size),
 		)
 	}
-
 	const photoRows = useMemo(
 		() =>
 			chunkArray(
@@ -140,9 +143,25 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		setShowWinnersOnly(winners)
 		if (view) setView(view)
 
-		// Always open dropdown if coming back from a film (scroll position exists)
+		// Check if we're returning from a film
+		const currentFilmSlug = sessionStorage.getItem('currentFilmSlug')
 		const scroll = sessionStorage.getItem('festivalScroll')
+
+		if (currentFilmSlug) {
+			// We're returning from a film, open the film selection and scroll to that film
+			setIsFilmSectionOpen(true)
+
+			// Use a timeout to ensure the DOM is rendered
+			setTimeout(() => {
+				scrollToFilm(currentFilmSlug)
+				sessionStorage.removeItem('currentFilmSlug')
+			}, 100)
+
+			return
+		}
+
 		if (scroll) {
+			// Regular scroll restoration
 			setIsFilmSectionOpen(true)
 			window.scrollTo(0, parseInt(scroll, 10))
 			sessionStorage.removeItem('festivalScroll')
@@ -155,20 +174,41 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		}
 	}, [])
 
+	const scrollToFilm = (filmSlug: string) => {
+		// Try to find the film element in the DOM
+		const filmElement = document.querySelector(`[data-film-slug="${filmSlug}"]`)
+
+		if (filmElement) {
+			// Scroll to the film with some offset for better visibility
+			const elementRect = filmElement.getBoundingClientRect()
+			const absoluteElementTop = elementRect.top + window.pageYOffset
+			const offset = 100 // Adjust this value as needed
+
+			window.scrollTo({
+				top: absoluteElementTop - offset,
+				behavior: 'smooth',
+			})
+		} else {
+			// Fallback: find the film in the sorted list and calculate approximate position
+			const filmIndex = sortedFilms.findIndex(
+				(f) => f.slug?.current === filmSlug,
+			)
+			if (filmIndex !== -1) {
+				// Approximate scroll position based on index
+				// Adjust these values based on your grid/list item heights
+				const itemHeight = view === 'grid' ? 400 : 60 // Approximate height per item
+				const approximatePosition = filmIndex * itemHeight
+
+				window.scrollTo({
+					top: approximatePosition,
+					behavior: 'smooth',
+				})
+			}
+		}
+	}
+
 	return (
 		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
-			{/* <div className="fixed bottom-4 right-12 z-50">
-				<BackToTopButton targetId="photo-gallery" />
-				<BackToTopButton targetId="film-selection" />
-			</div> */}
-
-			{/* {festival.description && (
-				<ReadMore
-					text={getLocalizedValue(festival.description, language)}
-					link={festival.pressLink}
-				/>
-			)} */}
-
 			<div
 				className={`absolute -top-1 rounded-md text-3xl font-semibold text-dark sm:hidden`}
 			>
@@ -192,8 +232,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					transition: {
 						duration: 5,
 						ease: [0.76, 0, 0.24, 1],
-						// repeat: Infinity,
-						// delay: 2.5,
 					},
 				}}
 			>
@@ -208,425 +246,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					transition: {
 						duration: 5,
 						ease: [0.76, 0, 0.24, 1],
-						// repeat: Infinity,
-						// delay: 2.5,
 					},
 				}}
 			>
 				<span>{festival.year}</span>
 			</motion.div>
-
-			{/* {festival.filmSelection && festival.filmSelection.length > 0 && (
-				<div className="mb-8 pt-8" id="film-selection">
-					<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark">
-						<div className="flex items-center justify-center">
-							<motion.div
-								initial={{ rotate: -1 }}
-								animate={{
-									rotate: 1,
-									transition: {
-										duration: 0.3,
-										repeat: Infinity,
-										delay: 5,
-										repeatType: 'reverse',
-										ease: 'easeInOut',
-									},
-								}}
-								onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-								className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all ${
-									isFilmSectionOpen
-										? 'border-dark bg-dark text-grayDark dark:border-grayDark dark:bg-grayDark dark:text-dark'
-										: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
-								}`}
-							>
-								<span>Film Selection</span>
-							</motion.div>
-						</div>
-
-						{isFilmSectionOpen && (
-							<div className="mt-0 flex w-full items-center justify-between rounded-none border-0 border-b-0 border-primary bg-grayLight text-sm dark:bg-dark lg:pt-0">
-								{[
-									{ field: 'year', label: 'Year' },
-									{ field: 'title', label: 'Title' },
-									{ field: 'director', label: 'Director' },
-								].map(({ field, label }) => (
-									<button
-										key={field}
-										onClick={() => {
-											setSortField(field as any)
-											setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-											updateQuery({
-												sort: field,
-												order: sortOrder === 'asc' ? 'desc' : 'asc',
-											})
-										}}
-										className={`relative flex items-center justify-center p-1`}
-									>
-										<motion.span
-											animate={
-												sortField === field
-													? {
-															scale: 1.05,
-															// rotate: sortOrder === 'asc' ? -15 : 15,
-															color: 'var(--color-primary)',
-														}
-													: { scale: 1, rotate: 0, color: 'inherit' }
-											}
-											transition={{
-												type: 'spring',
-												stiffness: 400,
-												damping: 22,
-											}}
-											className="flex items-center"
-										>
-											{sortField === field && (
-												<FilterIcon
-													theme={{
-														upArrow:
-															sortOrder === 'asc'
-																? 'var(--color-primary)'
-																: 'var(--color-grayDark)',
-														downArrow:
-															sortOrder === 'desc'
-																? 'var(--color-primary)'
-																: 'var(--color-grayDark)',
-													}}
-													className="mr-1 h-3"
-												/>
-											)}
-											<span
-												className={
-													sortField === field
-														? 'border-primary underline underline-offset-4'
-														: ''
-												}
-											>
-												{label}
-											</span>{' '}
-										</motion.span>
-									</button>
-								))}
-								<button
-									onClick={() => {
-										setShowWinnersOnly(!showWinnersOnly)
-										updateQuery({
-											winners: !showWinnersOnly ? '1' : undefined,
-										})
-									}}
-									className={`p-1`}
-								>
-									{showWinnersOnly ? (
-										<div className="flex items-center gap-1 rounded-md p-1">
-											<span className="text-primary">x</span>
-											<span className="underline underline-offset-4">
-												{' '}
-												Winners
-											</span>
-										</div>
-									) : (
-										<>
-											<span> Winners</span>
-										</>
-									)}
-								</button>
-
-								<div className="flex items-center justify-center gap-0">
-									<button
-										onClick={() => {
-											setView('grid')
-											updateQuery({ view: 'grid' })
-										}}
-										className="relative p-0 text-center font-bold tracking-tight transition-colors"
-										aria-label="Grid view"
-									>
-										<motion.span
-											animate={
-												view === 'grid'
-													? {
-															scale: 0.65,
-															rotate: 0,
-
-															opacity: 1,
-														}
-													: {
-															scale: 0.5,
-															rotate: 0,
-															filter: 'none',
-															opacity: 0.5,
-														}
-											}
-											transition={{
-												type: 'spring',
-												stiffness: 400,
-												damping: 22,
-											}}
-											className="inline-block"
-										>
-											<IoGrid
-												className={
-													view === 'grid'
-														? 'text-primary'
-														: 'text-dark dark:text-grayDark'
-												}
-												size={36}
-											/>
-										</motion.span>
-									</button>
-
-									<button
-										onClick={() => {
-											setView('list')
-											updateQuery({ view: 'list' })
-										}}
-										className="relative p-0 text-center font-bold tracking-tight transition-colors"
-										aria-label="List view"
-									>
-										<motion.span
-											animate={
-												view === 'list'
-													? {
-															scale: 0.85,
-															rotate: 0,
-
-															opacity: 1,
-														}
-													: {
-															scale: 0.75,
-															rotate: 0,
-															filter: 'none',
-															opacity: 0.5,
-														}
-											}
-											transition={{
-												type: 'spring',
-												stiffness: 400,
-												damping: 22,
-											}}
-											className="inline-block"
-										>
-											<IoList
-												className={
-													view === 'list'
-														? 'text-primary'
-														: 'text-dark dark:text-grayDark'
-												}
-												size={36}
-											/>
-										</motion.span>
-									</button>
-								</div>
-							</div>
-						)}
-					</div>
-
-					{isFilmSectionOpen && (
-						<div className="mt-0 pb-16">
-							{view === 'grid' ? (
-								<ul className="sticky top-32 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:px-4 lg:grid-cols-3">
-									{sortedFilms.map((film: any, index: number) => (
-										<li key={index} className="relative h-full w-full">
-											{film.slug?.current ? (
-												<Link
-													href={{
-														pathname: `/${language}/film/${film.slug.current}`,
-													}}
-													onClick={() => {
-														sessionStorage.setItem(
-															'festivalScroll',
-															window.scrollY.toString(),
-														)
-													}}
-												>
-													{film.affiche && (
-														<div className="relative">
-															<Img
-																image={film.affiche}
-																src={film.affiche.asset.url}
-																alt={getLocalizedValue(film.title, language)}
-																className="aspect-square h-auto rounded-lg border-2 border-grayDark object-cover dark:border-primary"
-															/>
-															<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
-																<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
-																	{film.title && (
-																		<>
-																			{splitTitle(
-																				getLocalizedValue(film.title, language),
-																				20,
-																			).map((line, idx) => (
-																				<h1
-																					key={idx}
-																					className={[
-																						'z-10 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-xl',
-																						idx === 0 ? '' : '-z-0 -mt-1',
-																						idx % 2 === 0
-																							? '-rotate-1'
-																							: 'rotate-1',
-																					].join(' ')}
-																				>
-																					{line}
-																				</h1>
-																			))}
-																		</>
-																	)}
-
-																	{film.director && (
-																		<>
-																			{splitTitle(film.director, 26).map(
-																				(line, idx) => (
-																					<p
-																						key={idx}
-																						className={[
-																							'z-10 mt-0 inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark',
-
-																							idx === 0
-																								? ''
-																								: '-z-0 -mt-[0.15rem]',
-																							idx % 2 === 0
-																								? '-rotate-1'
-																								: 'rotate-1',
-																						].join(' ')}
-																					>
-																						{line}
-																					</p>
-																				),
-																			)}
-																		</>
-																	)}
-
-																	{film.year && (
-																		<p
-																			className={`z-0 mt-0 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
-																		>
-																			{film.year}
-																		</p>
-																	)}
-																</div>
-															</div>
-														</div>
-													)}
-												</Link>
-											) : (
-												<>
-													{film.affiche && (
-														<Img
-															image={film.affiche}
-															src={film.affiche.asset.url}
-															alt={getLocalizedValue(film.title, language)}
-															className="aspect-square h-auto rounded-md border-0 border-primary object-cover"
-														/>
-													)}
-													<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
-														<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
-															{film.title && (
-																<h1
-																	className={`z-10 -rotate-6 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-xl`}
-																>
-																	{getLocalizedValue(film.title, language)}
-																</h1>
-															)}
-
-															{film.director && (
-																<p
-																	className={`z-10 mt-2 inline-block w-auto rotate-3 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark`}
-																>
-																	{film.director}
-																</p>
-															)}
-
-															{film.year && (
-																<p
-																	className={`z-0 mt-2 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
-																>
-																	{film.year}
-																</p>
-															)}
-														</div>
-													</div>
-												</>
-											)}
-										</li>
-									))}
-								</ul>
-							) : (
-								<table className="relative mt-4 w-full table-auto border-collapse text-sm">
-									<thead className="sticky left-0 top-0 z-10 hidden">
-										<tr className="bg-white text-left">
-											<th className="border-grayDark px-4 py-2 pl-0">
-												<span className="px-3 py-1">Year</span>
-											</th>
-											<th className="border-grayDark px-4 py-2">
-												<span className="px-3 py-1">Director</span>
-											</th>
-											<th className="border-grayDark px-4 py-2">
-												<span className="px-3 py-1">Title</span>
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										{sortedFilms.map((film: any, index: number) => (
-											<tr
-												key={index}
-												onMouseEnter={() => setHoveredFilm(film._id)}
-												onMouseLeave={() => setHoveredFilm(null)}
-												className="relative"
-											>
-												<td className="border-b border-dark py-2 dark:border-primary">
-													{film.slug?.current ? (
-														<Link
-															href={`/${language}/film/${film.slug.current}`}
-														>
-															{film.year}
-														</Link>
-													) : (
-														<span>{film.year}</span>
-													)}
-												</td>
-												<td className="border-b border-dark px-4 py-2 dark:border-primary">
-													{film.slug?.current ? (
-														<Link
-															href={`/${language}/film/${film.slug.current}`}
-														>
-															{film.director}
-														</Link>
-													) : (
-														<span>{film.director}</span>
-													)}
-												</td>
-												<td className="border-b border-dark px-4 py-2 pr-8 text-dark dark:border-primary dark:text-primary">
-													{film.slug?.current ? (
-														<Link
-															href={`/${language}/film/${film.slug.current}`}
-															className="flex gap-x-1"
-														>
-															{film.isWinner && <span>★</span>}
-															{getLocalizedValue(film.title, language)}
-														</Link>
-													) : (
-														<span className="flex gap-x-1">
-															{film.isWinner && <span>★</span>}
-															{getLocalizedValue(film.title, language)}
-														</span>
-													)}
-													{hoveredFilm === film._id && film.affiche && (
-														<div className="absolute -top-1/2 left-1/2 z-10 w-40 -translate-x-1/2 translate-y-1/2">
-															<Img
-																image={film.affiche}
-																src={film.affiche.asset.url}
-																alt={getLocalizedValue(film.title, language)}
-																className="h-auto w-full rounded-md object-cover"
-															/>
-														</div>
-													)}
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							)}
-						</div>
-					)}
-				</div>
-			)} */}
 
 			<div className="mb-8 pt-8" id="film-selection">
 				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark">
@@ -650,7 +274,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
 							}`}
 						>
-							<span>Film Selection</span>
+							<span>{tFilmSelection('title')}</span>
 						</motion.div>
 					</div>
 
@@ -659,9 +283,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							{festival.filmSelection && festival.filmSelection.length > 0 ? (
 								<div className="mt-0 flex w-full items-center justify-between rounded-none border-0 border-b-0 border-primary bg-grayLight text-sm dark:bg-dark lg:pt-0">
 									{[
-										{ field: 'year', label: 'Year' },
-										{ field: 'title', label: 'Title' },
-										{ field: 'director', label: 'Director' },
+										{ field: 'year', label: tFilmSelection('year') },
+										{ field: 'title', label: tFilmSelection('titleCol') },
+										{ field: 'director', label: tFilmSelection('director') },
 									].map(({ field, label }) => (
 										<button
 											key={field}
@@ -724,6 +348,15 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 											updateQuery({
 												winners: !showWinnersOnly ? '1' : undefined,
 											})
+											if (!showWinnersOnly) {
+												// We're about to show winners only, scroll to top
+												setTimeout(() => {
+													window.scrollTo({
+														top: 0,
+														behavior: 'smooth',
+													})
+												}, 100)
+											}
 										}}
 										className={`p-1`}
 									>
@@ -732,12 +365,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												<span className="text-primary">x</span>
 												<span className="underline underline-offset-4">
 													{' '}
-													Winners
+													{tFilmSelection('winners')}
 												</span>
 											</div>
 										) : (
 											<>
-												<span> Winners</span>
+												<span> {tFilmSelection('winners')}</span>
 											</>
 										)}
 									</button>
@@ -841,20 +474,18 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							{view === 'grid' ? (
 								<ul className="sticky top-32 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:px-4 lg:grid-cols-3">
 									{sortedFilms.map((film: any, index: number) => (
-										<li key={index} className="relative h-full w-full">
+										<li
+											key={index}
+											className="relative h-full w-full"
+											data-film-slug={film.slug?.current}
+										>
 											{film.slug?.current ? (
 												<Link
 													href={{
 														pathname: `/${language}/film/${film.slug.current}`,
-														// query: {
-														// 	filmSlugs: sortedFilms
-														// 		.map((f) => f.slug?.current)
-														// 		.filter(Boolean),
-														// 	sort: sortField,
-														// 	order: sortOrder,
-														// 	winners: showWinnersOnly ? '1' : undefined,
-														// 	view,
-														// },
+														query: searchParams
+															? Object.fromEntries(searchParams.entries())
+															: {},
 													}}
 													onClick={() => {
 														sessionStorage.setItem(
@@ -873,13 +504,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															/>
 															<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
 																<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
-																	{/* {film.title && (
-																<h1
-																	className={`z-10 -rotate-6 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-xl`}
-																>
-																	{getLocalizedValue(film.title, language)}
-																</h1>
-															)} */}
 																	{film.title && (
 																		<>
 																			{splitTitle(
@@ -1003,6 +627,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												onMouseEnter={() => setHoveredFilm(film._id)}
 												onMouseLeave={() => setHoveredFilm(null)}
 												className="relative"
+												data-film-slug={film.slug?.current}
 											>
 												<td className="border-b border-dark py-2 dark:border-primary">
 													{film.slug?.current ? (
@@ -1069,7 +694,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					className="-mt-5 flex flex-col items-center justify-center pb-1"
 				>
 					<AccordionTrigger className={`rotate-[3deg]`}>
-						Expo Photo
+						{tExpo('title')}
 					</AccordionTrigger>
 					<AccordionContent>
 						{festival.expoPhoto && festival.expoPhoto.length > 0 && (
@@ -1093,7 +718,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										<div key={expoIndex} className="mb-4">
 											<div className="flex justify-center">
 												<h3 className="z-0 -mt-3 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark">
-													Curated by {expo.curatorName || 'Unknown Curator'}
+													{tExpo('curatedBy')}{' '}
+													{expo.curatorName || 'Unknown Curator'}
 												</h3>
 											</div>
 
@@ -1171,29 +797,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										</div>
 									)
 								})}
-
-								{/* Lightbox Modal */}
-								{/* {isLightboxOpen && (
-									<div className="bg-dark/95 fixed inset-0 z-50 flex items-center justify-center">
-										<button
-											onClick={closeLightbox}
-											className="absolute right-4 top-4 z-50 rounded-full border-2 border-primary bg-dark px-2 text-3xl font-medium text-primary"
-										>
-											✕
-										</button>
-
-										<FestivalCarousel
-											photos={festival.expoPhoto.flatMap((expo: any) =>
-												expo.photos.map((photo: any) => ({
-													photo: photo.photo,
-													artistName: photo.artistName,
-													curatorName: expo.curatorName,
-												})),
-											)}
-											initialIndex={currentImageIndex}
-										/>
-									</div>
-								)} */}
 							</div>
 						)}
 					</AccordionContent>
@@ -1221,7 +824,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
 						}`}
 					>
-						<span>Photo Gallery</span>
+						<span>{tPhotoGallery('title')}</span>
 					</motion.div>
 				</div>
 
@@ -1229,7 +832,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					<div className="relative">
 						<div className="flex justify-center">
 							<h3 className="-z-10 -mt-0 inline-block rotate-2 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark">
-								Photos by Maya B
+								{tPhotoGallery('photosBy')}{' '}
+								{festival.photoGallery[0].photographer || ''}
 							</h3>
 						</div>
 
@@ -1311,7 +915,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					if (block.listItem === 'bullet') {
 						return (
 							<ul key={block._key} className="list-disc">
-								<li className="mt-4 text-lg font-normal leading-[1.2] tracking-tighter">
+								<li className="mt-4 text-base font-normal leading-[1.2] tracking-tighter">
 									{block.children.map((child: any) => child.text).join('')}
 								</li>
 							</ul>

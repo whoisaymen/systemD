@@ -8,22 +8,7 @@ export default defineType({
 	title: 'Short story',
 	icon: VscCalendar,
 	type: 'document',
-	groups: [
-		// { name: 'content', default: true },
-		// { name: 'options' },
-		// { name: 'seo', title: 'SEO' },
-	],
 	fields: [
-		// defineField({
-		// 	name: 'body',
-		// 	title: 'Paragraphes',
-		// 	type: 'array',
-		// 	of: [
-		// 		{
-		// 			type: 'internationalizedBlock',
-		// 		},
-		// 	],
-		// }),
 		defineField({
 			name: 'body',
 			title: 'Paragraphes',
@@ -35,11 +20,6 @@ export default defineType({
 			],
 		}),
 	],
-	// defineField({
-	// 	name: 'metadata',
-	// 	type: 'metadata',
-	// 	group: 'seo',
-	// }),
 	preview: {
 		prepare: () => ({
 			title: 'Short story',

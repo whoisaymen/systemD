@@ -1,6 +1,14 @@
+'use client'
 import Image from 'next/image'
 import LogoShortTsx from '../svgs/LogoShort'
 import LogoShortAnimated from '../svgs/LogoShortAnimated'
+import BrusselsMap from '../fabrique/BrusselsMap'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion'
 
 interface ContactContentProps {
 	contact: any
@@ -24,64 +32,76 @@ const ContactContent: React.FC<ContactContentProps> = ({
 	}
 
 	return (
-		<div className="h-full w-full pt-6 text-primary">
-			<div className="flex items-center justify-center">
-				<LogoShortTsx
-					className={`mr-[0.10rem] inline-block h-auto w-[90vw] -rotate-6 rounded-md bg-primary px-2 py-1 text-dark sm:w-[15rem]`}
-				/>
-			</div>
-
-			<div className="mt-16 px-4">
-				<h1 className="text-3xl font-bold">Contact</h1>
-				<p>Email: {contact.formEmail}</p>
-				<p>Phone: {contact.phone}</p>
-				<p>Address: {getLocalizedValue(contact.address, language)}</p>
-				{contact.mapLocation && (
-					<p>
-						<a
-							href={contact.mapLocation}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							View on Google Maps
-						</a>
-					</p>
-				)}
-			</div>
-
-			{contact.partners && contact.partners.length > 0 && (
-				<div className="mt-16 px-4">
-					<h2 className="text-2xl font-semibold">Partners</h2>
-					<div className="grid grid-cols-4 gap-8">
-						{contact.partners.map((partner: any, index: number) => (
-							<div key={index} className="my-4">
-								{partner.logo && (
-									<Image
-										width={150}
-										height={150}
-										loading="lazy"
-										src={partner.logo.asset.url}
-										alt={partner.name}
-										className="my-4 h-32 w-auto object-contain"
-									/>
-								)}
-								{/* <p>{partner.name}</p>
-								{partner.url && (
-									<p>
-										<a
-											href={partner.url}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{partner.url}
-										</a>
-									</p>
-								)} */}
+		<div className="h-full w-full px-4 pb-24 pt-6 text-primary">
+			<BrusselsMap className="w-full rounded-[3rem] border-[3px] border-primary bg-grayDark fill-current text-dark lg:w-1/2" />
+			<Accordion
+				type="single"
+				collapsible
+				className="mt-8"
+				onValueChange={() => {
+					const navbar = document.getElementById('navbar-mobile')
+					if (navbar) {
+						navbar.scrollIntoView({ behavior: 'smooth', block: 'start' })
+					}
+				}}
+			>
+				<AccordionItem
+					value={`contact`}
+					key={`contact`}
+					className="flex flex-col items-center justify-center"
+				>
+					<AccordionTrigger className={`-rotate-6 sm:text-7xl`}>
+						Contact
+					</AccordionTrigger>
+					<AccordionContent>
+						<div className="py-8 text-center">
+							<p>{contact.formEmail}</p>
+							<p>{contact.phone}</p>
+							<p>{getLocalizedValue(contact.address, language)}</p>
+							{contact.mapLocation && (
+								<p>
+									<a
+										href={contact.mapLocation}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										View on Google Maps
+									</a>
+								</p>
+							)}
+						</div>
+					</AccordionContent>
+				</AccordionItem>
+				<AccordionItem
+					value={`partners`}
+					key={`partners`}
+					className="flex flex-col items-center justify-center"
+				>
+					<AccordionTrigger className={`-rotate-0 sm:text-7xl`}>
+						Partners
+					</AccordionTrigger>
+					<AccordionContent>
+						{contact.partners && contact.partners.length > 0 && (
+							<div className="flex justify-between gap-4 px-4 pb-16">
+								{contact.partners.map((partner: any, index: number) => (
+									<div key={index} className="my-4">
+										{partner.logo && (
+											<Image
+												width={150}
+												height={150}
+												loading="lazy"
+												src={partner.logo.asset.url}
+												alt={partner.name}
+												className="h-8 w-auto object-contain"
+											/>
+										)}
+									</div>
+								))}
 							</div>
-						))}
-					</div>
-				</div>
-			)}
+						)}
+					</AccordionContent>
+				</AccordionItem>
+			</Accordion>
 		</div>
 	)
 }

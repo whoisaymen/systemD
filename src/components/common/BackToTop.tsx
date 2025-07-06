@@ -66,7 +66,7 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 					/> */}
 					<ArrowRight
 						theme={{ fill: 'var(--color-grayDark)' }}
-						className="h-auto w-10 -rotate-90 lg:w-9"
+						className="h-auto w-9 -rotate-90 lg:w-9"
 					/>
 				</motion.button>
 			)}

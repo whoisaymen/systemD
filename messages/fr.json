@@ -1,3 +1,27 @@
 {
-	"HomePage": { "hello": "Bonjour", "welcome": "Bienvenue sur SystemD" }
+	"menu": {
+		"legal": "Mentions légales",
+		"contact": "Contactez-nous"
+	},
+
+	"expo": {
+		"curatedBy": "Sélectionné par",
+		"title": "Expo Photo"
+	},
+
+	"filmSelection": {
+		"title": "Sélection films",
+		"year": "Année",
+		"titleCol": "Titre",
+		"director": "Réalisateur",
+		"winners": "Lauréats",
+		"comingSoon": "Films à venir...",
+		"gridView": "Vue grille",
+		"listView": "Vue liste"
+	},
+
+	"photoGallery": {
+		"title": "Galerie photo",
+		"photosBy": "Photos par"
+	}
 }

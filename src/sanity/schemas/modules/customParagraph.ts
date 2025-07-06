@@ -23,6 +23,17 @@ export default defineType({
 				hotspot: true,
 			},
 		}),
+		// defineField({
+		// 	name: 'svg',
+		// 	title: 'SVG Illustration',
+		// 	type: 'code',
+		// 	options: {
+		// 		language: 'svg',
+		// 		theme: 'github',
+		// 	},
+		// 	description:
+		// 		'Paste SVG markup here. Use fill="currentColor" for theme support.',
+		// }),
 	],
 	preview: {
 		select: {

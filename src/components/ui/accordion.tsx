@@ -42,7 +42,7 @@ const AccordionTrigger = React.forwardRef<
 
 	return (
 		<motion.div
-			className="z-10"
+			className="z-20"
 			animate={{
 				rotate: 1,
 				transition: {

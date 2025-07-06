@@ -206,7 +206,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
 				<div
-					className={`mt-1 grid ${view === 'single' ? 'grid-cols-1' : 'grid-cols-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0`}
+					className={`mt-1 grid ${view === 'single' ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0`}
 				>
 					{filteredFestivals.map((festival: any, index: number) => (
 						// {[...Array(5)]

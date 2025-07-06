@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl'
+
 import { circOut, motion } from 'motion/react'
 import Link from 'next/link'
 import BigBangLogoMobile from '../bigbang/BigBangLogoMobile'
@@ -143,6 +145,8 @@ interface MenuProps {
 }
 
 const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
+	const t = useTranslations('menu')
+
 	if (!menuOpen) return null
 	const footerDelay = Math.max(...menuItems.map((item) => item.delay)) + 0.1
 
@@ -190,7 +194,7 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 			))}
 
 			<motion.div
-				className="flex gap-4 pb-32 pt-4 text-sm font-bold leading-[1.2] tracking-tighter text-dark underline dark:font-semibold dark:text-primary"
+				className="mx-2 mt-4 flex items-center justify-center gap-1 tracking-tighter"
 				initial={{ opacity: 0, y: 20 }}
 				animate={{
 					opacity: 1,
@@ -211,9 +215,23 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 					},
 				}}
 			>
-				<Link href={`/${locale}/contact`}>Mentions légales</Link>
-				<Link href={`/${locale}/contact`}>Contactez-nous</Link>
-				<span>Instagram</span>
+				<Link
+					className="w-fit -rotate-2 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
+					href={`/${locale}/contact`}
+					onClick={closeMenu}
+				>
+					{t('legal')}
+				</Link>
+				<Link
+					className="w-fit rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
+					href={`/${locale}/contact`}
+					onClick={closeMenu}
+				>
+					{t('contact')}
+				</Link>
+				<span className="w-fit -rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
+					Instagram
+				</span>
 			</motion.div>
 		</motion.div>
 	)

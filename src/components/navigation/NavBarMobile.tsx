@@ -21,6 +21,7 @@ import FabriqueLogoMobile from '../fabrique/FabriqueLogoMobile'
 import LogoShortAnimated from '../svgs/LogoShortAnimated'
 
 import Menu from './MobileMenuItem'
+import LogoShortTsx from '../svgs/LogoShort'
 
 const parentVariants = {
 	visible: { y: 0 },
@@ -149,6 +150,13 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					className="overflow-visible text-dark"
 				/>
 			)
+		} else if (pathname.includes('/contact')) {
+			return (
+				<LogoShortAnimated
+					theme={themeColors.sparkle}
+					className={`my-4 mb-0 inline-block h-auto w-full -rotate-2 rounded-md px-2 py-1 text-primary sm:w-[15rem]`}
+				/>
+			)
 		} else {
 			return
 		}
@@ -203,7 +211,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				}}
 				className="fixed bottom-0 z-50 mb-4 flex h-auto w-full items-center justify-center gap-1 sm:hidden"
 			>
-				<div className="h-[2.5rem] rounded-md border-2 border-dark shadow-md dark:border-primary">
+				<div className="h-[2.5rem] w-fit rounded-lg border-2 border-dark bg-primary shadow-md dark:border-primary">
 					<LocaleSwitcher />
 				</div>
 				<div className="flex items-stretch justify-center gap-1">

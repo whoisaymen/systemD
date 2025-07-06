@@ -374,12 +374,8 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																			opacity: 0.9,
 																		}}
 																	/>
-																	// Use your darkGray color here, e.g. bg-grayDark/70 if you have it in Tailwind config
 																)}
 															</div>
-															{/* <h2 className="mt-2 text-left text-base font-bold leading-tight tracking-tighter text-primary">
-																	{member.name}
-																</h2> */}
 														</div>
 													))
 												) : (
@@ -399,7 +395,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 															<div className="w-full text-primary">
 																{selectedMember.name && (
 																	<div className="flex items-center justify-center">
-																		<h2 className="mb-3 -rotate-0 rounded-md border-[0px] border-primary px-2 text-2xl font-semibold tracking-tighter text-primary">
+																		<h2 className="mb-3 -rotate-0 rounded-md border-[0px] border-primary px-2 text-lg font-semibold tracking-tighter text-primary">
 																			{selectedMember.name}
 																		</h2>
 																	</div>
@@ -408,7 +404,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 																	// </h2>
 																)}
 																{selectedMember.biography && (
-																	<p className="text-base leading-tight tracking-tighter">
+																	<p className="text-base font-normal leading-[1.2] tracking-tighter">
 																		{getLocalizedValue(
 																			selectedMember.biography,
 																			language,

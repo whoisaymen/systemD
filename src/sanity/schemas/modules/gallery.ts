@@ -6,6 +6,11 @@ export default defineType({
 	type: 'object',
 	fields: [
 		defineField({
+			name: 'photographer',
+			title: 'Photographer',
+			type: 'string',
+		}),
+		defineField({
 			name: 'photos',
 			title: 'Photos',
 			type: 'array',
@@ -59,13 +64,14 @@ export default defineType({
 	],
 	preview: {
 		select: {
+			title: 'photographer',
 			photos: 'photos',
 		},
-		prepare({ photos }) {
+		prepare({ title, photos }) {
 			const firstPhoto = photos?.[0]?.asset ? photos[0] : undefined
 
 			return {
-				title: 'Galerie de photos',
+				title: title ? `Photos par ${title}` : 'Galerie de photos',
 				media: firstPhoto,
 			}
 		},

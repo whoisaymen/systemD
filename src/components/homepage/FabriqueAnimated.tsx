@@ -25,6 +25,7 @@ const FabriqueAnimated: React.FC<FabriqueAnimatedProps> = ({
 			d="M24 11C24 11.5523 23.5523 12 23 12H13C12.4477 12 12 12.4477 12 13V24C12 24.5523 11.5523 25 11 25H1C0.447715 25 0 24.5523 0 24V1C0 0.447716 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1V11Z"
 			fill={theme.icon}
 			animate={{
+				x: ['-1%', '-1%', '-1%'],
 				scale: [1, 1.2, 1], // Pulsating effect
 				opacity: [1, 0.8, 1], // Subtle fade
 			}}

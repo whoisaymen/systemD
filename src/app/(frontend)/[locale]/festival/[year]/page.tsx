@@ -49,6 +49,7 @@ async function getFestivalEdition(year: string) {
     },
     "photoGallery": photoGallery[]{
       _type,
+      photographer,
       photos[],
     },
      expoPhoto[]{

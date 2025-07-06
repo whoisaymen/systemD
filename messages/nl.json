@@ -1,3 +1,27 @@
 {
-	"HomePage": { "hello": "Hello", "welcome": "Welcome to SystemD" }
+	"menu": {
+		"legal": "Wettelijke vermeldingen",
+		"contact": "Contacteer ons"
+	},
+
+	"expo": {
+		"curatedBy": "Gecureerd door",
+		"title": "Foto-expo"
+	},
+
+	"filmSelection": {
+		"title": "Filmselectie",
+		"year": "Jaar",
+		"titleCol": "Titel",
+		"director": "Regisseur",
+		"winners": "Winnaars",
+		"comingSoon": "Films binnenkort beschikbaar...",
+		"gridView": "Rasterweergave",
+		"listView": "Lijstweergave"
+	},
+
+	"photoGallery": {
+		"title": "Fotogalerij",
+		"photosBy": "Foto's door"
+	}
 }

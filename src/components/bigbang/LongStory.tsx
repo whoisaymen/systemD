@@ -1,9 +1,10 @@
 'use client'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
 import { PortableText } from '@portabletext/react'
 import { renderParagraph } from '../common/RenderParagraph'
 import BackToTopButton from '../common/BackToTop'
+import { useState } from 'react'
 
 interface LongStoryProps {
 	content: any[]
@@ -11,14 +12,54 @@ interface LongStoryProps {
 }
 
 const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
+	const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
+
 	const getLocalizedValue = (array: any[], lang: string) =>
 		array?.find((v) => v?._key === lang)?.value
 
 	return (
-		<div className="space-y-0 pb-16" id="long-story">
-			<div className="fixed bottom-4 right-12 z-50">
+		<div className="space-y-0 pb-4" id="long-story">
+			<div className="fixed bottom-4 right-4 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
+
+			<AnimatePresence>
+				{fullscreenImage && (
+					<motion.div
+						className="fixed inset-0 z-50 flex items-center justify-center bg-dark"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.25 }}
+						onClick={() => setFullscreenImage(null)}
+					>
+						<motion.img
+							src={fullscreenImage}
+							alt="Fullscreen"
+							className="max-h-[95vh] max-w-[95vw] rounded-lg border-[3px] border-primary shadow-2xl"
+							initial={{ scale: 0.95, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							exit={{ scale: 0.95, opacity: 0 }}
+							transition={{ duration: 0.25 }}
+							onClick={(e) => e.stopPropagation()}
+						/>
+						<motion.button
+							className="z-60 bg-dark/80 absolute right-4 top-4 rounded-full p-2 text-primary"
+							initial={{ opacity: 0, y: -20 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -20 }}
+							transition={{ duration: 0.2 }}
+							onClick={(e) => {
+								e.stopPropagation()
+								setFullscreenImage(null)
+							}}
+						>
+							Close
+						</motion.button>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
 			{content.map((block, index) => {
 				switch (block._type) {
 					case 'internationalizedCitationBlock':
@@ -58,7 +99,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									"
 								</span>
 								{block.author && (
-									<div className="w-full pr-4 pt-0 text-right text-sm font-normal tracking-tighter text-dark dark:text-grayDark lg:text-base">
+									<div className="w-full pr-4 pt-0 text-right font-mono text-sm font-normal tracking-[-0.1em] text-dark dark:text-grayDark lg:text-base">
 										{block.author}
 									</div>
 								)}
@@ -139,6 +180,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 								<div
 									key={index}
 									className="mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:h-[65vh] sm:border-0"
+									onClick={() => setFullscreenImage(block.file.asset.url)}
 								>
 									<Image
 										src={block.file.asset.url}

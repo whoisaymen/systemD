@@ -65,10 +65,11 @@ import ColorSwitch from './homepage/ColorSwitch'
 
 const colorCombos = [
 	{ primary: '#DEFE04', dark: '#123DA6', grayDark: '#8C8C8F' },
-	{ primary: '#554FF1', dark: '#D0DCDC', grayDark: '#FF5E30' },
-	// { primary: '#FF5E30', dark: '#85343A', grayDark: '#8C8C8F' },
+	{ primary: '#554FF1', dark: '#D0DCDC', grayDark: '#8C8C8F' },
 	{ primary: '#8C8C8F', dark: '#222223', grayDark: '#8C8C8F' },
-	// ...add more combos
+	{ primary: '#222223', dark: '#fff', grayDark: '#8C8C8F' },
+	{ primary: '#222223', dark: '#FFED00', grayDark: '#222223' },
+	{ primary: '#DE5325', dark: '#FAFAEC', grayDark: '#DE5325' },
 ]
 
 const ThemeSwitch = () => {
@@ -87,7 +88,7 @@ const ThemeSwitch = () => {
 			const root = document.documentElement
 			root.style.setProperty('--color-primary', primary)
 			root.style.setProperty('--color-dark', dark)
-			root.style.setProperty('--color-grayDark', grayDark) // Default grayDark
+			root.style.setProperty('--color-grayDark', grayDark)
 		}
 	}
 
