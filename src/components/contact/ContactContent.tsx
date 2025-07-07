@@ -33,7 +33,12 @@ const ContactContent: React.FC<ContactContentProps> = ({
 
 	return (
 		<div className="h-full w-full px-4 pb-24 pt-6 text-primary">
-			<BrusselsMap className="w-full rounded-[3rem] border-[3px] border-primary bg-grayDark fill-current text-dark lg:w-1/2" />
+			<BrusselsMap
+				className="w-full rounded-[3rem] border-[3px] border-primary bg-grayDark fill-current text-dark lg:w-1/2"
+				pinLink={contact.mapLocation}
+				pinLeft="38%"
+				pinTop="48%"
+			/>
 			<Accordion
 				type="single"
 				collapsible

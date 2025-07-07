@@ -15,6 +15,7 @@ import BrusselsMap from './BrusselsMap'
 import FabriqueAnimated from '../homepage/FabriqueAnimated'
 import LogoShortTsx from '../svgs/LogoShort'
 import FabriqueBracketsIcon from './FabriqueBracketsIcon'
+import BackToTopButton from '../common/BackToTop'
 
 interface FabriqueContentProps {
 	fabrique: any
@@ -132,6 +133,9 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			ref={ref}
 			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll py-32 pt-0 text-base font-medium leading-[1.2] tracking-tighter text-dark sm:space-y-0 sm:px-0 sm:pt-0"
 		>
+			<div className="fixed bottom-4 right-12 z-50">
+				<BackToTopButton targetId="navbar-mobile" />
+			</div>
 			{/* <div className="relative mt-2 h-full rounded-full bg-primary p-6 py-32">
 				<p className="text-left text-3xl font-bold leading-[1.2] tracking-tighter text-dark">
 					{getLocalizedValue(fabrique.title, language) || 'No title available'}

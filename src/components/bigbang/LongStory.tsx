@@ -5,6 +5,7 @@ import { PortableText } from '@portabletext/react'
 import { renderParagraph } from '../common/RenderParagraph'
 import BackToTopButton from '../common/BackToTop'
 import { useState } from 'react'
+import CloseIcon from '../common/CloseIcon'
 
 interface LongStoryProps {
 	content: any[]
@@ -54,7 +55,10 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 								setFullscreenImage(null)
 							}}
 						>
-							Close
+							<CloseIcon
+								theme={{ fill: 'var(--color-primary)' }}
+								className="h-auto w-5 -rotate-180 lg:w-9"
+							/>
 						</motion.button>
 					</motion.div>
 				)}

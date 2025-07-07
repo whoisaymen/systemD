@@ -365,9 +365,9 @@ const FilmContent: React.FC<FilmContentProps> = ({
 	})
 	return (
 		<div className="no-scrollbar relative mt-1 flex h-full w-full flex-col overflow-y-visible rounded-md px-5 tracking-tighter sm:mt-0 sm:min-h-screen sm:overflow-y-visible sm:py-1">
-			<div className="relative my-0 flex w-full flex-col items-start justify-between">
+			<div className="relative my-0 my-2 flex w-full items-start justify-between">
 				<div
-					className={`w-full rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold text-primary sm:hidden`}
+					className={`w-fit rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold text-primary sm:hidden`}
 					onClick={goBack}
 				>
 					<button onClick={goBack} aria-label="Go back">
@@ -376,25 +376,31 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							className="h-auto w-8 -rotate-180 lg:w-9"
 						/>
 					</button>
+
 					{/* ⟵ <span className="font-mono text-sm uppercase">Film selection</span> */}
 				</div>
-				{/* <div className="flex flex-col items-end justify-start gap-0 px-2">
+
+				<div className="flex w-full flex-col items-end justify-start gap-0 px-2">
 					{film.title && (
 						<h1
-							className={`z-10 rounded-md border-0 border-dark bg-primary p-0 text-right text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary`}
+							className={`z-10 rounded-md border-0 border-dark bg-primary p-0 text-right text-3xl font-black italic leading-[1.2] text-dark dark:border-primary dark:bg-dark dark:text-primary`}
 						>
 							{getLocalizedValue(film.title, language)}
-							<span className="font-extralight italic">, ({film.year})</span>
 						</h1>
 					)}
-					{film.director && (
+
+					<span className="text-right font-mono text-base font-normal tracking-[-0.10em] text-primary">
+						{film.director}{' '}
+						<span className="font-sans italic">({film.year})</span>
+					</span>
+					{/* {film.director && (
 						<p
 							className={`z-10 -mt-1 inline-block w-auto rounded-md border-0 border-primary bg-dark px-1 py-0 text-center font-medium tracking-tighter text-primary`}
 						>
 							{film.director}
 						</p>
-					)}
-				</div> */}
+					)} */}
+				</div>
 			</div>
 
 			{isYoutubeOrVimeo ? (
@@ -443,8 +449,8 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				)
 			)}
 
-			<div className="relative mb-0 mt-6 flex w-full flex-col items-center justify-center gap-2 px-6 text-xs font-medium leading-[1.2]">
-				<div className="flex flex-col items-center justify-center gap-0 px-2">
+			<div className="relative mb-0 mt-4 flex w-full flex-col items-center justify-center gap-2 px-6 text-xs font-medium leading-[1.2]">
+				{/* <div className="flex flex-col items-center justify-center gap-0 px-2">
 					{film.title && (
 						<h1
 							className={`z-10 rounded-md border-0 border-dark bg-primary p-0 text-right text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary`}
@@ -460,7 +466,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							{film.director}
 						</p>
 					)}
-				</div>
+				</div> */}
 				{/* Previous film button */}
 				<button
 					className={`absolute bottom-1/2 left-1 ${
@@ -479,10 +485,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				>
 					<ArrowRight
 						theme={{
-							fill: navigationInfo.prevFilm
-								? 'var(--color-dark)'
-								: 'var(--color-grayDark)',
-							stroke: 'var(--color-primary)',
+							stroke: 'var(--color-grayDark)',
 						}}
 						className="h-auto w-8 -rotate-180 lg:w-9"
 					/>
@@ -491,9 +494,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				{/* Next film button */}
 				<button
 					className={`absolute bottom-1/2 right-1 ${
-						navigationInfo.nextFilm
-							? 'opacity-100'
-							: 'cursor-not-allowed opacity-30'
+						navigationInfo.nextFilm ? 'opacity-100' : 'hidden'
 					}`}
 					onClick={() =>
 						navigationInfo.nextFilm && navigateToFilm(navigationInfo.nextFilm)
@@ -508,10 +509,10 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				>
 					<ArrowRight
 						theme={{
-							fill: navigationInfo.nextFilm
-								? 'var(--color-dark)'
-								: 'var(--color-grayDark)',
-							stroke: 'var(--color-primary)',
+							// fill: navigationInfo.nextFilm
+							// 	? 'var(--color-dark)'
+							// 	: 'var(--color-grayDark)',
+							stroke: 'var(--color-grayDark)',
 						}}
 						className="h-auto w-8 lg:w-9"
 					/>

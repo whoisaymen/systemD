@@ -209,6 +209,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 	return (
 		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
+			<div className="fixed bottom-4 right-12 z-50">
+				<BackToTopButton targetId="navbar-mobile" />
+			</div>
 			<div
 				className={`absolute -top-1 rounded-md text-3xl font-semibold text-dark sm:hidden`}
 			>
@@ -884,12 +887,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								>
 									<button
 										onClick={closeLightbox}
-										className="rounded-md border-[2px] border-primary p-1.5"
+										className="border-primary"
 										aria-label="Go back"
 									>
 										<CloseIcon
 											theme={{ fill: 'var(--color-primary)' }}
-											className="h-auto w-6 -rotate-180 lg:w-9"
+											className="h-auto w-5 -rotate-180 lg:w-9"
 										/>
 									</button>
 								</div>
@@ -898,7 +901,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								<FestivalCarousel
 									photos={festival.photoGallery.flatMap((gallery: any) =>
 										gallery.photos.map((photo: any) => ({
-											photo, // Wrap the photo object
+											photo,
+											photographer: gallery.photographer,
 										})),
 									)}
 									initialIndex={currentImageIndex}
