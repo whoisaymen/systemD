@@ -67,8 +67,8 @@ const colorCombos = [
 	{ primary: '#DEFE04', dark: '#123DA6', grayDark: '#8C8C8F' },
 	{ primary: '#554FF1', dark: '#D0DCDC', grayDark: '#8C8C8F' },
 	{ primary: '#8C8C8F', dark: '#222223', grayDark: '#8C8C8F' },
-	{ primary: '#222223', dark: '#fff', grayDark: '#8C8C8F' },
-	{ primary: '#222223', dark: '#FFED00', grayDark: '#222223' },
+	// { primary: '#222223', dark: '#fff', grayDark: '#8C8C8F' },
+	// { primary: '#222223', dark: '#FFED00', grayDark: '#222223' },
 	{ primary: '#DE5325', dark: '#FAFAEC', grayDark: '#DE5325' },
 ]
 
@@ -102,7 +102,7 @@ const ThemeSwitch = () => {
 	}
 
 	const commonClass =
-		'bg-dark toggler flex aspect-square h-[2.25rem] cursor-pointer items-stretch justify-center border-primary p-1 sm:h-[2rem]'
+		'bg-dark toggler flex aspect-square h-[2.25rem] cursor-pointer items-stretch justify-center border-primary p-1 sm:h-[2rem] sm:border-[3px] sm:border-primary sm:rounded-md sm:p-1.5 lg:border-0'
 
 	return (
 		<div onClick={handleToggle} className={commonClass}>
@@ -112,7 +112,7 @@ const ThemeSwitch = () => {
 					right: colorCombos[comboIndex].primary,
 					stroke: colorCombos[comboIndex].primary,
 				}}
-				className="h-full w-full p-1"
+				className="h-full w-full overflow-visible p-1 sm:p-0"
 			/>
 		</div>
 	)

@@ -2,7 +2,7 @@
 import { motion } from 'motion/react'
 
 interface LogoShortAnimatedProps {
-	theme: {
+	theme?: {
 		fill?: string
 		stroke?: string
 		icon?: string

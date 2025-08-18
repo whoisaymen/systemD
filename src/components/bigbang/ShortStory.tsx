@@ -30,7 +30,7 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 	// Transform the scroll progress into a border radius value
 	const borderRadius = useTransform(scrollYProgress, [0, 1], [10, 120])
 
-	const scale = useTransform(scrollYProgress, [0, 1], [0.75, 1])
+	const scale = useTransform(scrollYProgress, [0, 1], [0.25, 1])
 	const rotate = useTransform(scrollYProgress, [0, 1], [-10, 10])
 
 	const themeColors = {
@@ -57,7 +57,7 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 	return (
 		<div
 			ref={ref}
-			className="flex w-full flex-col items-center justify-center space-y-4 rounded-md px-4 text-center sm:my-0 sm:space-y-0"
+			className="flex w-full flex-col items-center justify-center space-y-4 rounded-md px-4 text-center sm:my-0 sm:mt-16 sm:space-y-0"
 			id="short-story"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
@@ -70,14 +70,14 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 						// duration: 2,
 						ease: [0.76, 0, 0.24, 1],
 					}}
-					className="relative border-2 border-dark bg-primary px-4 py-6 shadow-sm sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none sm:dark:bg-transparent"
+					className="relative border-2 border-dark bg-primary px-4 py-6 shadow-sm sm:mx-40 sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none lg:bg-primary lg:bg-gradient-to-t lg:from-grayLight"
 				>
 					{block.text
 						.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key
 						.map((paragraph: any, index: number) => (
 							<p
 								key={index}
-								className="py-0 text-center text-xl font-bold leading-[1.1] tracking-tighter text-dark sm:py-4 sm:text-3xl"
+								className="py-0 text-center text-xl font-bold leading-[1.1] tracking-tighter text-dark sm:py-2 sm:text-3xl"
 							>
 								{renderParagraph(
 									paragraph,
@@ -87,18 +87,7 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 						))}
 				</motion.div>
 			)}
-			{/* {block.svg && (
-				<motion.div
-					className="w-full px-2 pt-6 sm:px-8 sm:py-8"
-					style={{ scale }}
-				>
-					<ThemedSvgFromCMS
-						svg={block.svg?.code || block.svg} // Use .code if it's a code field, fallback to direct string
-						color="var(--color-primary)"
-						className="h-auto w-full"
-					/>
-				</motion.div>
-			)} */}
+
 			{block.image && (
 				<motion.div
 					className="relative w-full px-2 pt-6 sm:px-8 sm:py-8"

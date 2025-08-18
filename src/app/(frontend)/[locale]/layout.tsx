@@ -49,7 +49,7 @@ export default async function RootLayout({
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body
-					className={`${GeistSans.className} sm:dark:bg-darkGray relative bg-grayLight text-ink antialiased dark:bg-dark`}
+					className={`${GeistSans.className} relative bg-dark text-ink antialiased`}
 				>
 					<ThemeProvider attribute="class" defaultTheme="dark">
 						<NextIntlClientProvider messages={messages}>
@@ -62,7 +62,7 @@ export default async function RootLayout({
 						{children}
 					</main> */}
 
-								<main className="z-40 w-full rounded-md sm:min-h-[calc(100svh-0.50rem)] md:flex md:w-full md:items-center md:justify-center md:px-[calc(var(--width-column-width))]">
+								<main className="z-40 w-full rounded-md lg:flex lg:min-h-[calc(100svh-0.50rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
 									{children}
 								</main>
 

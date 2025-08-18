@@ -208,8 +208,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1">
-			<div className="fixed bottom-4 right-12 z-50">
+		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:mt-1 lg:w-full lg:rounded-lg lg:bg-primary lg:py-32">
+			<div className="fixed bottom-4 right-12 z-50 lg:hidden">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 			<div
@@ -227,7 +227,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				</button>
 			</div>
 			<motion.div
-				className={`absolute -top-4 left-[3.5rem] z-10 -rotate-6 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark sm:hidden`}
+				className={`absolute -top-4 left-[3.5rem] z-10 -rotate-6 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:top-4 lg:rounded-xl lg:border-[4px] lg:border-dark lg:px-4 lg:text-9xl`}
 				initial={{ rotate: -6 }}
 				animate={{
 					scale: [1, 0.9, 1, 1, 1],
@@ -241,7 +241,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				<span>{festival.venue}</span>
 			</motion.div>
 			<motion.div
-				className={`absolute -top-3 right-[0.5rem] z-20 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
+				className={`absolute -top-3 right-[0.5rem] z-20 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark lg:top-3 lg:bg-dark lg:text-6xl lg:text-primary`}
 				initial={{ rotate: 6 }}
 				animate={{
 					scale: [1, 0.9, 1, 1, 1],
@@ -255,8 +255,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				<span>{festival.year}</span>
 			</motion.div>
 
-			<div className="mb-8 pt-8" id="film-selection">
-				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark">
+			<div className="mb-8 pt-8 lg:pt-0" id="film-selection">
+				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark lg:bg-transparent">
 					<div className="flex items-center justify-center">
 						<motion.div
 							initial={{ rotate: -1 }}
@@ -271,9 +271,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								},
 							}}
 							onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all ${
+							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:text-6xl ${
 								isFilmSectionOpen
-									? 'border-dark bg-dark text-grayDark dark:border-grayDark dark:bg-grayDark dark:text-dark'
+									? 'border-dark bg-dark text-grayDark dark:border-grayDark dark:bg-grayDark dark:text-dark lg:dark:border-0 lg:dark:bg-grayDark'
 									: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
 							}`}
 						>
@@ -696,7 +696,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					value="item-3"
 					className="-mt-5 flex flex-col items-center justify-center pb-1"
 				>
-					<AccordionTrigger className={`rotate-[3deg]`}>
+					<AccordionTrigger className={`rotate-[3deg] lg:text-6xl`}>
 						{tExpo('title')}
 					</AccordionTrigger>
 					<AccordionContent>
@@ -729,7 +729,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 											{/* Artist Names */}
 											{photosByArtist &&
 											Object.keys(photosByArtist).length > 0 ? (
-												<ul className="mt-2 text-base text-dark dark:text-primary">
+												<ul className="mt-2 text-base text-primary lg:text-dark">
 													{Object.keys(photosByArtist).map(
 														(artistName, artistIndex) => {
 															const isExpanded = selectedArtist === artistName
@@ -737,7 +737,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															return (
 																<li
 																	key={artistIndex}
-																	className="dark:border-primary/50 border-b border-primary"
+																	className="dark:border-primary/50 border-b border-primary lg:border-dark"
 																>
 																	<div
 																		className="flex cursor-pointer items-center justify-between py-2"
@@ -821,7 +821,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							},
 						}}
 						onClick={() => setIsPhotoGalleryOpen(!isPhotoGalleryOpen)}
-						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all ${
+						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all lg:text-6xl ${
 							isPhotoGalleryOpen
 								? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark'
 								: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
@@ -913,13 +913,13 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				)}
 			</div>
 
-			<div className="py-4 pt-3 lg:max-w-[50%] [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
+			<div className="py-4 pt-3 lg:mx-32 lg:pt-16 lg:text-dark [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
 				{festival.text?.[language]?.map((block: any) => {
 					// Check if the block is a list item
 					if (block.listItem === 'bullet') {
 						return (
 							<ul key={block._key} className="list-disc">
-								<li className="mt-4 text-base font-normal leading-[1.2] tracking-tighter">
+								<li className="mt-4 text-base font-normal leading-[1.2] tracking-tighter lg:text-xl">
 									{block.children.map((child: any) => child.text).join('')}
 								</li>
 							</ul>
@@ -930,7 +930,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					return (
 						<p
 							key={block._key}
-							className="mt-4 text-base font-normal leading-[1.2] tracking-tighter first:mt-0"
+							className="mt-4 text-base font-normal leading-[1.2] tracking-tighter first:mt-0 lg:text-xl"
 						>
 							{block.children.map((child: any) => child.text).join('')}
 						</p>
@@ -939,8 +939,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</div>
 
 			{festival.description && (
-				<div className="relative rounded-md border-dark bg-primary p-5 sm:py-10">
-					<div className="flex flex-wrap items-center justify-center gap-2">
+				<div className="relative rounded-md border-dark bg-primary p-5 sm:py-10 lg:mx-32 lg:bg-dark">
+					<div className="flex flex-wrap items-center justify-center gap-2 lg:gap-4">
 						{(getLocalizedValue(festival.description, language) || '')
 							.split(' ')
 							.map((word: string, index: number) => {
@@ -952,7 +952,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								return (
 									<span
 										key={index}
-										className="inline-block text-xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-dark sm:text-4xl"
+										className="inline-block text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:text-4xl lg:text-primary"
 										style={{
 											transform: `rotate(${randomRotation}deg)`,
 											marginTop: `${randomMarginTop}px`,

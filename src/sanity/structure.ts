@@ -36,6 +36,11 @@ export const structure = structureTool({
 		S.list()
 			.title('CMS')
 			.items([
+				S.documentTypeListItem('filmSubmission')
+					.title('Film Submissions')
+					.icon(FaClipboardList),
+
+				S.divider(),
 				singleton(S, 'site', 'Réglages').icon(VscServerProcess),
 				singleton(S, 'homepage', "Page d'accueil").icon(FaHome),
 				// S.documentTypeListItem('homepage'),

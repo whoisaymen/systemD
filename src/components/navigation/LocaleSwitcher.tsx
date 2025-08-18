@@ -49,7 +49,7 @@ export default function LocaleSwitcher() {
 				onClick={() => setIsOpen(!isOpen)}
 				disabled={isPending}
 				className={clsx(
-					'flex h-full items-center justify-between gap-2 rounded-md bg-grayDark px-2 text-base font-bold tracking-tighter text-dark transition-all duration-200 dark:bg-dark dark:text-primary sm:text-2xl',
+					'flex h-full items-center justify-between gap-2 rounded-md bg-dark px-2 text-base font-bold tracking-tighter text-primary transition-all duration-200 sm:border-[0px] sm:border-primary sm:px-1.5 sm:text-2xl',
 					isPending && 'opacity-30',
 					// isOpen && 'border-2 border-primary',
 				)}

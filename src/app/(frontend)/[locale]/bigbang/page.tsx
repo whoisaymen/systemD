@@ -17,6 +17,7 @@ export default async function BigBangPage({
 			longStory={content.longStory}
 			locale={locale}
 		/>
+		// <></>
 	)
 }
 

@@ -86,7 +86,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	)
 
 	return (
-		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner">
+		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner lg:border-4 lg:border-black">
 			{/* <div className="mb-4 flex flex-wrap items-center gap-2">
 				<span className="font-bold">Year:</span>
 				<button
@@ -119,9 +119,9 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 				</button>
 			</div> */}
 
-			<div className="mt-1 flex flex-wrap items-center justify-between">
+			<div className="mt-1 flex flex-wrap items-center justify-between sm:hidden">
 				<span className="px-2 py-3 text-5xl font-bold leading-[1] text-primary">
-					{/* {'Éditions'.split('').map((char, idx) => {
+					{'Éditions'.split('').map((char, idx) => {
 						// Skip rendering for spaces (if any)
 						if (char === ' ') return <span key={idx}>&nbsp;</span>
 						// Random rotation and position for each character
@@ -141,7 +141,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 								{char}
 							</span>
 						)
-					})} */}
+					})}
 				</span>
 				{/* View toggle */}
 				<div className="flex items-center justify-center gap-0">
@@ -206,7 +206,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
 				<div
-					className={`mt-1 grid ${view === 'single' ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-2 lg:gap-1 lg:p-0`}
+					className={`mt-1 grid sm:mx-0 sm:mt-8 ${view === 'single' ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-3 lg:gap-1 lg:p-0`}
 				>
 					{filteredFestivals.map((festival: any, index: number) => (
 						// {[...Array(5)]
@@ -217,7 +217,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 						<Link
 							key={festival._id || index}
 							href={`/${language}/festival/${festival.year}`}
-							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-primary shadow-xl transition-shadow duration-300 hover:shadow-lg`}
+							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-primary shadow-xl transition-shadow duration-300 hover:shadow-lg sm:border-0`}
 						>
 							<div
 								className={`absolute left-1/2 ${view === 'single' ? 'top-[65%] text-3xl' : 'top-[38%] text-xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tighter text-dark`}
