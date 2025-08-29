@@ -72,7 +72,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={block._key || index}
-								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-32"
+								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-16"
 							>
 								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-7xl">
 									"
@@ -119,7 +119,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 								className="flex flex-col items-center justify-center"
 							>
 								<div
-									className="px-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary lg:px-32 lg:text-xl"
+									className="px-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary lg:px-16 lg:text-xl"
 									style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 								>
 									{block.text
@@ -183,7 +183,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 							return (
 								<div
 									key={index}
-									className="relative mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:mx-0 sm:h-auto sm:border-[0px]"
+									className="relative mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:mx-0 sm:h-auto sm:border-[3px] lg:mx-16"
 									onClick={() => setFullscreenImage(block.file.asset.url)}
 								>
 									<div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-primary opacity-75 mix-blend-screen" />
@@ -192,7 +192,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										alt={getLocalizedValue(block.caption, lang) || 'Image'}
 										width={block.file.asset.metadata.dimensions.width}
 										height={block.file.asset.metadata.dimensions.height}
-										className="h-full w-full object-cover saturate-0"
+										className="aspect-video h-full w-full object-cover object-[100%_45%] saturate-0"
 									/>
 									{block.caption && (
 										<p className="mt-2 text-center text-sm italic text-dark dark:text-primary">

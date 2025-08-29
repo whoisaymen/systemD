@@ -168,8 +168,8 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 		<>
 			{isFilmPage && (
 				<>
-					<div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>
-					<div className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>
+					<div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y lg:hidden"></div>
+					<div className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y lg:hidden"></div>
 				</>
 			)}
 			{/* <div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>

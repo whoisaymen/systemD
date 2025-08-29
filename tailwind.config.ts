@@ -27,7 +27,7 @@ export default {
 				accent: '#1d1d1f',
 				// primary: '#DEFE04',
 				primary: 'var(--color-primary)',
-				secondary: '#DA4336',
+				secondary: '#DEFE04',
 				tertiary: '#222223',
 				// dark: '#123DA6',
 				dark: 'var(--color-dark)',

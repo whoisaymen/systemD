@@ -208,8 +208,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:mt-1 lg:w-full lg:rounded-lg lg:bg-primary lg:py-32">
-			<div className="fixed bottom-4 right-12 z-50 lg:hidden">
+		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:mt-1 lg:w-full lg:rounded-lg lg:bg-dark lg:py-16">
+			<div className="fixed bottom-4 right-12 z-50 lg:bottom-2 lg:right-[16.5%]">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 			<div
@@ -226,8 +226,56 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					/>
 				</button>
 			</div>
+			<div
+				className={`-top-1 z-[100000] hidden rounded-md p-8 text-3xl font-semibold text-dark lg:absolute lg:block`}
+			>
+				<button
+					onClick={() => router.push(`/${language}/memoire`)}
+					className=""
+					aria-label="Go back"
+				>
+					<ArrowRight
+						theme={{
+							// fill: 'var(--color-grayDark)',
+							stroke: 'var(--color-primary)',
+						}}
+						className="h-auto w-9 -rotate-180 border-primary"
+					/>
+				</button>
+			</div>
+			{/* Venue and Year Header */}
+			<div className="z-10 hidden w-full flex-row items-end justify-between border-0 px-8 lg:pointer-events-none lg:absolute lg:right-0 lg:top-8 lg:z-[10000] lg:mt-0 lg:flex lg:flex-col lg:justify-center lg:gap-4">
+				<motion.div
+					className="rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:rounded-xl lg:border-[0px] lg:border-primary lg:text-5xl"
+					initial={{ rotate: -6 }}
+					animate={{
+						scale: [1, 0.9, 1, 1, 1],
+						rotate: [-6, 360, -6, -6, -6],
+						transition: {
+							duration: 5,
+							ease: [0.76, 0, 0.24, 1],
+						},
+					}}
+				>
+					<span>{festival.venue}</span>
+				</motion.div>
+				<motion.div
+					className="-mt-5 rounded-md border-[0px] border-primary bg-primary px-2 text-xl font-black text-primary lg:bg-primary lg:text-3xl lg:text-dark"
+					initial={{ rotate: 6 }}
+					animate={{
+						scale: [1, 0.9, 1, 1, 1],
+						rotate: [6, 360, 6, 6, 6],
+						transition: {
+							duration: 5,
+							ease: [0.76, 0, 0.24, 1],
+						},
+					}}
+				>
+					<span>{festival.year}</span>
+				</motion.div>
+			</div>
 			<motion.div
-				className={`absolute -top-4 left-[3.5rem] z-10 -rotate-6 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:top-4 lg:rounded-xl lg:border-[4px] lg:border-dark lg:px-4 lg:text-9xl`}
+				className={`absolute -top-4 left-[3.5rem] z-10 -rotate-6 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:right-[1rem] lg:top-4 lg:hidden lg:w-fit lg:rounded-xl lg:border-[3px] lg:border-dark lg:px-4 lg:text-5xl`}
 				initial={{ rotate: -6 }}
 				animate={{
 					scale: [1, 0.9, 1, 1, 1],
@@ -241,7 +289,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				<span>{festival.venue}</span>
 			</motion.div>
 			<motion.div
-				className={`absolute -top-3 right-[0.5rem] z-20 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark lg:top-3 lg:bg-dark lg:text-6xl lg:text-primary`}
+				className={`absolute -top-3 right-[0.5rem] z-20 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark lg:top-8 lg:hidden lg:w-fit lg:bg-dark lg:text-3xl lg:text-primary`}
 				initial={{ rotate: 6 }}
 				animate={{
 					scale: [1, 0.9, 1, 1, 1],
@@ -256,7 +304,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</motion.div>
 
 			<div className="mb-8 pt-8 lg:pt-0" id="film-selection">
-				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark lg:bg-transparent">
+				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark lg:z-10 lg:bg-dark lg:pt-8">
 					<div className="flex items-center justify-center">
 						<motion.div
 							initial={{ rotate: -1 }}
@@ -273,7 +321,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
 							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:text-6xl ${
 								isFilmSectionOpen
-									? 'border-dark bg-dark text-grayDark dark:border-grayDark dark:bg-grayDark dark:text-dark lg:dark:border-0 lg:dark:bg-grayDark'
+									? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark'
 									: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
 							}`}
 						>
@@ -284,7 +332,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					{isFilmSectionOpen && (
 						<>
 							{festival.filmSelection && festival.filmSelection.length > 0 ? (
-								<div className="mt-0 flex w-full items-center justify-between rounded-none border-0 border-b-0 border-primary bg-grayLight text-sm dark:bg-dark lg:pt-0">
+								<div className="mt-0 flex w-full items-center justify-between rounded-none border-0 border-b-0 border-primary bg-dark text-sm lg:mt-2 lg:bg-dark lg:px-16 lg:pt-0 lg:text-lg lg:font-bold lg:tracking-tight lg:text-primary">
 									{[
 										{ field: 'year', label: tFilmSelection('year') },
 										{ field: 'title', label: tFilmSelection('titleCol') },
@@ -336,7 +384,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												<span
 													className={
 														sortField === field
-															? 'border-primary underline underline-offset-4'
+															? 'border-primary underline underline-offset-4 lg:text-primary'
 															: ''
 													}
 												>
@@ -365,7 +413,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									>
 										{showWinnersOnly ? (
 											<div className="flex items-center gap-1 rounded-md p-1">
-												<span className="text-primary">x</span>
+												<span className="text-primary lg:text-dark">x</span>
 												<span className="underline underline-offset-4">
 													{' '}
 													{tFilmSelection('winners')}
@@ -473,9 +521,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				{isFilmSectionOpen &&
 					festival.filmSelection &&
 					festival.filmSelection.length > 0 && (
-						<div className="mt-0 pb-16">
+						<div className="mt-0 pb-16 lg:px-16">
 							{view === 'grid' ? (
-								<ul className="sticky top-32 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:px-4 lg:grid-cols-3">
+								<ul className="sticky top-32 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 									{sortedFilms.map((film: any, index: number) => (
 										<li
 											key={index}
@@ -503,7 +551,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																image={film.affiche}
 																src={film.affiche.asset.url}
 																alt={getLocalizedValue(film.title, language)}
-																className="aspect-square h-auto rounded-lg border-2 border-grayDark object-cover dark:border-primary"
+																className="aspect-square h-auto rounded-lg border-2 border-primary object-cover lg:border-dark"
 															/>
 															<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
 																<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
@@ -609,7 +657,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									))}
 								</ul>
 							) : (
-								<table className="relative mt-4 w-full table-auto border-collapse text-sm">
+								<table className="relative mt-4 w-full table-auto border-collapse text-sm lg:text-lg">
 									<thead className="sticky left-0 top-0 z-10 hidden">
 										<tr className="bg-white text-left">
 											<th className="border-grayDark px-4 py-2 pl-0">
@@ -629,10 +677,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												key={index}
 												onMouseEnter={() => setHoveredFilm(film._id)}
 												onMouseLeave={() => setHoveredFilm(null)}
-												className="relative"
+												className="relative hover:bg-secondary/15"
 												data-film-slug={film.slug?.current}
 											>
-												<td className="border-b border-dark py-2 dark:border-primary">
+												<td
+													className={`border-b border-primary py-2 lg:border-dark lg:text-dark ${film.isWinner ? 'lg:text-secondary' : 'lg:text-dark'}`}
+												>
 													{film.slug?.current ? (
 														<Link
 															href={`/${language}/film/${film.slug.current}`}
@@ -643,7 +693,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 														<span className="text-grayDark">{film.year}</span>
 													)}
 												</td>
-												<td className="border-b border-dark px-4 py-2 dark:border-primary">
+												<td
+													className={`border-b border-primary px-4 py-2 lg:border-dark ${film.isWinner ? 'text-secondary' : 'text-dark'}`}
+												>
 													{film.slug?.current ? (
 														<Link
 															href={`/${language}/film/${film.slug.current}`}
@@ -656,7 +708,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 														</span>
 													)}
 												</td>
-												<td className="border-b border-dark px-4 py-2 pr-8 text-dark dark:border-primary dark:text-primary">
+												<td
+													className={`border-b border-primary px-4 py-2 pr-8 lg:border-dark ${film.isWinner ? 'text-secondary' : 'text-primary lg:text-dark'}`}
+												>
 													{film.slug?.current ? (
 														<Link
 															href={`/${language}/film/${film.slug.current}`}
@@ -672,13 +726,43 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 														</span>
 													)}
 													{hoveredFilm === film._id && film.affiche && (
-														<div className="absolute -top-1/2 left-1/2 z-10 w-40 -translate-x-1/2 translate-y-1/2">
-															<Img
-																image={film.affiche}
-																src={film.affiche.asset.url}
-																alt={getLocalizedValue(film.title, language)}
-																className="h-auto w-full rounded-md object-cover"
-															/>
+														<div className="absolute -top-1/2 left-1/2 z-10 w-40 -translate-x-1/2 translate-y-1/2 lg:w-[30rem]">
+															<div className="relative">
+																<Img
+																	image={film.affiche}
+																	src={film.affiche.asset.url}
+																	alt={getLocalizedValue(film.title, language)}
+																	className="h-auto w-full rounded-md object-cover lg:border-[3px] lg:border-secondary"
+																/>
+																<p
+																	className={`absolute left-1/2 top-1/2 z-50 mt-0 w-fit -translate-x-1/2 translate-y-1/2 -rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark`}
+																>
+																	{film.year}
+																</p>
+																{film.director && (
+																	<>
+																		{splitTitle(film.director, 26).map(
+																			(line, idx) => (
+																				<p
+																					key={idx}
+																					className={[
+																						'absolute left-1/2 top-[60%] z-10 mt-0 inline-block w-auto -translate-x-1/2 translate-y-1/2 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark',
+
+																						idx === 0
+																							? ''
+																							: '-z-0 -mt-[0.15rem]',
+																						idx % 2 === 0
+																							? '-rotate-1'
+																							: 'rotate-1',
+																					].join(' ')}
+																				>
+																					{line}
+																				</p>
+																			),
+																		)}
+																	</>
+																)}
+															</div>
 														</div>
 													)}
 												</td>
@@ -694,14 +778,14 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			<Accordion type="single" collapsible>
 				<AccordionItem
 					value="item-3"
-					className="-mt-5 flex flex-col items-center justify-center pb-1"
+					className="-mt-5 flex flex-col items-center justify-center pb-1 lg:-mt-2"
 				>
-					<AccordionTrigger className={`rotate-[3deg] lg:text-6xl`}>
+					<AccordionTrigger className={`z-50 rotate-[2deg] lg:text-6xl`}>
 						{tExpo('title')}
 					</AccordionTrigger>
 					<AccordionContent>
 						{festival.expoPhoto && festival.expoPhoto.length > 0 && (
-							<div className="my-4">
+							<div className="my-4 lg:px-16">
 								{/* Curator Name */}
 								{festival.expoPhoto.map((expo: any, expoIndex: number) => {
 									// Group photos by artist
@@ -720,7 +804,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									return (
 										<div key={expoIndex} className="mb-4">
 											<div className="flex justify-center">
-												<h3 className="z-0 -mt-3 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark">
+												<h3 className="z-0 -mt-3 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark lg:text-lg">
 													{tExpo('curatedBy')}{' '}
 													{expo.curatorName || 'Unknown Curator'}
 												</h3>
@@ -729,7 +813,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 											{/* Artist Names */}
 											{photosByArtist &&
 											Object.keys(photosByArtist).length > 0 ? (
-												<ul className="mt-2 text-base text-primary lg:text-dark">
+												<ul className="mt-2 text-base text-primary lg:text-primary">
 													{Object.keys(photosByArtist).map(
 														(artistName, artistIndex) => {
 															const isExpanded = selectedArtist === artistName
@@ -737,7 +821,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															return (
 																<li
 																	key={artistIndex}
-																	className="dark:border-primary/50 border-b border-primary lg:border-dark"
+																	className="dark:border-primary/50 border-b border-primary lg:border-primary"
 																>
 																	<div
 																		className="flex cursor-pointer items-center justify-between py-2"
@@ -821,9 +905,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							},
 						}}
 						onClick={() => setIsPhotoGalleryOpen(!isPhotoGalleryOpen)}
-						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all lg:text-6xl ${
+						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all lg:z-10 lg:text-6xl ${
 							isPhotoGalleryOpen
-								? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark'
+								? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark lg:z-50'
 								: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
 						}`}
 					>
@@ -834,32 +918,50 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				{isPhotoGalleryOpen && (
 					<div className="relative">
 						<div className="flex justify-center">
-							<h3 className="-z-10 -mt-0 inline-block rotate-2 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark">
+							<h3 className="-z-10 -mt-0 inline-block rotate-2 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark lg:z-0 lg:text-lg">
 								{tPhotoGallery('photosBy')}{' '}
 								{festival.photoGallery[0].photographer || ''}
 							</h3>
 						</div>
 
-						<div className="relative space-y-4 pt-4">
+						<div className="relative space-y-4 pt-4 lg:px-16">
 							{photoRows.map((row, rowIndex) => (
 								<div
 									key={rowIndex}
-									className="relative flex flex-col items-center justify-center rounded-md bg-grayDark py-4"
+									className="relative flex flex-col items-center justify-center rounded-md bg-grayDark py-4 lg:py-[2.4rem]"
 								>
 									{/* Top perforation */}
-									<div className="absolute left-0 top-1 flex w-full justify-between px-2">
+									<div className="absolute left-0 top-1 flex w-full justify-between px-2 lg:top-2">
+										{[...Array(28)].map((_, i) => (
+											<div
+												key={i}
+												className="hidden h-2 w-4 rounded-sm bg-dark lg:block lg:h-[1.45rem] lg:w-[1.15rem] lg:rounded-[0.25rem] lg:bg-dark"
+											/>
+										))}
 										{[...Array(12)].map((_, i) => (
-											<div key={i} className="h-2 w-4 rounded-sm bg-dark" />
+											<div
+												key={i}
+												className="h-2 w-4 rounded-sm bg-dark lg:hidden lg:h-[1.45rem] lg:w-3 lg:rounded-[0.25rem] lg:bg-dark"
+											/>
 										))}
 									</div>
 									{/* Bottom perforation */}
-									<div className="absolute bottom-1 left-0 flex w-full justify-between px-2">
+									<div className="absolute bottom-1 left-0 flex w-full justify-between px-2 lg:bottom-2">
+										{[...Array(28)].map((_, i) => (
+											<div
+												key={i}
+												className="hidden h-2 w-4 rounded-sm bg-dark lg:block lg:h-[1.45rem] lg:w-[1.15rem] lg:rounded-[0.25rem] lg:bg-dark"
+											/>
+										))}
 										{[...Array(12)].map((_, i) => (
-											<div key={i} className="h-2 w-4 rounded-sm bg-dark" />
+											<div
+												key={i}
+												className="h-2 w-4 rounded-sm bg-dark lg:hidden lg:h-[1.45rem] lg:w-3 lg:rounded-[0.25rem] lg:bg-dark"
+											/>
 										))}
 									</div>
 									{/* Images */}
-									<div className="z-10 grid w-full max-w-3xl grid-cols-3">
+									<div className="z-10 grid w-full max-w-3xl grid-cols-3 lg:max-w-full lg:gap-2">
 										{row.map((photo: any, index: number) => (
 											<button
 												key={index}
@@ -870,7 +972,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													image={photo}
 													src={photo.asset.url}
 													alt={`Photo ${rowIndex * 3 + index + 1}`}
-													className="aspect-square h-auto w-full rounded-none object-cover"
+													className="aspect-square h-auto w-full rounded-none object-cover lg:aspect-video"
 												/>
 											</button>
 										))}
@@ -883,7 +985,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						{isLightboxOpen && (
 							<div className="fixed inset-0 z-40 flex items-center justify-center bg-dark">
 								<div
-									className={`absolute right-4 top-2 z-50 rounded-md text-3xl font-semibold text-dark sm:hidden`}
+									className={`absolute right-4 top-2 z-50 rounded-md text-3xl font-semibold text-dark`}
 								>
 									<button
 										onClick={closeLightbox}
@@ -913,13 +1015,13 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				)}
 			</div>
 
-			<div className="py-4 pt-3 lg:mx-32 lg:pt-16 lg:text-dark [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
+			<div className="py-4 pt-3 lg:mx-32 lg:py-16 lg:text-primary [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
 				{festival.text?.[language]?.map((block: any) => {
 					// Check if the block is a list item
 					if (block.listItem === 'bullet') {
 						return (
 							<ul key={block._key} className="list-disc">
-								<li className="mt-4 text-base font-normal leading-[1.2] tracking-tighter lg:text-xl">
+								<li className="mt-4 text-base font-normal leading-[1.2] tracking-tight lg:text-xl lg:leading-[1.5rem]">
 									{block.children.map((child: any) => child.text).join('')}
 								</li>
 							</ul>
@@ -930,7 +1032,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					return (
 						<p
 							key={block._key}
-							className="mt-4 text-base font-normal leading-[1.2] tracking-tighter first:mt-0 lg:text-xl"
+							className="mt-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:text-xl lg:leading-[1.5rem]"
 						>
 							{block.children.map((child: any) => child.text).join('')}
 						</p>
@@ -938,7 +1040,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				})}
 			</div>
 
-			{festival.description && (
+			{/* {festival.description && (
 				<div className="relative rounded-md border-dark bg-primary p-5 sm:py-10 lg:mx-32 lg:bg-dark">
 					<div className="flex flex-wrap items-center justify-center gap-2 lg:gap-4">
 						{(getLocalizedValue(festival.description, language) || '')
@@ -965,7 +1067,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							})}
 					</div>
 				</div>
-			)}
+			)} */}
 
 			{/* {festival.pressLink && (
 				<a

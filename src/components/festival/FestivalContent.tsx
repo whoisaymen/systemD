@@ -204,9 +204,9 @@ const EventCalendar: React.FC<CalendarProps> = ({
 					/>
 				</button>
 			</div>
-			<div className="relative mx-32 rounded-xl border-[3px] border-primary bg-dark pb-4">
+			<div className="relative mx-32 rounded-xl border-[0px] border-primary bg-dark pb-4">
 				{/* Header with controls */}
-				<div className="mb-6 flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
+				<div className="mb-0 flex flex-col gap-4 p-2 lg:flex-row lg:items-center lg:justify-between">
 					<div className="flex items-center gap-4">
 						<h3 className="-rotate-3 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:top-4 lg:rounded-xl lg:border-[3px] lg:border-dark lg:px-2 lg:text-2xl">
 							{monthNames[currentMonth]} {currentYear}
@@ -263,11 +263,11 @@ const EventCalendar: React.FC<CalendarProps> = ({
 							className="p-4"
 						>
 							{/* Day headers */}
-							<div className="mb-4 grid grid-cols-7 gap-1">
+							<div className="mb-2 grid grid-cols-7 gap-1">
 								{dayNames.map((day) => (
 									<div
 										key={day}
-										className="p-2 text-center text-sm font-semibold text-primary"
+										className="p-0 text-left text-xl font-semibold text-primary"
 									>
 										{day}
 									</div>
@@ -491,7 +491,7 @@ const CustomTextBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 				{block.title}
 			</AccordionTrigger>
 			<AccordionContent>
-				<div className="px-2 pb-0 pt-4 text-base leading-[1.2] tracking-tight text-primary lg:mx-32 lg:rounded-md lg:bg-primary lg:pb-8 lg:pt-8 lg:text-xl lg:leading-[1.75rem] lg:text-dark">
+				<div className="px-2 pb-0 pt-4 text-base leading-[1.2] tracking-tight text-primary lg:mx-16 lg:rounded-md lg:pb-8 lg:pt-8 lg:text-xl lg:leading-[1.5rem] lg:text-primary">
 					{block.content?.[language] && (
 						<PortableText
 							value={block.content[language]}
@@ -584,7 +584,7 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 	return (
 		<motion.div
 			layout
-			className={`mx-0 w-auto cursor-pointer overflow-hidden rounded-lg pb-10 pt-2 lg:h-[50vh] lg:pb-0 lg:pt-0 ${
+			className={`mx-0 w-auto cursor-pointer overflow-hidden rounded-lg px-16 pb-10 pt-2 lg:h-[50vh] lg:rounded-3xl lg:pb-0 lg:pt-0 ${
 				isFullscreen ? 'fixed inset-0 z-50 w-screen rounded-none bg-dark' : ''
 			}`}
 			style={{
@@ -598,8 +598,8 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 			}}
 		>
 			<video
-				className={`h-full w-full transform rounded-3xl border-[3px] border-primary object-cover lg:rounded-md lg:border-0 ${
-					isFullscreen ? 'lg:border-4' : ''
+				className={`h-full w-full transform rounded-3xl border-[3px] border-primary object-cover lg:rounded-3xl lg:border-0 ${
+					isFullscreen ? 'lg:border-[3px]' : 'lg:border-[4px]'
 				}`}
 				autoPlay
 				muted
@@ -622,26 +622,18 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 	)
 }
 
-// Jury Block Component
 const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
-	const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
+	const [currentIndex, setCurrentIndex] = useState(0)
 	const getLocalizedValue = useLocalizedValue()
 
-	const toggleMember = (id: string) => {
-		setSelectedMemberId((prev) => (prev === id ? null : id))
-	}
+	const members = block.juryMembers || []
+	const total = members.length
+	const currentMember = members[currentIndex]
 
-	useEffect(() => {
-		if (block.juryMembers?.length > 0 && selectedMemberId === null) {
-			setSelectedMemberId(block.juryMembers[0]._id)
-		}
-	}, [block.juryMembers, selectedMemberId])
+	const goPrev = () => setCurrentIndex((prev) => (prev - 1 + total) % total)
+	const goNext = () => setCurrentIndex((prev) => (prev + 1) % total)
 
-	if (!block.show) return null
-
-	const selectedMember = block.juryMembers?.find(
-		(m: any) => m._id === selectedMemberId,
-	)
+	if (!block.show || !currentMember) return null
 
 	return (
 		<AccordionItem
@@ -652,130 +644,50 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 				Jury
 			</AccordionTrigger>
 			<AccordionContent>
-				{/* Jury Grid */}
-				<div className="grid w-full grid-cols-3 gap-1 lg:grid-cols-6 lg:px-32">
-					{block.juryMembers?.length > 0 ? (
-						block.juryMembers.map((member: any) => (
-							<div
-								key={member._id}
-								className="flex cursor-pointer flex-col items-center px-0"
-								onClick={() => toggleMember(member._id)}
-							>
-								<div
-									className={`relative h-full w-full overflow-hidden rounded-lg border-[3px] lg:px-0 ${
-										selectedMemberId === member._id
-											? 'border-primary'
-											: 'border-dark'
-									}`}
-								>
-									<Img
-										image={member.image}
-										src={member.image?.asset.url}
-										alt={member.name}
-										className={`z-0 h-full w-full border-0 border-dark object-cover dark:border-primary lg:border-0 ${
-											selectedMemberId === member._id
-												? 'saturate-100'
-												: 'lg:saturate-0'
-										}`}
-									/>
-									{selectedMemberId !== member._id && (
-										<div
-											className="absolute inset-0 z-10 mix-blend-screen"
-											style={{
-												backgroundColor: 'var(--color-dark)',
-												opacity: 0.9,
-											}}
-										/>
-									)}
-								</div>
-							</div>
-						))
-					) : (
-						<p>No jury members found</p>
-					)}
-				</div>
-
-				{/* Selected Member Bio */}
-				{selectedMemberId && selectedMember && (
-					<div className="mb-4 mt-4 w-full px-0">
-						<div className="w-full text-primary">
-							{selectedMember.name && (
-								<div className="flex items-center justify-center">
-									<h2 className="mb-3 -rotate-0 rounded-md border-[0px] border-primary px-2 text-lg font-semibold tracking-tighter text-primary lg:hidden">
-										{selectedMember.name}
-									</h2>
-								</div>
-							)}
-							{selectedMember.biography && (
-								<p className="text-base font-normal leading-[1.2] tracking-tighter lg:px-32 lg:text-xl">
-									<span className="mr-4 hidden font-bold tracking-tighter lg:inline-block">
-										{selectedMember.name}
-									</span>
-									{getLocalizedValue(selectedMember.biography, language)}
-								</p>
-							)}
+				<div className="relative flex w-full flex-col items-center justify-center py-8 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32">
+					{/* Left: Photo, Name, Counter */}
+					<div className="flex flex-col items-center">
+						<Img
+							image={currentMember.image}
+							src={currentMember.image?.asset.url}
+							alt={currentMember.name}
+							className="h-40 w-40 min-w-[10rem] rounded-lg border-0 border-primary object-cover lg:h-80 lg:w-56 lg:min-w-[15rem]"
+						/>
+						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-2xl font-medium tracking-tighter text-dark">
+							{currentMember.name}
+						</h2>
+						<div className="items-between mt-2 flex w-full justify-center">
+							<button onClick={goPrev} aria-label="Go back">
+								<ArrowRight
+									theme={{ fill: 'var(--color-grayDark)' }}
+									className="h-auto w-8 -rotate-180 lg:w-9"
+								/>
+							</button>
+							<span className="w-full text-center text-xl font-semibold text-primary">
+								{total > 0 ? `${currentIndex + 1} / ${total}` : null}
+							</span>
+							<button onClick={goNext} aria-label="Go next">
+								<ArrowRight
+									theme={{ fill: 'var(--color-grayDark)' }}
+									className="h-auto w-8 lg:w-9"
+								/>
+							</button>
 						</div>
 					</div>
-				)}
+
+					{/* Right: Biography */}
+					<div className="mt-6 flex flex-1 flex-col items-center lg:mt-0 lg:items-start lg:justify-start lg:text-left">
+						{currentMember.biography && (
+							<p className="mb-4 text-base font-normal leading-snug tracking-tight text-primary lg:text-xl lg:leading-tight">
+								{getLocalizedValue(currentMember.biography, language)}
+							</p>
+						)}
+					</div>
+				</div>
 			</AccordionContent>
 		</AccordionItem>
 	)
 }
-
-// On Tour Block Component
-// const OnTourBlock: React.FC<BlockProps> = ({ block, index, language }) => {
-// 	const getLocalizedValue = useLocalizedValue()
-
-// 	if (!block.show) return null
-
-// 	return (
-// 		<AccordionItem
-// 			value={`onTour-${index}`}
-// 			className="flex flex-col items-center justify-center"
-// 		>
-// 			<AccordionTrigger className="rotate-6 lg:text-6xl">
-// 				On Tour
-// 			</AccordionTrigger>
-// 			<AccordionContent className="w-full">
-// 				<div className="mt-4 w-full">
-// 					<table className="w-full table-auto border-collapse">
-// 						<tbody>
-// 							{block.events.map((event: any, eventIndex: number) => (
-// 								<tr
-// 									key={eventIndex}
-// 									className="border-b border-t border-dark text-sm tracking-tighter text-dark dark:border-primary dark:text-primary"
-// 								>
-// 									<td className="flex flex-col px-4 py-2">
-// 										<span>
-// 											{new Date(event.date).toLocaleDateString(language, {
-// 												weekday: 'long',
-// 												day: 'numeric',
-// 												month: 'long',
-// 											})}
-// 										</span>
-// 										<span>
-// 											{new Date(event.date).toLocaleTimeString(language, {
-// 												hour: '2-digit',
-// 												minute: '2-digit',
-// 												hour12: true,
-// 											})}
-// 										</span>
-// 									</td>
-// 									<td className="px-4 py-2 text-sm normal-case leading-[1]">
-// 										{getLocalizedValue(event.title, language)}
-// 									</td>
-// 									<td className="px-4 py-2">
-// 										{event.location || 'Location not specified'}
-// 									</td>
-// 								</tr>
-// 							))}
-// 						</tbody>
-// 					</table>
-// 				</div>
-// 			</AccordionContent>
-// 		</AccordionItem>
-// 	)
-// }
 
 const OnTourBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	const getLocalizedValue = useLocalizedValue()
@@ -875,7 +787,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 				collapsible
 				onValueChange={handleAccordionValueChange}
 				// className="lg:rounded-md lg:bg-dark lg:bg-gradient-to-t lg:from-grayDark lg:py-16 lg:shadow-inner"
-				className="lg:rounded-lg lg:border-0 lg:border-primary lg:bg-primary lg:bg-gradient-to-b lg:from-dark lg:pb-28 lg:pt-20"
+				className="lg:rounded-lg lg:border-0 lg:border-primary lg:bg-dark lg:pb-14 lg:pt-20"
 			>
 				{accordionBlocks?.map(renderBlock)}
 			</Accordion>
