@@ -9,12 +9,6 @@ interface EquipeContentProps {
 	language: string
 }
 
-const theme = {
-	icon: 'var(--color-primary)',
-	fill: 'var(--color-primary)',
-	stroke: 'var(--color-grayDark)',
-}
-
 const getLocalizedValue = (array: any[], lang: string) => {
 	const item = array.find((entry) => entry._key === lang)
 	return item ? item.value : ''
@@ -22,7 +16,7 @@ const getLocalizedValue = (array: any[], lang: string) => {
 
 const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 	const n = persons.length
-	const [displayIndex, setDisplayIndex] = useState(1)
+	const [displayIndex, setDisplayIndex] = useState(n + 1) // Start at first real person (after left clones)
 	const [cardWidth, setCardWidth] = useState(330)
 	const containerRef = useRef<HTMLDivElement>(null)
 
@@ -30,16 +24,13 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 	useEffect(() => {
 		const updateCardWidth = () => {
 			const screenWidth = window.innerWidth
-			let newWidth = 330 // default desktop
+			let newWidth = 330
 
 			if (screenWidth < 480) {
-				// Small phones
-				newWidth = Math.min(280, screenWidth - 80) // Leave 40px padding on each side
+				newWidth = Math.min(280, screenWidth - 80)
 			} else if (screenWidth < 640) {
-				// Larger phones
 				newWidth = Math.min(320, screenWidth - 100)
 			} else if (screenWidth < 768) {
-				// Small tablets
 				newWidth = 330
 			}
 
@@ -57,25 +48,36 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 	const prev = () => setDisplayIndex((i) => i - 1)
 	const next = () => setDisplayIndex((i) => i + 1)
 
-	// build extended array
-	const extended = [
-		persons[n - 1], // clone last
-		...persons,
-		persons[0], // clone first
-	]
+	// Create infinite loop array with enough clones on both sides
+	const cloneCount = Math.max(5, n) // At least 5 clones on each side
+	const leftClones = Array(cloneCount)
+		.fill(null)
+		.map((_, i) => {
+			const index = (n - cloneCount + i + n) % n // Ensure positive index
+			return persons[index]
+		})
+	const rightClones = Array(cloneCount)
+		.fill(null)
+		.map((_, i) => {
+			const index = i % n
+			return persons[index]
+		})
+
+	const extended = [...leftClones, ...persons, ...rightClones]
 
 	// compute center‐offset translateX
 	const containerW = containerRef.current?.offsetWidth || window.innerWidth
 	const translateX =
 		-displayIndex * (cardWidth + CARD_GAP) + containerW / 2 - cardWidth / 2
 
-	// when the spring finishes on a clone, immediately jump
-	// (no transition) back to the real index
+	// when the spring finishes on a clone, immediately jump back to the real index
 	const handleAnimationComplete = () => {
-		if (displayIndex === 0) {
-			setDisplayIndex(n)
-		} else if (displayIndex === n + 1) {
-			setDisplayIndex(1)
+		if (displayIndex <= cloneCount - 1) {
+			// We're in left clones, jump to corresponding right side
+			setDisplayIndex(displayIndex + n)
+		} else if (displayIndex >= cloneCount + n) {
+			// We're in right clones, jump to corresponding left side
+			setDisplayIndex(displayIndex - n)
 		}
 	}
 
@@ -89,7 +91,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 						aria-label="Previous"
 					>
 						<ArrowRight
-							theme={{ fill: 'var(--color-primary' }}
+							theme={{ fill: 'var(--color-primary)' }}
 							className="h-9 w-9 rotate-180"
 						/>
 					</button>
@@ -99,7 +101,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 						aria-label="Next"
 					>
 						<ArrowRight
-							theme={{ fill: 'var(--color-primary' }}
+							theme={{ fill: 'var(--color-primary)' }}
 							className="h-9 w-9"
 						/>
 					</button>
@@ -119,14 +121,26 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 							damping: 30,
 							// snap instantly if we're on a clone
 							duration:
-								displayIndex === 0 || displayIndex === n + 1 ? 0 : undefined,
+								displayIndex <= cloneCount - 1 || displayIndex >= cloneCount + n
+									? 0
+									: undefined,
 						}}
 						onAnimationComplete={handleAnimationComplete}
 					>
 						{extended.map((person, idx) => {
 							// map extended idx back to real 0..n-1
-							const realIdx = idx === 0 ? n - 1 : idx === n + 1 ? 0 : idx - 1
-							const isActive = realIdx === (displayIndex - 1 + n) % n
+							const realIdx =
+								idx < cloneCount
+									? (((idx - cloneCount + n) % n) + n) % n // Double modulo to ensure positive
+									: idx >= cloneCount + n
+										? (((idx - cloneCount) % n) + n) % n // Double modulo to ensure positive
+										: idx - cloneCount
+
+							const isActive =
+								realIdx === (((displayIndex - cloneCount) % n) + n) % n
+
+							// Add safety check for person object
+							if (!person) return null
 
 							return (
 								<motion.div
@@ -135,7 +149,6 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 									style={{ width: cardWidth }}
 									animate={{
 										scale: isActive ? 1 : 0.85,
-										// opacity: isActive ? 1 : 0.7,
 									}}
 									onClick={() => setDisplayIndex(idx)}
 								>

@@ -10,6 +10,9 @@ import ReactPlayer from 'react-player'
 import { useState, useMemo } from 'react'
 import ArrowRight from '../common/ArrowRight'
 import { useRouter } from 'next/navigation'
+import NewArrowRightSimple from '../common/NewArrowRightSimple'
+import NewArrowRightFull from '../common/NewArrowRightFull'
+import { useTranslations } from 'next-intl'
 
 interface FilmContentProps {
 	film: any
@@ -26,6 +29,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 }) => {
 	const [showPlayer, setShowPlayer] = useState(false)
 	const router = useRouter()
+	const tFilmSelection = useTranslations('filmSelection')
 
 	const getLocalizedValue = (array: any[], lang: string) => {
 		if (!Array.isArray(array)) {
@@ -140,19 +144,37 @@ const FilmContent: React.FC<FilmContentProps> = ({
 		<div className="no-scrollbar relative mt-1 flex h-full w-full flex-col overflow-y-visible rounded-md px-5 tracking-tighter sm:mt-0 sm:min-h-screen sm:overflow-y-visible sm:py-1 lg:px-32">
 			<div className="relative my-0 my-2 flex w-full items-start justify-between">
 				<div
-					className={`w-fit rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold text-primary lg:absolute lg:-left-32 lg:top-0`}
+					className={`w-fit rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold text-primary lg:absolute lg:-left-28 lg:top-4 lg:flex`}
 					onClick={goBack}
 				>
-					<button onClick={goBack} aria-label="Go back">
-						<ArrowRight
-							theme={{ fill: 'var(--color-primary)' }}
-							className="h-auto w-8 -rotate-180 lg:w-9"
-						/>
-					</button>
+					<div className="z-10 flex justify-center">
+						<motion.div
+							initial={{ rotate: -3 }}
+							animate={{
+								rotate: 1,
+								transition: {
+									duration: 0.3,
+									repeat: Infinity,
+									delay: 5,
+									repeatType: 'reverse',
+									ease: 'easeInOut',
+								},
+							}}
+							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[4px] border-primary bg-dark px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] text-primary shadow-sm transition-all dark:border-grayDark dark:bg-grayDark dark:text-dark lg:z-10 lg:pl-1 lg:pr-3 lg:text-4xl`}
+						>
+							<button onClick={goBack} aria-label="Go back">
+								<NewArrowRightFull
+									theme={{ stroke: 'var(--color-dark)' }}
+									className="ml-1 h-auto w-8 -rotate-180 lg:w-7"
+								/>
+							</button>
+							<span>{tFilmSelection('title')}</span>
+						</motion.div>
+					</div>
 				</div>
 
-				<div className="z-50 hidden items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark lg:mt-24 lg:flex">
-					<div className="absolute left-1/2 top-20 flex w-[90%] -translate-x-1/2 flex-col items-center lg:flex-row">
+				<div className="z-50 hidden items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark lg:mt-28 lg:flex">
+					<div className="absolute left-1/2 top-24 flex w-[90%] -translate-x-1/2 flex-col items-center lg:flex-row">
 						{film.title && (
 							<>
 								{splitTitle(getLocalizedValue(film.title, language), 20).map(
@@ -235,11 +257,11 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							: 'No previous film'
 					}
 				>
-					<ArrowRight
+					<NewArrowRightSimple
 						theme={{
 							stroke: 'var(--color-grayDark)',
 						}}
-						className="h-auto w-8 -rotate-180 lg:w-9"
+						className="h-auto w-8 -rotate-180 lg:w-7"
 					/>
 				</button>
 				<button
@@ -257,11 +279,11 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							: 'No next film'
 					}
 				>
-					<ArrowRight
+					<NewArrowRightSimple
 						theme={{
 							stroke: 'var(--color-grayDark)',
 						}}
-						className="h-auto w-8 lg:w-9"
+						className="h-auto w-8 lg:w-7"
 					/>
 				</button>
 				{isYoutubeOrVimeo ? (
@@ -281,7 +303,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							/>
 						</div>
 					) : (
-						<div className="relative mx-1 flex h-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:border-[3px]">
+						<div className="relative mx-1 flex h-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:rounded-xl lg:border-[5px]">
 							<Img
 								image={film.affiche}
 								src={film.affiche.asset.url}
@@ -299,7 +321,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					)
 				) : (
 					film.affiche && (
-						<div className="relative mx-1 flex h-auto items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:border-[3px]">
+						<div className="relative mx-1 flex h-auto items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:border-[5px]">
 							<Img
 								image={film.affiche}
 								src={film.affiche.asset.url}
@@ -405,7 +427,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 			{film.synopsis && (
 				<div className="relative px-2 py-6 lg:py-6">
-					<p className="mx-auto py-2 text-left text-base leading-[1.2] tracking-tighter text-primary sm:py-4 lg:text-xl">
+					<p className="mx-auto py-2 text-left text-base leading-[1.2] tracking-tighter text-primary sm:py-4 lg:text-3xl">
 						{getLocalizedValue(film.synopsis, language)}
 					</p>
 				</div>

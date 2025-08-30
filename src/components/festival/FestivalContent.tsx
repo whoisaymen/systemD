@@ -23,6 +23,7 @@ import {
 import ArrowRight from '../common/ArrowRight'
 import { BsFillCalendar2Fill } from 'react-icons/bs'
 import { PiListBold } from 'react-icons/pi'
+import NewArrowRightSimple from '../common/NewArrowRightSimple'
 
 // Types
 interface FestivalContentProps {
@@ -182,12 +183,12 @@ const EventCalendar: React.FC<CalendarProps> = ({
 					className="z-40 text-primary"
 					aria-label="Previous"
 				>
-					<ArrowRight
+					<NewArrowRightSimple
 						theme={{
-							fill: 'var(--color-grayDark',
+							stroke: 'var(--color-grayDark',
 							// stroke: 'var(--color-primary',
 						}}
-						className="h-9 w-9 rotate-180"
+						className="h-7 w-7 rotate-180"
 					/>
 				</button>
 				<button
@@ -195,12 +196,12 @@ const EventCalendar: React.FC<CalendarProps> = ({
 					className="z-40 text-primary"
 					aria-label="Next"
 				>
-					<ArrowRight
+					<NewArrowRightSimple
 						theme={{
-							fill: 'var(--color-grayDark',
+							stroke: 'var(--color-grayDark',
 							// stroke: 'var(--color-primary',
 						}}
-						className="h-9 w-9"
+						className="h-7 w-7"
 					/>
 				</button>
 			</div>
@@ -645,6 +646,28 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			</AccordionTrigger>
 			<AccordionContent>
 				<div className="relative flex w-full flex-col items-center justify-center py-8 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32">
+					<button
+						className={`absolute left-12 top-1/2 hidden lg:block`}
+						onClick={goPrev}
+					>
+						<NewArrowRightSimple
+							theme={{
+								stroke: 'var(--color-grayDark)',
+							}}
+							className="h-auto w-8 -rotate-180 lg:w-7"
+						/>
+					</button>
+					<button
+						className={`absolute right-12 top-1/2 hidden lg:block`}
+						onClick={goNext}
+					>
+						<NewArrowRightSimple
+							theme={{
+								stroke: 'var(--color-grayDark)',
+							}}
+							className="h-auto w-8 lg:w-7"
+						/>
+					</button>
 					{/* Left: Photo, Name, Counter */}
 					<div className="flex flex-col items-center">
 						<Img
@@ -656,7 +679,10 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-2xl font-medium tracking-tighter text-dark">
 							{currentMember.name}
 						</h2>
-						<div className="items-between mt-2 flex w-full justify-center">
+						<span className="hidden w-full text-center text-xl font-semibold tracking-[-0.15em] text-primary">
+							{total > 0 ? `${currentIndex + 1} / ${total}` : null}
+						</span>
+						{/* <div className="items-between mt-2 flex w-full justify-center">
 							<button onClick={goPrev} aria-label="Go back">
 								<ArrowRight
 									theme={{ fill: 'var(--color-grayDark)' }}
@@ -672,11 +698,11 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 									className="h-auto w-8 lg:w-9"
 								/>
 							</button>
-						</div>
+						</div> */}
 					</div>
 
 					{/* Right: Biography */}
-					<div className="mt-6 flex flex-1 flex-col items-center lg:mt-0 lg:items-start lg:justify-start lg:text-left">
+					<div className="mt-6 flex flex-1 flex-col items-center lg:mt-0 lg:items-start lg:justify-center lg:text-left">
 						{currentMember.biography && (
 							<p className="mb-4 text-base font-normal leading-snug tracking-tight text-primary lg:text-xl lg:leading-tight">
 								{getLocalizedValue(currentMember.biography, language)}

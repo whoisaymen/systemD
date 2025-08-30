@@ -226,7 +226,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					/>
 				</button>
 			</div>
-			<div
+			{/* <div
 				className={`-top-1 z-[100000] hidden rounded-md p-8 text-3xl font-semibold text-dark lg:absolute lg:block`}
 			>
 				<button
@@ -242,7 +242,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						className="h-auto w-9 -rotate-180 border-primary"
 					/>
 				</button>
-			</div>
+			</div> */}
 			{/* Venue and Year Header */}
 			<div className="z-10 hidden w-full flex-row items-end justify-between border-0 px-8 lg:pointer-events-none lg:absolute lg:right-0 lg:top-8 lg:z-[10000] lg:mt-0 lg:flex lg:flex-col lg:justify-center lg:gap-4">
 				<motion.div
@@ -983,9 +983,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 						{/* Lightbox Modal */}
 						{isLightboxOpen && (
-							<div className="fixed inset-0 z-40 flex items-center justify-center bg-dark">
+							<div className="fixed inset-0 z-[10000] flex items-center justify-center bg-dark">
 								<div
-									className={`absolute right-4 top-2 z-50 rounded-md text-3xl font-semibold text-dark`}
+									className={`absolute right-4 top-2 z-50 rounded-md text-3xl font-semibold text-dark lg:hidden`}
 								>
 									<button
 										onClick={closeLightbox}
@@ -1008,6 +1008,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										})),
 									)}
 									initialIndex={currentImageIndex}
+									onClose={closeLightbox}
 								/>
 							</div>
 						)}

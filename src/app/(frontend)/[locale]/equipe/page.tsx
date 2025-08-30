@@ -2,6 +2,7 @@
 import dynamic from 'next/dynamic'
 
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
+import TeamCarousel from '@/components/equipe/TeamCarousel'
 
 const EquipeContent = dynamic(
 	() => import('@/components/equipe/EquipeContent'),
@@ -18,7 +19,9 @@ export default async function EquipePage({
 	const { locale } = await params
 	const content = await getEquipe('person', locale)
 
-	return <EquipeContent persons={content} language={locale} />
+	// return <EquipeContent persons={content} language={locale} />
+
+	return <TeamCarousel persons={content} language={locale} />
 }
 
 async function getEquipe(tab: string, locale: string) {

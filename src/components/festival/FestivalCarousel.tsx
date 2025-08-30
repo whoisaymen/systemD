@@ -4,6 +4,8 @@ import { motion } from 'motion/react'
 import { useRef, useEffect, useState } from 'react'
 import ArrowGallery from '../common/ArrowGallery'
 import { useTranslations } from 'next-intl'
+import NewArrowRightSimple from '../common/NewArrowRightSimple'
+import NewArrowRightFull from '../common/NewArrowRightFull'
 
 const FestivalCarousel: React.FC<{
 	photos: {
@@ -13,10 +15,15 @@ const FestivalCarousel: React.FC<{
 		curatorName?: string
 	}[]
 	initialIndex?: number
-}> = ({ photos, initialIndex = 0 }) => {
+	onClose?: () => void
+}> = ({ photos, initialIndex = 0, onClose }) => {
 	const [currentIndex, setCurrentIndex] = useState(initialIndex)
 	const thumbContainerRef = useRef<HTMLDivElement>(null)
 	const [isLandscape, setIsLandscape] = useState(true)
+	const photoRefs = useRef<(HTMLDivElement | null)[]>([])
+	const [transformX, setTransformX] = useState(
+		`translateX(calc(50vw - ${currentIndex * 408}px - 204px))`,
+	)
 
 	const activeThumbRef = useRef<HTMLButtonElement>(null)
 
@@ -62,6 +69,21 @@ const FestivalCarousel: React.FC<{
 		}
 	}, [currentIndex, photos])
 
+	// Update transform to center the active image based on actual widths
+	useEffect(() => {
+		setTimeout(() => {
+			let totalWidth = 0
+			for (let i = 0; i < currentIndex; i++) {
+				if (photoRefs.current[i]) {
+					totalWidth += photoRefs.current[i].offsetWidth + 32 // Updated to match new margin
+				}
+			}
+			const activeWidth = photoRefs.current[currentIndex]?.offsetWidth || 0
+			const centerPosition = totalWidth + activeWidth / 2
+			setTransformX(`translateX(calc(50vw - ${centerPosition}px))`)
+		}, 0)
+	}, [currentIndex, photos])
+
 	const handleNext = () => {
 		setCurrentIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1))
 	}
@@ -73,38 +95,55 @@ const FestivalCarousel: React.FC<{
 	const photographer = photos[currentIndex]?.photographer
 	const tPhotoGallery = useTranslations('photoGallery')
 
-	const getPrevPhoto = () => {
-		const prevIndex = currentIndex === 0 ? photos.length - 1 : currentIndex - 1
-		return photos[prevIndex]
-	}
-
-	const getNextPhoto = () => {
-		const nextIndex = currentIndex === photos.length - 1 ? 0 : currentIndex + 1
-		return photos[nextIndex]
-	}
-
 	return (
 		<div className="relative flex h-full w-full flex-col items-center justify-center">
 			{/* Navigation Arrows */}
+			<div
+				className="absolute left-16 top-36 z-10 -mt-5 flex justify-center lg:z-20"
+				onClick={onClose}
+			>
+				<motion.div
+					initial={{ rotate: -3 }}
+					animate={{
+						rotate: 1,
+						transition: {
+							duration: 0.3,
+							repeat: Infinity,
+							delay: 5,
+							repeatType: 'reverse',
+							ease: 'easeInOut',
+						},
+					}}
+					className={`flex w-fit items-center justify-center gap-1 rounded-md border-[4px] border-grayDark bg-grayDark px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] text-dark shadow-sm transition-all lg:z-10 lg:pl-1 lg:pr-3 lg:text-4xl`}
+				>
+					<button aria-label="Go back">
+						<NewArrowRightFull
+							theme={{ stroke: 'var(--color-dark)' }}
+							className="ml-1 h-auto w-8 -rotate-180 lg:w-7"
+						/>
+					</button>
+					<span>{tPhotoGallery('title')}</span>
+				</motion.div>
+			</div>
 			<button
-				className="fixed bottom-1/2 left-4 z-50"
+				className="fixed bottom-1/2 left-3 z-50 lg:left-8"
 				aria-label="Previous photo"
 				onClick={handlePrev}
 			>
-				<ArrowRight
+				<NewArrowRightSimple
 					theme={{ stroke: 'var(--color-grayDark)' }}
-					className="h-auto w-9 -rotate-180 lg:w-9"
+					className="h-auto w-5 -rotate-180 lg:w-7"
 				/>
 			</button>
 
 			<button
-				className="fixed bottom-1/2 right-4 z-50"
+				className="fixed bottom-1/2 right-3 z-50 lg:right-8"
 				aria-label="Next photo"
 				onClick={handleNext}
 			>
-				<ArrowRight
+				<NewArrowRightSimple
 					theme={{ stroke: 'var(--color-grayDark)' }}
-					className="h-auto w-9 lg:w-9"
+					className="h-auto w-5 lg:w-7"
 				/>
 			</button>
 
@@ -145,7 +184,6 @@ const FestivalCarousel: React.FC<{
 			</div>
 
 			{/* Desktop Version - Full Screen Film Roll */}
-
 			<div className="m-2 hidden rounded-xl py-24 lg:relative lg:flex lg:h-screen lg:w-screen lg:items-center lg:justify-center lg:overflow-hidden lg:bg-grayDark">
 				{/* Film perforations - top */}
 				<div className="absolute left-0 top-0 z-10 flex w-full justify-between px-4 py-2">
@@ -163,16 +201,16 @@ const FestivalCarousel: React.FC<{
 				{/* Film roll container - horizontal scrolling strip */}
 				<div className="relative flex h-full w-full items-center justify-center overflow-hidden">
 					{/* Photographer label */}
-					<h3 className="absolute left-16 top-8 z-20 -rotate-3 rounded-md border-[3px] border-dark bg-primary px-2 py-0 text-xl font-medium tracking-tighter text-dark">
+					<h3 className="absolute left-28 top-[4.1rem] z-20 -rotate-2 rounded-md border-[0px] border-dark bg-primary px-2 py-0 text-xl font-medium tracking-tighter text-dark">
 						{tPhotoGallery('photosBy')} {photographer}
 					</h3>
 
 					{/* Film strip - all photos in a row */}
 					<div
-						className="flex h-full items-stretch transition-transform duration-500 ease-out"
+						className="flex items-stretch transition-transform duration-500 ease-out"
 						style={{
-							transform: `translateX(calc(50vw - ${currentIndex * 408}px - 204px))`, // Updated calculation
-							height: '100vh',
+							transform: transformX,
+							height: 'calc(100vh - 2rem)',
 						}}
 					>
 						{photos.map((photo, index) => {
@@ -181,34 +219,29 @@ const FestivalCarousel: React.FC<{
 							return (
 								<div
 									key={index}
-									className={`flex h-full flex-shrink-0 items-center justify-center transition-all duration-500 ${
+									ref={(el) => (photoRefs.current[index] = el)}
+									className={`flex flex-shrink-0 items-center justify-center transition-all duration-500 ${
 										isActive ? 'opacity-100' : 'opacity-70'
 									}`}
 									style={{
-										width: isActive ? 'auto' : '400px',
-										height: '100vh',
+										width: 'auto', // All containers auto-width for aspect ratio
+										height: 'calc(100vh - 2rem)',
 										marginRight: '32px',
-										minWidth: isActive ? '0' : '400px',
 									}}
 								>
-									<div className="flex h-full w-full items-center justify-center">
-										{' '}
-										{/* Added wrapper div */}
-										<button
-											onClick={() => setCurrentIndex(index)}
-											className="relative h-full w-auto"
-											aria-label={`Go to photo ${index + 1}`}
-										>
-											<Img
-												image={photo.photo}
-												src={photo.photo.asset.url}
-												alt={`Photo ${index + 1}`}
-												className={`h-full w-auto ${
-													isActive ? 'object-contain' : 'object-cover'
-												}`}
-											/>
-										</button>
-									</div>
+									<button
+										onClick={() => setCurrentIndex(index)}
+										className="relative flex h-full w-full items-center justify-center"
+										aria-label={`Go to photo ${index + 1}`}
+									>
+										<Img
+											image={photo.photo}
+											src={photo.photo.asset.url}
+											alt={`Photo ${index + 1}`}
+											className="w-auto object-contain"
+											style={{ height: 'calc(100vh - 2rem)' }}
+										/>
+									</button>
 								</div>
 							)
 						})}
@@ -216,7 +249,7 @@ const FestivalCarousel: React.FC<{
 				</div>
 
 				{/* Photo counter */}
-				<div className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-md border-[0px] border-primary bg-grayDark px-3 py-1 text-xl font-medium text-dark">
+				<div className="absolute bottom-12 left-1/2 z-20 -translate-x-1/2 rounded-md bg-grayDark px-3 py-1 font-medium text-dark">
 					{currentIndex + 1} / {photos.length}
 				</div>
 			</div>
