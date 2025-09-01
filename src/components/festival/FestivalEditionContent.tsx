@@ -319,7 +319,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								},
 							}}
 							onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
-							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:text-6xl ${
+							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:text-5xl ${
 								isFilmSectionOpen
 									? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark'
 									: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
@@ -780,7 +780,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					value="item-3"
 					className="-mt-5 flex flex-col items-center justify-center pb-1 lg:-mt-2"
 				>
-					<AccordionTrigger className={`z-50 rotate-[2deg] lg:text-6xl`}>
+					<AccordionTrigger className={`z-50 rotate-[2deg] lg:text-5xl`}>
 						{tExpo('title')}
 					</AccordionTrigger>
 					<AccordionContent>
@@ -905,7 +905,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							},
 						}}
 						onClick={() => setIsPhotoGalleryOpen(!isPhotoGalleryOpen)}
-						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all lg:z-10 lg:text-6xl ${
+						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all lg:z-10 lg:text-5xl ${
 							isPhotoGalleryOpen
 								? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark lg:z-50'
 								: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'

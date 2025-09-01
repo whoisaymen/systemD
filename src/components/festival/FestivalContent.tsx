@@ -173,8 +173,6 @@ const EventCalendar: React.FC<CalendarProps> = ({
 		)
 	})
 
-	console.log('events', events)
-
 	return (
 		<>
 			<div className="absolute top-16 flex w-full items-center justify-between px-16">
@@ -479,6 +477,46 @@ const EventCalendar: React.FC<CalendarProps> = ({
 	)
 }
 
+const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
+	const getLocalizedValue = useLocalizedValue()
+
+	if (!block.show) return null
+
+	return (
+		<AccordionItem
+			value={`vision-${index}`}
+			className="flex flex-col items-center justify-center"
+		>
+			<AccordionTrigger className="-rotate-3 lg:text-5xl">
+				{getLocalizedValue(block.visionTitle, language) || 'Vision'}
+			</AccordionTrigger>
+			<AccordionContent>
+				<div className="pt-2">
+					{block.vision?.map((visionItem: any, vIndex: number) => (
+						<motion.div
+							key={vIndex}
+							className="mt-8"
+							initial={{ opacity: 0, x: -20 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.5, delay: vIndex * 0.2 }}
+						>
+							<div className="relative rounded-t-3xl px-4">
+								<h2 className="text-lg font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:px-32 lg:text-xl">
+									{getLocalizedValue(visionItem.title, language)}
+								</h2>
+								<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
+									{getLocalizedValue(visionItem.text, language) ||
+										'No description available'}
+								</p>
+							</div>
+						</motion.div>
+					))}
+				</div>
+			</AccordionContent>
+		</AccordionItem>
+	)
+}
+
 // Custom Text Block Component
 const CustomTextBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	if (!block.show) return null
@@ -488,7 +526,7 @@ const CustomTextBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			value={`custom-${index}`}
 			className="flex flex-col items-center justify-center"
 		>
-			<AccordionTrigger className="-mb-0 rotate-3 lg:text-6xl">
+			<AccordionTrigger className="-mb-0 rotate-3 lg:text-5xl">
 				{block.title}
 			</AccordionTrigger>
 			<AccordionContent>
@@ -641,7 +679,7 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			value={`jury-${index}`}
 			className="flex flex-col items-center justify-center"
 		>
-			<AccordionTrigger className="-rotate-6 lg:text-6xl">
+			<AccordionTrigger className="-rotate-6 lg:text-5xl">
 				Jury
 			</AccordionTrigger>
 			<AccordionContent>
@@ -725,7 +763,7 @@ const OnTourBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			value={`onTour-${index}`}
 			className="flex flex-col items-center justify-center"
 		>
-			<AccordionTrigger className="rotate-6 lg:text-6xl">
+			<AccordionTrigger className="rotate-6 lg:text-5xl">
 				On Tour
 			</AccordionTrigger>
 			<AccordionContent className="relative w-full">
@@ -781,6 +819,9 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 				return <JuryBlock key={`jury-${index}`} {...blockProps} />
 			case 'onTourBlock':
 				return <OnTourBlock key={`onTour-${index}`} {...blockProps} />
+			case 'visionBlock':
+				return <VisionBlock key={`vision-${index}`} {...blockProps} />
+
 			default:
 				return null
 		}
@@ -792,7 +833,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		<div
 			key={festival._id}
 			id="festival-content"
-			className="relative flex h-full w-full flex-col space-y-1 rounded-md p-2 px-4 pb-32 lg:mt-0 lg:h-svh lg:p-0 lg:pt-0"
+			className="lg:inset-shadow-xl relative flex h-full w-full flex-col space-y-1 rounded-md p-2 px-4 pb-32 lg:mt-0 lg:h-svh lg:bg-gradient-to-t lg:from-transparent lg:p-0 lg:py-16 lg:pt-0 lg:shadow-inner"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
@@ -813,7 +854,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 				collapsible
 				onValueChange={handleAccordionValueChange}
 				// className="lg:rounded-md lg:bg-dark lg:bg-gradient-to-t lg:from-grayDark lg:py-16 lg:shadow-inner"
-				className="lg:rounded-lg lg:border-0 lg:border-primary lg:bg-dark lg:pb-14 lg:pt-20"
+				className="lg:-pb-0 lg:rounded-lg lg:border-0 lg:border-primary lg:bg-dark lg:pt-20"
 			>
 				{accordionBlocks?.map(renderBlock)}
 			</Accordion>

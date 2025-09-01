@@ -17,8 +17,8 @@ export default async function FestivalPage({
 }
 
 async function getFestival() {
-	const query = groq`
-  *[_type == 'lefestival'][0]{
+	const query = groq`{
+  "festival": *[_type == 'lefestival'][0]{
     description,
     blocks[]{
       _type == 'mediaTeaserBlock' => {
@@ -89,16 +89,40 @@ async function getFestival() {
           location
         },
         show
+      },
+      _type == 'visionBlock' => {
+        _key,
+        _type,
+        visionTitle,
+        vision,
+        show
       }
     }
-  }
-`
+  },
+  "vision": *[_type == 'fabrique'][0].vision,
+  "visionTitle": *[_type == 'fabrique'][0].visionTitle
+}`
+
 	const data = await fetchSanityLive({ query })
 
 	if (!data) {
 		return notFound()
-		throw new Error(`No content found for festival"`)
 	}
 
-	return data
+	// Adjust to access nested festival data
+	const festival = data.festival
+
+	// Inject the vision data as a visionBlock
+	if (data.vision && data.visionTitle) {
+		festival.blocks = festival.blocks || []
+		festival.blocks.push({
+			_key: 'vision-block',
+			_type: 'visionBlock',
+			vision: data.vision,
+			visionTitle: data.visionTitle,
+			show: true,
+		})
+	}
+
+	return festival
 }

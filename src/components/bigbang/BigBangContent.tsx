@@ -55,29 +55,6 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 					Long Story
 				</button>
 			</div>
-			{/* <div className="sticky left-0 top-0 z-10 flex w-full justify-between sm:justify-center gap-2 px-4 py-2 text-lg font-bold tracking-tighter lg:py-1">
-				<button
-					onClick={() => handleTabClick('short')}
-					className={`w-auto border-[2.5px] border-grayDark px-4 py-0 pb-0.5 ${
-						activeTab === 'short'
-							? 'bg-grayDark text-dark'
-							: 'border-grayDark bg-dark text-grayDark'
-					} rounded-md transition-all`}
-				>
-					Short Story
-				</button>
-				<button
-					onClick={() => handleTabClick('long')}
-					className={`w-auto border-[2.5px] border-grayDark px-4 py-0 pb-0.5 ${
-						activeTab === 'long'
-							? 'bg-grayDark text-dark'
-							: 'bg-dark text-grayDark'
-					} rounded-md transition-all`}
-				>
-					Long Story
-				</button>
-			</div> */}
-
 			<div className="flex flex-col space-y-1 rounded-md sm:my-1 sm:min-h-svh sm:p-0">
 				{activeTab === 'short' ? (
 					<ShortStory content={shortStory.body} lang={locale} />
