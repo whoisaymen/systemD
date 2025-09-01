@@ -485,26 +485,26 @@ const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	return (
 		<AccordionItem
 			value={`vision-${index}`}
-			className="flex flex-col items-center justify-center"
+			className="relative z-50 flex flex-col items-center justify-center"
 		>
 			<AccordionTrigger className="-rotate-3 lg:text-5xl">
-				{getLocalizedValue(block.visionTitle, language) || 'Vision'}
+				{getLocalizedValue(block.visionTitle, language) || 'Our Vision'}
 			</AccordionTrigger>
 			<AccordionContent>
-				<div className="pt-2">
+				<div className="mb-4 pt-2">
 					{block.vision?.map((visionItem: any, vIndex: number) => (
 						<motion.div
 							key={vIndex}
-							className="mt-8"
-							initial={{ opacity: 0, x: -20 }}
-							animate={{ opacity: 1, x: 0 }}
-							transition={{ duration: 0.5, delay: vIndex * 0.2 }}
+							className="mt-4 first:-mt-0"
+							// initial={{ opacity: 0, x: -20 }}
+							// animate={{ opacity: 1, x: 0 }}
+							// transition={{ duration: 0.5, delay: vIndex * 0.2 }}
 						>
-							<div className="relative rounded-t-3xl px-4">
-								<h2 className="text-lg font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:px-32 lg:text-xl">
+							<div className="relative flex flex-col items-start rounded-t-3xl px-4">
+								<h3 className="-z-10 -mt-0 inline-block -rotate-2 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark lg:z-0 lg:mx-20 lg:text-lg">
 									{getLocalizedValue(visionItem.title, language)}
-								</h2>
-								<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
+								</h3>
+								<p className="mx-auto -mt-2 py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
 									{getLocalizedValue(visionItem.text, language) ||
 										'No description available'}
 								</p>
@@ -524,7 +524,7 @@ const CustomTextBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	return (
 		<AccordionItem
 			value={`custom-${index}`}
-			className="flex flex-col items-center justify-center"
+			className="flex flex-col items-center justify-center hover:relative hover:z-50"
 		>
 			<AccordionTrigger className="-mb-0 rotate-3 lg:text-5xl">
 				{block.title}
@@ -795,6 +795,8 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		return <div>No content available</div>
 	}
 
+	console.log('festival:', festival)
+
 	// Setup sparkle image for snowfall
 	const sparkleImg = new window.Image()
 	sparkleImg.src = '/assets/svg/SparkleSnow2.svg'
@@ -854,7 +856,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 				collapsible
 				onValueChange={handleAccordionValueChange}
 				// className="lg:rounded-md lg:bg-dark lg:bg-gradient-to-t lg:from-grayDark lg:py-16 lg:shadow-inner"
-				className="lg:-pb-0 lg:rounded-lg lg:border-0 lg:border-primary lg:bg-dark lg:pt-20"
+				className="lg:-pb-0 lg:rounded-lg lg:border-0 lg:border-primary lg:bg-dark lg:pt-16"
 			>
 				{accordionBlocks?.map(renderBlock)}
 			</Accordion>

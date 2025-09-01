@@ -75,7 +75,7 @@ const FestivalCarousel: React.FC<{
 			let totalWidth = 0
 			for (let i = 0; i < currentIndex; i++) {
 				if (photoRefs.current[i]) {
-					totalWidth += photoRefs.current[i].offsetWidth + 32 // Updated to match new margin
+					totalWidth += photoRefs.current[i]!.offsetWidth + 32
 				}
 			}
 			const activeWidth = photoRefs.current[currentIndex]?.offsetWidth || 0
@@ -219,7 +219,9 @@ const FestivalCarousel: React.FC<{
 							return (
 								<div
 									key={index}
-									ref={(el) => (photoRefs.current[index] = el)}
+									ref={(el) => {
+										photoRefs.current[index] = el
+									}}
 									className={`flex flex-shrink-0 items-center justify-center transition-all duration-500 ${
 										isActive ? 'opacity-100' : 'opacity-70'
 									}`}

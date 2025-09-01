@@ -1,5 +1,4 @@
 import FestivalContent from '@/components/festival/FestivalContent'
-import FestivalContentImproved from '@/components/festival/festivalcontent-improved'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { notFound } from 'next/navigation'
 
@@ -11,14 +10,14 @@ export default async function FestivalPage({
 	const { locale } = await params
 	const content = await getFestival()
 
-	// return <Loading />
+	console.log('Fetched festival content: ', content)
 	return <FestivalContent festival={content} language={locale} />
-	// return <FestivalContentImproved festival={content} language={locale} />
 }
 
 async function getFestival() {
-	const query = groq`{
-  "festival": *[_type == 'lefestival'][0]{
+	// First fetch the festival content
+	const festivalQuery = groq`
+  *[_type == 'lefestival'][0]{
     description,
     blocks[]{
       _type == 'mediaTeaserBlock' => {
@@ -89,40 +88,48 @@ async function getFestival() {
           location
         },
         show
-      },
-      _type == 'visionBlock' => {
-        _key,
-        _type,
-        visionTitle,
-        vision,
-        show
       }
     }
-  },
-  "vision": *[_type == 'fabrique'][0].vision,
-  "visionTitle": *[_type == 'fabrique'][0].visionTitle
-}`
+  }
+`
+	// Then fetch the vision data from fabrique
+	const visionQuery = groq`
+    *[_type == 'fabrique'][0]{
+      vision,
+      visionTitle
+    }
+  `
 
-	const data = await fetchSanityLive({ query })
+	const [festivalData, visionData] = await Promise.all([
+		fetchSanityLive({ query: festivalQuery }),
+		fetchSanityLive({ query: visionQuery }),
+	])
 
-	if (!data) {
+	if (!festivalData) {
 		return notFound()
 	}
 
-	// Adjust to access nested festival data
-	const festival = data.festival
-
-	// Inject the vision data as a visionBlock
-	if (data.vision && data.visionTitle) {
-		festival.blocks = festival.blocks || []
-		festival.blocks.push({
+	// Create a vision block and add it to the festival blocks
+	if (visionData && visionData.vision) {
+		const visionBlock = {
 			_key: 'vision-block',
 			_type: 'visionBlock',
-			vision: data.vision,
-			visionTitle: data.visionTitle,
 			show: true,
-		})
+			vision: visionData.vision,
+			visionTitle: visionData.visionTitle,
+		}
+
+		// Initialize blocks array if it doesn't exist
+		if (!festivalData.blocks) {
+			festivalData.blocks = []
+		}
+
+		// Add vision block to the beginning of the array using unshift
+		festivalData.blocks.unshift(visionBlock)
+
+		// Alternatively, you can create a new array with vision block first
+		// festivalData.blocks = [visionBlock, ...festivalData.blocks]
 	}
 
-	return festival
+	return festivalData
 }

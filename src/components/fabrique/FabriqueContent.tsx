@@ -49,14 +49,14 @@ const LOGO_COLLAGE_CONFIG: LogoCollageItem[] = [
 		rotate: 25,
 	},
 	{
-		className: 'absolute bottom-2 right-8 w-20 w-[9rem] sm:w-[15rem]',
+		className: 'absolute bottom-2 -right-16 w-20 w-[9rem] sm:w-[15rem]',
 		delay: 0.5,
-		rotate: -40,
+		rotate: -60,
 	},
 	{
-		className: 'absolute right-0 top-12 w-20 w-[9rem]',
+		className: 'absolute -right-8 top-4 w-20 w-[9rem] sm:w-[15rem]',
 		delay: 0.7,
-		rotate: 50,
+		rotate: 55,
 	},
 	{
 		className: 'absolute left-0 top-12 w-20 w-[9rem] sm:w-[15rem]',
@@ -64,14 +64,19 @@ const LOGO_COLLAGE_CONFIG: LogoCollageItem[] = [
 		rotate: -60,
 	},
 	{
-		className: 'absolute bottom-0 left-8 w-20 w-[9rem] sm:w-[15rem]',
+		className: 'absolute -bottom-8 -left-0 w-20 w-[9rem] sm:w-[15rem]',
 		delay: 1.1,
 		rotate: 60,
 	},
 	{
-		className: 'absolute -bottom-16 left-1/2 w-20 w-[9rem] sm:w-[15rem]',
+		className: 'absolute -bottom-32 left-[45%] w-20 w-[9rem] sm:w-[15rem]',
 		delay: 1.3,
-		rotate: -15,
+		rotate: 40,
+	},
+	{
+		className: 'absolute -bottom-28 left-1/2 w-20 w-[9rem] sm:w-[15rem]',
+		delay: 1.3,
+		rotate: -40,
 	},
 ]
 
@@ -107,7 +112,7 @@ const VisionBlock: React.FC<{
 					theme={{ fill: 'var(--color-primary)' }}
 				/>
 			</div>
-			<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+			<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tight text-dark dark:text-primary sm:py-4 sm:text-4xl">
 				{getLocalizedValue(visionTitle, language) || 'Vision'}
 			</h1>
 		</div>
@@ -116,10 +121,10 @@ const VisionBlock: React.FC<{
 			{vision.map((visionItem: any, index: number) => (
 				<div key={index} className="mt-8">
 					<div className="relative rounded-t-3xl px-4">
-						<h2 className="text-lg font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:px-32 lg:text-xl">
+						<h2 className="text-lg font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:px-32 lg:text-xl">
 							{getLocalizedValue(visionItem.title, language)}
 						</h2>
-						<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tighter text-primary lg:px-32 lg:text-xl">
+						<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
 							{getLocalizedText(visionItem.text, language) ||
 								'No description available'}
 						</p>
@@ -139,9 +144,9 @@ const LogoCollage: React.FC = () => {
 	})
 
 	return (
-		<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-4 lg:mx-auto lg:max-w-[33vw]">
+		<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-4 lg:mx-auto">
 			<div
-				className="relative mt-24 flex h-[20vh] w-full items-center justify-center"
+				className="relative mt-24 flex h-[20vh] w-full items-center justify-center lg:max-w-[29vw]"
 				ref={collageRef}
 			>
 				{LOGO_COLLAGE_CONFIG.map((logo, i) => (
@@ -169,15 +174,15 @@ const LogoCollage: React.FC = () => {
 							damping: 12,
 							delay: logo.delay,
 						}}
-						className={`${logo.className} inline-block h-auto rounded-md bg-primary px-2 py-1`}
+						className={`${logo.className} inline-block h-auto rounded-md bg-grayDark px-2 py-1`}
 						style={{ position: 'absolute' }}
 					>
-						<LogoShortTsx />
+						<LogoShortTsx className="lg:bg-grayDark lg:text-dark" />
 					</motion.div>
 				))}
 			</div>
 
-			<p className="mx-auto py-2 pt-32 text-center text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+			<p className="mx-auto py-2 pt-32 text-center text-3xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary sm:pt-52 sm:text-4xl">
 				For our Brussels stories, resourceful and proud.
 			</p>
 		</div>
@@ -196,7 +201,7 @@ const renderActionContent = (
 		<div className="relative px-0 py-4 text-primary sm:py-10">
 			{subTitle && (
 				<div className="flex items-center justify-center">
-					<h2 className="-mt-4 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tighter text-dark lg:-mt-8 lg:border-0 lg:text-2xl">
+					<h2 className="-mt-4 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tight text-dark lg:-mt-8 lg:border-0 lg:text-2xl">
 						{subTitle}
 					</h2>
 				</div>
@@ -208,7 +213,7 @@ const renderActionContent = (
 				if (block.style === 'h6' && !block.listItem) {
 					return (
 						<div key={blockKey} className="flex justify-start">
-							<p className="-z-10 m-4 -mb-4 -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tighter text-dark">
+							<p className="-z-10 m-4 -mb-4 -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tight text-dark">
 								{block.children.map((child: any, idx: number) => (
 									<span key={child._key || idx}>{child.text}</span>
 								))}
@@ -223,7 +228,7 @@ const renderActionContent = (
 					return (
 						<ul key={blockKey} className="px-10">
 							<li
-								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tighter lg:px-32 lg:text-xl ${
+								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-32 lg:text-xl ${
 									isBold ? 'font-bold' : ''
 								}`}
 							>
@@ -240,7 +245,7 @@ const renderActionContent = (
 				return (
 					<p
 						key={blockKey}
-						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tighter first:mt-0 lg:px-32 lg:text-xl"
+						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:px-32 lg:text-xl"
 					>
 						{block.children.map((child: any, idx: number) => (
 							<span key={child._key || idx}>{child.text}</span>
@@ -285,7 +290,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	return (
 		<div
 			ref={ref}
-			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll py-32 pt-0 text-base font-medium leading-[1.2] tracking-tighter text-dark sm:mt-1 sm:space-y-0 sm:px-0 lg:bg-dark"
+			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll py-32 pt-0 text-base font-medium leading-[1.2] tracking-tight text-dark sm:mt-1 sm:space-y-0 sm:px-0 lg:bg-dark"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
@@ -293,7 +298,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 
 			{/* Description */}
 			<div className="relative mx-4 mb-12 mt-4 rounded-md bg-primary p-6 sm:py-10 lg:mx-0 lg:bg-transparent">
-				<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
+				<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
 					{memoizedValues.description
 						? renderParagraph(
 								{ value: memoizedValues.description },
@@ -316,7 +321,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 
 			{/* Single Accordion for all Actions */}
 			{memoizedValues.actions && (
-				<Accordion type="single" collapsible className="mb-0 lg:pb-64 lg:pt-0">
+				<Accordion type="single" collapsible className="mb-0 lg:pb-0 lg:pt-0">
 					{memoizedValues.actions.map((action: any, index: number) => {
 						const actionTitle = getLocalizedValue(action.title, language)
 						const [mainTitle, subTitle] = actionTitle.split(' - ')
@@ -329,9 +334,9 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 								value={`action-${index}`}
 								className="flex flex-col items-center justify-center"
 							>
-								<AccordionTrigger className={`${triggerRotation} sm:text-6xl`}>
+								<AccordionTrigger className={`${triggerRotation} sm:text-5xl`}>
 									<div className="flex flex-col items-center">
-										<div className="z-10 inline-block w-fit text-3xl tracking-tighter lg:text-6xl">
+										<div className="z-10 inline-block w-fit text-3xl tracking-tight lg:text-5xl">
 											<span className="text-center">
 												{capitalizeFirstLetter(mainTitle)}
 											</span>
@@ -348,13 +353,13 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			)}
 
 			{/* Vision */}
-			{memoizedValues.vision && (
+			{/* {memoizedValues.vision && (
 				<VisionBlock
 					vision={memoizedValues.vision}
 					visionTitle={memoizedValues.visionTitle}
 					language={language}
 				/>
-			)}
+			)} */}
 
 			{/* Logo Collage */}
 			<LogoCollage />

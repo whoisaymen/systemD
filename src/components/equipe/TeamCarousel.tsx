@@ -98,7 +98,9 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 				isActive,
 				offset: i,
 				key: `${realIndex}-${activeIndex}-${i}`,
-				playfulStyle: playfulOffsets[i.toString()] || {
+				playfulStyle: playfulOffsets[
+					i.toString() as keyof typeof playfulOffsets
+				] || {
 					marginTop: '0',
 					scale: 'scale-100',
 				},
@@ -107,81 +109,6 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 		return cards
 	}
-
-	// const inactiveCardAnimations = [
-	// 	{
-	// 		animate: {
-	// 			scaleX: [1, 1.1, 0.95, 1],
-	// 			scaleY: [1, 0.9, 1.05, 1],
-	// 			x: [0, -2, 2, 0],
-	// 		},
-	// 		transition: {
-	// 			duration: 2,
-	// 			ease: [0.76, 0, 0.24, 1],
-	// 			repeat: Number.POSITIVE_INFINITY,
-	// 		},
-	// 	},
-	// 	{
-	// 		animate: {
-	// 			scaleX: [1, 0.9, 1.1, 1],
-	// 			scaleY: [1, 1.1, 0.9, 1],
-	// 			x: [0, 3, -3, 0],
-	// 		},
-	// 		transition: {
-	// 			duration: 1,
-	// 			ease: [0.76, 0, 0.24, 1],
-	// 			repeat: Number.POSITIVE_INFINITY,
-	// 		},
-	// 	},
-	// 	{
-	// 		animate: {
-	// 			scaleX: [1, 1.05, 0.98, 1],
-	// 			scaleY: [1, 0.95, 1.02, 1],
-	// 			x: [0, -1, 1, 0],
-	// 		},
-	// 		transition: {
-	// 			duration: 2.5,
-	// 			ease: [0.76, 0, 0.24, 1],
-	// 			repeat: Number.POSITIVE_INFINITY,
-	// 		},
-	// 	},
-	// 	{
-	// 		animate: {
-	// 			scaleX: [1, 0.95, 1.08, 1],
-	// 			scaleY: [1, 1.05, 0.92, 1],
-	// 			x: [0, 2, -2, 0],
-	// 		},
-	// 		transition: {
-	// 			duration: 1.2,
-	// 			ease: [0.76, 0, 0.24, 1],
-	// 			repeat: Number.POSITIVE_INFINITY,
-	// 		},
-	// 	},
-	// 	{
-	// 		animate: {
-	// 			scaleX: [1, 1.08, 0.92, 1],
-	// 			scaleY: [1, 0.92, 1.08, 1],
-	// 			x: [0, -2, 2, 0],
-	// 		},
-	// 		transition: {
-	// 			duration: 1.8,
-	// 			ease: [0.76, 0, 0.24, 1],
-	// 			repeat: Number.POSITIVE_INFINITY,
-	// 		},
-	// 	},
-	// 	{
-	// 		animate: {
-	// 			scaleX: [1, 0.88, 1.12, 1],
-	// 			scaleY: [1, 1.12, 0.88, 1],
-	// 			x: [0, 1, -1, 0],
-	// 		},
-	// 		transition: {
-	// 			duration: 2.5,
-	// 			ease: [0.76, 0, 0.24, 1],
-	// 			repeat: Number.POSITIVE_INFINITY,
-	// 		},
-	// 	},
-	// ]
 
 	const inactiveCardAnimations = [
 		{
