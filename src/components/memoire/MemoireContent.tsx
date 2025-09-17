@@ -14,6 +14,8 @@ import { useState } from 'react'
 import { IoGrid } from 'react-icons/io5'
 import FilterIcon from '../svgs/FilterIcon'
 import { BiSolidSquareRounded } from 'react-icons/bi'
+import { renderParagraph } from '../common/RenderParagraph'
+import SectionTitle from '../ui/SectionTitle'
 
 interface MemoireContentProps {
 	memoire: any
@@ -85,12 +87,37 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		sortOrder === 'asc' ? a.year - b.year : b.year - a.year,
 	)
 
-	console.log('Filtered Festivals:', filteredFestivals)
-
 	return (
-		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 rounded-md border-grayLight bg-transparent px-4 tracking-tighter dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner lg:border-4 lg:border-black">
-			<div className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-16 lg:pt-16">
-				<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-7xl">
+		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 lg:shadowtest rounded-md border-grayLight bg-transparent px-4 tracking-tight dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner lg:h-[calc(100svh-12px)] lg:overflow-y-auto lg:border-4 lg:border-black lg:py-8">
+			{/* Description */}
+			<div className="relative mt-4 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
+				<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
+					{/* <MemoireLogoMobile
+						theme={themeColors.memoire}
+						className="w-1/2 overflow-visible text-dark"
+					/> */}
+					{renderParagraph(
+						{
+							value:
+								'System_D and the Citylab Pianofabriek team support your stories and imaginations in several ways.',
+						},
+						[],
+						'bg-dark text-primary lg:bg-grayDark lg:text-dark',
+					)}
+				</p>
+			</div>
+			{/* <div className="relative m-8 rounded-xl border-0 border-primary bg-primary px-4 py-16"> */}
+			{/* <p className="py-0 text-center text-xl font-bold leading-[1.1] tracking-tight text-primary lg:py-8 lg:pt-32 lg:text-5xl">
+				{"La mémoire est l'avenir du passé"}
+			</p> */}
+			{/* <SectionTitle
+				className="lg:pb-12 lg:pt-24"
+				text="La mémoire est l'avenir du passé"
+			/> */}
+
+			{/* </div> */}
+			{/* <div className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-16 lg:pt-16">
+				<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
 					"
 				</span>
 				{'La mémoire est l avenir du passé'
@@ -103,7 +130,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 						return (
 							<span
 								key={idx}
-								className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-5xl"
+								className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-5xl"
 								style={{
 									transform: `rotate(${randomRotation}deg)`,
 									marginTop: `${randomMarginTop}px`,
@@ -114,11 +141,11 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 							</span>
 						)
 					})}
-				<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-7xl">
+				<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
 					"
 				</span>
-			</div>
-			<p className="mt-4 px-16 text-base font-normal leading-[1.2] tracking-tighter text-primary first:mt-0 lg:pb-8 lg:pt-8 lg:text-xl">
+			</div> */}
+			<p className="mt-4 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
 				This festival was like a warm embrace in winter, without covid masks
 				this time. People were happy to see each other, to connect with the
 				community, particularly as the situation in Gaza was rapidly
@@ -266,19 +293,19 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 						<Link
 							key={festival._id || index}
 							href={`/${language}/festival/${festival.year}`}
-							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-lg lg:border-[3px]`}
+							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-sm lg:border-[0px]`}
 						>
 							<div
-								className={`absolute left-1/2 ${view === 'single' ? 'top-[65%] text-3xl' : 'top-[38%] text-xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tighter text-dark lg:top-[50%] lg:text-6xl`}
+								className={`absolute left-1/2 ${view === 'single' ? 'top-[65%] text-3xl' : 'top-[38%] text-xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tight text-dark lg:top-[50%] lg:text-5xl`}
 							>
 								<span>{festival.year}</span>
 							</div>
 							<div
-								className={`absolute left-1/2 ${view === 'single' ? 'top-[72%] text-3xl' : 'top-[50%] text-xl'} z-10 -translate-x-1/2 rotate-6 rounded-md bg-dark px-2 font-semibold tracking-tighter text-primary lg:top-[61%] lg:text-6xl`}
+								className={`absolute left-1/2 ${view === 'single' ? 'top-[72%] text-3xl' : 'top-[50%] text-xl'} z-10 -translate-x-1/2 rotate-6 rounded-md bg-dark px-2 font-semibold tracking-tight text-primary lg:top-[58%] lg:text-5xl`}
 							>
 								<span>{festival.venue}</span>
 							</div>
-							<div className="relative h-full overflow-hidden">
+							<div className="lg:shadowtest relative h-full overflow-hidden">
 								{festival.visual ? (
 									<Img
 										image={festival.visual}
@@ -288,7 +315,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 												? getLocalizedValue(festival.title, language)
 												: 'Festival image'
 										}
-										className="h-full w-full object-cover"
+										className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
 									/>
 								) : (
 									<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />

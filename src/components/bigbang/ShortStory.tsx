@@ -1,6 +1,5 @@
 'use client'
-import { motion, useInView } from 'motion/react'
-import { useScroll, useTransform } from 'motion/react'
+import { motion } from 'motion/react'
 import Img from '@/ui/Img'
 import LogoShortTsx from '../svgs/LogoShort'
 import { useRef } from 'react'
@@ -11,27 +10,102 @@ import { ThemedSvgFromCMS } from './ThemedSvgFromCMS'
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
 		<div className="flex flex-col space-y-8 pb-28 sm:space-y-0 sm:py-0">
-			{content.map((block: any) => (
-				<StoryBlock key={block._key} block={block} lang={lang} />
+			{content.map((block: any, index: number) => (
+				<StoryBlock
+					key={block._key}
+					block={block}
+					lang={lang}
+					animationVariant={index % 3} // Use index to create variation
+				/>
 			))}
 		</div>
 	)
 }
 
-const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
+const StoryBlock = ({
+	block,
+	lang,
+	animationVariant = 0,
+}: {
+	block: any
+	lang: any
+	animationVariant?: number
+}) => {
 	const ref = useRef(null)
 
-	// Use scroll and transform for each individual block
-	const { scrollYProgress } = useScroll({
-		target: ref,
-		offset: ['start 25vh', 'end center'], // Animation starts when the block reaches the middle of the screen
-	})
+	// Different animation patterns based on variant
+	const animations = [
+		{
+			// Variant 0 - Slow pulse
+			container: {
+				borderRadius: [10, 50, 10],
+				scale: [1, 1.02, 1],
+				transition: {
+					duration: 8,
+					ease: [0.76, 0, 0.24, 1],
+					repeat: Infinity,
+				},
+			},
+			image: {
+				scale: [0.8, 0.6, 0.8],
+				// rotate: [-3, 3, -3],
+				transition: {
+					duration: 4,
+					ease: [0.76, 0, 0.24, 1],
+					repeat: Infinity,
+				},
+			},
+		},
+		// {
+		// 	// Variant 1 - Medium float
+		// 	container: {
+		// 		borderRadius: [10, 80, 10],
+		// 		scale: [1, 1.03, 1],
+		// 		y: [0, -5, 0],
+		// 		transition: {
+		// 			duration: 6,
+		// 			ease: [0.76, 0, 0.24, 1],
+		// 			repeat: Infinity,
+		// 		},
+		// 	},
+		// 	image: {
+		// 		scale: [0.8, 0.7, 0.8],
+		// 		rotate: [0, 5, 0],
+		// 		x: [0, 10, 0],
+		// 		transition: {
+		// 			duration: 7,
+		// 			ease: [0.76, 0, 0.24, 1],
+		// 			repeat: Infinity,
+		// 		},
+		// 	},
+		// },
+		// {
+		// 	// Variant 2 - Quick subtle movement
+		// 	container: {
+		// 		borderRadius: [10, 30, 10],
+		// 		scale: [1, 1.01, 1],
+		// 		x: [0, 5, 0],
+		// 		transition: {
+		// 			duration: 5,
+		// 			ease: [0.76, 0, 0.24, 1],
+		// 			repeat: Infinity,
+		// 		},
+		// 	},
+		// 	image: {
+		// 		scale: [0.8, 0.78, 0.8],
+		// 		rotate: [0, -4, 0],
+		// 		y: [0, 8, 0],
+		// 		transition: {
+		// 			duration: 9,
+		// 			ease: [0.76, 0, 0.24, 1],
+		// 			repeat: Infinity,
+		// 		},
+		// 	},
+		// },
+	]
 
-	// Transform the scroll progress into a border radius value
-	const borderRadius = useTransform(scrollYProgress, [0, 1], [10, 120])
-
-	const scale = useTransform(scrollYProgress, [0, 1], [0.25, 1])
-	const rotate = useTransform(scrollYProgress, [0, 1], [-10, 10])
+	// Select animation based on variant
+	const animation = animations[animationVariant % animations.length]
 
 	const themeColors = {
 		dark: {
@@ -54,6 +128,7 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 			icon: 'var(--color-primary)',
 		},
 	}
+
 	return (
 		<div
 			ref={ref}
@@ -65,15 +140,11 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 			</div>
 			{block.text && (
 				<motion.div
-					style={{ borderRadius }}
-					transition={{
-						// duration: 2,
-						ease: [0.76, 0, 0.24, 1],
-					}}
-					className="relative border-2 border-dark bg-primary px-4 py-6 shadow-sm sm:mx-40 sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none lg:bg-primary lg:bg-gradient-to-t lg:from-grayLight"
+					// animate={animation.container}
+					className="lg:shadowtest relative rounded-xl border-2 border-dark bg-primary px-4 py-6 shadow-sm sm:mx-40 sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none lg:bg-primary lg:bg-gradient-to-t lg:from-primary"
 				>
 					{block.text
-						.filter((paragraph: any) => paragraph._key === lang) // Filter the text by the selected language key
+						.filter((paragraph: any) => paragraph._key === lang)
 						.map((paragraph: any, index: number) => (
 							<p
 								key={index}
@@ -90,8 +161,8 @@ const StoryBlock = ({ block, lang }: { block: any; lang: any }) => {
 
 			{block.image && (
 				<motion.div
+					animate={animation.image}
 					className="relative w-full px-2 pt-6 sm:px-8 sm:py-8"
-					style={{ scale }}
 				>
 					<Img
 						image={block.image}
@@ -133,7 +204,7 @@ const renderParagraph = (paragraph: any, titles: string[]) => {
 						},
 					}}
 				>
-					<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[8rem] -rotate-6 rounded-md bg-dark px-2 py-1 leading-[0] text-primary dark:bg-dark sm:w-[15rem]" />
+					<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[8rem] -rotate-6 rounded-md bg-grayDark px-2 py-1 leading-[0] text-dark sm:w-[15rem]" />
 				</motion.span>
 			) : (
 				<span key={index} className={isTitle ? 'font-bold' : ''}>

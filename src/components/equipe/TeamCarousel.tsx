@@ -186,11 +186,11 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	]
 
 	return (
-		<div className="relative h-full w-full">
+		<div className="lg:shadowtest relative w-full lg:my-1 lg:h-[calc(100svh-1rem)] lg:rounded-xl lg:pt-32">
 			{/* Navigation Arrows */}
 			<button
 				onClick={goToPrev}
-				className="absolute bottom-[50%] left-4 z-30 md:left-4 lg:bottom-[25%]"
+				className="absolute bottom-[50%] left-4 z-30 md:left-4 lg:bottom-[35%]"
 			>
 				<NewArrowRightSimple
 					theme={{
@@ -202,7 +202,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 			<button
 				onClick={goToNext}
-				className="absolute bottom-[50%] right-4 z-30 md:right-4 lg:bottom-[25%]"
+				className="absolute bottom-[50%] right-4 z-30 md:right-4 lg:bottom-[35%]"
 			>
 				<NewArrowRightSimple
 					theme={{
@@ -258,7 +258,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 													/>
 												</div>
 												<div className="absolute -bottom-4 left-1/2 flex w-full -translate-x-1/2 -rotate-3 items-center justify-center">
-													<span className="z-10 w-fit rounded-md border-2 border-dark bg-grayDark px-2 text-center text-2xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-4xl">
+													<span className="z-10 w-fit rounded-md border-[3px] border-dark bg-grayDark px-2 text-center text-2xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-5xl">
 														{member.name}
 													</span>
 												</div>
@@ -278,7 +278,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 			</div>
 
 			{/* Full-width description below the carousel */}
-			<div className="mt-0 px-4 pb-16 lg:px-16">
+			<div className="mt-0 h-64 overflow-y-auto px-4 pb-16 lg:px-16">
 				<p className="text-base font-normal leading-[1.2] tracking-tight text-primary lg:text-xl lg:leading-[1.5rem]">
 					{teamMembers[activeIndex].description}
 				</p>

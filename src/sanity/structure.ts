@@ -59,6 +59,9 @@ export const structure = structureTool({
 									FaInfoCircle,
 								),
 								singleton(S, 'bigbangLongStory', 'Long story').icon(FaBook),
+								// S.documentTypeListItem('bigbangLongStory')
+								// 	.title('All Long Stories')
+								// 	.icon(FaBook),
 							]),
 					),
 				singleton(S, 'fabrique', 'La Fabrique').icon(GiFactory),

@@ -241,18 +241,19 @@ const FilmSubmissionForm = () => {
 	}
 
 	return (
-		<div className="mx-auto max-w-4xl p-4">
+		<div className="lg:shadowtest lg: mx-auto my-1 h-[calc(100svh-12px)] w-full p-4 lg:rounded-xl">
 			<div className="mb-8 text-center">
-				<h1 className="mb-4 -rotate-1 text-4xl font-bold text-primary">
+				<h1 className="mb-4 text-5xl font-bold text-primary lg:my-16">
 					System D Formulaire
 				</h1>
-				<p className="mb-2 text-lg text-dark dark:text-primary">
-					Il y a 4 niveaux d'interrogation avant de rejoindre notre voyage vers
-					le TURFU.
-				</p>
-				<p className="text-dark dark:text-primary">
-					Bon vent aux courageux aventuriers!
-				</p>
+				<div className="mt-4 px-16 text-base font-normal leading-[1.2] tracking-tighter text-primary first:mt-0 lg:mt-0 lg:pb-8 lg:pt-0 lg:text-xl">
+					{' '}
+					<p>
+						Il y a 4 niveaux d'interrogation avant de rejoindre notre voyage
+						vers le TURFU.
+					</p>
+					<p>Bon vent aux courageux aventuriers!</p>
+				</div>
 			</div>
 
 			{/* Progress Bar */}
@@ -287,10 +288,10 @@ const FilmSubmissionForm = () => {
 						animate={{ opacity: 1, x: 0 }}
 						exit={{ opacity: 0, x: -20 }}
 						transition={{ duration: 0.3 }}
-						className="rounded-xl border-2 border-gray-200 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-900"
+						className="rounded-xl border-2 border-gray-200 bg-primary p-8 shadow-lg"
 					>
 						<div className="mb-6">
-							<h2 className="mb-2 rotate-1 text-2xl font-bold text-primary">
+							<h2 className="mb-2 text-2xl font-bold text-dark">
 								{steps[currentStep - 1].title}
 							</h2>
 							<p className="text-gray-600 dark:text-gray-300">
@@ -755,7 +756,7 @@ const FilmSubmissionForm = () => {
 						<button
 							type="button"
 							onClick={nextStep}
-							className="flex items-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700"
+							className="flex items-center space-x-2 rounded-lg bg-primary px-6 py-3 text-dark transition-colors hover:bg-blue-700"
 						>
 							<span>Suivant</span>
 							<IoArrowForward />

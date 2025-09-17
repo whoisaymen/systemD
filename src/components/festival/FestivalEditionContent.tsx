@@ -208,16 +208,15 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar relative flex h-full min-h-screen w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-dark dark:text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:mt-1 lg:w-full lg:rounded-lg lg:bg-dark lg:py-16">
+		<div className="no-scrollbar lg:shadowtest relative flex h-full w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:mt-1 lg:h-[calc(100svh-12px)] lg:w-full lg:overflow-y-auto lg:rounded-lg lg:bg-dark lg:py-16">
 			<div className="fixed bottom-4 right-12 z-50 lg:bottom-2 lg:right-[16.5%]">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 			<div
-				className={`absolute -top-1 rounded-md text-3xl font-semibold text-dark sm:hidden`}
+				className={`absolute -top-1 rounded-md text-3xl font-semibold text-dark lg:left-6 lg:top-4 lg:transition-all lg:hover:scale-110 lg:hover:duration-300`}
 			>
 				<button
 					onClick={() => router.push(`/${language}/memoire`)}
-					className=""
 					aria-label="Go back"
 				>
 					<ArrowRight
@@ -226,24 +225,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					/>
 				</button>
 			</div>
-			{/* <div
-				className={`-top-1 z-[100000] hidden rounded-md p-8 text-3xl font-semibold text-dark lg:absolute lg:block`}
-			>
-				<button
-					onClick={() => router.push(`/${language}/memoire`)}
-					className=""
-					aria-label="Go back"
-				>
-					<ArrowRight
-						theme={{
-							// fill: 'var(--color-grayDark)',
-							stroke: 'var(--color-primary)',
-						}}
-						className="h-auto w-9 -rotate-180 border-primary"
-					/>
-				</button>
-			</div> */}
-			{/* Venue and Year Header */}
+
 			<div className="z-10 hidden w-full flex-row items-end justify-between border-0 px-8 lg:pointer-events-none lg:absolute lg:right-0 lg:top-8 lg:z-[10000] lg:mt-0 lg:flex lg:flex-col lg:justify-center lg:gap-4">
 				<motion.div
 					className="rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:rounded-xl lg:border-[0px] lg:border-primary lg:text-5xl"
@@ -304,7 +286,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</motion.div>
 
 			<div className="mb-8 pt-8 lg:pt-0" id="film-selection">
-				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark lg:z-10 lg:bg-dark lg:pt-8">
+				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark lg:z-10 lg:mx-1 lg:bg-dark lg:pt-8">
 					<div className="flex items-center justify-center">
 						<motion.div
 							initial={{ rotate: -1 }}
@@ -322,7 +304,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:text-5xl ${
 								isFilmSectionOpen
 									? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark'
-									: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
+									: 'border-primary bg-dark text-primary'
 							}`}
 						>
 							<span>{tFilmSelection('title')}</span>
@@ -681,7 +663,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												data-film-slug={film.slug?.current}
 											>
 												<td
-													className={`border-b border-primary py-2 lg:border-dark lg:text-dark ${film.isWinner ? 'lg:text-secondary' : 'lg:text-dark'}`}
+													className={`border-b border-primary py-2 lg:border-primary lg:text-primary ${film.isWinner ? 'lg:text-secondary' : 'lg:text-primary'}`}
 												>
 													{film.slug?.current ? (
 														<Link
@@ -694,7 +676,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													)}
 												</td>
 												<td
-													className={`border-b border-primary px-4 py-2 lg:border-dark ${film.isWinner ? 'text-secondary' : 'text-dark'}`}
+													className={`border-b border-primary px-4 py-2 lg:border-primary ${film.isWinner ? 'text-secondary' : 'text-dark lg:text-primary'}`}
 												>
 													{film.slug?.current ? (
 														<Link
@@ -709,7 +691,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													)}
 												</td>
 												<td
-													className={`border-b border-primary px-4 py-2 pr-8 lg:border-dark ${film.isWinner ? 'text-secondary' : 'text-primary lg:text-dark'}`}
+													className={`border-b border-primary px-4 py-2 pr-8 lg:border-primary ${film.isWinner ? 'text-secondary' : 'text-primary lg:text-primary'}`}
 												>
 													{film.slug?.current ? (
 														<Link
@@ -1017,6 +999,23 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</div>
 
 			<div className="py-4 pt-3 lg:mx-32 lg:py-16 lg:text-primary [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
+				<div className="relative mt-4 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
+					<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:text-primary">
+						{/* <MemoireLogoMobile
+						theme={themeColors.memoire}
+						className="w-1/2 overflow-visible text-dark"
+					/> */}
+						{renderParagraph(
+							{
+								value:
+									'System_D and the Citylab Pianofabriek team support your stories and imaginations in several ways.',
+							},
+							[],
+							'bg-dark text-primary lg:bg-grayDark lg:text-dark',
+						)}
+					</p>
+				</div>
+
 				{festival.text?.[language]?.map((block: any) => {
 					// Check if the block is a list item
 					if (block.listItem === 'bullet') {

@@ -22,7 +22,7 @@ const NewArrowRightSimple: React.FC<NewArrowRightSimpleProps> = ({
 		<path
 			d="M9 9L30.5 30.5L9 52"
 			stroke={theme.stroke}
-			strokeWidth="12"
+			strokeWidth="7"
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		/>

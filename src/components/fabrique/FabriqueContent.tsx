@@ -104,7 +104,7 @@ const VisionBlock: React.FC<{
 	visionTitle: any[]
 	language: string
 }> = ({ vision, visionTitle, language }) => (
-	<div className="mt-20 lg:flex">
+	<div className="lg:shadowtest mt-20 lg:flex">
 		<div className="relative mb-12 lg:w-full">
 			<div className="flex items-center justify-center">
 				<FabriqueBracketsIcon
@@ -124,7 +124,7 @@ const VisionBlock: React.FC<{
 						<h2 className="text-lg font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:px-32 lg:text-xl">
 							{getLocalizedValue(visionItem.title, language)}
 						</h2>
-						<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
+						<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-16 lg:text-xl">
 							{getLocalizedText(visionItem.text, language) ||
 								'No description available'}
 						</p>
@@ -201,7 +201,7 @@ const renderActionContent = (
 		<div className="relative px-0 py-4 text-primary sm:py-10">
 			{subTitle && (
 				<div className="flex items-center justify-center">
-					<h2 className="-mt-4 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tight text-dark lg:-mt-8 lg:border-0 lg:text-2xl">
+					<h2 className="-mt-4 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tight text-dark lg:-mt-8 lg:border-0 lg:text-lg">
 						{subTitle}
 					</h2>
 				</div>
@@ -228,7 +228,7 @@ const renderActionContent = (
 					return (
 						<ul key={blockKey} className="px-10">
 							<li
-								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-32 lg:text-xl ${
+								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-16 lg:text-xl ${
 									isBold ? 'font-bold' : ''
 								}`}
 							>
@@ -245,7 +245,7 @@ const renderActionContent = (
 				return (
 					<p
 						key={blockKey}
-						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:px-32 lg:text-xl"
+						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:px-16 lg:text-xl"
 					>
 						{block.children.map((child: any, idx: number) => (
 							<span key={child._key || idx}>{child.text}</span>
@@ -290,7 +290,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	return (
 		<div
 			ref={ref}
-			className="no-scrollbar flex h-full w-full flex-col overflow-y-scroll py-32 pt-0 text-base font-medium leading-[1.2] tracking-tight text-dark sm:mt-1 sm:space-y-0 sm:px-0 lg:bg-dark"
+			className="no-scrollbar lg:shadowtest flex h-full w-full flex-col overflow-y-scroll py-32 pt-0 text-base font-medium leading-[1.2] tracking-tight text-dark sm:mt-1 sm:space-y-0 sm:px-0 lg:h-[calc(100svh-12px)] lg:rounded-xl"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
@@ -308,6 +308,20 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 						: 'No description available'}
 				</p>
 			</div>
+
+			<p className="-mt-4 px-16 text-base font-normal leading-[1.2] tracking-tighter text-primary first:mt-0 lg:mt-0 lg:pb-8 lg:pt-0 lg:text-xl">
+				This festival was like a warm embrace in winter, without covid masks
+				this time. People were happy to see each other, to connect with the
+				community, particularly as the situation in Gaza was rapidly
+				degenerating. Sbeul collective kicked off the festival with an electric
+				performance of As Salem Aleykoum that absolutely brought down the house.
+				Their assertivity, dignity and love were reflected in all other facets
+				of the festival. A retrospective video installation by Maxime Bourlet
+				revisited favorite films of the previous editions, a photo exhibit
+				curated by Neima B Reyale reminded us of the little things we share
+				while the salon du TURFU by Imiskill and Face B invited radical new
+				imaginations of our future.
+			</p>
 
 			{/* Image */}
 			{memoizedValues.image?.asset && (

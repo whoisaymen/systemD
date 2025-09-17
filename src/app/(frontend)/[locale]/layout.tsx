@@ -22,6 +22,7 @@ import { Metadata } from 'next'
 import NavBarMobile from '@/components/navigation/NavBarMobile'
 import Link from 'next/link'
 import LogoShortAnimated from '@/components/svgs/LogoShortAnimated'
+import SectionOverlay from '@/components/navigation/SectionOverlay'
 
 export const metadata: Metadata = {
 	title: 'System_D | Empowering self-made filmmakers',
@@ -62,7 +63,7 @@ export default async function RootLayout({
 						{children}
 					</main> */}
 
-								<main className="z-40 w-full rounded-md lg:flex lg:min-h-[calc(100svh-0.50rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
+								<main className="z-40 w-full rounded-md lg:-ml-0 lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
 									{children}
 								</main>
 

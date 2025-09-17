@@ -36,7 +36,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 	}
 
 	return (
-		<div className="w-full">
+		<div className="lg:shadowtest lg:no-scrollbar w-full lg:my-1 lg:h-[calc(100svh-12px)] lg:overflow-y-auto lg:rounded-xl">
 			<div className="sticky left-0 top-2 z-10 m-2 mx-auto flex w-fit justify-between gap-2 rounded-full bg-primary px-2 py-2 text-lg font-bold tracking-tighter sm:justify-center lg:py-1">
 				<button
 					onClick={() => handleTabClick('short')}
@@ -55,7 +55,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 					Long Story
 				</button>
 			</div>
-			<div className="flex flex-col space-y-1 rounded-md sm:my-1 sm:min-h-svh sm:p-0">
+			<div className="flex flex-col space-y-1 rounded-md sm:p-0">
 				{activeTab === 'short' ? (
 					<ShortStory content={shortStory.body} lang={locale} />
 				) : (

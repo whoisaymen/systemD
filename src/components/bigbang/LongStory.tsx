@@ -6,6 +6,7 @@ import { renderParagraph } from '../common/RenderParagraph'
 import BackToTopButton from '../common/BackToTop'
 import { useState } from 'react'
 import CloseIcon from '../common/CloseIcon'
+import SectionTitle from '../ui/SectionTitle'
 
 interface LongStoryProps {
 	content: any[]
@@ -19,7 +20,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 		array?.find((v) => v?._key === lang)?.value
 
 	return (
-		<div className="space-y-0 pb-4" id="long-story">
+		<div className="space-y-0 py-8" id="long-story">
 			<div className="fixed bottom-4 right-4 z-50 sm:hidden">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
@@ -63,6 +64,8 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 					</motion.div>
 				)}
 			</AnimatePresence>
+			{/* 
+			<SectionTitle className="lg:py-8" text="Big Bang" /> */}
 
 			{content.map((block, index) => {
 				switch (block._type) {
@@ -72,9 +75,9 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={block._key || index}
-								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-16"
+								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-20"
 							>
-								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-7xl">
+								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
 									"
 								</span>
 								{getLocalizedValue(block.text, lang)
@@ -88,7 +91,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										return (
 											<span
 												key={index}
-												className="inline-block text-2xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-5xl"
+												className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-5xl"
 												style={{
 													transform: `rotate(${randomRotation}deg)`,
 													marginTop: `${randomMarginTop}px`,
@@ -99,13 +102,13 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 											</span>
 										)
 									})}
-								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:text-7xl">
+								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
 									"
 								</span>
 								{block.author && (
-									<div className="w-full pr-4 pt-0 text-right font-mono text-sm font-normal tracking-[-0.1em] text-dark dark:text-grayDark lg:text-base">
+									<span className="pl-4 pt-0 text-right font-mono text-sm font-normal tracking-[-0.1em] text-dark dark:text-grayDark lg:mt-0 lg:text-base">
 										{block.author}
-									</div>
+									</span>
 								)}
 							</div>
 						)
@@ -116,10 +119,10 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={index}
-								className="flex flex-col items-center justify-center"
+								className="flex flex-col items-center justify-center lg:py-8"
 							>
 								<div
-									className="px-4 text-base leading-[1.2] tracking-tighter text-dark dark:text-primary lg:px-16 lg:text-xl"
+									className="px-4 text-base leading-[1.2] tracking-tight text-dark dark:text-primary lg:px-16 lg:text-xl"
 									style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 								>
 									{block.text
@@ -130,7 +133,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 													paragraph,
 													[],
 													'bg-grayDark text-dark',
-													'!w-[5rem] !md:w-[10rem] !px-1 !py-0.5 !rounded-[0.15rem]',
+													'!w-[6rem] !md:w-[100rem] !px-1 !py-0.5 !rounded-[0.15rem]',
 												)}
 											</p>
 										))}
@@ -186,13 +189,13 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									className="relative mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:mx-0 sm:h-auto sm:border-[3px] lg:mx-16"
 									onClick={() => setFullscreenImage(block.file.asset.url)}
 								>
-									<div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-primary opacity-75 mix-blend-screen" />
+									{/* <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-primary opacity-75 mix-blend-screen" /> */}
 									<Image
 										src={block.file.asset.url}
 										alt={getLocalizedValue(block.caption, lang) || 'Image'}
 										width={block.file.asset.metadata.dimensions.width}
 										height={block.file.asset.metadata.dimensions.height}
-										className="aspect-video h-full w-full object-cover object-[100%_45%] saturate-0"
+										className="aspect-video h-full w-full object-cover object-[100%_45%]"
 									/>
 									{block.caption && (
 										<p className="mt-2 text-center text-sm italic text-dark dark:text-primary">

@@ -162,7 +162,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 		'Décembre',
 	]
 
-	const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+	const dayNames = ['D', 'L', 'M', 'Me', 'J', 'V', 'S']
 
 	// Get events for the current month
 	const currentMonthEvents = events.filter((event) => {
@@ -175,7 +175,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 
 	return (
 		<>
-			<div className="absolute top-16 flex w-full items-center justify-between px-16">
+			<div className="top-16 hidden w-full items-center justify-between px-16 lg:absolute lg:flex">
 				<button
 					onClick={goToPrevMonth}
 					className="z-40 text-primary"
@@ -203,11 +203,11 @@ const EventCalendar: React.FC<CalendarProps> = ({
 					/>
 				</button>
 			</div>
-			<div className="relative mx-32 rounded-xl border-[0px] border-primary bg-dark pb-4">
+			<div className="relative z-[49] rounded-xl border-[3px] border-primary bg-grayDark pb-4 lg:mx-32">
 				{/* Header with controls */}
-				<div className="mb-0 flex flex-col gap-4 p-2 lg:flex-row lg:items-center lg:justify-between">
+				<div className="mb-0 flex flex-row items-center justify-between gap-4 p-2">
 					<div className="flex items-center gap-4">
-						<h3 className="-rotate-3 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:top-4 lg:rounded-xl lg:border-[3px] lg:border-dark lg:px-2 lg:text-2xl">
+						<h3 className="-rotate-3 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tight text-dark lg:top-4 lg:rounded-xl lg:border-[3px] lg:border-dark lg:px-2 lg:text-2xl">
 							{monthNames[currentMonth]} {currentYear}
 						</h3>
 
@@ -224,13 +224,13 @@ const EventCalendar: React.FC<CalendarProps> = ({
 
 					<div className="flex items-center gap-2">
 						{/* View Mode Toggle */}
-						<div className="flex rounded-lg border-2 border-primary p-0">
+						<div className="flex rounded-lg border-0 border-primary bg-dark p-1">
 							<button
 								onClick={() => setViewMode('calendar')}
 								className={`flex items-center gap-1 rounded px-3 py-1 text-sm font-medium transition-colors ${
 									viewMode === 'calendar'
 										? 'bg-primary text-dark'
-										: 'text-gray-600 hover:text-gray-800'
+										: 'text-grayDark'
 								}`}
 							>
 								{/* <IoCalendar className="h-4 w-4" /> */}
@@ -239,9 +239,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 							<button
 								onClick={() => setViewMode('list')}
 								className={`flex items-center gap-1 rounded px-3 py-1 text-sm font-medium transition-colors ${
-									viewMode === 'list'
-										? 'bg-primary text-dark'
-										: 'text-gray-600 hover:text-gray-800'
+									viewMode === 'list' ? 'bg-primary text-dark' : 'text-grayDark'
 								}`}
 							>
 								<PiListBold className="h-4 w-4" />
@@ -266,7 +264,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 								{dayNames.map((day) => (
 									<div
 										key={day}
-										className="p-0 text-left text-xl font-semibold text-primary"
+										className="p-0 text-left text-xl font-semibold uppercase text-dark"
 									>
 										{day}
 									</div>
@@ -279,7 +277,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 									day.isCurrentMonth ? (
 										<motion.div
 											key={`${day.date.toISOString()}-${index}`}
-											className={`relative min-h-[100px] border-t ${day.events.length > 0 ? 'border-primary' : 'border-grayDark'} p-2 transition-colors ${
+											className={`relative min-h-[100px] border-t ${day.events.length > 0 ? 'border-primary' : 'border-dark'} p-2 transition-colors ${
 												day.isToday ? '' : ''
 											}`}
 											whileHover={{ scale: day.events.length > 0 ? 1.02 : 1 }}
@@ -291,7 +289,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 										>
 											{/* Day number */}
 											<div
-												className={`w-fit text-sm font-medium ${day.events.length > 0 ? 'text-primary' : 'text-grayDark'} ${day.isToday ? 'rounded-full bg-primary px-1 py-0 font-bold !text-dark' : ''} `}
+												className={`w-fit text-sm font-medium ${day.events.length > 0 ? 'text-primary' : 'text-dark'} ${day.isToday ? 'rounded-full bg-primary px-1 py-0 font-bold !text-dark' : ''} `}
 											>
 												{day.date.getDate()}
 											</div>
@@ -336,46 +334,85 @@ const EventCalendar: React.FC<CalendarProps> = ({
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, y: -20 }}
 							transition={{ duration: 0.3 }}
-							className=""
+							className="mt-4"
 						>
 							{currentMonthEvents.length > 0 ? (
 								currentMonthEvents.map((event, index) => (
 									<motion.div
 										key={index}
-										className="cursor-pointer border-b border-primary p-4 transition-colors hover:bg-gray-50"
+										className="mx-4 cursor-pointer border-b-[1px] border-dark first:border-t-[0px] last:border-b-0 last:pb-0"
 										onClick={() => setSelectedEvent(event)}
-										whileHover={{ scale: 1.01 }}
-										whileTap={{ scale: 0.99 }}
+										// whileHover={{ scale: 1.01 }}
+										// whileTap={{ scale: 0.99 }}
 									>
-										<div className="flex items-start justify-between gap-4">
+										<div className="flex items-start justify-between py-2">
 											<div className="flex-1">
-												<h4 className="mb-1 font-semibold text-primary">
+												<div className="flex items-start justify-start gap-4">
+													{/* Date columns */}
+													<div className="flex min-w-[8rem] items-center gap-2">
+														<div className="w-[5rem] text-left text-sm text-dark">
+															{new Date(event.date).toLocaleDateString(
+																language,
+																{ weekday: 'long' },
+															)}
+														</div>
+														<div className="w-[2.5rem] text-left text-sm text-dark">
+															{new Date(event.date).toLocaleDateString(
+																language,
+																{ month: 'long' },
+															)}
+														</div>
+														<div className="w-[2.5rem] text-left text-sm text-dark">
+															{new Date(event.date).toLocaleDateString(
+																language,
+																{ day: 'numeric' },
+															)}
+														</div>
+														<div className="w-[1rem] text-left text-sm text-dark">
+															-
+														</div>
+													</div>
+													{/* Time */}
+													<div className="text-left text-sm text-dark">
+														{new Date(event.date).toLocaleTimeString(language, {
+															hour: '2-digit',
+															minute: '2-digit',
+														})}
+													</div>
+												</div>
+												{/* <h4 className="mb-0 font-semibold text-dark">
 													{getLocalizedValue(event.title, language)}
 												</h4>
-												<p className="text-sm text-gray-600">
+												<p className="text-sm text-grayDark">
+													{event.location}
+												</p> */}
+											</div>
+											<div className="flex items-center justify-center gap-4">
+												<h4 className="mb-0 font-semibold text-dark">
+													{getLocalizedValue(event.title, language)}
+												</h4>
+												<p className="text-sm text-grayDark">
 													{event.location}
 												</p>
-											</div>
-											<div className="text-right">
-												<div className="text-sm font-medium text-primary">
+												{/* <div className="text-sm font-medium text-dark">
 													{new Date(event.date).toLocaleDateString(language, {
 														weekday: 'long',
 														day: 'numeric',
 														month: 'long',
 													})}
 												</div>
-												<div className="text-sm text-gray-600">
+												<div className="text-right text-sm text-dark">
 													{new Date(event.date).toLocaleTimeString(language, {
 														hour: '2-digit',
 														minute: '2-digit',
 													})}
-												</div>
+												</div> */}
 											</div>
 										</div>
 									</motion.div>
 								))
 							) : (
-								<div className="py-8 text-center text-primary">
+								<div className="py-8 text-center text-lg tracking-tight text-dark">
 									Aucun événement ce mois-ci
 								</div>
 							)}
@@ -390,14 +427,14 @@ const EventCalendar: React.FC<CalendarProps> = ({
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+							className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-[0px]"
 							onClick={() => setSelectedEvent(null)}
 						>
 							<motion.div
 								initial={{ scale: 0.9, opacity: 0 }}
 								animate={{ scale: 1, opacity: 1 }}
 								exit={{ scale: 0.9, opacity: 0 }}
-								className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-2xl dark:bg-gray-800"
+								className="shadowtest relative h-[20rem] w-[20rem] rounded-xl border-[0px] border-primary bg-dark p-6 shadow-2xl"
 								onClick={(e) => e.stopPropagation()}
 							>
 								{/* Close button */}
@@ -416,10 +453,8 @@ const EventCalendar: React.FC<CalendarProps> = ({
 
 									<div className="space-y-3">
 										<div className="flex items-center gap-2">
-											<span className="font-medium text-gray-700 dark:text-gray-300">
-												Date:
-											</span>
-											<span className="text-gray-900">
+											<span className="text-grayDark">Date:</span>
+											<span className="text-grayDark">
 												{new Date(selectedEvent.date).toLocaleDateString(
 													language,
 													{
@@ -433,10 +468,8 @@ const EventCalendar: React.FC<CalendarProps> = ({
 										</div>
 
 										<div className="flex items-center gap-2">
-											<span className="font-medium text-gray-700 dark:text-gray-300">
-												Heure:
-											</span>
-											<span className="text-gray-900 dark:text-gray-100">
+											<span className="text-grayDark">Heure:</span>
+											<span className="text-grayDark">
 												{new Date(selectedEvent.date).toLocaleTimeString(
 													language,
 													{
@@ -448,20 +481,18 @@ const EventCalendar: React.FC<CalendarProps> = ({
 										</div>
 
 										<div className="flex items-center gap-2">
-											<span className="font-medium text-gray-700 dark:text-gray-300">
-												Lieu:
-											</span>
-											<span className="text-gray-900 dark:text-gray-100">
+											<span className="text-grayDark">Heure:</span>
+											<span className="text-grayDark">
 												{selectedEvent.location}
 											</span>
 										</div>
 
 										{selectedEvent.description && (
 											<div className="mt-4">
-												<span className="mb-2 block font-medium text-gray-700 dark:text-gray-300">
+												<span className="mb-2 block font-medium text-grayDark">
 													Description:
 												</span>
-												<p className="text-sm leading-relaxed text-gray-900 dark:text-gray-100">
+												<p className="text-sm leading-relaxed text-grayDark">
 													{selectedEvent.description}
 												</p>
 											</div>
@@ -485,7 +516,7 @@ const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	return (
 		<AccordionItem
 			value={`vision-${index}`}
-			className="relative z-50 flex flex-col items-center justify-center"
+			className="relative flex flex-col items-center justify-center"
 		>
 			<AccordionTrigger className="-rotate-3 lg:text-5xl">
 				{getLocalizedValue(block.visionTitle, language) || 'Our Vision'}
@@ -495,13 +526,13 @@ const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 					{block.vision?.map((visionItem: any, vIndex: number) => (
 						<motion.div
 							key={vIndex}
-							className="mt-4 first:-mt-0"
+							className="mt-4 first:-mt-2"
 							// initial={{ opacity: 0, x: -20 }}
 							// animate={{ opacity: 1, x: 0 }}
 							// transition={{ duration: 0.5, delay: vIndex * 0.2 }}
 						>
-							<div className="relative flex flex-col items-start rounded-t-3xl px-4">
-								<h3 className="-z-10 -mt-0 inline-block -rotate-2 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark lg:z-0 lg:mx-20 lg:text-lg">
+							<div className="relative mb-8 flex flex-col items-center rounded-t-3xl px-4">
+								<h3 className="-z-10 -mt-0 inline-block -rotate-0 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tight text-dark lg:z-0 lg:mx-20 lg:mb-2 lg:text-lg">
 									{getLocalizedValue(visionItem.title, language)}
 								</h3>
 								<p className="mx-auto -mt-2 py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
@@ -577,7 +608,7 @@ const YellowBannerBlock: React.FC<BlockProps> = ({
 				{paragraphs.map((paragraph: string, i: number) => (
 					<p
 						key={i}
-						className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tighter text-dark lg:py-4 lg:text-3xl"
+						className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark lg:py-4 lg:text-3xl"
 					>
 						{paragraph.split(/(System D)/).map((part, partIndex) =>
 							part === 'System D' ? (
@@ -623,8 +654,8 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 	return (
 		<motion.div
 			layout
-			className={`mx-0 w-auto cursor-pointer overflow-hidden rounded-lg px-16 pb-10 pt-2 lg:h-[50vh] lg:rounded-3xl lg:pb-0 lg:pt-0 ${
-				isFullscreen ? 'fixed inset-0 z-50 w-screen rounded-none bg-dark' : ''
+			className={`lg:rounded-0xl mx-0 w-auto cursor-pointer overflow-hidden rounded-lg pb-10 pt-2 lg:h-[50vh] lg:px-4 lg:pb-1 lg:pt-1 ${
+				isFullscreen ? 'fixed inset-0 z-50 w-screen' : ''
 			}`}
 			style={{
 				height: isFullscreen ? '100%' : '65vh',
@@ -638,7 +669,7 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 		>
 			<video
 				className={`h-full w-full transform rounded-3xl border-[3px] border-primary object-cover lg:rounded-3xl lg:border-0 ${
-					isFullscreen ? 'lg:border-[3px]' : 'lg:border-[4px]'
+					isFullscreen ? 'lg:border-[3px]' : 'lg:border-[3px]'
 				}`}
 				autoPlay
 				muted
@@ -714,7 +745,7 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 							alt={currentMember.name}
 							className="h-40 w-40 min-w-[10rem] rounded-lg border-0 border-primary object-cover lg:h-80 lg:w-56 lg:min-w-[15rem]"
 						/>
-						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-2xl font-medium tracking-tighter text-dark">
+						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-2xl font-medium tracking-tight text-dark">
 							{currentMember.name}
 						</h2>
 						<span className="hidden w-full text-center text-xl font-semibold tracking-[-0.15em] text-primary">
@@ -757,6 +788,8 @@ const OnTourBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	const getLocalizedValue = useLocalizedValue()
 
 	if (!block.show) return null
+
+	console.log('OnTourBlock events:', block.events)
 
 	return (
 		<AccordionItem
@@ -835,28 +868,27 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		<div
 			key={festival._id}
 			id="festival-content"
-			className="lg:inset-shadow-xl relative flex h-full w-full flex-col space-y-1 rounded-md p-2 px-4 pb-32 lg:mt-0 lg:h-svh lg:bg-gradient-to-t lg:from-transparent lg:p-0 lg:py-16 lg:pt-0 lg:shadow-inner"
+			className="lg:shadowtest relative flex h-full w-full flex-col space-y-1 rounded-md border-primary p-2 px-4 pb-32 lg:my-1 lg:h-svh lg:overflow-hidden lg:rounded-xl lg:border-[0px] lg:bg-dark lg:p-0 lg:py-16 lg:pt-0"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
-
 			<Snowfall
-				snowflakeCount={10}
+				snowflakeCount={15}
 				speed={[0.2, 0.5]}
 				wind={[0, 0]}
 				radius={[10, 40]}
 				rotationSpeed={[0.2, 0.5]}
 				images={[sparkleImg]}
+				style={{ zIndex: 48 }}
 			/>
-
 			{/* Accordion Items */}
 			<Accordion
 				type="single"
 				collapsible
 				onValueChange={handleAccordionValueChange}
 				// className="lg:rounded-md lg:bg-dark lg:bg-gradient-to-t lg:from-grayDark lg:py-16 lg:shadow-inner"
-				className="lg:-pb-0 lg:rounded-lg lg:border-0 lg:border-primary lg:bg-dark lg:pt-16"
+				className="lg:-pb-0 lg:rounded-lg lg:border-0 lg:border-primary lg:bg-transparent lg:pt-16"
 			>
 				{accordionBlocks?.map(renderBlock)}
 			</Accordion>

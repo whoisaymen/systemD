@@ -32,7 +32,7 @@ const ContactContent: React.FC<ContactContentProps> = ({
 	}
 
 	return (
-		<div className="h-full w-full px-4 pb-24 pt-6 text-primary">
+		<div className="lg:shadowtest lg:no-scrollbar h-full w-full px-4 pb-24 pt-6 text-primary lg:my-1 lg:h-[calc(100svh-12px)] lg:overflow-y-auto lg:rounded-xl">
 			<BrusselsMap
 				className="w-full rounded-[3rem] border-[3px] border-primary bg-grayDark fill-current text-dark lg:w-1/2"
 				pinLink={contact.mapLocation}
@@ -55,7 +55,7 @@ const ContactContent: React.FC<ContactContentProps> = ({
 					key={`contact`}
 					className="flex flex-col items-center justify-center"
 				>
-					<AccordionTrigger className={`-rotate-6 sm:text-7xl`}>
+					<AccordionTrigger className={`-rotate-6 lg:text-5xl`}>
 						Contact
 					</AccordionTrigger>
 					<AccordionContent>
@@ -82,7 +82,7 @@ const ContactContent: React.FC<ContactContentProps> = ({
 					key={`partners`}
 					className="flex flex-col items-center justify-center"
 				>
-					<AccordionTrigger className={`-rotate-0 sm:text-7xl`}>
+					<AccordionTrigger className={`-rotate-0 lg:text-5xl`}>
 						Partners
 					</AccordionTrigger>
 					<AccordionContent>

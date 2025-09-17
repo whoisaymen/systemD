@@ -280,6 +280,14 @@
 }
 
 @layer utilities {
+	.shadowtest {
+		box-shadow: inset 0px 0px 6px var(--color-grayDark);
+		/* box-shadow:
+			inset 6px 0 6px -6px var(--color-grayDark),
+			inset 0 6px 6px -6px var(--color-grayDark),
+			inset 0 -6px 6px -6px var(--color-grayDark); */
+	}
+
 	.frosted-glass {
 		@apply bg-opacity-90 backdrop-blur-lg backdrop-saturate-200;
 	}
