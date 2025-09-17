@@ -131,17 +131,15 @@ const NavBar = ({ locale }: { locale: string }) => {
 				</div>
 
 				{/* Bottom Controls */}
-				<div className="flex h-auto w-full items-center justify-between rounded-md p-1 lg:gap-0">
-					<div className="flex items-center justify-center">
-						<ThemeSwitch />
-						<LocaleSwitcher />
-					</div>
-					<div className="flex items-center justify-center">
-						<FaInstagram size={30} className="text-primary lg:p-1" />
-						<FaFacebook size={30} className="text-primary lg:p-1" />
-						<FaYoutube size={30} className="text-primary lg:p-1" />
-					</div>
-
+				<div className="flex h-auto w-full items-center justify-between rounded-md p-1 lg:gap-0 lg:px-2">
+					{/* <div className="flex items-center justify-center"> */}
+					<FaYoutube size={36} className="text-primary lg:p-1" />
+					<FaFacebook size={30} className="text-primary lg:p-1" />
+					<FaInstagram size={30} className="text-primary lg:p-1" />
+					<span className="rounded-md bg-primary px-1 py-0 text-base font-medium tracking-tight text-dark">
+						Contact
+					</span>
+					{/* </div> */}
 					{/* <span className="w-fit -rotate-3 rounded-md border-2 border-primary bg-primary px-2 py-0 text-xl font-medium leading-snug tracking-tighter text-dark">
 						Contact
 					</span> */}
@@ -206,12 +204,13 @@ const NavBar = ({ locale }: { locale: string }) => {
 
 				{/* Bottom Social and Contact */}
 				<div className="flex h-[2.5rem] w-full items-center justify-between px-2">
-					<span className="rounded-md border-0 border-primary text-base font-medium tracking-tighter text-primary">
+					<span className="rounded-md bg-primary px-1 py-0 text-base font-medium tracking-tight text-dark">
 						Mentions légales
 					</span>
-					<span className="rounded-md border-0 border-primary text-base font-medium tracking-tighter text-primary">
-						Contact
-					</span>
+					{/* <div className="flex items-center justify-center"> */}
+					<ThemeSwitch />
+					<LocaleSwitcher />
+					{/* </div> */}
 				</div>
 			</div>
 		</nav>

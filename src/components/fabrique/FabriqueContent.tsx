@@ -14,6 +14,7 @@ import { renderParagraph } from '../common/RenderParagraph'
 import LogoShortTsx from '../svgs/LogoShort'
 import FabriqueBracketsIcon from './FabriqueBracketsIcon'
 import BackToTopButton from '../common/BackToTop'
+import FestivalSparkleIcon from '../festival/FestivalSparkleIcon'
 
 // Types
 interface FabriqueContentProps {
@@ -212,8 +213,8 @@ const renderActionContent = (
 				// Render h6 blocks as styled paragraphs
 				if (block.style === 'h6' && !block.listItem) {
 					return (
-						<div key={blockKey} className="flex justify-start">
-							<p className="-z-10 m-4 -mb-4 -rotate-1 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tight text-dark">
+						<div key={blockKey} className="flex justify-start lg:ml-28">
+							<p className="-z-10 m-4 -mb-4 -rotate-0 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tight text-dark">
 								{block.children.map((child: any, idx: number) => (
 									<span key={child._key || idx}>{child.text}</span>
 								))}
@@ -226,16 +227,26 @@ const renderActionContent = (
 				if (block.listItem === 'bullet') {
 					const isBold = block.style === 'h6'
 					return (
-						<ul key={blockKey} className="px-10">
+						<ul key={blockKey} className="px-36">
 							<li
-								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-16 lg:text-xl ${
+								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-0 lg:text-xl ${
 									isBold ? 'font-bold' : ''
 								}`}
 							>
 								{block.children.map((child: any, idx: number) => (
-									<span key={child._key || idx}>{child.text}</span>
+									<span className="ml-0.5" key={child._key || idx}>
+										{child.text}
+									</span>
 								))}
-								<div className="absolute -left-5 top-2 h-2 w-2 rounded-sm bg-primary" />
+
+								{/* Replace the div with FestivalSparkleIcon */}
+								<FestivalSparkleIcon
+									className="absolute -left-6 top-3.5 h-4 w-4 -translate-y-1/2"
+									theme={{
+										fill: 'var(--color-primary)',
+										stroke: 'var(--color-dark)',
+									}}
+								/>
 							</li>
 						</ul>
 					)
@@ -245,7 +256,7 @@ const renderActionContent = (
 				return (
 					<p
 						key={blockKey}
-						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:px-16 lg:text-xl"
+						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:px-32 lg:text-xl"
 					>
 						{block.children.map((child: any, idx: number) => (
 							<span key={child._key || idx}>{child.text}</span>
@@ -296,33 +307,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 
-			{/* Description */}
-			<div className="relative mx-4 mb-12 mt-4 rounded-md bg-primary p-6 sm:py-10 lg:mx-0 lg:bg-transparent">
-				<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
-					{memoizedValues.description
-						? renderParagraph(
-								{ value: memoizedValues.description },
-								[],
-								'bg-dark text-primary lg:bg-grayDark lg:text-dark',
-							)
-						: 'No description available'}
-				</p>
-			</div>
-
-			<p className="-mt-4 px-16 text-base font-normal leading-[1.2] tracking-tighter text-primary first:mt-0 lg:mt-0 lg:pb-8 lg:pt-0 lg:text-xl">
-				This festival was like a warm embrace in winter, without covid masks
-				this time. People were happy to see each other, to connect with the
-				community, particularly as the situation in Gaza was rapidly
-				degenerating. Sbeul collective kicked off the festival with an electric
-				performance of As Salem Aleykoum that absolutely brought down the house.
-				Their assertivity, dignity and love were reflected in all other facets
-				of the festival. A retrospective video installation by Maxime Bourlet
-				revisited favorite films of the previous editions, a photo exhibit
-				curated by Neima B Reyale reminded us of the little things we share
-				while the salon du TURFU by Imiskill and Face B invited radical new
-				imaginations of our future.
-			</p>
-
 			{/* Image */}
 			{memoizedValues.image?.asset && (
 				<Img
@@ -335,7 +319,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 
 			{/* Single Accordion for all Actions */}
 			{memoizedValues.actions && (
-				<Accordion type="single" collapsible className="mb-0 lg:pb-0 lg:pt-0">
+				<Accordion type="single" collapsible className="mb-0 lg:pb-0 lg:pt-16">
 					{memoizedValues.actions.map((action: any, index: number) => {
 						const actionTitle = getLocalizedValue(action.title, language)
 						const [mainTitle, subTitle] = actionTitle.split(' - ')
@@ -365,6 +349,33 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 					})}
 				</Accordion>
 			)}
+
+			{/* Description */}
+			<div className="relative mx-4 rounded-md border-0 bg-primary lg:mx-0 lg:bg-transparent lg:pb-4 lg:pt-16">
+				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-32 lg:text-primary">
+					{memoizedValues.description
+						? renderParagraph(
+								{ value: memoizedValues.description },
+								[],
+								'bg-dark text-primary lg:bg-grayDark lg:text-dark',
+							)
+						: 'No description available'}
+				</p>
+			</div>
+
+			<p className="-mt-4 px-32 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:pb-8 lg:pt-0 lg:text-xl">
+				This festival was like a warm embrace in winter, without covid masks
+				this time. People were happy to see each other, to connect with the
+				community, particularly as the situation in Gaza was rapidly
+				degenerating. Sbeul collective kicked off the festival with an electric
+				performance of As Salem Aleykoum that absolutely brought down the house.
+				Their assertivity, dignity and love were reflected in all other facets
+				of the festival. A retrospective video installation by Maxime Bourlet
+				revisited favorite films of the previous editions, a photo exhibit
+				curated by Neima B Reyale reminded us of the little things we share
+				while the salon du TURFU by Imiskill and Face B invited radical new
+				imaginations of our future.
+			</p>
 
 			{/* Vision */}
 			{/* {memoizedValues.vision && (
