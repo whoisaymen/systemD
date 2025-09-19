@@ -9,7 +9,7 @@ import { ThemedSvgFromCMS } from './ThemedSvgFromCMS'
 
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
-		<div className="flex flex-col space-y-8 pb-28 sm:space-y-0 sm:py-0">
+		<div className="flex flex-col space-y-0 pb-28 sm:space-y-0 sm:py-0">
 			{content.map((block: any, index: number) => (
 				<StoryBlock
 					key={block._key}
@@ -47,7 +47,8 @@ const StoryBlock = ({
 				},
 			},
 			image: {
-				scale: [0.8, 0.6, 0.8],
+				// scale: [0.8, 0.6, 0.8],
+				scale: [1, 0.3, 1],
 				// rotate: [-3, 3, -3],
 				transition: {
 					duration: 4,
@@ -141,7 +142,7 @@ const StoryBlock = ({
 			{block.text && (
 				<motion.div
 					// animate={animation.container}
-					className="lg:shadowtest relative rounded-xl border-2 border-dark bg-primary px-4 py-6 shadow-sm sm:mx-40 sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none lg:bg-primary lg:bg-gradient-to-t lg:from-primary"
+					className="lg:shadowtest shadowtest relative rounded-xl bg-primary px-4 py-6 shadow-sm sm:mx-40 sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none lg:bg-primary lg:bg-gradient-to-t lg:from-primary"
 				>
 					{block.text
 						.filter((paragraph: any) => paragraph._key === lang)
@@ -162,7 +163,7 @@ const StoryBlock = ({
 			{block.image && (
 				<motion.div
 					animate={animation.image}
-					className="relative w-full px-2 pt-6 sm:px-8 sm:py-8"
+					className="relative w-full px-2 pt-0 sm:px-8 lg:py-8"
 				>
 					<Img
 						image={block.image}

@@ -162,7 +162,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 		'Décembre',
 	]
 
-	const dayNames = ['D', 'L', 'M', 'Me', 'J', 'V', 'S']
+	const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S']
 
 	// Get events for the current month
 	const currentMonthEvents = events.filter((event) => {
@@ -207,15 +207,41 @@ const EventCalendar: React.FC<CalendarProps> = ({
 				{/* Header with controls */}
 				<div className="mb-0 flex flex-row items-center justify-between gap-4 p-2">
 					<div className="flex items-center gap-4">
-						<h3 className="-rotate-3 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tight text-dark lg:top-4 lg:rounded-xl lg:border-[3px] lg:border-dark lg:px-2 lg:text-2xl">
+						<h3 className="flex -rotate-3 items-center justify-center gap-2 rounded-md bg-grayDark px-2 text-xl font-semibold tracking-tight text-dark lg:top-4 lg:rounded-xl lg:border-[3px] lg:border-dark lg:px-2 lg:text-2xl">
+							<button
+								onClick={goToPrevMonth}
+								className="z-40 text-primary lg:hidden"
+								aria-label="Previous"
+							>
+								<NewArrowRightSimple
+									theme={{
+										stroke: 'var(--color-dark',
+										// stroke: 'var(--color-primary',
+									}}
+									className="h-5 w-5 rotate-180"
+								/>
+							</button>
 							{monthNames[currentMonth]} {currentYear}
+							<button
+								onClick={goToNextMonth}
+								className="z-40 text-primary lg:hidden"
+								aria-label="Next"
+							>
+								<NewArrowRightSimple
+									theme={{
+										stroke: 'var(--color-dark',
+										// stroke: 'var(--color-primary',
+									}}
+									className="h-5 w-5"
+								/>
+							</button>
 						</h3>
 
 						{(currentMonth !== new Date().getMonth() ||
 							currentYear !== new Date().getFullYear()) && (
 							<button
 								onClick={goToToday}
-								className="hover:bg-primary/90 rounded-md bg-primary px-3 py-1 text-sm font-semibold text-dark transition-colors"
+								className="hover:bg-primary/90 hidden rounded-md bg-primary px-3 py-1 text-sm font-semibold text-dark transition-colors lg:block"
 							>
 								Aujourd&apos;hui
 							</button>
@@ -304,7 +330,9 @@ const EventCalendar: React.FC<CalendarProps> = ({
 															whileHover={{ scale: 1.02 }}
 															whileTap={{ scale: 0.98 }}
 														>
-															{getLocalizedValue(event.title, language)}
+															<span className="hidden lg:block">
+																{getLocalizedValue(event.title, language)}
+															</span>
 															{/* {getLocalizedValue(event.title, language).length >
 															15 && '...'} */}
 														</motion.button>
@@ -532,9 +560,29 @@ const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 							// transition={{ duration: 0.5, delay: vIndex * 0.2 }}
 						>
 							<div className="relative mb-8 flex flex-col items-center rounded-t-3xl px-4">
-								<h3 className="-z-10 -mt-0 inline-block -rotate-0 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tight text-dark lg:z-0 lg:mx-20 lg:mb-2 lg:text-lg">
+								{/* <h3 className="-z-10 -mt-0 inline-block -rotate-0 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tight text-dark lg:z-0 lg:mx-20 lg:mb-2 lg:text-lg">
 									{getLocalizedValue(visionItem.title, language)}
-								</h3>
+								</h3> */}
+
+								<>
+									{splitTitle(
+										getLocalizedValue(visionItem.title, language),
+										30,
+									).map((line, idx) => (
+										<h1
+											key={idx}
+											className={[
+												'-z-10 -mt-0 inline-block -rotate-0 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tight text-dark lg:z-0 lg:mx-20 lg:mb-2 lg:text-lg',
+												idx === 0 ? '' : '-z-0 -mt-1',
+												idx % 2 === 0
+													? '-rotate-1 lg:-rotate-3'
+													: 'rotate-1 lg:rotate-3',
+											].join(' ')}
+										>
+											{line}
+										</h1>
+									))}
+								</>
 								<p className="mx-auto -mt-2 py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
 									{getLocalizedValue(visionItem.text, language) ||
 										'No description available'}
@@ -716,25 +764,25 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			<AccordionContent>
 				<div className="relative flex w-full flex-col items-center justify-center py-8 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32">
 					<button
-						className={`absolute left-12 top-1/2 hidden lg:block`}
+						className={`absolute left-2 top-24 lg:left-12 lg:top-1/2 lg:block`}
 						onClick={goPrev}
 					>
 						<NewArrowRightSimple
 							theme={{
-								stroke: 'var(--color-grayDark)',
+								stroke: 'var(--color-dark)',
 							}}
-							className="h-auto w-8 -rotate-180 lg:w-7"
+							className="h-[2.35rem] w-[2.35rem] -rotate-180 rounded-lg border-0 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
 						/>
 					</button>
 					<button
-						className={`absolute right-12 top-1/2 hidden lg:block`}
+						className={`absolute right-2 top-24 lg:right-12 lg:top-1/2 lg:block`}
 						onClick={goNext}
 					>
 						<NewArrowRightSimple
 							theme={{
-								stroke: 'var(--color-grayDark)',
+								stroke: 'var(--color-dark)',
 							}}
-							className="h-auto w-8 lg:w-7"
+							className="-rotate h-[2.35rem] w-[2.35rem] rounded-lg border-0 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
 						/>
 					</button>
 					{/* Left: Photo, Name, Counter */}
@@ -743,7 +791,7 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 							image={currentMember.image}
 							src={currentMember.image?.asset.url}
 							alt={currentMember.name}
-							className="h-40 w-40 min-w-[10rem] rounded-lg border-0 border-primary object-cover lg:h-80 lg:w-56 lg:min-w-[15rem]"
+							className="h-48 w-64 min-w-[10rem] rounded-lg border-0 border-primary object-cover lg:h-80 lg:w-56 lg:min-w-[15rem]"
 						/>
 						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-2xl font-medium tracking-tight text-dark">
 							{currentMember.name}
@@ -906,3 +954,17 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 }
 
 export default FestivalContent
+
+function splitTitle(title: string, maxLength = 18) {
+	const result = []
+	let str = title
+
+	while (str.length > maxLength) {
+		let idx = str.lastIndexOf(' ', maxLength)
+		if (idx === -1) idx = maxLength // no space found, hard cut
+		result.push(str.slice(0, idx).trim())
+		str = str.slice(idx).trim()
+	}
+	if (str.length) result.push(str)
+	return result
+}

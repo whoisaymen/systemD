@@ -75,7 +75,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={block._key || index}
-								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-20"
+								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-4 sm:gap-4 lg:px-20"
 							>
 								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
 									"

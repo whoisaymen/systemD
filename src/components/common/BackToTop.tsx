@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import FilterIcon from '../svgs/FilterIcon'
 import ArrowIcon from '../svgs/ArrowIcon'
 import ArrowRight from './ArrowRight'
+import NewArrowRightSimple from './NewArrowRightSimple'
 
 interface BackToTopButtonProps {
 	targetId: string // Section ID (e.g. "photo-gallery")
@@ -64,12 +65,18 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 						}}
 						className="h-full w-full p-1"
 					/> */}
-					<ArrowRight
+					{/* <ArrowRight
 						theme={{
 							// fill: 'var(--color-grayDark)',
 							stroke: 'var(--color-primary)',
 						}}
 						className="h-auto w-9 -rotate-90 lg:w-9"
+					/> */}
+					<NewArrowRightSimple
+						theme={{
+							stroke: 'var(--color-primary)',
+						}}
+						className="h-[2.35rem] w-[2.35rem] -rotate-90 rounded-lg border-2 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
 					/>
 				</motion.button>
 			)}

@@ -90,19 +90,15 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	return (
 		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 lg:shadowtest rounded-md border-grayLight bg-transparent px-4 tracking-tight dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner lg:h-[calc(100svh-12px)] lg:overflow-y-auto lg:border-4 lg:border-black lg:py-8">
 			{/* Description */}
-			<div className="relative mt-4 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
-				<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
-					{/* <MemoireLogoMobile
-						theme={themeColors.memoire}
-						className="w-1/2 overflow-visible text-dark"
-					/> */}
+			<div className="relative mt-8 rounded-md bg-transparent lg:mb-4 lg:bg-transparent">
+				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-primary sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
 					{renderParagraph(
 						{
 							value:
 								'System_D and the Citylab Pianofabriek team support your stories and imaginations in several ways.',
 						},
 						[],
-						'bg-dark text-primary lg:bg-grayDark lg:text-dark',
+						'bg-grayDark text-dark lg:bg-grayDark lg:text-dark',
 					)}
 				</p>
 			</div>
@@ -145,7 +141,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					"
 				</span>
 			</div> */}
-			<p className="mt-4 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
+			<p className="mt-4 py-4 pb-8 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
 				This festival was like a warm embrace in winter, without covid masks
 				this time. People were happy to see each other, to connect with the
 				community, particularly as the situation in Gaza was rapidly
@@ -195,9 +191,9 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 				</button>
 			</div> */}
 
-			<div className="mt-1 flex flex-wrap items-center justify-between sm:hidden">
-				<span className="px-2 py-3 text-5xl font-bold leading-[1] text-primary">
-					{'Éditions'.split('').map((char, idx) => {
+			<div className="mt-1 flex flex-wrap items-center justify-between border-t border-t-primary pt-4 sm:hidden">
+				<span className="px-2 py-3 text-xl font-bold leading-[1] text-primary">
+					{/* {'Éditions'.split('').map((char, idx) => {
 						// Skip rendering for spaces (if any)
 						if (char === ' ') return <span key={idx}>&nbsp;</span>
 						// Random rotation and position for each character
@@ -217,7 +213,8 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 								{char}
 							</span>
 						)
-					})}
+					})} */}
+					Éditions
 				</span>
 				{/* View toggle */}
 				<div className="flex items-center justify-center gap-0">
