@@ -99,7 +99,7 @@ const FestivalCarousel: React.FC<{
 		<div className="relative flex h-full w-full flex-col items-center justify-center">
 			{/* Navigation Arrows */}
 			<div
-				className="absolute left-16 top-36 z-10 -mt-5 flex justify-center lg:z-20"
+				className="absolute left-8 top-8 z-10 -mt-5 flex justify-center lg:left-16 lg:top-36 lg:z-20"
 				onClick={onClose}
 			>
 				<motion.div
@@ -114,12 +114,12 @@ const FestivalCarousel: React.FC<{
 							ease: 'easeInOut',
 						},
 					}}
-					className={`flex w-fit items-center justify-center gap-1 rounded-md border-[4px] border-grayDark bg-grayDark px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] text-dark shadow-sm transition-all lg:z-10 lg:pl-1 lg:pr-3 lg:text-4xl`}
+					className={`flex w-fit items-center justify-center gap-1 rounded-md border-[0px] border-grayDark bg-grayDark py-0 pl-1 pr-3 text-center text-3xl font-bold uppercase italic tracking-[-0.06em] text-dark shadow-sm transition-all lg:z-10 lg:text-4xl`}
 				>
 					<button aria-label="Go back">
 						<NewArrowRightFull
 							theme={{ stroke: 'var(--color-dark)' }}
-							className="ml-1 h-auto w-8 -rotate-180 lg:w-7"
+							className="ml-1 h-auto w-5 -rotate-180 lg:w-7"
 						/>
 					</button>
 					<span>{tPhotoGallery('title')}</span>

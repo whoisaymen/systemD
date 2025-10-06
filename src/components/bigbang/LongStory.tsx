@@ -20,7 +20,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 		array?.find((v) => v?._key === lang)?.value
 
 	return (
-		<div className="space-y-0 py-8" id="long-story">
+		<div className="py-8" id="long-story">
 			<div className="fixed bottom-4 right-4 z-50 sm:hidden">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
@@ -186,7 +186,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 							return (
 								<div
 									key={index}
-									className="relative mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:mx-0 sm:h-auto sm:border-[3px] lg:mx-16"
+									className="relative mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:mx-0 sm:h-auto sm:border-[3px] lg:mx-16 lg:mt-8"
 									onClick={() => setFullscreenImage(block.file.asset.url)}
 								>
 									{/* <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-primary opacity-75 mix-blend-screen" /> */}

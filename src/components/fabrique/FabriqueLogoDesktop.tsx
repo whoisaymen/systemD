@@ -63,6 +63,7 @@ const FabriqueLogoDesktop: React.FC<FabriqueLogoDesktopProps> = ({
 					scaleY: isHovered ? 1.05 : 0.95,
 					transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 				}}
+				className="[@media(max-height:900px)]:hidden"
 			>
 				<path
 					d="M57.6338 325.254L76.071 291.268H142.933L138.113 300.073H99.3714L97.0818 304.296H127.737L123.399 312.432H92.7438L90.5747 316.448H130.04L125.22 325.254H57.6338Z"

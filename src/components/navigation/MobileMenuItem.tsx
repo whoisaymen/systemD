@@ -62,15 +62,21 @@ const menuItems: {
 		delay: 0.15,
 		rotation: '-rotate-6',
 	},
-	{
-		href: 'bigbang',
-		Component: BigBangLogoMobile,
-		delay: 0.2,
-		rotation: 'rotate-3',
-	},
+	// {
+	// 	href: 'bigbang',
+	// 	Component: BigBangLogoMobile,
+	// 	delay: 0.2,
+	// 	rotation: 'rotate-3',
+	// },
 	{
 		href: 'festival',
 		Component: FestivalLogoMobile,
+		delay: 0.2,
+		rotation: 'rotate-1',
+	},
+	{
+		href: 'bigbang',
+		Component: BigBangLogoMobile,
 		delay: 0.25,
 		rotation: '-rotate-3',
 	},
@@ -81,16 +87,16 @@ const menuItems: {
 		rotation: 'rotate-3',
 	},
 	{
-		href: 'equipe',
-		Component: EquipeLogoMobile,
+		href: 'fabrique',
+		Component: FabriqueLogoMobile,
 		delay: 0.35,
 		rotation: '-rotate-3',
 	},
 	{
-		href: 'fabrique',
-		Component: FabriqueLogoMobile,
+		href: 'equipe',
+		Component: EquipeLogoMobile,
 		delay: 0.4,
-		rotation: 'rotate-3',
+		rotation: 'rotate-2',
 	},
 ]
 
@@ -216,20 +222,20 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 				}}
 			>
 				<Link
-					className="w-fit -rotate-2 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
+					className="w-fit -rotate-0 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
 					href={`/${locale}/contact`}
 					onClick={closeMenu}
 				>
 					{t('legal')}
 				</Link>
 				<Link
-					className="w-fit rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
+					className="w-fit rotate-0 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
 					href={`/${locale}/contact`}
 					onClick={closeMenu}
 				>
 					{t('contact')}
 				</Link>
-				<span className="w-fit -rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
+				<span className="w-fit -rotate-0 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
 					Instagram
 				</span>
 			</motion.div>

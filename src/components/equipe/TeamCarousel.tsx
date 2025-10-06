@@ -186,11 +186,11 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	]
 
 	return (
-		<div className="lg:shadowtest relative w-full lg:my-1 lg:h-[calc(100svh-1rem)] lg:rounded-xl lg:pt-32">
+		<div className="lg:shadowtest no-scrollbar relative w-full lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:rounded-xl lg:pt-32">
 			{/* Navigation Arrows */}
 			<button
 				onClick={goToPrev}
-				className="absolute bottom-[50%] left-4 z-30 md:left-4 lg:bottom-[35%]"
+				className="absolute bottom-[50%] left-4 z-30 md:left-4 lg:bottom-[30%]"
 			>
 				<NewArrowRightSimple
 					theme={{
@@ -202,7 +202,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 			<button
 				onClick={goToNext}
-				className="absolute bottom-[50%] right-4 z-30 md:right-4 lg:bottom-[35%]"
+				className="absolute bottom-[50%] right-4 z-30 md:right-4 lg:bottom-[30%]"
 			>
 				<NewArrowRightSimple
 					theme={{
@@ -213,7 +213,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 			</button>
 
 			{/* Carousel Container */}
-			<div className="overflow-hidden py-16 lg:pt-0">
+			<div className="overflow-hidden pb-8 pt-16 lg:pb-16 lg:pt-0">
 				<div className="flex h-full items-start justify-center gap-2 md:gap-4 lg:items-start">
 					{getVisibleCards().map(
 						({ member, isActive, offset, key, playfulStyle }) => (
@@ -278,7 +278,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 			</div>
 
 			{/* Full-width description below the carousel */}
-			<div className="mt-0 h-64 overflow-y-auto px-4 pb-16 lg:px-16">
+			<div className="mt-0 h-[17rem] overflow-y-auto px-4 pb-16 lg:px-16">
 				<p className="text-base font-normal leading-[1.2] tracking-tight text-primary lg:text-xl lg:leading-[1.5rem]">
 					{teamMembers[activeIndex].description}
 				</p>

@@ -24,6 +24,7 @@ import ArrowRight from '../common/ArrowRight'
 import { BsFillCalendar2Fill } from 'react-icons/bs'
 import { PiListBold } from 'react-icons/pi'
 import NewArrowRightSimple from '../common/NewArrowRightSimple'
+import SparkleEffect from './SparkleEffect'
 
 // Types
 interface FestivalContentProps {
@@ -287,9 +288,9 @@ const EventCalendar: React.FC<CalendarProps> = ({
 						>
 							{/* Day headers */}
 							<div className="mb-2 grid grid-cols-7 gap-1">
-								{dayNames.map((day) => (
+								{dayNames.map((day, idx) => (
 									<div
-										key={day}
+										key={idx}
 										className="p-0 text-left text-xl font-semibold uppercase text-dark"
 									>
 										{day}
@@ -330,9 +331,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 															whileHover={{ scale: 1.02 }}
 															whileTap={{ scale: 0.98 }}
 														>
-															<span className="hidden lg:block">
-																{getLocalizedValue(event.title, language)}
-															</span>
+															<span className="hidden lg:block"></span>
 															{/* {getLocalizedValue(event.title, language).length >
 															15 && '...'} */}
 														</motion.button>
@@ -879,8 +878,8 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	console.log('festival:', festival)
 
 	// Setup sparkle image for snowfall
-	const sparkleImg = new window.Image()
-	sparkleImg.src = '/assets/svg/SparkleSnow2.svg'
+	// const sparkleImg = new window.Image()
+	// sparkleImg.src = '/assets/svg/SparkleSnow2.svg'
 
 	// Separate accordion items from media teaser
 	const accordionBlocks = festival.blocks?.filter(
@@ -916,12 +915,12 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		<div
 			key={festival._id}
 			id="festival-content"
-			className="lg:shadowtest relative flex h-full w-full flex-col space-y-1 rounded-md border-primary p-2 px-4 pb-32 lg:my-1 lg:h-svh lg:overflow-hidden lg:rounded-xl lg:border-[0px] lg:bg-dark lg:p-0 lg:py-16 lg:pt-0"
+			className="lg:shadowtest no-scrollbar relative flex h-full w-full flex-col space-y-1 rounded-md border-primary p-2 px-4 pb-16 lg:mt-1 lg:h-[calc(100svh-10px)] lg:overflow-hidden lg:overflow-y-auto lg:rounded-xl lg:border-[0px] lg:bg-dark lg:p-0 lg:py-16 lg:pt-0"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
-			<Snowfall
+			{/* <Snowfall
 				snowflakeCount={15}
 				speed={[0.2, 0.5]}
 				wind={[0, 0]}
@@ -929,6 +928,16 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 				rotationSpeed={[0.2, 0.5]}
 				images={[sparkleImg]}
 				style={{ zIndex: 48 }}
+			/> */}
+			<SparkleEffect
+				count={15}
+				colors={[
+					{ fill: 'var(--color-primary)' },
+					// { fill: 'var(--color-dark)', stroke: 'var(--color-primary)' },
+				]}
+				size={[30, 40]}
+				speed={[15, 25]}
+				wind={[-50, 50]}
 			/>
 			{/* Accordion Items */}
 			<Accordion

@@ -9,7 +9,6 @@ interface FestivalSparkleIconProps {
 	}
 	className?: string
 }
-
 const FestivalSparkleIcon: React.FC<FestivalSparkleIconProps> = ({
 	theme,
 	className,

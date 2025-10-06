@@ -208,7 +208,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar lg:shadowtest relative flex h-full w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:mt-1 lg:h-[calc(100svh-12px)] lg:w-full lg:overflow-y-auto lg:rounded-lg lg:bg-dark lg:py-16">
+		<div className="no-scrollbar lg:shadowtest relative flex h-full w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-primary sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:mt-1 lg:h-[calc(100svh-10px)] lg:w-full lg:overflow-y-auto lg:rounded-lg lg:bg-dark lg:py-16">
 			<div className="fixed bottom-4 right-12 z-50 lg:bottom-2 lg:right-[16.5%]">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
@@ -286,7 +286,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</motion.div>
 
 			<div className="mb-8 pt-8 lg:pt-0" id="film-selection">
-				<div className="sticky top-[0] z-10 flex flex-col items-center justify-center bg-dark lg:z-10 lg:mx-1 lg:bg-dark lg:pt-8">
+				<div className="sticky top-[0px] z-10 flex flex-col items-center justify-center bg-dark pt-2 lg:-top-[64px] lg:z-10 lg:mx-1 lg:bg-dark lg:pt-4">
 					<div className="flex items-center justify-center">
 						<motion.div
 							initial={{ rotate: -1 }}
@@ -834,15 +834,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																		<div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 																			{photosByArtist[artistName].map(
 																				(photo: any, photoIndex: number) => (
-																					// <button
-																					// 	key={photoIndex}
-																					// 	onClick={() => {
-																					// 		setCurrentImageIndex(photoIndex)
-																					// 		setIsLightboxOpen(true)
-																					// 	}}
-																					// 	className="focus:outline-none"
-																					// >
 																					<Img
+																						key={
+																							photo.photo?._key ||
+																							photo.photo?.asset?._id ||
+																							`${artistName}-${photoIndex}`
+																						}
 																						image={photo.photo}
 																						src={photo.photo.asset.url}
 																						alt={`Photo by ${artistName}`}
@@ -999,12 +996,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</div>
 
 			<div className="py-4 pt-3 lg:mx-32 lg:py-16 lg:text-primary [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
-				<div className="relative mt-4 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
+				<div className="relative mt-0 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
 					<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:text-primary">
-						{/* <MemoireLogoMobile
-						theme={themeColors.memoire}
-						className="w-1/2 overflow-visible text-dark"
-					/> */}
 						{renderParagraph(
 							{
 								value:

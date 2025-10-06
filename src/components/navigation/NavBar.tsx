@@ -15,7 +15,7 @@ import LogoShortAnimated from '../svgs/LogoShortAnimated'
 import FabriqueLogoDesktop from '../fabrique/FabriqueLogoDesktop'
 import FestivalLogoDesktop from '../festival/FestivalLogoDesktop'
 
-import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa'
+import { FaFacebook, FaInstagram, FaVimeo, FaYoutube } from 'react-icons/fa'
 import { usePathname } from 'next/navigation'
 
 // Theme configuration
@@ -102,7 +102,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 					<NavItem
 						href={`/${locale}/festival`}
 						growClass="grow-[4]"
-						className="p-8"
+						className="p-8 transition-all duration-300 [@media(max-height:900px)]:p-4"
 						isActive={isActive('festival')}
 					>
 						{(isHovered, isActive) => (
@@ -133,9 +133,12 @@ const NavBar = ({ locale }: { locale: string }) => {
 				{/* Bottom Controls */}
 				<div className="flex h-auto w-full items-center justify-between rounded-md p-1 lg:gap-0 lg:px-2">
 					{/* <div className="flex items-center justify-center"> */}
+					<FaVimeo size={30} className="text-primary lg:p-1" />
+
 					<FaYoutube size={36} className="text-primary lg:p-1" />
 					<FaFacebook size={30} className="text-primary lg:p-1" />
 					<FaInstagram size={30} className="text-primary lg:p-1" />
+
 					<span className="rounded-md bg-primary px-1 py-0 text-base font-medium tracking-tight text-dark">
 						Contact
 					</span>
@@ -203,7 +206,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 				</div>
 
 				{/* Bottom Social and Contact */}
-				<div className="flex h-[2.5rem] w-full items-center justify-between px-2">
+				<div className="flex h-[2.5rem] w-full items-center justify-between px-2 lg:pointer-events-auto">
 					<span className="rounded-md bg-primary px-1 py-0 text-base font-medium tracking-tight text-dark">
 						Mentions légales
 					</span>

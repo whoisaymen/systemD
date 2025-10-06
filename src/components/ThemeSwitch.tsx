@@ -4,7 +4,7 @@ import ColorSwitch from './homepage/ColorSwitch'
 
 const colorCombos = [
 	{ primary: '#DEFE04', dark: '#123DA6', grayDark: '#8C8C8F' },
-	{ primary: '#554FF1', dark: '#D0DCDC', grayDark: '#8C8C8F' },
+	{ primary: '#554FF1', dark: '#D0DCDC', grayDark: '#636363' },
 	{ primary: '#8C8C8F', dark: '#222223', grayDark: '#8C8C8F' },
 	// { primary: '#222223', dark: '#fff', grayDark: '#8C8C8F' },
 	// { primary: '#222223', dark: '#FFED00', grayDark: '#222223' },

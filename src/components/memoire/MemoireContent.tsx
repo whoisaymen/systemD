@@ -88,10 +88,10 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	)
 
 	return (
-		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 lg:shadowtest rounded-md border-grayLight bg-transparent px-4 tracking-tight dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner lg:h-[calc(100svh-12px)] lg:overflow-y-auto lg:border-4 lg:border-black lg:py-8">
+		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 lg:shadowtest rounded-md border-grayLight bg-transparent px-4 tracking-tight dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:border-4 lg:border-black lg:py-8">
 			{/* Description */}
-			<div className="relative mt-8 rounded-md bg-transparent lg:mb-4 lg:bg-transparent">
-				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-primary sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
+			<div className="shadowtest relative mt-8 rounded-md bg-primary p-4 text-dark lg:mb-4 lg:mt-4 lg:bg-transparent lg:p-0 lg:shadow-none">
+				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
 					{renderParagraph(
 						{
 							value:
@@ -102,6 +102,19 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					)}
 				</p>
 			</div>
+
+			{/* <div className="relative mt-4 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
+				<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:text-primary">
+					{renderParagraph(
+						{
+							value:
+								'System_D and the Citylab Pianofabriek team support your stories and imaginations in several ways.',
+						},
+						[],
+						'bg-dark text-primary lg:bg-grayDark lg:text-dark',
+					)}
+				</p>
+			</div> */}
 			{/* <div className="relative m-8 rounded-xl border-0 border-primary bg-primary px-4 py-16"> */}
 			{/* <p className="py-0 text-center text-xl font-bold leading-[1.1] tracking-tight text-primary lg:py-8 lg:pt-32 lg:text-5xl">
 				{"La mémoire est l'avenir du passé"}
@@ -141,7 +154,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					"
 				</span>
 			</div> */}
-			<p className="mt-4 py-4 pb-8 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
+			<p className="mt-4 px-1 py-4 pb-2 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
 				This festival was like a warm embrace in winter, without covid masks
 				this time. People were happy to see each other, to connect with the
 				community, particularly as the situation in Gaza was rapidly
@@ -191,7 +204,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 				</button>
 			</div> */}
 
-			<div className="mt-1 flex flex-wrap items-center justify-between border-t border-t-primary pt-4 sm:hidden">
+			<div className="mt-1 flex flex-wrap items-center justify-between border-t-0 border-t-primary pt-4 sm:hidden">
 				<span className="px-2 py-3 text-xl font-bold leading-[1] text-primary">
 					{/* {'Éditions'.split('').map((char, idx) => {
 						// Skip rendering for spaces (if any)
@@ -290,7 +303,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 						<Link
 							key={festival._id || index}
 							href={`/${language}/festival/${festival.year}`}
-							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-sm lg:border-[0px]`}
+							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-sm lg:rounded-full lg:border-[0px]`}
 						>
 							<div
 								className={`absolute left-1/2 ${view === 'single' ? 'top-[65%] text-3xl' : 'top-[38%] text-xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tight text-dark lg:top-[50%] lg:text-5xl`}

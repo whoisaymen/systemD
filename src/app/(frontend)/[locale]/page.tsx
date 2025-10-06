@@ -35,7 +35,7 @@ export default function IndexRoute() {
 	}
 
 	return (
-		<div className="relative flex h-svh w-full items-center justify-center overflow-hidden tracking-tight sm:h-[100vh]">
+		<div className="lg:shadowtest lg:no-scrollbar relative flex h-svh w-full items-center justify-center overflow-hidden tracking-tight lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:rounded-xl">
 			{/* Rule of thirds grid */}
 			<div className="pointer-events-none absolute inset-0 z-20">
 				<div className="absolute inset-0 grid grid-cols-3 grid-rows-3">

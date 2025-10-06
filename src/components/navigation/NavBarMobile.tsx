@@ -64,18 +64,58 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 		setPrevScroll(latest)
 	})
 
+	// const toggleMenu = () => {
+	// 	setMenuOpen(!menuOpen)
+	// 	if (!menuOpen) {
+	// 		document.body.style.overflow = 'hidden'
+	// 	} else {
+	// 		document.body.style.overflow = 'auto'
+	// 	}
+	// }
+
+	// const closeMenu = () => {
+	// 	setMenuOpen(false)
+	// 	document.body.style.overflow = ''
+	// }
+
+	const lockScroll = () => {
+		const scrollY = window.scrollY
+		document.body.style.position = 'fixed'
+		document.body.style.top = `-${scrollY}px`
+		document.body.style.left = '0'
+		document.body.style.right = '0'
+		document.body.style.overflow = 'hidden'
+		document.body.dataset.scrollY = String(scrollY) // save it for restore
+	}
+
+	const unlockScroll = () => {
+		const scrollY = document.body.dataset.scrollY
+			? parseInt(document.body.dataset.scrollY, 10)
+			: 0
+		document.body.style.position = ''
+		document.body.style.top = ''
+		document.body.style.left = ''
+		document.body.style.right = ''
+		document.body.style.overflow = ''
+		window.scrollTo(0, scrollY) // restore previous scroll
+		delete document.body.dataset.scrollY
+	}
+
 	const toggleMenu = () => {
-		setMenuOpen(!menuOpen)
-		if (!menuOpen) {
-			document.body.style.overflow = 'hidden'
-		} else {
-			document.body.style.overflow = 'auto'
-		}
+		setMenuOpen((prev) => {
+			const newState = !prev
+			if (newState) {
+				lockScroll()
+			} else {
+				unlockScroll()
+			}
+			return newState
+		})
 	}
 
 	const closeMenu = () => {
 		setMenuOpen(false)
-		document.body.style.overflow = ''
+		unlockScroll()
 	}
 
 	const themeColors = {

@@ -50,7 +50,7 @@ const LOGO_COLLAGE_CONFIG: LogoCollageItem[] = [
 		rotate: 25,
 	},
 	{
-		className: 'absolute bottom-2 -right-16 w-20 w-[9rem] sm:w-[15rem]',
+		className: 'absolute bottom-2 -right-12 w-20 w-[9rem] sm:w-[15rem]',
 		delay: 0.5,
 		rotate: -60,
 	},
@@ -227,7 +227,7 @@ const renderActionContent = (
 				if (block.listItem === 'bullet') {
 					const isBold = block.style === 'h6'
 					return (
-						<ul key={blockKey} className="px-36">
+						<ul key={blockKey} className="px-9 lg:px-36">
 							<li
 								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-0 lg:text-xl ${
 									isBold ? 'font-bold' : ''
@@ -301,7 +301,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	return (
 		<div
 			ref={ref}
-			className="no-scrollbar lg:shadowtest flex h-full w-full flex-col overflow-y-scroll py-32 pt-0 text-base font-medium leading-[1.2] tracking-tight text-dark sm:mt-1 sm:space-y-0 sm:px-0 lg:h-[calc(100svh-12px)] lg:rounded-xl"
+			className="no-scrollbar lg:shadowtest flex h-full w-full flex-col overflow-y-scroll px-4 py-32 pt-0 text-base font-medium leading-[1.2] tracking-tight text-dark lg:my-1 lg:h-[calc(100svh-10px)] lg:rounded-xl"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
@@ -319,7 +319,11 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 
 			{/* Single Accordion for all Actions */}
 			{memoizedValues.actions && (
-				<Accordion type="single" collapsible className="mb-0 lg:pb-0 lg:pt-16">
+				<Accordion
+					type="single"
+					collapsible
+					className="mb-0 pt-4 lg:pb-0 lg:pt-16"
+				>
 					{memoizedValues.actions.map((action: any, index: number) => {
 						const actionTitle = getLocalizedValue(action.title, language)
 						const [mainTitle, subTitle] = actionTitle.split(' - ')
@@ -351,8 +355,8 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			)}
 
 			{/* Description */}
-			<div className="relative mx-4 rounded-md border-0 bg-primary lg:mx-0 lg:bg-transparent lg:pb-4 lg:pt-16">
-				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-32 lg:text-primary">
+			<div className="shadowtest relative mt-8 rounded-md bg-primary p-4 text-dark lg:mb-4 lg:bg-transparent lg:p-0 lg:shadow-none">
+				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
 					{memoizedValues.description
 						? renderParagraph(
 								{ value: memoizedValues.description },
@@ -363,7 +367,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				</p>
 			</div>
 
-			<p className="-mt-4 px-32 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:pb-8 lg:pt-0 lg:text-xl">
+			<p className="mt-8 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
 				This festival was like a warm embrace in winter, without covid masks
 				this time. People were happy to see each other, to connect with the
 				community, particularly as the situation in Gaza was rapidly

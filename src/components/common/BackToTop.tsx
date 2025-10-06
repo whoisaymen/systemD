@@ -74,9 +74,9 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 					/> */}
 					<NewArrowRightSimple
 						theme={{
-							stroke: 'var(--color-primary)',
+							stroke: 'var(--color-dark)',
 						}}
-						className="h-[2.35rem] w-[2.35rem] -rotate-90 rounded-lg border-2 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
+						className="h-[2.35rem] w-[2.35rem] -rotate-90 rounded-lg border-2 border-dark bg-grayDark p-2 lg:h-auto lg:w-7"
 					/>
 				</motion.button>
 			)}

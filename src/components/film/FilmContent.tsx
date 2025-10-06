@@ -141,8 +141,8 @@ const FilmContent: React.FC<FilmContentProps> = ({
 		filmCount: festival?.filmSelection?.length,
 	})
 	return (
-		<div className="no-scrollbar relative mt-1 flex h-full w-full flex-col overflow-y-visible rounded-md px-5 tracking-tighter sm:mt-0 sm:min-h-screen sm:overflow-y-visible sm:py-1 lg:px-32">
-			<div className="relative my-0 my-2 flex w-full items-start justify-between">
+		<div className="lg:no-scrollbar lg:shadowtest relative flex h-full w-full flex-col rounded-md px-5 tracking-tighter lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:px-32">
+			<div className="relative flex w-full items-start justify-between">
 				<div
 					className={`w-fit rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold text-primary lg:absolute lg:-left-28 lg:top-4 lg:flex`}
 					onClick={goBack}
@@ -160,12 +160,12 @@ const FilmContent: React.FC<FilmContentProps> = ({
 									ease: 'easeInOut',
 								},
 							}}
-							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[4px] border-primary bg-dark px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] text-primary shadow-sm transition-all dark:border-grayDark dark:bg-grayDark dark:text-dark lg:z-10 lg:pl-1 lg:pr-3 lg:text-4xl`}
+							className={`flex w-fit items-center justify-center gap-1 rounded-md border border-primary bg-dark px-2 pl-0 pr-2 text-center text-xl font-bold uppercase italic tracking-[-0.06em] text-primary shadow-sm transition-all dark:border-grayDark dark:bg-grayDark dark:text-dark lg:z-10 lg:border-[4px] lg:pl-1 lg:pr-3 lg:text-4xl`}
 						>
 							<button onClick={goBack} aria-label="Go back">
 								<NewArrowRightFull
 									theme={{ stroke: 'var(--color-dark)' }}
-									className="ml-1 h-auto w-8 -rotate-180 lg:w-7"
+									className="ml-1 h-auto w-5 -rotate-180 lg:w-7"
 								/>
 							</button>
 							<span>{tFilmSelection('title')}</span>
@@ -225,7 +225,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						)}
 					</div>
 				</div>
-
+				{/* 
 				<div className="flex w-full flex-col items-end justify-start gap-0 px-2 lg:hidden">
 					{film.title && (
 						<h1
@@ -239,53 +239,39 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						{film.director}{' '}
 						<span className="font-sans italic">({film.year})</span>
 					</span>
-				</div>
+				</div> */}
 			</div>
 			<div className="relative">
-				<button
-					className={`absolute -left-12 top-1/2 hidden lg:block ${
-						navigationInfo.prevFilm ? 'opacity-100' : 'hidden'
-					}`}
-					onClick={() =>
-						navigationInfo.prevFilm && navigateToFilm(navigationInfo.prevFilm)
-					}
-					disabled={!navigationInfo.prevFilm}
-					aria-label="Previous film"
-					title={
-						navigationInfo.prevFilm
-							? `Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`
-							: 'No previous film'
-					}
-				>
-					<NewArrowRightSimple
-						theme={{
-							stroke: 'var(--color-grayDark)',
-						}}
-						className="h-auto w-8 -rotate-180 lg:w-7"
-					/>
-				</button>
-				<button
-					className={`absolute -right-12 top-1/2 hidden lg:block ${
-						navigationInfo.nextFilm ? 'opacity-100' : 'hidden'
-					}`}
-					onClick={() =>
-						navigationInfo.nextFilm && navigateToFilm(navigationInfo.nextFilm)
-					}
-					disabled={!navigationInfo.nextFilm}
-					aria-label="Next film"
-					title={
-						navigationInfo.nextFilm
-							? `Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`
-							: 'No next film'
-					}
-				>
-					<NewArrowRightSimple
-						theme={{
-							stroke: 'var(--color-grayDark)',
-						}}
-						className="h-auto w-8 lg:w-7"
-					/>
-				</button>
+				{/* Previous Arrow (Desktop only) */}
+				{navigationInfo.prevFilm && (
+					<button
+						className="absolute -bottom-14 left-4 z-10 opacity-100 lg:-left-12 lg:bottom-auto lg:top-1/2"
+						onClick={() => navigateToFilm(navigationInfo.prevFilm)}
+						aria-label="Previous film"
+						title={`Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`}
+					>
+						<NewArrowRightSimple
+							theme={{ stroke: 'var(--color-grayDark)' }}
+							className="h-auto w-5 -rotate-180 lg:w-7"
+						/>
+					</button>
+				)}
+
+				{/* Next Arrow (Desktop only) */}
+				{navigationInfo.nextFilm && (
+					<button
+						className="absolute -bottom-14 right-4 z-10 opacity-100 lg:-right-12 lg:bottom-auto lg:top-1/2"
+						onClick={() => navigateToFilm(navigationInfo.nextFilm)}
+						aria-label="Next film"
+						title={`Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`}
+					>
+						<NewArrowRightSimple
+							theme={{ stroke: 'var(--color-grayDark)' }}
+							className="h-auto w-5 lg:w-7"
+						/>
+					</button>
+				)}
+
 				{isYoutubeOrVimeo ? (
 					showPlayer ? (
 						<div className="relative mx-auto flex max-h-[60vh] min-h-[30vh] w-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:min-h-[60vh]">
@@ -303,7 +289,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							/>
 						</div>
 					) : (
-						<div className="relative mx-1 flex h-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:rounded-xl lg:border-[5px]">
+						<div className="relative mx-1 flex h-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:rounded-xl lg:border-[4px]">
 							<Img
 								image={film.affiche}
 								src={film.affiche.asset.url}
@@ -321,7 +307,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					)
 				) : (
 					film.affiche && (
-						<div className="relative mx-1 flex h-auto items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:border-[5px]">
+						<div className="relative mx-1 flex h-auto items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:border-[4px]">
 							<Img
 								image={film.affiche}
 								src={film.affiche.asset.url}
@@ -333,53 +319,57 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				)}
 			</div>
 
-			<div className="relative mb-0 mt-4 flex w-full flex-col items-center justify-center gap-2 px-6 text-xs font-medium leading-[1.2]">
-				<button
-					className={`absolute bottom-1/2 left-1 lg:hidden ${
-						navigationInfo.prevFilm ? 'opacity-100' : 'hidden'
-					}`}
-					onClick={() =>
-						navigationInfo.prevFilm && navigateToFilm(navigationInfo.prevFilm)
-					}
-					disabled={!navigationInfo.prevFilm}
-					aria-label="Previous film"
-					title={
-						navigationInfo.prevFilm
-							? `Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`
-							: 'No previous film'
-					}
-				>
-					<ArrowRight
-						theme={{
-							stroke: 'var(--color-grayDark)',
-						}}
-						className="h-auto w-8 -rotate-180 lg:w-9"
-					/>
-				</button>
+			<div className="relative z-0 mb-0 mt-4 flex w-full flex-col items-center justify-center gap-2 px-6 text-sm font-medium leading-[1.2]">
+				<div className="flex flex-col items-center lg:hidden lg:flex-row">
+					{film.title && (
+						<>
+							{splitTitle(getLocalizedValue(film.title, language), 20).map(
+								(line, idx) => (
+									<h1
+										key={idx}
+										className={[
+											'z-10 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-4xl',
+											idx === 0 ? '' : '-z-0 -mt-1',
+											idx % 2 === 0
+												? '-rotate-1 lg:-rotate-3'
+												: 'rotate-1 lg:rotate-3',
+										].join(' ')}
+									>
+										{line}
+									</h1>
+								),
+							)}
+						</>
+					)}
 
-				<button
-					className={`absolute bottom-1/2 right-1 lg:hidden ${
-						navigationInfo.nextFilm ? 'opacity-100' : 'hidden'
-					}`}
-					onClick={() =>
-						navigationInfo.nextFilm && navigateToFilm(navigationInfo.nextFilm)
-					}
-					disabled={!navigationInfo.nextFilm}
-					aria-label="Next film"
-					title={
-						navigationInfo.nextFilm
-							? `Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`
-							: 'No next film'
-					}
-				>
-					<ArrowRight
-						theme={{
-							stroke: 'var(--color-grayDark)',
-						}}
-						className="h-auto w-8 lg:w-9"
-					/>
-				</button>
+					{film.director && (
+						<>
+							{splitTitle(film.director, 26).map((line, idx) => (
+								<p
+									key={idx}
+									className={[
+										'z-10 mt-0 inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark lg:border-0 lg:text-2xl',
 
+										idx === 0 ? '' : '-z-0 -mt-[0.15rem]',
+										idx % 2 === 0
+											? '-rotate-1 lg:-rotate-3'
+											: 'rotate-1 lg:rotate-3',
+									].join(' ')}
+								>
+									{line}
+								</p>
+							))}
+						</>
+					)}
+
+					{film.year && (
+						<p
+							className={`z-0 mt-0 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+						>
+							{film.year}
+						</p>
+					)}
+				</div>
 				{/* Film counter - only show if we have festival data */}
 				{festival && sortedFilms.length > 0 && (
 					<div className="mb-2 text-xs text-grayDark lg:hidden lg:text-lg">
@@ -427,13 +417,13 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 			{film.synopsis && (
 				<div className="relative px-2 py-6 lg:py-6">
-					<p className="mx-auto py-2 text-left text-base leading-[1.2] tracking-tighter text-primary sm:py-4 lg:text-3xl">
+					<p className="mx-auto py-2 text-left text-base leading-[1.2] tracking-tight text-primary sm:py-4 lg:text-3xl">
 						{getLocalizedValue(film.synopsis, language)}
 					</p>
 				</div>
 			)}
 
-			<div className="mx-2 flex items-center justify-center gap-1 pb-32 lg:hidden">
+			{/* <div className="mx-2 flex items-center justify-center gap-1 pb-32 lg:hidden">
 				<span className="w-fit -rotate-2 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark lg:text-lg">
 					Press link
 				</span>
@@ -446,13 +436,21 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				<span className="w-fit rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark lg:text-lg">
 					Facebook
 				</span>
-			</div>
+			</div> */}
 
-			<div className="mx-2 flex items-center justify-center gap-4 text-lg tracking-tighter text-primary underline underline-offset-2">
-				<span className="">Press link</span>
-				<span className="">Instagram</span>
-				<span className="">Prod</span>
-				<span className="">Facebook</span>
+			<div className="mx-2 flex items-center justify-center gap-1 pb-16 text-lg tracking-tighter text-primary">
+				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
+					Press link
+				</span>
+				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
+					Instagram
+				</span>
+				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
+					Prod
+				</span>
+				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
+					Facebook
+				</span>
 			</div>
 		</div>
 	)
