@@ -208,8 +208,36 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 		<>
 			{isFilmPage && (
 				<>
-					<div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y lg:hidden"></div>
-					<div className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y lg:hidden"></div>
+					{/* <div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y lg:hidden"></div>
+					<div className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y lg:hidden"></div> */}
+					<div
+						className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md lg:hidden"
+						style={{
+							maskImage: `url(/assets/svg/filmroll.svg)`,
+							WebkitMaskImage: `url(/assets/svg/filmroll.svg)`,
+							maskRepeat: 'repeat-y',
+							WebkitMaskRepeat: 'repeat-y',
+							maskPosition: 'center',
+							WebkitMaskPosition: 'center',
+							maskSize: '11px 30px',
+							WebkitMaskSize: '11px 30px',
+							backgroundColor: 'var(--color-grayDark)',
+						}}
+					/>
+					<div
+						className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md lg:hidden"
+						style={{
+							maskImage: `url(/assets/svg/filmroll.svg)`,
+							WebkitMaskImage: `url(/assets/svg/filmroll.svg)`,
+							maskRepeat: 'repeat-y',
+							WebkitMaskRepeat: 'repeat-y',
+							maskPosition: 'center',
+							WebkitMaskPosition: 'center',
+							maskSize: '11px 30px',
+							WebkitMaskSize: '11px 30px',
+							backgroundColor: 'var(--color-grayDark)',
+						}}
+					/>
 				</>
 			)}
 			{/* <div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>

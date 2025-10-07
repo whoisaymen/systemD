@@ -303,7 +303,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 						<Link
 							key={festival._id || index}
 							href={`/${language}/festival/${festival.year}`}
-							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-sm lg:rounded-full lg:border-[0px]`}
+							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-sm lg:rounded-xl lg:border-[0px]`}
 						>
 							<div
 								className={`absolute left-1/2 ${view === 'single' ? 'top-[65%] text-3xl' : 'top-[38%] text-xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tight text-dark lg:top-[50%] lg:text-5xl`}

@@ -533,7 +533,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																image={film.affiche}
 																src={film.affiche.asset.url}
 																alt={getLocalizedValue(film.title, language)}
-																className="aspect-square h-auto rounded-lg border-2 border-primary object-cover lg:border-dark"
+																className="aspect-square h-auto w-full rounded-lg border-2 border-primary object-cover lg:border-dark"
 															/>
 															<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
 																<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
@@ -541,7 +541,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																		<>
 																			{splitTitle(
 																				getLocalizedValue(film.title, language),
-																				20,
+																				16,
 																			).map((line, idx) => (
 																				<h1
 																					key={idx}
@@ -663,7 +663,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												data-film-slug={film.slug?.current}
 											>
 												<td
-													className={`border-b border-primary py-2 lg:border-primary lg:text-primary ${film.isWinner ? 'lg:text-secondary' : 'lg:text-primary'}`}
+													className={`border-b border-primary py-2 lg:border-primary lg:text-primary ${film.isWinner ? 'font-black text-primary' : 'lg:text-primary'}`}
 												>
 													{film.slug?.current ? (
 														<Link
@@ -676,7 +676,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													)}
 												</td>
 												<td
-													className={`border-b border-primary px-4 py-2 lg:border-primary ${film.isWinner ? 'text-secondary' : 'text-dark lg:text-primary'}`}
+													className={`border-b border-primary px-4 py-2 lg:border-primary ${film.isWinner ? 'font-black text-primary' : 'text-primary'}`}
 												>
 													{film.slug?.current ? (
 														<Link
@@ -685,13 +685,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															{film.director}
 														</Link>
 													) : (
-														<span className="text-grayDark">
-															{film.director}
-														</span>
+														<span className="">{film.director}</span>
 													)}
 												</td>
 												<td
-													className={`border-b border-primary px-4 py-2 pr-8 lg:border-primary ${film.isWinner ? 'text-secondary' : 'text-primary lg:text-primary'}`}
+													className={`border-b border-primary px-4 py-2 pr-8 lg:border-primary ${film.isWinner ? 'font-black text-primary' : 'text-primary lg:text-primary'}`}
 												>
 													{film.slug?.current ? (
 														<Link

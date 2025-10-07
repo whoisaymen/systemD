@@ -1,5 +1,6 @@
 'use client'
 import { motion } from 'motion/react'
+import { useTransition } from 'react'
 
 import { getRandomRotationClass } from '@/lib/utils'
 import Img from '@/ui/Img'
@@ -13,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import NewArrowRightSimple from '../common/NewArrowRightSimple'
 import NewArrowRightFull from '../common/NewArrowRightFull'
 import { useTranslations } from 'next-intl'
+import LoadingOverlay from '../common/LoadingOverlay'
 
 interface FilmContentProps {
 	film: any
@@ -30,6 +32,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 	const [showPlayer, setShowPlayer] = useState(false)
 	const router = useRouter()
 	const tFilmSelection = useTranslations('filmSelection')
+	const [isPending, startTransition] = useTransition()
 
 	const getLocalizedValue = (array: any[], lang: string) => {
 		if (!Array.isArray(array)) {
@@ -95,17 +98,27 @@ const FilmContent: React.FC<FilmContentProps> = ({
 		}
 	}, [sortedFilms, film])
 
+	// const navigateToFilm = (targetFilm: any) => {
+	// 	if (!targetFilm?.slug?.current) return
+
+	// 	// Preserve search parameters
+	// 	const params = new URLSearchParams(searchParams || {})
+	// 	const queryString = params.toString()
+	// 	const url = `/${language}/film/${targetFilm.slug.current}${queryString ? `?${queryString}` : ''}`
+
+	// 	router.push(url)
+	// }
 	const navigateToFilm = (targetFilm: any) => {
 		if (!targetFilm?.slug?.current) return
 
-		// Preserve search parameters
 		const params = new URLSearchParams(searchParams || {})
 		const queryString = params.toString()
 		const url = `/${language}/film/${targetFilm.slug.current}${queryString ? `?${queryString}` : ''}`
 
-		router.push(url)
+		startTransition(() => {
+			router.push(url)
+		})
 	}
-
 	const goBack = () => {
 		if (!festival?._id) {
 			// Fallback to general memoire page if no festival data
@@ -376,37 +389,35 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						{navigationInfo.currentIndex + 1} / {navigationInfo.total}
 					</div>
 				)}
-
-				<div className="flex flex-col gap-2 lg:mt-2 lg:flex-row lg:gap-1">
-					<div className="flex items-center justify-center gap-1 lg:text-lg">
+				<div className="flex flex-col gap-1 lg:mt-2 lg:flex-row lg:flex-wrap lg:gap-1">
+					<div className="flex flex-wrap items-center justify-center gap-1 lg:text-lg">
 						{film.length && (
-							<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
 								<GoClockFill />
 								<span>{film.length} minutes</span>
 							</span>
 						)}
 
 						{film.city && (
-							<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
 								<FaLocationDot />
 								<span>{getLocalizedValue(film.city, language)}</span>
 							</span>
 						)}
 					</div>
 
-					<div className="flex items-center justify-center gap-1 lg:text-lg">
+					<div className="flex flex-wrap items-center justify-center gap-1 lg:text-lg">
 						{film.genre && film.genre.title && (
-							<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
 								<FaTag />
 								{getLocalizedValue(film.genre.title, language) ||
-									// fallback: show the first available value
 									(Array.isArray(film.genre.title) &&
 										film.genre.title[0]?.value) ||
 									''}
 							</span>
 						)}
 						{film.production && (
-							<span className="flex items-center justify-center gap-1 rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
 								<BiSolidCameraMovie />
 								{film.production}
 							</span>
@@ -452,6 +463,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					Facebook
 				</span>
 			</div>
+			<LoadingOverlay isVisible={isPending} />
 		</div>
 	)
 }

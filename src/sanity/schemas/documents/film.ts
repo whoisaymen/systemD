@@ -29,11 +29,14 @@ export default defineType({
 				},
 				slugify: (input: string) =>
 					input
-						.trim() // Trim leading and trailing spaces
+						.trim()
 						.toLowerCase()
-						.replace(/\s+/g, '-') // Replace spaces with hyphens
-						.replace(/[^\w-]+/g, '') // Remove all non-word characters except hyphens
-						.slice(0, 96), // Limit slug length to 96 characters
+						.normalize('NFD') // Decompose accented characters
+						.replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+						.replace(/[^\w]+/g, '-') // Replace non-word chars (including colon) with hyphen
+						.replace(/-+/g, '-') // Collapse multiple hyphens into one
+						.replace(/^-|-$/g, '') // Remove leading/trailing hyphens
+						.slice(0, 96),
 			},
 			validation: (Rule) => Rule.required(),
 		}),
