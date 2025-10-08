@@ -154,7 +154,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					"
 				</span>
 			</div> */}
-			<p className="mt-4 px-1 py-4 pb-2 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
+			{/* <p className="mt-4 px-1 py-4 pb-2 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
 				This festival was like a warm embrace in winter, without covid masks
 				this time. People were happy to see each other, to connect with the
 				community, particularly as the situation in Gaza was rapidly
@@ -171,7 +171,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 				Bwanga Pilipili, Gilles De Voghel, Mehdi Fikri and Mounir Amamra.
 				Together they celebrated the unique identity of the festival while
 				welcoming new perspectives.
-			</p>
+			</p> */}
 			{/* <div className="mb-4 flex flex-wrap items-center gap-2">
 				<span className="font-bold">Year:</span>
 				<button
