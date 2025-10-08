@@ -3,9 +3,7 @@ import { motion } from 'motion/react'
 import Img from '@/ui/Img'
 import LogoShortTsx from '../svgs/LogoShort'
 import { useRef } from 'react'
-import BigBangLogoMobile from './BigBangLogoMobile'
 import BackToTopButton from '../common/BackToTop'
-import { ThemedSvgFromCMS } from './ThemedSvgFromCMS'
 
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
@@ -15,7 +13,7 @@ const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 					key={block._key}
 					block={block}
 					lang={lang}
-					animationVariant={index % 3} // Use index to create variation
+					animationVariant={index % 3}
 				/>
 			))}
 		</div>
@@ -33,7 +31,6 @@ const StoryBlock = ({
 }) => {
 	const ref = useRef(null)
 
-	// Different animation patterns based on variant
 	const animations = [
 		{
 			// Variant 0 - Slow pulse
@@ -49,7 +46,6 @@ const StoryBlock = ({
 			image: {
 				// scale: [0.8, 0.6, 0.8],
 				scale: [1, 0.3, 1],
-				// rotate: [-3, 3, -3],
 				transition: {
 					duration: 4,
 					ease: [0.76, 0, 0.24, 1],
@@ -57,55 +53,19 @@ const StoryBlock = ({
 				},
 			},
 		},
-		// {
-		// 	// Variant 1 - Medium float
-		// 	container: {
-		// 		borderRadius: [10, 80, 10],
-		// 		scale: [1, 1.03, 1],
-		// 		y: [0, -5, 0],
-		// 		transition: {
-		// 			duration: 6,
-		// 			ease: [0.76, 0, 0.24, 1],
-		// 			repeat: Infinity,
-		// 		},
-		// 	},
-		// 	image: {
-		// 		scale: [0.8, 0.7, 0.8],
-		// 		rotate: [0, 5, 0],
-		// 		x: [0, 10, 0],
-		// 		transition: {
-		// 			duration: 7,
-		// 			ease: [0.76, 0, 0.24, 1],
-		// 			repeat: Infinity,
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	// Variant 2 - Quick subtle movement
-		// 	container: {
-		// 		borderRadius: [10, 30, 10],
-		// 		scale: [1, 1.01, 1],
-		// 		x: [0, 5, 0],
-		// 		transition: {
-		// 			duration: 5,
-		// 			ease: [0.76, 0, 0.24, 1],
-		// 			repeat: Infinity,
-		// 		},
-		// 	},
-		// 	image: {
-		// 		scale: [0.8, 0.78, 0.8],
-		// 		rotate: [0, -4, 0],
-		// 		y: [0, 8, 0],
-		// 		transition: {
-		// 			duration: 9,
-		// 			ease: [0.76, 0, 0.24, 1],
-		// 			repeat: Infinity,
-		// 		},
-		// 	},
-		// },
 	]
 
-	// Select animation based on variant
+	const imageVariants = {
+		mobile: {
+			scale: [1, 0.5, 1],
+			transition: { duration: 4, ease: [0.76, 0, 0.24, 1], repeat: Infinity },
+		},
+		desktop: {
+			scale: [0.8, 0.5, 0.8],
+			transition: { duration: 4, ease: [0.76, 0, 0.24, 1], repeat: Infinity },
+		},
+	}
+
 	const animation = animations[animationVariant % animations.length]
 
 	const themeColors = {
@@ -162,10 +122,11 @@ const StoryBlock = ({
 
 			{block.image && (
 				<motion.div
-					animate={animation.image}
+					variants={imageVariants}
+					animate={window.innerWidth >= 1024 ? 'desktop' : 'mobile'}
 					className="relative w-full px-2 pt-0 sm:px-8 lg:py-8"
 				>
-					<Img
+					{/* <Img
 						image={block.image}
 						src={`/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`}
 						alt="Story Image"
@@ -173,7 +134,15 @@ const StoryBlock = ({
 							filter: 'grayscale(1) hue-rotate(70deg) brightness(0.8)',
 						}}
 						className="h-auto w-full"
-					/>
+					/> */}
+
+					{block.svgMarkup && (
+						<div
+							className="h-auto w-full"
+							style={{ color: 'var(--color-grayDark)' }}
+							dangerouslySetInnerHTML={{ __html: block.svgMarkup }}
+						/>
+					)}
 				</motion.div>
 			)}
 		</div>

@@ -23,6 +23,11 @@ export default defineType({
 				hotspot: true,
 			},
 		}),
+		defineField({
+			name: 'svgMarkup',
+			title: 'SVG Markup',
+			type: 'text', // or 'code' if you want syntax highlighting
+		}),
 		// defineField({
 		// 	name: 'svg',
 		// 	title: 'SVG Illustration',

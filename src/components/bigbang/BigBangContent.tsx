@@ -37,7 +37,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 
 	return (
 		<div className="lg:shadowtest lg:no-scrollbar w-full lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:rounded-xl">
-			<div className="sticky left-0 top-2 z-10 m-6 mx-auto mb-2 flex w-fit justify-between gap-2 rounded-full bg-primary px-1 py-1 text-base font-bold tracking-tighter sm:justify-center lg:my-2 lg:px-2 lg:py-1 lg:py-2 lg:text-lg">
+			<div className="sticky left-0 top-2 z-10 m-6 mx-auto mb-2 flex w-fit justify-between gap-2 rounded-full bg-primary px-1 py-1 text-base font-bold tracking-tighter sm:justify-center lg:my-2 lg:px-1 lg:py-1 lg:text-lg">
 				<button
 					onClick={() => handleTabClick('short')}
 					className={`w-auto px-2.5 py-0 lg:px-4 lg:pb-0.5 ${

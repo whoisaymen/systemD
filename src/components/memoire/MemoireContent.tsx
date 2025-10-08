@@ -98,7 +98,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 								'System_D and the Citylab Pianofabriek team support your stories and imaginations in several ways.',
 						},
 						[],
-						'bg-grayDark text-dark lg:bg-grayDark lg:text-dark',
+						'bg-dark text-primary lg:bg-grayDark lg:text-dark',
 					)}
 				</p>
 			</div>

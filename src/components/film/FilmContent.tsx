@@ -44,9 +44,6 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 	// Reconstruct the sorted films array based on current filters/sorting
 	const sortedFilms = useMemo(() => {
-		console.log('Sorting films with params:', searchParams)
-		console.log('Festival film selection:', festival?.filmSelection)
-
 		if (!festival?.filmSelection) return []
 
 		const sortField = searchParams?.sort || 'year'
@@ -155,6 +152,23 @@ const FilmContent: React.FC<FilmContentProps> = ({
 	})
 	return (
 		<div className="lg:no-scrollbar lg:shadowtest relative flex h-full w-full flex-col rounded-md px-5 tracking-tighter lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:px-32">
+			<div className="fixed bottom-4 right-8 z-50">
+				<NewArrowRightSimple
+					theme={{
+						stroke: 'var(--color-dark)',
+					}}
+					className="h-[2.50rem] w-[2.50rem] rounded-lg border-2 border-dark bg-grayDark p-2 lg:h-auto lg:w-7"
+				/>
+			</div>
+			<div className="fixed bottom-4 left-8 z-50">
+				<NewArrowRightSimple
+					theme={{
+						stroke: 'var(--color-dark)',
+					}}
+					className="h-[2.50rem] w-[2.50rem] -rotate-180 rounded-lg border-2 border-dark bg-grayDark p-2 lg:h-auto lg:w-7"
+				/>
+			</div>
+
 			<div className="relative flex w-full items-start justify-between">
 				<div
 					className={`w-fit rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold text-primary lg:absolute lg:-left-28 lg:top-4 lg:flex`}
@@ -184,6 +198,42 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							<span>{tFilmSelection('title')}</span>
 						</motion.div>
 					</div>
+				</div>
+				<div className="mt-2 flex items-center justify-center gap-x-2">
+					{navigationInfo.prevFilm && (
+						<button
+							className="z-10 opacity-100"
+							onClick={() => navigateToFilm(navigationInfo.prevFilm)}
+							aria-label="Previous film"
+							title={`Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`}
+						>
+							<NewArrowRightSimple
+								theme={{ stroke: 'var(--color-grayDark)' }}
+								className="w-2 -rotate-180 lg:w-7"
+							/>
+						</button>
+					)}
+
+					{festival && sortedFilms.length > 0 && (
+						<div className="text-base text-grayDark lg:hidden lg:text-lg">
+							{navigationInfo.currentIndex + 1} / {navigationInfo.total}
+						</div>
+					)}
+
+					{/* Next Arrow (Desktop only) */}
+					{navigationInfo.nextFilm && (
+						<button
+							className="z-10 opacity-100"
+							onClick={() => navigateToFilm(navigationInfo.nextFilm)}
+							aria-label="Next film"
+							title={`Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`}
+						>
+							<NewArrowRightSimple
+								theme={{ stroke: 'var(--color-grayDark)' }}
+								className="w-2 lg:w-7"
+							/>
+						</button>
+					)}
 				</div>
 
 				<div className="z-50 hidden items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark lg:mt-28 lg:flex">
@@ -258,7 +308,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				{/* Previous Arrow (Desktop only) */}
 				{navigationInfo.prevFilm && (
 					<button
-						className="absolute -bottom-14 left-4 z-10 opacity-100 lg:-left-12 lg:bottom-auto lg:top-1/2"
+						className="absolute -bottom-14 left-1 z-10 opacity-100 lg:-left-12 lg:bottom-auto lg:top-1/2"
 						onClick={() => navigateToFilm(navigationInfo.prevFilm)}
 						aria-label="Previous film"
 						title={`Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`}
@@ -273,7 +323,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				{/* Next Arrow (Desktop only) */}
 				{navigationInfo.nextFilm && (
 					<button
-						className="absolute -bottom-14 right-4 z-10 opacity-100 lg:-right-12 lg:bottom-auto lg:top-1/2"
+						className="absolute -bottom-14 right-1 z-10 opacity-100 lg:-right-12 lg:bottom-auto lg:top-1/2"
 						onClick={() => navigateToFilm(navigationInfo.nextFilm)}
 						aria-label="Next film"
 						title={`Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`}

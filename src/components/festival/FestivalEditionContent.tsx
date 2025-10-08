@@ -994,8 +994,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</div>
 
 			<div className="py-4 pt-3 lg:mx-32 lg:py-16 lg:text-primary [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
-				<div className="relative mt-0 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
-					<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:text-primary">
+				<div className="shadowtest relative mb-6 mt-0 rounded-md bg-primary p-4 text-dark lg:mb-4 lg:mt-4 lg:bg-transparent lg:p-0 lg:shadow-none">
+					<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:text-primary">
 						{renderParagraph(
 							{
 								value:
@@ -1029,47 +1029,18 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						</p>
 					)
 				})}
+
+				{festival.pressLink && (
+					<a
+						href={festival.pressLink}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="mt-6 inline-block rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base"
+					>
+						Press Link
+					</a>
+				)}
 			</div>
-
-			{/* {festival.description && (
-				<div className="relative rounded-md border-dark bg-primary p-5 sm:py-10 lg:mx-32 lg:bg-dark">
-					<div className="flex flex-wrap items-center justify-center gap-2 lg:gap-4">
-						{(getLocalizedValue(festival.description, language) || '')
-							.split(' ')
-							.map((word: string, index: number) => {
-								// Generate random rotation and position
-								const randomRotation = Math.floor(Math.random() * 21) - 10 // -10 to 10 deg
-								const randomMarginTop = Math.floor(Math.random() * 10) - 5 // -5px to 5px
-								const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // -5px to 5px
-
-								return (
-									<span
-										key={index}
-										className="inline-block text-xl font-bold leading-[1.2] tracking-tighter text-dark sm:text-4xl lg:text-primary"
-										style={{
-											transform: `rotate(${randomRotation}deg)`,
-											marginTop: `${randomMarginTop}px`,
-											marginLeft: `${randomMarginLeft}px`,
-										}}
-									>
-										{word}
-									</span>
-								)
-							})}
-					</div>
-				</div>
-			)} */}
-
-			{/* {festival.pressLink && (
-				<a
-					href={festival.pressLink}
-					target="_blank"
-					rel="noopener noreferrer"
-					className="mt-4 inline-block text-primary underline"
-				>
-					Press Link
-				</a>
-			)} */}
 		</div>
 	)
 }

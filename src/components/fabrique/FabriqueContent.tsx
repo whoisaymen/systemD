@@ -50,7 +50,8 @@ const LOGO_COLLAGE_CONFIG: LogoCollageItem[] = [
 		rotate: 25,
 	},
 	{
-		className: 'absolute bottom-2 -right-12 w-20 w-[9rem] sm:w-[15rem]',
+		className:
+			'absolute bottom-2 -right-8 lg:-right-12 w-20 w-[9rem] sm:w-[15rem]',
 		delay: 0.5,
 		rotate: -60,
 	},
@@ -65,17 +66,20 @@ const LOGO_COLLAGE_CONFIG: LogoCollageItem[] = [
 		rotate: -60,
 	},
 	{
-		className: 'absolute -bottom-8 -left-0 w-20 w-[9rem] sm:w-[15rem]',
+		className:
+			'absolute -bottom-2 lg:-bottom-8 -left-0 w-20 w-[9rem] sm:w-[15rem]',
 		delay: 1.1,
 		rotate: 60,
 	},
 	{
-		className: 'absolute -bottom-32 left-[45%] w-20 w-[9rem] sm:w-[15rem]',
+		className:
+			'absolute -bottom-24 lg:-bottom-32 left-[45%] w-20 w-[9rem] sm:w-[15rem]',
 		delay: 1.3,
 		rotate: 40,
 	},
 	{
-		className: 'absolute -bottom-28 left-1/2 w-20 w-[9rem] sm:w-[15rem]',
+		className:
+			'absolute -bottom-24 lg:-bottom-28 left-1/2 w-20 w-[9rem] sm:w-[15rem]',
 		delay: 1.3,
 		rotate: -40,
 	},
@@ -183,7 +187,7 @@ const LogoCollage: React.FC = () => {
 				))}
 			</div>
 
-			<p className="mx-auto py-2 pt-32 text-center text-3xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary sm:pt-52 sm:text-4xl">
+			<p className="mx-auto py-2 pt-40 text-center text-3xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary sm:pt-52 sm:text-4xl">
 				For our Brussels stories, resourceful and proud.
 			</p>
 		</div>

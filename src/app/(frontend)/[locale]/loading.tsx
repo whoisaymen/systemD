@@ -1,6 +1,6 @@
 export default function Loading() {
 	return (
-		<div className="flex h-screen w-screen items-center justify-center">
+		<div className="lg:shadowtest lg:no-scrollbar flex h-screen w-screen items-center justify-center lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:rounded-xl">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 200 200"

@@ -36,7 +36,10 @@ async function getBigBang() {
       },
       _type == 'internationalizedParagraphBlock' => {
         _type,
-        text
+        text,
+        title,
+        image,
+        svgMarkup
       },
       _type == 'internationalizedImageBlock' => {
         _type,
