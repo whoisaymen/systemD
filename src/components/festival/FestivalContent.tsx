@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
 import { PortableText } from 'next-sanity'
 import Snowfall from 'react-snowfall'
@@ -741,6 +741,9 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 
 const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	const [currentIndex, setCurrentIndex] = useState(0)
+	const [isVisible, setIsVisible] = useState(false)
+	const [isOpen, setIsOpen] = useState(false) // track accordion open state
+	const juryRef = useRef<HTMLDivElement>(null)
 	const getLocalizedValue = useLocalizedValue()
 
 	const members = block.juryMembers || []
@@ -750,6 +753,22 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	const goPrev = () => setCurrentIndex((prev) => (prev - 1 + total) % total)
 	const goNext = () => setCurrentIndex((prev) => (prev + 1) % total)
 
+	// Observe visibility only when open
+	useEffect(() => {
+		if (!isOpen || !juryRef.current) {
+			setIsVisible(false)
+			return
+		}
+
+		const observer = new IntersectionObserver(
+			([entry]) => setIsVisible(entry.isIntersecting),
+			{ threshold: 0.2 },
+		)
+
+		observer.observe(juryRef.current)
+		return () => observer.disconnect()
+	}, [isOpen])
+
 	if (!block.show || !currentMember) return null
 
 	return (
@@ -757,76 +776,90 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			value={`jury-${index}`}
 			className="flex flex-col items-center justify-center"
 		>
-			<AccordionTrigger className="-rotate-6 lg:text-5xl">
+			<AccordionTrigger
+				className="-rotate-6 lg:text-5xl"
+				onClick={() => setIsOpen((prev) => !prev)}
+			>
 				Jury
 			</AccordionTrigger>
+
 			<AccordionContent>
-				<div className="relative flex w-full flex-col items-center justify-center py-8 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32">
+				<div
+					ref={juryRef}
+					className="relative flex w-full flex-col items-center justify-center py-8 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32"
+				>
+					{/* Desktop arrows */}
 					<button
-						className={`absolute left-2 top-24 lg:left-12 lg:top-1/2 lg:block`}
 						onClick={goPrev}
+						className={`absolute left-2 top-24 hidden transition-opacity duration-300 lg:left-12 lg:top-1/2 lg:block ${
+							isVisible && isOpen
+								? 'opacity-100'
+								: 'pointer-events-none opacity-0'
+						}`}
 					>
 						<NewArrowRightSimple
-							theme={{
-								stroke: 'var(--color-dark)',
-							}}
-							className="h-[2.35rem] w-[2.35rem] -rotate-180 rounded-lg border-0 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
+							theme={{ stroke: 'var(--color-dark)' }}
+							className="h-[2.35rem] w-[2.35rem] -rotate-180 rounded-lg bg-grayDark p-2 lg:w-7"
 						/>
 					</button>
+
 					<button
-						className={`absolute right-2 top-24 lg:right-12 lg:top-1/2 lg:block`}
 						onClick={goNext}
+						className={`absolute right-2 top-24 hidden transition-opacity duration-300 lg:right-12 lg:top-1/2 lg:block ${
+							isVisible && isOpen
+								? 'opacity-100'
+								: 'pointer-events-none opacity-0'
+						}`}
 					>
 						<NewArrowRightSimple
-							theme={{
-								stroke: 'var(--color-dark)',
-							}}
-							className="-rotate h-[2.35rem] w-[2.35rem] rounded-lg border-0 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
+							theme={{ stroke: 'var(--color-dark)' }}
+							className="h-[2.35rem] w-[2.35rem] rounded-lg bg-grayDark p-2 lg:w-7"
 						/>
 					</button>
-					{/* Left: Photo, Name, Counter */}
+
+					{/* Member content */}
 					<div className="flex flex-col items-center">
 						<Img
 							image={currentMember.image}
 							src={currentMember.image?.asset.url}
 							alt={currentMember.name}
-							className="h-48 w-64 min-w-[10rem] rounded-lg border-0 border-primary object-cover lg:h-80 lg:w-56 lg:min-w-[15rem]"
+							className="h-48 w-64 rounded-lg object-cover lg:h-80 lg:w-56"
 						/>
 						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-2xl font-medium tracking-tight text-dark">
 							{currentMember.name}
 						</h2>
-						<span className="hidden w-full text-center text-xl font-semibold tracking-[-0.15em] text-primary">
-							{total > 0 ? `${currentIndex + 1} / ${total}` : null}
-						</span>
-						{/* <div className="items-between mt-2 flex w-full justify-center">
-							<button onClick={goPrev} aria-label="Go back">
-								<ArrowRight
-									theme={{ fill: 'var(--color-grayDark)' }}
-									className="h-auto w-8 -rotate-180 lg:w-9"
-								/>
-							</button>
-							<span className="w-full text-center text-xl font-semibold text-primary">
-								{total > 0 ? `${currentIndex + 1} / ${total}` : null}
-							</span>
-							<button onClick={goNext} aria-label="Go next">
-								<ArrowRight
-									theme={{ fill: 'var(--color-grayDark)' }}
-									className="h-auto w-8 lg:w-9"
-								/>
-							</button>
-						</div> */}
 					</div>
 
-					{/* Right: Biography */}
-					<div className="mt-6 flex flex-1 flex-col items-center lg:mt-0 lg:items-start lg:justify-center lg:text-left">
+					<div className="mt-6 flex flex-1 flex-col items-center lg:mt-0 lg:items-start lg:text-left">
 						{currentMember.biography && (
-							<p className="mb-4 text-base font-normal leading-snug tracking-tight text-primary lg:text-xl lg:leading-tight">
+							<p className="mb-4 text-base font-normal leading-[1.2] tracking-tight text-primary lg:text-xl lg:leading-[1.5rem]">
 								{getLocalizedValue(currentMember.biography, language)}
 							</p>
 						)}
 					</div>
 				</div>
 			</AccordionContent>
+
+			<div
+				className={`fixed bottom-0 left-0 right-0 z-40 mb-4 flex justify-between px-8 transition-opacity duration-300 lg:hidden ${
+					isVisible && isOpen
+						? 'pointer-events-auto opacity-100'
+						: 'pointer-events-none opacity-0'
+				}`}
+			>
+				<button onClick={goPrev} className="pointer-events-auto">
+					<NewArrowRightSimple
+						theme={{ stroke: 'var(--color-dark)' }}
+						className="h-[2.5rem] w-[2.5rem] -rotate-180 rounded-lg border-2 border-dark bg-grayDark p-2"
+					/>
+				</button>
+				<button onClick={goNext} className="pointer-events-auto">
+					<NewArrowRightSimple
+						theme={{ stroke: 'var(--color-dark)' }}
+						className="h-[2.5rem] w-[2.5rem] rounded-lg border-2 border-dark bg-grayDark p-2"
+					/>
+				</button>
+			</div>
 		</AccordionItem>
 	)
 }
@@ -835,8 +868,6 @@ const OnTourBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	const getLocalizedValue = useLocalizedValue()
 
 	if (!block.show) return null
-
-	console.log('OnTourBlock events:', block.events)
 
 	return (
 		<AccordionItem
@@ -875,8 +906,6 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		return <div>No content available</div>
 	}
 
-	console.log('festival:', festival)
-
 	// Setup sparkle image for snowfall
 	// const sparkleImg = new window.Image()
 	// sparkleImg.src = '/assets/svg/SparkleSnow2.svg'
@@ -909,15 +938,13 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 		}
 	}
 
-	console.log(festival)
-
 	return (
 		<div
 			key={festival._id}
 			id="festival-content"
 			className="lg:shadowtest no-scrollbar relative flex h-full w-full flex-col space-y-1 rounded-md border-primary p-2 px-4 pb-16 lg:mt-1 lg:h-[calc(100svh-10px)] lg:overflow-hidden lg:overflow-y-auto lg:rounded-xl lg:border-[0px] lg:bg-dark lg:p-0 lg:py-16 lg:pt-0"
 		>
-			<div className="fixed bottom-4 right-12 z-50">
+			<div className="fixed bottom-0 right-0 z-50 mb-4 flex items-center justify-end px-8 lg:hidden">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 			{/* <Snowfall

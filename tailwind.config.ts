@@ -26,11 +26,11 @@ export default {
 				canvas: '#fff',
 				accent: '#1d1d1f',
 				// primary: '#DEFE04',
-				primary: 'var(--color-primary)',
+				primary: 'rgb(var(--color-primary-rgb) / <alpha-value>)', // Changed this
 				secondary: '#DEFE04',
 				tertiary: '#222223',
 				// dark: '#123DA6',
-				dark: 'var(--color-dark)',
+				dark: 'rgb(var(--color-dark-rgb) / <alpha-value>)', // Changed this
 
 				// dark: '#2c1',
 				// dark: '#222223',
@@ -38,7 +38,7 @@ export default {
 				// dark: '#000',
 				grayLight: '#DADADA',
 				// grayDark: '#8C8C8F',
-				grayDark: 'var(--color-grayDark)',
+				grayDark: 'rgb(var(--color-grayDark-rgb) / <alpha-value>)', // Changed this
 				// grayDark: '#DEFE04',
 			},
 			maxHeight: {

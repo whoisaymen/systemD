@@ -315,7 +315,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 					}}
 					className={`relative flex h-full w-full cursor-pointer items-center justify-center rounded-md shadow-inner ${
 						active
-							? 'shadowtest border-0 border-r-0 bg-dark lg:relative lg:z-50'
+							? 'shadowtest border-0 border-r-0 bg-neutral-500 lg:relative lg:z-50'
 							: 'to-grayDark/25 shadowtest bg-gradient-to-b from-primary shadow-inner'
 					} ${className}`}
 				>

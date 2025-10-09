@@ -1,6 +1,7 @@
 import FilmContent from '@/components/film/FilmContent'
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import { notFound } from 'next/navigation'
+import Loading from './loading'
 
 export default async function FilmPage({
 	params,
@@ -19,10 +20,6 @@ export default async function FilmPage({
 
 	const festival = await getFestivalWithFilms(film.festival?._ref)
 
-	console.log('Film:', film)
-	console.log('Festival:', festival)
-	console.log('Resolved search params:', resolvedSearchParams)
-
 	// Convert searchParams to a proper object for easier handling
 	const searchParamsObj: Record<string, string> = {}
 	Object.entries(resolvedSearchParams).forEach(([key, value]) => {
@@ -38,6 +35,7 @@ export default async function FilmPage({
 			festival={festival}
 			searchParams={searchParamsObj}
 		/>
+		// <Loading />
 	)
 }
 
@@ -74,11 +72,8 @@ async function getFilm(slug: string) {
 
 async function getFestivalWithFilms(festivalId: string) {
 	if (!festivalId) {
-		console.log('No festival ID provided')
 		return null
 	}
-
-	console.log('Looking for festival with ID:', festivalId)
 
 	// Get the festival details
 	const festivalQuery = groq`
@@ -119,9 +114,6 @@ async function getFestivalWithFilms(festivalId: string) {
 			fetchSanityLive({ query: festivalQuery, params: { festivalId } }),
 			fetchSanityLive({ query: filmsQuery, params: { festivalId } }),
 		])
-
-		console.log('Festival data:', festival)
-		console.log('Films data:', films)
 
 		if (!festival) {
 			return null

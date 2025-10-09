@@ -9,8 +9,6 @@ export default async function FabriquePage({
 	const { locale } = await params
 	const content = await getFabrique()
 
-	console.log(content)
-
 	return <FabriqueContent fabrique={content.fabrique} language={locale} />
 }
 

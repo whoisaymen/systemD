@@ -34,7 +34,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		return item ? item.value : ''
 	}
 
-	const [view, setView] = useState<'grid' | 'single'>('single')
+	const [view, setView] = useState<'grid' | 'single'>('grid')
 	const [sortField, setSortField] = useState<'year'>('year')
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 	const [yearFilter, setYearFilter] = useState<string | null>(null)
@@ -206,27 +206,6 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 
 			<div className="mt-1 flex flex-wrap items-center justify-between border-t-0 border-t-primary pt-4 sm:hidden">
 				<span className="px-2 py-3 text-xl font-bold leading-[1] text-primary">
-					{/* {'Éditions'.split('').map((char, idx) => {
-						// Skip rendering for spaces (if any)
-						if (char === ' ') return <span key={idx}>&nbsp;</span>
-						// Random rotation and position for each character
-						const randomRotation = Math.floor(Math.random() * 21) - 10 // -10 to 10 deg
-						const randomMarginTop = Math.floor(Math.random() * 10) - 5 // -5px to 5px
-						const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // -5px to 5px
-						return (
-							<span
-								key={idx}
-								className="inline-block p-0.5"
-								style={{
-									transform: `rotate(${randomRotation}deg)`,
-									marginTop: `${randomMarginTop}px`,
-									marginLeft: `${randomMarginLeft}px`,
-								}}
-							>
-								{char}
-							</span>
-						)
-					})} */}
 					Éditions
 				</span>
 				{/* View toggle */}

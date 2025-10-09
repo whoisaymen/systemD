@@ -58,25 +58,11 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 					whileHover={{ y: -5 }}
 					onClick={scrollToTop}
 					aria-label="Scroll to top of section"
+					className="flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-lg border-2 border-dark bg-grayDark p-2"
 				>
-					{/* <ArrowIcon
-						theme={{
-							fill: 'var(--color-primary)',
-						}}
-						className="h-full w-full p-1"
-					/> */}
-					{/* <ArrowRight
-						theme={{
-							// fill: 'var(--color-grayDark)',
-							stroke: 'var(--color-primary)',
-						}}
-						className="h-auto w-9 -rotate-90 lg:w-9"
-					/> */}
 					<NewArrowRightSimple
-						theme={{
-							stroke: 'var(--color-dark)',
-						}}
-						className="h-[2.35rem] w-[2.35rem] -rotate-90 rounded-lg border-2 border-dark bg-grayDark p-2 lg:h-auto lg:w-7"
+						theme={{ stroke: 'var(--color-dark)' }}
+						className="h-full w-full -rotate-90"
 					/>
 				</motion.button>
 			)}

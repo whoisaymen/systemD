@@ -187,10 +187,33 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 	return (
 		<div className="lg:shadowtest no-scrollbar relative w-full lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:rounded-xl lg:pt-32">
+			<button
+				onClick={goToPrev}
+				className="pointer-events-auto fixed bottom-4 left-8 z-40"
+			>
+				<NewArrowRightSimple
+					theme={{
+						stroke: 'var(--color-dark)',
+					}}
+					className="h-[2.50rem] w-[2.50rem] -rotate-180 rounded-lg border-2 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
+				/>
+			</button>
+			<button
+				onClick={goToNext}
+				className="pointer-events-auto fixed bottom-4 right-8 z-40 lg:hidden"
+			>
+				<NewArrowRightSimple
+					theme={{
+						stroke: 'var(--color-dark)',
+					}}
+					className="h-[2.50rem] w-[2.50rem] rounded-lg border-2 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
+				/>
+			</button>
+
 			{/* Navigation Arrows */}
 			<button
 				onClick={goToPrev}
-				className="absolute bottom-[50%] left-4 z-30 md:left-4 lg:bottom-[30%]"
+				className="absolute bottom-[50%] left-4 z-30 hidden md:left-4 lg:bottom-[30%] lg:block"
 			>
 				<NewArrowRightSimple
 					theme={{
@@ -202,7 +225,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 			<button
 				onClick={goToNext}
-				className="absolute bottom-[50%] right-4 z-30 md:right-4 lg:bottom-[30%]"
+				className="absolute bottom-[50%] right-4 z-30 hidden md:right-4 lg:bottom-[30%] lg:block"
 			>
 				<NewArrowRightSimple
 					theme={{
@@ -213,7 +236,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 			</button>
 
 			{/* Carousel Container */}
-			<div className="overflow-hidden pb-8 pt-16 lg:pb-16 lg:pt-0">
+			<div className="overflow-hidden pb-4 pt-16 lg:pb-16 lg:pt-0">
 				<div className="flex h-full items-start justify-center gap-2 md:gap-4 lg:items-start">
 					{getVisibleCards().map(
 						({ member, isActive, offset, key, playfulStyle }) => (

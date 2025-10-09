@@ -77,9 +77,7 @@ async function migratePhotoGallery() {
 				.patch(festival._id)
 				.set({ photoGallery: newPhotoGallery })
 				.commit()
-				.then((updatedFestival) => {
-					console.log(`Updated festival ${festival._id}`)
-				})
+				.then((updatedFestival) => {})
 				.catch((err) => {
 					console.error(`Failed to update festival ${festival._id}:`, err)
 				})

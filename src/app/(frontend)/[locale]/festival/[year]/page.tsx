@@ -15,8 +15,6 @@ export default async function FestivalEditionPage({
 		return <div>No content available for this festival edition</div>
 	}
 
-	console.log('content', content)
-
 	// return <Loading />
 	return <FestivalEditionContent festival={content} language={locale} />
 }

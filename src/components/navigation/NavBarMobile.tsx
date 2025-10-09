@@ -248,14 +248,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_20%,white_40%,white_50%,transparent_75%)]" />
 					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_50%,white_60%,white_75%,transparent_100%)]" />
 				</div> */}
-				<nav
-					// variants={parentVariants}
-					// animate={hidden ? 'hidden' : 'visible'}
-					// transition={{
-					// 	duration: 0.2,
-					// }}
-					className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black lg:hidden"
-				>
+				<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black lg:hidden">
 					<div className="h-full w-full">{renderLogo()}</div>
 				</nav>
 			</div>
@@ -277,12 +270,12 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				transition={{
 					duration: 0.2,
 				}}
-				className="fixed bottom-0 z-50 mb-4 flex h-auto w-full items-center justify-center gap-1 lg:hidden"
+				className="pointer-events-none fixed bottom-0 z-50 mb-4 flex h-auto w-full items-center justify-center gap-1 lg:hidden"
 			>
-				<div className="h-[2.5rem] w-fit rounded-lg border-2 border-dark bg-primary shadow-md dark:border-primary">
+				<div className="pointer-events-auto h-[2.5rem] w-fit rounded-lg border-2 border-dark bg-primary shadow-md dark:border-primary">
 					<LocaleSwitcher />
 				</div>
-				<div className="flex items-stretch justify-center gap-1">
+				<div className="pointer-events-auto flex items-stretch justify-center gap-1">
 					<div className="flex aspect-square h-full overflow-hidden rounded-md border-2 border-dark dark:border-primary">
 						<ThemeSwitch />
 					</div>

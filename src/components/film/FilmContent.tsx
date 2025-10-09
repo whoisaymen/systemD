@@ -131,7 +131,6 @@ const FilmContent: React.FC<FilmContentProps> = ({
 		// Use the festival ID since we don't have a slug
 		const url = `/${language}/festival/${festival.year}${queryString ? `?${queryString}` : ''}`
 
-		console.log('Navigating back to:', url)
 		router.push(url)
 	}
 
@@ -145,30 +144,42 @@ const FilmContent: React.FC<FilmContentProps> = ({
 			film.playFilmUrl.includes('youtu.be') ||
 			film.playFilmUrl.includes('vimeo.com'))
 
-	console.log('Film Content Props:', {
-		film: film?.title,
-		festival: festival?.year,
-		filmCount: festival?.filmSelection?.length,
-	})
 	return (
 		<div className="lg:no-scrollbar lg:shadowtest relative flex h-full w-full flex-col rounded-md px-5 tracking-tighter lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:px-32">
-			<div className="fixed bottom-4 right-8 z-50">
-				<NewArrowRightSimple
-					theme={{
-						stroke: 'var(--color-dark)',
-					}}
-					className="h-[2.50rem] w-[2.50rem] rounded-lg border-2 border-dark bg-grayDark p-2 lg:h-auto lg:w-7"
-				/>
+			<div className="pointer-events-none fixed bottom-0 left-0 right-0 z-40 mb-4 flex items-center justify-between px-8 lg:hidden">
+				{navigationInfo.prevFilm ? (
+					<button
+						className="pointer-events-auto"
+						onClick={() => navigateToFilm(navigationInfo.prevFilm)}
+						aria-label="Previous film"
+						title={`Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`}
+					>
+						<NewArrowRightSimple
+							theme={{ stroke: 'var(--color-dark)' }}
+							className="h-[2.5rem] w-[2.5rem] -rotate-180 rounded-lg border-2 border-dark bg-grayDark p-2"
+						/>
+					</button>
+				) : (
+					<div className="w-[2.5rem]" />
+				)}{' '}
+				{/* Spacer for alignment */}
+				{navigationInfo.nextFilm ? (
+					<button
+						className="pointer-events-auto"
+						onClick={() => navigateToFilm(navigationInfo.nextFilm)}
+						aria-label="Next film"
+						title={`Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`}
+					>
+						<NewArrowRightSimple
+							theme={{ stroke: 'var(--color-dark)' }}
+							className="h-[2.5rem] w-[2.5rem] rounded-lg border-2 border-dark bg-grayDark p-2"
+						/>
+					</button>
+				) : (
+					<div className="w-[2.5rem]" />
+				)}{' '}
+				{/* Spacer for alignment */}
 			</div>
-			<div className="fixed bottom-4 left-8 z-50">
-				<NewArrowRightSimple
-					theme={{
-						stroke: 'var(--color-dark)',
-					}}
-					className="h-[2.50rem] w-[2.50rem] -rotate-180 rounded-lg border-2 border-dark bg-grayDark p-2 lg:h-auto lg:w-7"
-				/>
-			</div>
-
 			<div className="relative flex w-full items-start justify-between">
 				<div
 					className={`w-fit rounded-md bg-dark p-0.5 pr-2 text-3xl font-semibold text-primary lg:absolute lg:-left-28 lg:top-4 lg:flex`}
@@ -199,8 +210,9 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						</motion.div>
 					</div>
 				</div>
-				<div className="mt-2 flex items-center justify-center gap-x-2">
-					{navigationInfo.prevFilm && (
+
+				<div className="mr-2 mt-2 flex items-center justify-center gap-x-2">
+					{/* {navigationInfo.prevFilm && (
 						<button
 							className="z-10 opacity-100"
 							onClick={() => navigateToFilm(navigationInfo.prevFilm)}
@@ -212,16 +224,16 @@ const FilmContent: React.FC<FilmContentProps> = ({
 								className="w-2 -rotate-180 lg:w-7"
 							/>
 						</button>
-					)}
+					)} */}
 
 					{festival && sortedFilms.length > 0 && (
 						<div className="text-base text-grayDark lg:hidden lg:text-lg">
-							{navigationInfo.currentIndex + 1} / {navigationInfo.total}
+							{navigationInfo.currentIndex + 1}/{navigationInfo.total}
 						</div>
 					)}
 
 					{/* Next Arrow (Desktop only) */}
-					{navigationInfo.nextFilm && (
+					{/* {navigationInfo.nextFilm && (
 						<button
 							className="z-10 opacity-100"
 							onClick={() => navigateToFilm(navigationInfo.nextFilm)}
@@ -233,7 +245,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 								className="w-2 lg:w-7"
 							/>
 						</button>
-					)}
+					)} */}
 				</div>
 
 				<div className="z-50 hidden items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark lg:mt-28 lg:flex">
@@ -306,7 +318,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 			</div>
 			<div className="relative">
 				{/* Previous Arrow (Desktop only) */}
-				{navigationInfo.prevFilm && (
+				{/* {navigationInfo.prevFilm && (
 					<button
 						className="absolute -bottom-14 left-1 z-10 opacity-100 lg:-left-12 lg:bottom-auto lg:top-1/2"
 						onClick={() => navigateToFilm(navigationInfo.prevFilm)}
@@ -318,10 +330,10 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							className="h-auto w-5 -rotate-180 lg:w-7"
 						/>
 					</button>
-				)}
+				)} */}
 
 				{/* Next Arrow (Desktop only) */}
-				{navigationInfo.nextFilm && (
+				{/* {navigationInfo.nextFilm && (
 					<button
 						className="absolute -bottom-14 right-1 z-10 opacity-100 lg:-right-12 lg:bottom-auto lg:top-1/2"
 						onClick={() => navigateToFilm(navigationInfo.nextFilm)}
@@ -333,7 +345,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							className="h-auto w-5 lg:w-7"
 						/>
 					</button>
-				)}
+				)} */}
 
 				{isYoutubeOrVimeo ? (
 					showPlayer ? (
@@ -434,31 +446,31 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					)}
 				</div>
 				{/* Film counter - only show if we have festival data */}
-				{festival && sortedFilms.length > 0 && (
+				{/* {festival && sortedFilms.length > 0 && (
 					<div className="mb-2 text-xs text-grayDark lg:hidden lg:text-lg">
 						{navigationInfo.currentIndex + 1} / {navigationInfo.total}
 					</div>
-				)}
-				<div className="flex flex-col gap-1 lg:mt-2 lg:flex-row lg:flex-wrap lg:gap-1">
-					<div className="flex flex-wrap items-center justify-center gap-1 lg:text-lg">
+				)} */}
+				<div className="mt-2 flex flex-col gap-1 lg:mt-2 lg:flex-row lg:flex-wrap lg:gap-1">
+					<div className="flex flex-wrap items-center justify-center gap-1 text-xs lg:text-lg">
 						{film.length && (
-							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-md border border-primary px-2 py-0.5 text-primary">
 								<GoClockFill />
 								<span>{film.length} minutes</span>
 							</span>
 						)}
 
 						{film.city && (
-							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-md border border-primary px-2 py-0.5 text-primary">
 								<FaLocationDot />
 								<span>{getLocalizedValue(film.city, language)}</span>
 							</span>
 						)}
 					</div>
 
-					<div className="flex flex-wrap items-center justify-center gap-1 lg:text-lg">
+					<div className="flex flex-wrap items-center justify-center gap-1 text-xs lg:text-lg">
 						{film.genre && film.genre.title && (
-							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-md border border-primary px-2 py-0.5 text-primary">
 								<FaTag />
 								{getLocalizedValue(film.genre.title, language) ||
 									(Array.isArray(film.genre.title) &&
@@ -467,7 +479,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							</span>
 						)}
 						{film.production && (
-							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 px-2 text-dark dark:border-grayDark dark:bg-grayDark dark:text-dark">
+							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-md border border-primary px-2 py-0.5 text-primary">
 								<BiSolidCameraMovie />
 								{film.production}
 							</span>

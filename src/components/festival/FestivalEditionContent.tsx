@@ -659,7 +659,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												key={index}
 												onMouseEnter={() => setHoveredFilm(film._id)}
 												onMouseLeave={() => setHoveredFilm(null)}
-												className="relative hover:bg-secondary/15"
+												className="hover:bg-primary/15 relative"
 												data-film-slug={film.slug?.current}
 											>
 												<td
@@ -712,7 +712,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																	image={film.affiche}
 																	src={film.affiche.asset.url}
 																	alt={getLocalizedValue(film.title, language)}
-																	className="h-auto w-full rounded-md object-cover lg:border-[3px] lg:border-secondary"
+																	className="h-auto w-full rounded-md object-cover lg:border-[3px] lg:border-primary"
 																/>
 																<p
 																	className={`absolute left-1/2 top-1/2 z-50 mt-0 w-fit -translate-x-1/2 translate-y-1/2 -rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark`}
