@@ -240,18 +240,13 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 					/>
 				</>
 			)}
-			{/* <div className="fixed left-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div>
-			<div className="fixed right-1 top-0 z-30 h-screen w-[2.5%] rounded-md bg-[url('/assets/svg/filmroll.svg')] bg-[length:11px_30px] bg-center bg-repeat-y"></div> */}
-			<div className="z-50 w-full lg:hidden" id="navbar-mobile">
-				{/* <div className="absolute inset-0 -z-10 h-28">
-					<div className="absolute inset-0 backdrop-blur-sm [-webkit-mask-image:linear-gradient(to_top,transparent_0%,white_20%,white_40%,transparent_50%)]" />
-					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_20%,white_40%,white_50%,transparent_75%)]" />
-					<div className="absolute inset-0 backdrop-blur-md [-webkit-mask-image:linear-gradient(to_top,transparent_50%,white_60%,white_75%,transparent_100%)]" />
-				</div> */}
-				<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black lg:hidden">
-					<div className="h-full w-full">{renderLogo()}</div>
-				</nav>
-			</div>
+			{renderLogo() && (
+				<div className="z-50 w-full lg:hidden" id="navbar-mobile">
+					<nav className="mt-2 flex h-auto w-full items-start justify-center gap-2 pl-4 pr-4 text-center text-xl font-black tracking-tighter text-black lg:hidden">
+						<div className="h-full w-full">{renderLogo()}</div>
+					</nav>
+				</div>
+			)}
 
 			<AnimatePresence mode="wait">
 				{menuOpen && (

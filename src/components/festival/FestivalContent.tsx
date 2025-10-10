@@ -242,7 +242,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 							currentYear !== new Date().getFullYear()) && (
 							<button
 								onClick={goToToday}
-								className="hover:bg-primary/90 hidden rounded-md bg-primary px-3 py-1 text-sm font-semibold text-dark transition-colors lg:block"
+								className="hidden rounded-md bg-primary px-3 py-1 text-sm font-semibold text-dark transition-colors hover:bg-primary/90 lg:block"
 							>
 								Aujourd&apos;hui
 							</button>
@@ -327,7 +327,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 														<motion.button
 															key={eventIndex}
 															onClick={() => setSelectedEvent(event)}
-															className="hover:bg-primary/90 w-full rounded-md bg-primary px-2 py-1 text-left text-xs font-medium text-dark transition-colors"
+															className="w-full rounded-md bg-primary px-2 py-1 text-left text-xs font-medium text-dark transition-colors hover:bg-primary/90"
 															whileHover={{ scale: 1.02 }}
 															whileTap={{ scale: 0.98 }}
 														>
@@ -786,7 +786,7 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			<AccordionContent>
 				<div
 					ref={juryRef}
-					className="relative flex w-full flex-col items-center justify-center py-8 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32"
+					className="relative flex w-full flex-col items-center justify-center pt-4 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32 lg:py-8"
 				>
 					{/* Desktop arrows */}
 					<button
@@ -823,9 +823,9 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 							image={currentMember.image}
 							src={currentMember.image?.asset.url}
 							alt={currentMember.name}
-							className="h-48 w-64 rounded-lg object-cover lg:h-80 lg:w-56"
+							className="aspect-video w-full rounded-lg border-[3px] border-primary object-cover lg:h-80 lg:w-56 lg:border-4"
 						/>
-						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-2xl font-medium tracking-tight text-dark">
+						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-xl font-medium tracking-tighter text-dark lg:text-2xl">
 							{currentMember.name}
 						</h2>
 					</div>

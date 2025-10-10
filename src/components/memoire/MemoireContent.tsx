@@ -88,7 +88,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	)
 
 	return (
-		<div className="no-scrollbar dark:hover:bg-dark/50 dark:to-grayDark/25 sm:to-grayDark/25 lg:shadowtest rounded-md border-grayLight bg-transparent px-4 tracking-tight dark:border-0 dark:from-dark sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:px-0 sm:shadow-inner lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:border-4 lg:border-black lg:py-8">
+		<div className="no-scrollbar lg:shadowtest rounded-md border-grayLight bg-transparent px-4 tracking-tight dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:to-grayDark/25 sm:px-0 sm:shadow-inner lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:border-4 lg:border-black lg:py-8">
 			{/* Description */}
 			<div className="shadowtest relative mt-8 rounded-md bg-primary p-4 text-dark lg:mb-4 lg:mt-4 lg:bg-transparent lg:p-0 lg:shadow-none">
 				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
@@ -282,7 +282,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 						<Link
 							key={festival._id || index}
 							href={`/${language}/festival/${festival.year}`}
-							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-sm lg:rounded-xl lg:border-[0px]`}
+							className={`relative block ${view === 'single' ? 'h-[60vh]' : 'h-[30vh] lg:h-[60vh]'} overflow-hidden rounded-xl border-[2.5px] border-grayDark transition-shadow duration-300 hover:shadow-sm lg:rounded-xl lg:border-[0px]`}
 						>
 							<div
 								className={`absolute left-1/2 ${view === 'single' ? 'top-[65%] text-3xl' : 'top-[38%] text-xl'} z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 font-black tracking-tight text-dark lg:top-[50%] lg:text-5xl`}
