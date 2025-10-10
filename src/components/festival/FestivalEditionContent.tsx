@@ -659,7 +659,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												key={index}
 												onMouseEnter={() => setHoveredFilm(film._id)}
 												onMouseLeave={() => setHoveredFilm(null)}
-												className="hover:bg-primary/15 relative"
+												className="relative hover:bg-primary/15"
 												data-film-slug={film.slug?.current}
 											>
 												<td
@@ -801,7 +801,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															return (
 																<li
 																	key={artistIndex}
-																	className="dark:border-primary/50 border-b border-primary lg:border-primary"
+																	className="border-b border-primary dark:border-primary/50 lg:border-primary"
 																>
 																	<div
 																		className="flex cursor-pointer items-center justify-between py-2"
@@ -960,14 +960,15 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 						{/* Lightbox Modal */}
 						{isLightboxOpen && (
-							<div className="fixed inset-0 z-[10000] flex items-center justify-center bg-dark">
+							<div className="fixed inset-0 z-[10000] flex min-h-screen w-full items-center justify-center bg-dark">
+								{/* Close button */}
 								<div
-									className={`absolute right-4 top-2 z-50 rounded-md text-3xl font-semibold text-dark lg:hidden`}
+									className={`absolute right-4 top-2 z-50 hidden rounded-md text-3xl font-semibold text-dark lg:hidden`}
 								>
 									<button
 										onClick={closeLightbox}
 										className="border-primary"
-										aria-label="Go back"
+										aria-label="Close lightbox"
 									>
 										<CloseIcon
 											theme={{ fill: 'var(--color-primary)' }}
@@ -975,7 +976,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										/>
 									</button>
 								</div>
-
 								{/* Carousel */}
 								<FestivalCarousel
 									photos={festival.photoGallery.flatMap((gallery: any) =>
@@ -993,7 +993,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				)}
 			</div>
 
-			<div className="py-4 pt-3 lg:mx-32 lg:py-16 lg:text-primary [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-primary [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-grayDark [&::-webkit-scrollbar]:w-2">
+			<div className="py-4 pt-3 lg:mx-32 lg:py-16 lg:text-primary">
 				<div className="shadowtest relative mb-6 mt-0 rounded-md bg-primary p-4 text-dark lg:mb-4 lg:mt-4 lg:bg-transparent lg:p-0 lg:shadow-none">
 					<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:text-primary">
 						{renderParagraph(

@@ -97,9 +97,32 @@ const FestivalCarousel: React.FC<{
 
 	return (
 		<div className="relative flex h-full w-full flex-col items-center justify-center">
+			{/* Mobile Navigation Arrows */}
+			<div className="fixed bottom-0 left-0 right-0 z-50 mb-4 flex items-center justify-between px-8 lg:hidden">
+				<button
+					aria-label="Previous photo"
+					onClick={handlePrev}
+					className="pointer-events-auto"
+				>
+					<NewArrowRightSimple
+						theme={{ stroke: 'var(--color-dark)' }}
+						className="h-[2.5rem] w-[2.5rem] -rotate-180 rounded-lg border-2 border-dark bg-grayDark p-2"
+					/>
+				</button>
+				<button
+					aria-label="Next photo"
+					onClick={handleNext}
+					className="pointer-events-auto"
+				>
+					<NewArrowRightSimple
+						theme={{ stroke: 'var(--color-dark)' }}
+						className="h-[2.5rem] w-[2.5rem] rounded-lg border-2 border-dark bg-grayDark p-2"
+					/>
+				</button>
+			</div>
 			{/* Navigation Arrows */}
 			<div
-				className="absolute left-8 top-8 z-10 -mt-5 flex justify-center lg:left-16 lg:top-36 lg:z-20"
+				className="absolute left-8 top-8 z-10 mt-0 flex justify-center lg:left-16 lg:top-36 lg:z-20 lg:-mt-5"
 				onClick={onClose}
 			>
 				<motion.div
@@ -126,7 +149,7 @@ const FestivalCarousel: React.FC<{
 				</motion.div>
 			</div>
 			<button
-				className="fixed bottom-1/2 left-3 z-50 lg:left-8"
+				className="fixed bottom-1/2 left-3 z-50 hidden lg:left-8 lg:block"
 				aria-label="Previous photo"
 				onClick={handlePrev}
 			>
@@ -137,7 +160,7 @@ const FestivalCarousel: React.FC<{
 			</button>
 
 			<button
-				className="fixed bottom-1/2 right-3 z-50 lg:right-8"
+				className="fixed bottom-1/2 right-3 z-50 hidden lg:right-8 lg:block"
 				aria-label="Next photo"
 				onClick={handleNext}
 			>
@@ -149,7 +172,7 @@ const FestivalCarousel: React.FC<{
 
 			{/* Mobile Version - Current Layout */}
 			<div className="pointer-events-none relative flex items-start justify-end px-0 lg:hidden">
-				<div className="relative flex flex-col items-center justify-center rounded-none bg-grayDark py-4">
+				<div className="relative flex h-[65vh] max-h-[80vh] flex-col items-center justify-center rounded-none bg-grayDark py-4">
 					{/* Film perforations */}
 					<div className="absolute left-0 top-1 flex w-full justify-between px-2">
 						{[...Array(12)].map((_, i) => (
@@ -166,7 +189,7 @@ const FestivalCarousel: React.FC<{
 						href={photos[currentIndex].photo.asset.url}
 						target="_blank"
 						rel="noopener noreferrer"
-						className="pointer-events-auto relative block w-full"
+						className="pointer-events-auto relative block h-full w-full"
 						tabIndex={0}
 						aria-label="Open image in new tab"
 					>
@@ -174,9 +197,10 @@ const FestivalCarousel: React.FC<{
 							image={photos[currentIndex].photo}
 							src={photos[currentIndex].photo.asset.url}
 							alt={`Photo ${currentIndex + 1}`}
-							className="max-h-[60vh] w-full object-cover object-top"
+							className="h-full w-full object-contain px-8"
+							loading="lazy"
 						/>
-						<h3 className="absolute -top-12 left-[1rem] -rotate-3 rounded-md border-[3px] border-dark bg-grayDark px-2 text-lg font-medium tracking-tighter text-dark">
+						<h3 className="absolute -top-12 left-auto right-[1rem] -rotate-3 rounded-md border-[3px] border-dark bg-grayDark px-2 text-lg font-medium tracking-tighter text-dark lg:-top-12 lg:left-[1rem] lg:right-auto">
 							{tPhotoGallery('photosBy')} {photographer}
 						</h3>
 					</a>
@@ -242,6 +266,7 @@ const FestivalCarousel: React.FC<{
 											alt={`Photo ${index + 1}`}
 											className="w-auto object-contain"
 											style={{ height: 'calc(100vh - 2rem)' }}
+											loading="lazy"
 										/>
 									</button>
 								</div>
@@ -257,7 +282,7 @@ const FestivalCarousel: React.FC<{
 			</div>
 
 			{/* Mobile Thumbnail Navigation */}
-			<div className="relative z-20 mt-2 w-full py-1 lg:hidden">
+			<div className="relative z-20 w-full py-1 lg:hidden">
 				<div className="pointer-events-none absolute left-0 top-3.5 z-10 flex w-full justify-between px-2">
 					{[...Array(12)].map((_, i) => (
 						<div key={i} className="h-2 w-4 rounded-sm bg-dark" />
@@ -283,9 +308,11 @@ const FestivalCarousel: React.FC<{
 							>
 								<Img
 									image={photo.photo}
+									imageWidth={200}
 									src={photo.photo.asset.url}
 									alt={`Thumbnail ${index + 1}`}
 									className="h-full w-full overflow-visible rounded-md object-cover"
+									loading="lazy"
 								/>
 							</button>
 						)
