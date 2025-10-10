@@ -63,7 +63,7 @@ export default async function RootLayout({
 						{children}
 					</main> */}
 
-								<main className="z-40 w-full rounded-md border-0 lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
+								<main className="z-40 w-full rounded-md lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
 									{children}
 								</main>
 

@@ -68,35 +68,7 @@ export default function IndexRoute() {
 				/>
 			</div>
 
-			{/* <AnimatedCircle
-				className="absolute left-[10%] top-[15%] h-auto w-[40vw] sm:hidden"
-				theme={{
-					fill: 'var(--color-primary)',
-				}}
-			/>
-
-			<EquipeLogoAnimated
-				className="absolute bottom-[20%] left-[10%] h-auto w-[80vw] rotate-12 overflow-visible sm:hidden"
-				theme={{
-					icon: 'var(--color-primary)',
-				}}
-			/>
-
-			<MemoirePlayAnimated
-				className="absolute left-[40%] top-[15%] h-auto w-[100vw] -rotate-12 overflow-visible sm:hidden"
-				theme={{
-					icon: 'var(--color-primary)',
-				}}
-			/>
-
-			<FestivalAnimated
-				className="absolute relative bottom-[10%] left-[0%] h-auto w-[80vw] -rotate-6 overflow-visible sm:hidden"
-				theme={{
-					icon: 'var(--color-primary)',
-				}}
-			/> */}
-
-			<div className="h-full w-auto sm:mx-0">
+			<div className="m-0 h-full w-auto p-0">
 				<video
 					className="h-full w-full transform rounded-none border-0 object-cover sm:rounded-md"
 					autoPlay
