@@ -40,7 +40,7 @@ const VisionBlock: React.FC<VisionBlockProps> = ({
 						theme={{ fill: 'var(--color-primary)' }}
 					/>
 				</div>
-				<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tighter text-dark dark:text-primary sm:py-4 sm:text-4xl">
+				<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tighter text-primary sm:py-4 sm:text-4xl">
 					{getLocalizedValue(visionTitle, language) || 'Vision'}
 				</h1>
 			</div>
@@ -55,7 +55,7 @@ const VisionBlock: React.FC<VisionBlockProps> = ({
 						transition={{ duration: 0.5, delay: index * 0.2 }}
 					>
 						<div className="relative rounded-t-3xl px-4">
-							<h2 className="text-lg font-bold leading-[1.2] tracking-tighter text-dark dark:text-primary lg:px-32 lg:text-xl">
+							<h2 className="text-lg font-bold leading-[1.2] tracking-tighter text-primary lg:px-32 lg:text-xl">
 								{getLocalizedValue(visionItem.title, language)}
 							</h2>
 							<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tighter text-primary lg:px-32 lg:text-xl">

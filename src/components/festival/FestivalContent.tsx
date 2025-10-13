@@ -467,7 +467,7 @@ const EventCalendar: React.FC<CalendarProps> = ({
 								{/* Close button */}
 								<button
 									onClick={() => setSelectedEvent(null)}
-									className="absolute right-4 top-4 rounded-full p-1 text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+									className="absolute right-4 top-4 rounded-full p-1 text-gray-500 transition-colors hover:bg-gray-700"
 								>
 									<IoClose className="h-5 w-5" />
 								</button>
@@ -650,7 +650,7 @@ const YellowBannerBlock: React.FC<BlockProps> = ({
 					duration: 2,
 					ease: [0.76, 0, 0.24, 1],
 				}}
-				className="relative border-2 border-dark bg-primary px-4 py-10 shadow-sm dark:bg-primary lg:hidden lg:border-0 lg:py-10"
+				className="relative border-2 border-dark bg-primary px-4 py-10 shadow-sm lg:hidden lg:border-0 lg:py-10"
 			>
 				{paragraphs.map((paragraph: string, i: number) => (
 					<p
@@ -672,7 +672,7 @@ const YellowBannerBlock: React.FC<BlockProps> = ({
 										},
 									}}
 								>
-									<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary dark:bg-dark lg:w-[15rem]" />
+									<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary lg:w-[15rem]" />
 								</motion.span>
 							) : (
 								part

@@ -281,7 +281,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 													/>
 												</div>
 												<div className="absolute -bottom-4 left-1/2 flex w-full -translate-x-1/2 -rotate-3 items-center justify-center">
-													<span className="z-10 w-fit rounded-md border-[3px] border-dark bg-grayDark px-2 text-center text-2xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-5xl">
+													<span className="z-10 w-fit rounded-md border-[3px] border-primary bg-dark px-2 text-center text-2xl font-black italic text-primary lg:text-5xl">
 														{member.name}
 													</span>
 												</div>

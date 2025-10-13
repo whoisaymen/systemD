@@ -117,7 +117,7 @@ const VisionBlock: React.FC<{
 					theme={{ fill: 'var(--color-primary)' }}
 				/>
 			</div>
-			<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tight text-dark dark:text-primary sm:py-4 sm:text-4xl">
+			<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tight text-primary sm:py-4 sm:text-4xl">
 				{getLocalizedValue(visionTitle, language) || 'Vision'}
 			</h1>
 		</div>
@@ -126,7 +126,7 @@ const VisionBlock: React.FC<{
 			{vision.map((visionItem: any, index: number) => (
 				<div key={index} className="mt-8">
 					<div className="relative rounded-t-3xl px-4">
-						<h2 className="text-lg font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:px-32 lg:text-xl">
+						<h2 className="text-lg font-bold leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
 							{getLocalizedValue(visionItem.title, language)}
 						</h2>
 						<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-16 lg:text-xl">
@@ -187,7 +187,7 @@ const LogoCollage: React.FC = () => {
 				))}
 			</div>
 
-			<p className="mx-auto py-2 pt-40 text-center text-3xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary sm:pt-52 sm:text-4xl">
+			<p className="mx-auto py-2 pt-40 text-center text-3xl font-bold leading-[1.2] tracking-tight text-primary sm:pt-52 sm:text-4xl">
 				For our Brussels stories, resourceful and proud.
 			</p>
 		</div>

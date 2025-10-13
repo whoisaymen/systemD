@@ -42,38 +42,34 @@ export default async function RootLayout({
 
 	return (
 		<ViewTransitions>
-			<html
-				lang={locale}
-				suppressHydrationWarning
-				className="no-scrollbar dark"
-			>
+			<html lang={locale} suppressHydrationWarning className="no-scrollbar">
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body
 					className={`${GeistSans.className} relative bg-dark text-ink antialiased`}
 				>
-					<ThemeProvider attribute="class" defaultTheme="dark">
-						<NextIntlClientProvider messages={messages}>
-							<NuqsAdapter>
-								<NavBar locale={locale} />
-								<NavBarMobile locale={locale} />
+					{/* <ThemeProvider attribute="class" defaultTheme="dark"> */}
+					<NextIntlClientProvider messages={messages}>
+						<NuqsAdapter>
+							<NavBar locale={locale} />
+							<NavBarMobile locale={locale} />
 
-								{/* <Header /> */}
-								{/* <main id="main-content" role="main" tabIndex={-1}>
+							{/* <Header /> */}
+							{/* <main id="main-content" role="main" tabIndex={-1}>
 						{children}
 					</main> */}
 
-								<main className="z-40 w-full rounded-md lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
-									{children}
-								</main>
+							<main className="z-40 w-full rounded-md lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
+								{children}
+							</main>
 
-								<VisualEditingControls />
-							</NuqsAdapter>
+							<VisualEditingControls />
+						</NuqsAdapter>
 
-							<Analytics />
-							<SpeedInsights />
-						</NextIntlClientProvider>
-					</ThemeProvider>
+						<Analytics />
+						<SpeedInsights />
+					</NextIntlClientProvider>
+					{/* </ThemeProvider> */}
 				</body>
 			</html>
 		</ViewTransitions>

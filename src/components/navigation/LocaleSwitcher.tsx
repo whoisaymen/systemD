@@ -64,17 +64,15 @@ export default function LocaleSwitcher() {
 						animate={{ opacity: 1, y: 0, scale: 1 }}
 						exit={{ opacity: 0, y: 10, scale: 0.95 }}
 						transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-						className="absolute bottom-full left-0 right-0 z-50 mb-2 w-full rounded-md border-2 border-dark bg-grayDark shadow-lg dark:border-primary dark:bg-dark"
+						className="absolute bottom-full left-0 right-0 z-50 mb-2 w-full rounded-md border-2 border-primary bg-dark shadow-lg"
 					>
 						{routing.locales.map((lang) => (
 							<button
 								key={lang}
 								onClick={() => onSelectChange(lang)}
 								className={clsx(
-									'w-full text-center text-base font-bold tracking-tighter transition-all duration-150 hover:bg-primary hover:text-dark dark:hover:bg-primary dark:hover:text-dark sm:text-xl',
-									lang === locale
-										? 'bg-primary text-dark dark:bg-primary dark:text-dark'
-										: 'text-dark dark:text-primary',
+									'w-full text-center text-base font-bold tracking-tighter transition-all duration-150 hover:bg-primary hover:text-dark sm:text-xl',
+									lang === locale ? 'bg-primary text-dark' : 'text-primary',
 								)}
 							>
 								<div className="flex h-full items-center justify-center py-2">

@@ -39,14 +39,14 @@ export default function IndexRoute() {
 			{/* Rule of thirds grid */}
 			<div className="pointer-events-none absolute inset-0 z-20">
 				<div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
-					<div className="border-b border-r border-white opacity-20 dark:border-grayLight"></div>
-					<div className="border-b border-r border-white opacity-20 dark:border-grayLight"></div>
-					<div className="border-b border-white opacity-20 dark:border-grayLight"></div>
-					<div className="border-b border-r border-white opacity-20 dark:border-grayLight"></div>
-					<div className="border-b border-r border-white opacity-20 dark:border-grayLight"></div>
-					<div className="border-b border-white opacity-20 dark:border-grayLight"></div>
-					<div className="border-r border-white opacity-20 dark:border-grayLight"></div>
-					<div className="border-r border-white opacity-20 dark:border-grayLight"></div>
+					<div className="border-b border-r border-grayLight opacity-20"></div>
+					<div className="border-b border-r border-grayLight opacity-20"></div>
+					<div className="border-b border-grayLight opacity-20"></div>
+					<div className="border-b border-r border-grayLight opacity-20"></div>
+					<div className="border-b border-r border-grayLight opacity-20"></div>
+					<div className="border-b border-grayLight opacity-20"></div>
+					<div className="border-r border-grayLight opacity-20"></div>
+					<div className="border-r border-grayLight opacity-20"></div>
 					<div></div>
 				</div>
 			</div>
@@ -60,7 +60,7 @@ export default function IndexRoute() {
 			{/* Main Logo */}
 			<div className="absolute z-30 flex items-center justify-center sm:hidden">
 				<LogoShortAnimated
-					className="w-[85vw] -rotate-6 text-primary dark:text-primary"
+					className="w-[85vw] -rotate-6 text-primary"
 					theme={{
 						fill: 'var(--color-primary)',
 						stroke: 'var(--color-dark)',

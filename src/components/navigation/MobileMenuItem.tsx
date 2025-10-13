@@ -158,7 +158,7 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 
 	return (
 		<motion.div
-			className="fixed inset-0 z-50 flex w-full flex-col items-center justify-start overflow-y-auto overflow-x-hidden bg-grayLight px-0 pt-8 dark:bg-dark md:w-[30%]"
+			className="fixed inset-0 z-50 flex w-full flex-col items-center justify-start overflow-y-auto overflow-x-hidden bg-dark px-0 pt-8 md:w-[30%]"
 			initial={{ y: '-100%' }}
 			animate={{ y: '0%' }}
 			transition={{
@@ -177,14 +177,6 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 			}}
 		>
 			<div className="relative"></div>
-			{/* <div className="flex w-full justify-start">
-				<div className="group mx-4 flex h-auto w-[40vw] justify-start rounded-md border-2 border-dark bg-primary px-2 py-1 shadow-md dark:border-primary dark:bg-primary sm:hidden">
-					<LogoShortAnimated
-						className="h-full w-full !overflow-visible text-dark group-hover:text-primary dark:text-dark"
-						theme={theme.logo}
-					/>
-				</div>
-			</div> */}
 
 			{menuItems.map(({ href, Component, delay, rotation }) => (
 				<MenuItem

@@ -88,7 +88,8 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	)
 
 	return (
-		<div className="no-scrollbar lg:shadowtest rounded-md border-grayLight bg-transparent px-4 tracking-tight dark:border-0 dark:from-dark dark:to-grayDark/25 dark:hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-grayLight sm:to-grayDark/25 sm:px-0 sm:shadow-inner lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:border-4 lg:border-black lg:py-8">
+		<div className="no-scrollbar lg:shadowtest rounded-md border-0 bg-dark from-dark to-grayDark/25 px-4 tracking-tight hover:bg-dark/50 sm:mt-1 sm:items-start sm:bg-dark sm:bg-gradient-to-b sm:from-dark sm:to-grayDark/25 sm:px-0 sm:shadow-inner lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:py-8">
+			{' '}
 			{/* Description */}
 			<div className="shadowtest relative mt-8 rounded-md bg-primary p-4 text-dark lg:mb-4 lg:mt-4 lg:bg-transparent lg:p-0 lg:shadow-none">
 				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
@@ -102,108 +103,6 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 					)}
 				</p>
 			</div>
-
-			{/* <div className="relative mt-4 rounded-md bg-primary p-6 lg:mb-4 lg:bg-transparent">
-				<p className="mx-auto py-0 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:text-primary">
-					{renderParagraph(
-						{
-							value:
-								'System_D and the Citylab Pianofabriek team support your stories and imaginations in several ways.',
-						},
-						[],
-						'bg-dark text-primary lg:bg-grayDark lg:text-dark',
-					)}
-				</p>
-			</div> */}
-			{/* <div className="relative m-8 rounded-xl border-0 border-primary bg-primary px-4 py-16"> */}
-			{/* <p className="py-0 text-center text-xl font-bold leading-[1.1] tracking-tight text-primary lg:py-8 lg:pt-32 lg:text-5xl">
-				{"La mémoire est l'avenir du passé"}
-			</p> */}
-			{/* <SectionTitle
-				className="lg:pb-12 lg:pt-24"
-				text="La mémoire est l'avenir du passé"
-			/> */}
-
-			{/* </div> */}
-			{/* <div className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-16 lg:pt-16">
-				<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
-					"
-				</span>
-				{'La mémoire est l avenir du passé'
-					.split(' ')
-					.map((word: string, idx: number) => {
-						const randomRotation = Math.floor(Math.random() * 21) - 10
-						const randomMarginTop = Math.floor(Math.random() * 10) - 5
-						const randomMarginLeft = Math.floor(Math.random() * 10) - 5
-
-						return (
-							<span
-								key={idx}
-								className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-5xl"
-								style={{
-									transform: `rotate(${randomRotation}deg)`,
-									marginTop: `${randomMarginTop}px`,
-									marginLeft: `${randomMarginLeft}px`,
-								}}
-							>
-								{word}
-							</span>
-						)
-					})}
-				<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
-					"
-				</span>
-			</div> */}
-			{/* <p className="mt-4 px-1 py-4 pb-2 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
-				This festival was like a warm embrace in winter, without covid masks
-				this time. People were happy to see each other, to connect with the
-				community, particularly as the situation in Gaza was rapidly
-				degenerating. Sbeul collective kicked off the festival with an electric
-				performance of As Salem Aleykoum that absolutely brought down the house.
-				Their assertivity, dignity and love were reflected in all other facets
-				of the festival. A retrospective video installation by Maxime Bourlet
-				revisited favorite films of the previous editions, a photo exhibit
-				curated by Neima B Reyale reminded us of the little things we share
-				while the salon du TURFU by Imiskill and Face B invited radical new
-				imaginations of our future. The incredible selection of films were made
-				by a mix of old friends, inspired new voices and storytellers from far
-				away. The exceptional jury included Maja-Ajmia Yde Zellama, Rob Jacobs,
-				Bwanga Pilipili, Gilles De Voghel, Mehdi Fikri and Mounir Amamra.
-				Together they celebrated the unique identity of the festival while
-				welcoming new perspectives.
-			</p> */}
-			{/* <div className="mb-4 flex flex-wrap items-center gap-2">
-				<span className="font-bold">Year:</span>
-				<button
-					onClick={() => setYearFilter(null)}
-					className={`rounded px-2 py-1 ${!yearFilter ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
-				>
-					All
-				</button>
-				{years.map((year) => (
-					<button
-						key={year}
-						onClick={() => setYearFilter(String(year))}
-						className={`rounded px-2 py-1 ${yearFilter === String(year) ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
-					>
-						{year}
-					</button>
-				))}
-				<span className="ml-4 font-bold">View:</span>
-				<button
-					onClick={() => setView('grid')}
-					className={`rounded px-2 py-1 ${view === 'grid' ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
-				>
-					Grid
-				</button>
-				<button
-					onClick={() => setView('single')}
-					className={`rounded px-2 py-1 ${view === 'single' ? 'bg-primary font-bold text-dark' : 'bg-grayDark text-dark'}`}
-				>
-					single
-				</button>
-			</div> */}
-
 			<div className="mt-1 flex flex-wrap items-center justify-between border-t-0 border-t-primary pt-4 sm:hidden">
 				<span className="px-2 py-3 text-xl font-bold leading-[1] text-primary">
 					Éditions
@@ -229,11 +128,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 							className="inline-block"
 						>
 							<BiSolidSquareRounded
-								className={
-									view === 'single'
-										? 'text-primary'
-										: 'text-dark dark:text-grayDark'
-								}
+								className={view === 'single' ? 'text-primary' : 'text-grayDark'}
 								size={30}
 							/>
 						</motion.span>
@@ -257,18 +152,13 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 							className="inline-block"
 						>
 							<IoGrid
-								className={
-									view === 'grid'
-										? 'text-primary'
-										: 'text-dark dark:text-grayDark'
-								}
+								className={view === 'grid' ? 'text-primary' : 'text-grayDark'}
 								size={36}
 							/>
 						</motion.span>
 					</button>
 				</div>
 			</div>
-
 			{memoire.pastFestivals && memoire.pastFestivals.length > 0 && (
 				<div
 					className={`mt-1 grid sm:mx-0 sm:mt-8 ${view === 'single' ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-2'} gap-2 pb-16 sm:grid-cols-2 lg:grid-cols-2 lg:gap-4 lg:px-16`}
@@ -307,7 +197,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 										className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
 									/>
 								) : (
-									<div className="flex h-full w-full items-center justify-center rounded-md bg-dark dark:bg-primary" />
+									<div className="flex h-full w-full items-center justify-center rounded-md bg-primary" />
 								)}
 							</div>
 						</Link>

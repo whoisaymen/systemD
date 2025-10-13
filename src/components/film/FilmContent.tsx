@@ -198,7 +198,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 									ease: 'easeInOut',
 								},
 							}}
-							className={`flex w-fit items-center justify-center gap-1 rounded-md border border-primary bg-dark px-2 pl-0 pr-2 text-center text-xl font-bold uppercase italic tracking-[-0.06em] text-primary shadow-sm transition-all dark:border-grayDark dark:bg-grayDark dark:text-dark lg:z-10 lg:border-[4px] lg:pl-1 lg:pr-3 lg:text-4xl`}
+							className={`flex w-fit items-center justify-center gap-1 rounded-md border border-grayDark bg-grayDark px-2 pl-0 pr-2 text-center text-xl font-bold uppercase italic tracking-[-0.06em] text-dark shadow-sm transition-all lg:z-10 lg:border-[4px] lg:pl-1 lg:pr-3 lg:text-4xl`}
 						>
 							<button onClick={goBack} aria-label="Go back">
 								<NewArrowRightFull
@@ -248,7 +248,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					)} */}
 				</div>
 
-				<div className="z-50 hidden items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark lg:mt-28 lg:flex">
+				<div className="z-50 hidden items-center justify-center rounded-b-md bg-dark px-2 lg:mt-28 lg:flex">
 					<div className="absolute left-1/2 top-24 flex w-[90%] -translate-x-1/2 flex-col items-center lg:flex-row">
 						{film.title && (
 							<>
@@ -257,7 +257,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 										<h1
 											key={idx}
 											className={[
-												'z-10 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-4xl',
+												'z-10 rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-4xl',
 												idx === 0 ? '' : '-z-0 -mt-1',
 												idx % 2 === 0
 													? '-rotate-1 lg:-rotate-3'
@@ -293,60 +293,15 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 						{film.year && (
 							<p
-								className={`z-0 mt-0 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+								className={`z-0 mt-0 -rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
 							>
 								{film.year}
 							</p>
 						)}
 					</div>
 				</div>
-				{/* 
-				<div className="flex w-full flex-col items-end justify-start gap-0 px-2 lg:hidden">
-					{film.title && (
-						<h1
-							className={`z-10 rounded-md border-0 border-dark bg-primary p-0 text-right text-3xl font-black italic leading-[1.2] text-dark dark:border-primary dark:bg-dark dark:text-primary`}
-						>
-							{getLocalizedValue(film.title, language)}
-						</h1>
-					)}
-
-					<span className="text-right font-mono text-base font-normal tracking-[-0.10em] text-primary">
-						{film.director}{' '}
-						<span className="font-sans italic">({film.year})</span>
-					</span>
-				</div> */}
 			</div>
 			<div className="relative">
-				{/* Previous Arrow (Desktop only) */}
-				{/* {navigationInfo.prevFilm && (
-					<button
-						className="absolute -bottom-14 left-1 z-10 opacity-100 lg:-left-12 lg:bottom-auto lg:top-1/2"
-						onClick={() => navigateToFilm(navigationInfo.prevFilm)}
-						aria-label="Previous film"
-						title={`Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`}
-					>
-						<NewArrowRightSimple
-							theme={{ stroke: 'var(--color-grayDark)' }}
-							className="h-auto w-5 -rotate-180 lg:w-7"
-						/>
-					</button>
-				)} */}
-
-				{/* Next Arrow (Desktop only) */}
-				{/* {navigationInfo.nextFilm && (
-					<button
-						className="absolute -bottom-14 right-1 z-10 opacity-100 lg:-right-12 lg:bottom-auto lg:top-1/2"
-						onClick={() => navigateToFilm(navigationInfo.nextFilm)}
-						aria-label="Next film"
-						title={`Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`}
-					>
-						<NewArrowRightSimple
-							theme={{ stroke: 'var(--color-grayDark)' }}
-							className="h-auto w-5 lg:w-7"
-						/>
-					</button>
-				)} */}
-
 				{isYoutubeOrVimeo ? (
 					showPlayer ? (
 						<div className="relative mx-auto flex max-h-[60vh] min-h-[30vh] w-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:min-h-[60vh]">
@@ -373,7 +328,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 							/>
 							<button
 								onClick={() => setShowPlayer(true)}
-								className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 text-4xl dark:border-primary"
+								className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-primary text-4xl"
 								aria-label="Play film"
 							>
 								<FaPlay className="pl-2 text-primary" />
@@ -403,7 +358,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 									<h1
 										key={idx}
 										className={[
-											'z-10 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-4xl',
+											'z-10 rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-4xl',
 											idx === 0 ? '' : '-z-0 -mt-1',
 											idx % 2 === 0
 												? '-rotate-1 lg:-rotate-3'
@@ -439,7 +394,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 					{film.year && (
 						<p
-							className={`z-0 mt-0 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+							className={`z-0 mt-0 -rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
 						>
 							{film.year}
 						</p>

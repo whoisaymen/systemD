@@ -303,7 +303,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							onClick={() => setIsFilmSectionOpen(!isFilmSectionOpen)}
 							className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:text-5xl ${
 								isFilmSectionOpen
-									? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark'
+									? 'border-grayDark bg-grayDark text-dark'
 									: 'border-primary bg-dark text-primary'
 							}`}
 						>
@@ -440,9 +440,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 											>
 												<IoGrid
 													className={
-														view === 'grid'
-															? 'text-primary'
-															: 'text-dark dark:text-grayDark'
+														view === 'grid' ? 'text-primary' : 'text-grayDark'
 													}
 													size={36}
 												/>
@@ -481,9 +479,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 											>
 												<IoList
 													className={
-														view === 'list'
-															? 'text-primary'
-															: 'text-dark dark:text-grayDark'
+														view === 'list' ? 'text-primary' : 'text-grayDark'
 													}
 													size={36}
 												/>
@@ -492,7 +488,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									</div>
 								</div>
 							) : (
-								<div className="w-full pb-4 pt-2 text-center text-lg text-primary dark:text-primary">
+								<div className="w-full pb-4 pt-2 text-center text-lg text-primary">
 									Films coming soon...
 								</div>
 							)}
@@ -535,7 +531,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																alt={getLocalizedValue(film.title, language)}
 																className="aspect-square h-auto w-full rounded-lg border-2 border-primary object-cover lg:border-dark"
 															/>
-															<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
+															<div className="flex items-center justify-center rounded-b-md bg-dark px-2">
 																<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
 																	{film.title && (
 																		<>
@@ -546,7 +542,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																				<h1
 																					key={idx}
 																					className={[
-																						'z-10 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-xl',
+																						'z-10 rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-xl',
 																						idx === 0 ? '' : '-z-0 -mt-1',
 																						idx % 2 === 0
 																							? '-rotate-1'
@@ -585,7 +581,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 																	{film.year && (
 																		<p
-																			className={`z-0 mt-0 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+																			className={`z-0 mt-0 -rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
 																		>
 																			{film.year}
 																		</p>
@@ -606,11 +602,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															className="aspect-square h-auto rounded-md border-0 border-primary object-cover"
 														/>
 													)}
-													<div className="flex items-center justify-center rounded-b-md bg-grayLight px-2 dark:bg-dark">
+													<div className="flex items-center justify-center rounded-b-md bg-dark px-2">
 														<div className="absolute left-1/2 top-1/2 -mt-4 mb-8 flex w-[90%] -translate-x-1/2 flex-col items-center">
 															{film.title && (
 																<h1
-																	className={`z-10 -rotate-6 rounded-md border-2 border-dark bg-grayDark px-2 text-center text-3xl font-black italic text-dark dark:border-primary dark:bg-dark dark:text-primary lg:text-xl`}
+																	className={`z-10 -rotate-6 rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-xl`}
 																>
 																	{getLocalizedValue(film.title, language)}
 																</h1>
@@ -626,7 +622,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 															{film.year && (
 																<p
-																	className={`z-0 mt-2 -rotate-6 rounded-md bg-grayDark px-2 text-xl font-black text-primary dark:bg-primary dark:text-dark sm:hidden`}
+																	className={`z-0 mt-2 -rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark sm:hidden`}
 																>
 																	{film.year}
 																</p>
@@ -801,7 +797,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															return (
 																<li
 																	key={artistIndex}
-																	className="border-b border-primary dark:border-primary/50 lg:border-primary"
+																	className="border-b border-primary/50 lg:border-primary"
 																>
 																	<div
 																		className="flex cursor-pointer items-center justify-between py-2"
@@ -854,7 +850,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													)}
 												</ul>
 											) : (
-												<p className="mt-2 text-base text-dark dark:text-primary">
+												<p className="mt-2 text-base text-primary">
 													No photos available.
 												</p>
 											)}
@@ -884,8 +880,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						onClick={() => setIsPhotoGalleryOpen(!isPhotoGalleryOpen)}
 						className={`flex w-fit items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all lg:z-10 lg:text-5xl ${
 							isPhotoGalleryOpen
-								? 'border-primary bg-dark text-primary dark:border-grayDark dark:bg-grayDark dark:text-dark lg:z-50'
-								: 'border-dark bg-grayDark text-dark dark:border-primary dark:bg-dark dark:text-primary'
+								? 'border-grayDark bg-grayDark text-dark lg:z-50'
+								: 'border-primary bg-dark text-primary'
 						}`}
 					>
 						<span>{tPhotoGallery('title')}</span>

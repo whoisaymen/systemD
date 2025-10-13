@@ -46,7 +46,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 							onClick={(e) => e.stopPropagation()}
 						/>
 						<motion.button
-							className="z-60 bg-dark/80 absolute right-4 top-4 rounded-full p-2 text-primary"
+							className="z-60 absolute right-4 top-4 rounded-full bg-dark/80 p-2 text-primary"
 							initial={{ opacity: 0, y: -20 }}
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, y: -20 }}
@@ -77,7 +77,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 								key={block._key || index}
 								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-20"
 							>
-								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
+								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-primary lg:text-7xl">
 									"
 								</span>
 								{getLocalizedValue(block.text, lang)
@@ -91,7 +91,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										return (
 											<span
 												key={index}
-												className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-5xl"
+												className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-primary lg:text-5xl"
 												style={{
 													transform: `rotate(${randomRotation}deg)`,
 													marginTop: `${randomMarginTop}px`,
@@ -102,11 +102,11 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 											</span>
 										)
 									})}
-								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tight text-dark dark:text-primary lg:text-7xl">
+								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tight text-primary lg:text-7xl">
 									"
 								</span>
 								{block.author && (
-									<span className="pl-4 pt-0 text-right font-mono text-sm font-normal tracking-[-0.1em] text-dark dark:text-grayDark lg:mt-0 lg:text-base">
+									<span className="pl-4 pt-0 text-right font-mono text-sm font-normal tracking-[-0.1em] text-grayDark lg:mt-0 lg:text-base">
 										{block.author}
 									</span>
 								)}
@@ -122,7 +122,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 								className="flex flex-col items-center justify-center lg:py-8"
 							>
 								<div
-									className="px-4 text-base leading-[1.2] tracking-tight text-dark dark:text-primary lg:px-16 lg:text-xl"
+									className="px-4 text-base leading-[1.2] tracking-tight text-primary lg:px-16 lg:text-xl"
 									style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 								>
 									{block.text
@@ -154,7 +154,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										Your browser does not support the video tag.
 									</video>
 									{block.caption && (
-										<p className="mt-2 text-center text-sm italic text-dark dark:text-primary">
+										<p className="mt-2 text-center text-sm italic text-primary">
 											{getLocalizedValue(block.caption, lang)}
 										</p>
 									)}
@@ -174,7 +174,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										Your browser does not support the video tag.
 									</video>
 									{block.caption && (
-										<p className="mt-2 text-center text-sm italic text-dark dark:text-primary">
+										<p className="mt-2 text-center text-sm italic text-primary">
 											{getLocalizedValue(block.caption, lang)}
 										</p>
 									)}
@@ -198,7 +198,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 										className="aspect-video h-full w-full object-cover object-[100%_45%]"
 									/>
 									{block.caption && (
-										<p className="mt-2 text-center text-sm italic text-dark dark:text-primary">
+										<p className="mt-2 text-center text-sm italic text-primary">
 											{getLocalizedValue(block.caption, lang)}
 										</p>
 									)}

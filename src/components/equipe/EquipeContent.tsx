@@ -154,7 +154,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 								>
 									{isActive ? (
 										<div className="pt-2">
-											<div className="w-full overflow-hidden rounded-3xl border-2 border-dark dark:border-primary">
+											<div className="w-full overflow-hidden rounded-3xl border-2 border-primary">
 												<Img
 													image={person.image}
 													src={
@@ -181,7 +181,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 													)}
 												</div>
 												{person.biography && (
-													<p className="text-base leading-tight tracking-tighter text-dark dark:text-primary sm:text-sm">
+													<p className="text-base leading-tight tracking-tighter text-primary sm:text-sm">
 														{getLocalizedValue(person.biography, language)}
 													</p>
 												)}

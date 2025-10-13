@@ -16,9 +16,7 @@ const SideNavLayout = ({
 				<NavBarMobile locale={locale} />
 			</div>
 			{/* Main content */}
-			<div className="flex-1 overflow-y-auto bg-grayLight p-4 dark:bg-dark">
-				{children}
-			</div>
+			<div className="flex-1 overflow-y-auto bg-dark p-4">{children}</div>
 		</div>
 	)
 }
