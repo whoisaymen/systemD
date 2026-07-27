@@ -1,0 +1,50 @@
+{
+	"name": "studio",
+	"version": "1.0.0",
+	"private": true,
+	"keywords": [
+		"sanity"
+	],
+	"license": "UNLICENSED",
+	"main": "package.json",
+	"scripts": {
+		"build": "sanity build",
+		"deploy": "sanity deploy --yes",
+		"dev": "sanity dev",
+		"migrate:festival-content:dry": "sanity exec migrations/moveFestivalContent.ts --with-user-token -- --dry-run",
+		"migrate:festival-content": "sanity exec migrations/moveFestivalContent.ts --with-user-token",
+		"migrate:festival-jury-2023:dry": "sanity exec migrations/copyFestivalJuryTo2023.ts --with-user-token -- --dry-run",
+		"migrate:festival-jury-2023": "sanity exec migrations/copyFestivalJuryTo2023.ts --with-user-token",
+		"migrate:i18n-arrays:dry": "sanity migration run migrateToLanguageField",
+		"migrate:i18n-arrays": "sanity migration run migrateToLanguageField --no-dry-run",
+		"seed:site-settings:dry": "sanity exec migrations/seedSiteSettings.ts --with-user-token -- --dry-run",
+		"seed:site-settings": "sanity exec migrations/seedSiteSettings.ts --with-user-token",
+		"start": "sanity start",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@sanity/client": "^7.23.0",
+		"@sanity/code-input": "^7.2.6",
+		"@sanity/color-input": "^6.0.12",
+		"@sanity/dashboard": "^6.0.8",
+		"@sanity/document-internationalization": "^6.2.17",
+		"@sanity/image-url": "^2.1.1",
+		"@sanity/locale-fr-fr": "^1.2.33",
+		"@sanity/ui": "^3.3.5",
+		"@sanity/vision": "^6.4.0",
+		"groq": "^6.4.0",
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
+		"react-icons": "^5.7.0",
+		"sanity": "^6.4.0",
+		"sanity-plugin-dashboard-widget-vercel": "^4.0.14",
+		"sanity-plugin-internationalized-array": "^5.1.17",
+		"styled-components": "^6.4.3"
+	},
+	"devDependencies": {
+		"@sanity/eslint-config-studio": "^6.0.0",
+		"@types/react": "^19.2.17",
+		"eslint": "^9.39.4",
+		"typescript": "^6.0.3"
+	}
+}

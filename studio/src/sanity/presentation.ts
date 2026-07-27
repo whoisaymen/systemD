@@ -1,12 +1,14 @@
-'use client'
-
+import groq from 'groq'
 import { presentationTool } from 'sanity/presentation'
-import { groq } from 'next-sanity'
+
+const previewOrigin =
+	process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 
 export const presentation = presentationTool({
 	name: 'editor',
 	title: 'Editor',
 	previewUrl: {
+		initial: previewOrigin,
 		previewMode: {
 			enable: '/api/draft-mode/enable',
 		},

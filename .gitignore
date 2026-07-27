@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/frontend/node_modules
 /studio/node_modules
 /.pnp
 .pnp.js
@@ -11,11 +12,16 @@
 
 # next.js
 /.next/
+/frontend/.next/
 /out/
+/frontend/out/
 
 # production
 /build
+/frontend/build
 /studio/dist
+/studio/.sanity
+/studio/backups
 
 # misc
 .DS_Store
@@ -32,6 +38,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+frontend/.env*.local
 
 # vercel
 .vercel
@@ -42,3 +49,4 @@ yarn-error.log*
 # Env files created by scripts for working locally
 .env
 studio/.env.development
+studio/.env.local

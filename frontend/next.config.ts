@@ -1,3 +1,4 @@
+import { hostname, networkInterfaces } from 'node:os'
 import { createClient, groq } from 'next-sanity'
 import { projectId, dataset, apiVersion } from '@/sanity/lib/env'
 // import { token } from '@/lib/sanity/token'
@@ -5,6 +6,33 @@ import type { NextConfig } from 'next'
 
 import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin()
+
+function getAllowedDevOrigins() {
+	const origins = new Set(
+		(process.env.NEXT_ALLOWED_DEV_ORIGINS ?? '')
+			.split(',')
+			.map((origin) => origin.trim())
+			.filter(Boolean),
+	)
+
+	if (process.env.NODE_ENV === 'development') {
+		for (const network of Object.values(networkInterfaces()).flat()) {
+			if (network?.family === 'IPv4' && !network.internal) {
+				origins.add(network.address)
+			}
+		}
+
+		const localHostname = hostname()
+		if (localHostname) {
+			origins.add(localHostname)
+			origins.add(`${localHostname}.local`)
+		}
+	}
+
+	return Array.from(origins)
+}
+
+const allowedDevOrigins = getAllowedDevOrigins()
 
 const client = createClient({
 	projectId,
@@ -15,7 +43,9 @@ const client = createClient({
 })
 
 const nextConfig: NextConfig = {
+	...(allowedDevOrigins.length > 0 ? { allowedDevOrigins } : {}),
 	images: {
+		qualities: [75, 90],
 		remotePatterns: [
 			{
 				protocol: 'https',

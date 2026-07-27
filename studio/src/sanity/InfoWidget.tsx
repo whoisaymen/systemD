@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Card, Code, Flex, Heading, Label, Stack, Text } from '@sanity/ui'
-import pkg from '$/package.json'
+import pkg from '../../package.json'
 import { FaGithub, FaBluesky, FaXTwitter } from 'react-icons/fa6'
 import type { DashboardWidget, LayoutConfig } from '@sanity/dashboard'
 

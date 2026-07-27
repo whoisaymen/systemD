@@ -1,5 +1,3 @@
-'use client'
-
 import { defineConfig } from 'sanity'
 import { projectId, dataset } from '@/sanity/lib/env'
 import { structure } from './src/sanity/structure'
@@ -30,7 +28,6 @@ export default defineConfig({
 	title: 'System D',
 	projectId,
 	dataset,
-	basePath: '/admin',
 	// theme,
 
 	// studio: {
