@@ -6,6 +6,9 @@ export default defineCliConfig({
 		projectId,
 		dataset,
 	},
-	studioHost: process.env.SANITY_STUDIO_HOST || undefined,
-	deployment: { autoUpdates: true },
+	studioHost: process.env.SANITY_STUDIO_HOST || 'systemd',
+	deployment: {
+		appId: '2bd2bf1d3e5494ca26803fc6',
+		autoUpdates: true,
+	},
 })

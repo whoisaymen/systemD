@@ -53,7 +53,7 @@ SANITY_STUDIO_PROJECT_ID=s7yacqk1
 SANITY_STUDIO_DATASET=production
 SANITY_STUDIO_API_VERSION=2024-12-01
 SANITY_STUDIO_PREVIEW_URL=https://YOUR-FRONTEND-DOMAIN
-SANITY_STUDIO_HOST=YOUR-STUDIO-HOST
+SANITY_STUDIO_HOST=systemd
 ```
 
 Deploy it from the repository root:
@@ -62,10 +62,9 @@ Deploy it from the repository root:
 npm run deploy:studio
 ```
 
-This runs `sanity deploy --yes` inside the `studio` workspace. On the first
-deployment, set `SANITY_STUDIO_HOST` to the desired hostname. Subsequent Studio
-deployments use the same hostname.
+This runs `sanity deploy --yes` inside the `studio` workspace and updates
+`https://systemd.sanity.studio`.
 
-Add the final frontend and `https://YOUR-STUDIO.sanity.studio` origins to the
-Sanity project's CORS settings. Enable credentials for the frontend origin used
-by Visual Editing.
+Add the final frontend and `https://systemd.sanity.studio` origins to the Sanity
+project's CORS settings. Enable credentials for the frontend origin used by
+Visual Editing.
