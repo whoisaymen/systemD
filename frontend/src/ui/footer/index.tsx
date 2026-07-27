@@ -3,27 +3,17 @@ import Navigation from './Navigation'
 import Social from '@/ui/Social'
 import { PortableText } from 'next-sanity'
 import Link from 'next/link'
-import Img from '@/ui/Img'
+import LogoShortAnimated from '@/components/svgs/LogoShortAnimated'
 
 export default async function Footer() {
-	const { title, logo, copyright } = await getSite()
-
-	const logoImage = logo?.image?.light || logo?.image?.default
+	const { title, copyright } = await getSite()
 
 	return (
 		<footer className="bg-accent text-center text-canvas" role="contentinfo">
 			<div className="section flex flex-wrap justify-between gap-x-12 gap-y-8 max-sm:flex-col">
 				<div className="flex flex-col gap-3 self-start max-sm:mx-auto max-sm:items-center">
-					<Link className="h3 md:h2 max-w-max" href="/">
-						{logoImage ? (
-							<Img
-								className="max-h-[1.5em] w-auto"
-								image={logoImage}
-								alt={logo?.name || title}
-							/>
-						) : (
-							title
-						)}
+					<Link className="max-w-max" href="/" aria-label={title}>
+						<LogoShortAnimated className="h-auto w-36 text-current md:w-48" />
 					</Link>
 
 					<Social />

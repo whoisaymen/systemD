@@ -209,7 +209,7 @@
 // 				{/* Bottom Social and Contact */}
 // 				<div className="flex h-[2.5rem] w-full items-center justify-between px-2 lg:pointer-events-auto">
 // 					<span className="rounded-md bg-primary px-1 py-0 text-base font-medium tracking-tight text-dark">
-// 						Mentions légales
+// 						Legal label
 // 					</span>
 // 					{/* <div className="flex items-center justify-center"> */}
 // 					<ThemeSwitch />
@@ -225,28 +225,28 @@
 
 'use client'
 
-import React, { useEffect, useState, useTransition } from 'react'
-import { motion } from 'motion/react'
+import type { ReactNode } from 'react'
+import { useEffect, useState, useTransition } from 'react'
+import { useReducedMotion } from 'motion/react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 import ThemeSwitch from '../ThemeSwitch'
 import LocaleSwitcher from './LocaleSwitcher'
-import MenuArrows from './MenuArrows'
 import BigBangLogo from '../bigbang/BigBangLogo'
-import FabriqueBracketsIcon from '../fabrique/FabriqueBracketsIcon'
-import FestivalSparklesIcon from '../festival/FestivalSparklesIcon'
 import HoverableItem from '../HoverableItem'
 import EquipeLogo from '../equipe/EquipeLogo'
 import MemoireLogo from '../memoire/MemoireLogo'
 import LogoShortAnimated from '../svgs/LogoShortAnimated'
 import FabriqueLogoDesktop from '../fabrique/FabriqueLogoDesktop'
 import FestivalLogoDesktop from '../festival/FestivalLogoDesktop'
+import SocialLinks from '@/ui/SocialLinks'
+import type { ThemeCombo } from '@/lib/theme'
 
-import { FaFacebook, FaInstagram, FaVimeo, FaYoutube } from 'react-icons/fa'
+import { MdContactSupport } from 'react-icons/md'
 import Loading from '@/app/(frontend)/[locale]/loading'
-
-// import your Loading component (adjust path if your file is elsewhere)
+import { SKIP_HOME_INTRO_KEY } from '@/components/homepage/HomepageVideoIntro'
 
 // Theme configuration
 const getThemeColors = (isHovered: boolean, isActive: boolean = false) => ({
@@ -259,22 +259,69 @@ const getThemeColors = (isHovered: boolean, isActive: boolean = false) => ({
 			: 'var(--color-dark)',
 })
 
+const HOME_INTRO_EASE = 'cubic-bezier(0.76, 0, 0.24, 1)'
+const HOME_VIDEO_EXPANDED_EVENT = 'homepage-video-expanded-change'
+
+const normalizeNavHref = (href: string) => href.replace(/\/$/, '')
+
 // Type for render function
-type RenderFunction = (isHovered: boolean, isActive: boolean) => React.ReactNode
+type RenderFunction = (isHovered: boolean, isActive: boolean) => ReactNode
 
 // NavBar component (contains a local NavItem that uses transition+router)
-const NavBar = ({ locale }: { locale: string }) => {
+const NavBar = ({
+	locale,
+	social,
+	themes,
+}: {
+	locale: string
+	social?: Sanity.Navigation
+	themes?: ThemeCombo[]
+}) => {
 	const router = useRouter()
 	const pathname = usePathname()
+	const tMenu = useTranslations('menu')
+	const reduceMotion = useReducedMotion()
+	const shouldReduceMotion = reduceMotion === true
+	const normalizedPathname = pathname.replace(/\/$/, '')
+	const isHomeRoute = normalizedPathname === `/${locale}`
 
 	// transition + loading state
-	const [isPending, startTransition] = useTransition()
+	const [, startTransition] = useTransition()
 	const [isLoading, setIsLoading] = useState(false)
+	const [pendingHref, setPendingHref] = useState<string | null>(null)
+	const [isHomeVideoExpanded, setIsHomeVideoExpanded] = useState(true)
 
 	// when the pathname changes, hide the loader (navigation finished)
 	useEffect(() => {
 		setIsLoading(false)
+		setPendingHref(null)
 	}, [pathname])
+
+	useEffect(() => {
+		if (!isHomeRoute) {
+			setIsHomeVideoExpanded(false)
+			return
+		}
+
+		const homepageVideoExpanded =
+			document.documentElement.dataset.homepageVideoExpanded
+		setIsHomeVideoExpanded(homepageVideoExpanded !== 'false')
+
+		const handleHomepageVideoState = (event: Event) => {
+			setIsHomeVideoExpanded(
+				(event as CustomEvent<{ expanded: boolean }>).detail.expanded,
+			)
+		}
+
+		window.addEventListener(HOME_VIDEO_EXPANDED_EVENT, handleHomepageVideoState)
+
+		return () => {
+			window.removeEventListener(
+				HOME_VIDEO_EXPANDED_EVENT,
+				handleHomepageVideoState,
+			)
+		}
+	}, [isHomeRoute])
 
 	// Route active helper (kept identical to your logic)
 	const isActive = (path: string) => {
@@ -299,48 +346,72 @@ const NavBar = ({ locale }: { locale: string }) => {
 		className?: string
 		growClass?: string
 		isActive?: boolean
-	}) => (
-		<HoverableItem className={`flex h-auto w-full ${growClass}`}>
-			{(isHovered) => (
-				// use a button and trigger router.push inside startTransition
-				<button
-					type="button"
-					onClick={() => {
-						// show loader immediately
-						setIsLoading(true)
-						// start a React transition and navigate
-						startTransition(() => {
-							router.push(href)
-						})
-					}}
-					className={`relative flex h-full w-full cursor-pointer items-center justify-center rounded-md shadow-inner ${
-						active
-							? 'shadowtest border-0 border-r-0 bg-neutral-500 lg:relative lg:z-50'
-							: 'to-grayDark/25 shadowtest bg-gradient-to-b from-primary shadow-inner'
-					} ${className}`}
-				>
-					{children(isHovered, !!active)}
-				</button>
-			)}
-		</HoverableItem>
-	)
+	}) => {
+		const navHref = normalizeNavHref(href)
+		const effectiveActive = pendingHref ? pendingHref === navHref : active
 
-	const SocialIcons = ({ className = '' }: { className?: string }) => (
-		<div className={`flex items-center gap-2 ${className}`}>
-			<FaInstagram className="text-dark" />
-			<FaFacebook className="text-dark" />
-			<FaYoutube className="text-dark" />
-		</div>
-	)
+		return (
+			<HoverableItem className={`flex h-auto w-full ${growClass}`}>
+				{(isHovered) => {
+					const shouldShowAnimatedState = isHovered || effectiveActive
+
+					return (
+						// use a button and trigger router.push inside startTransition
+						<button
+							type="button"
+							aria-current={effectiveActive ? 'page' : undefined}
+							onClick={() => {
+								if (navHref === normalizedPathname) return
+
+								setPendingHref(navHref)
+								setIsLoading(true)
+								startTransition(() => {
+									router.push(href)
+								})
+							}}
+							className={`relative flex h-full w-full cursor-pointer items-center justify-center rounded-md shadow-inner transition-colors duration-200 ${
+								effectiveActive
+									? 'shadowtest bg-[#8C8C8F] shadow-inner lg:relative lg:z-50'
+									: 'shadowtest bg-gradient-to-b from-primary to-grayDark/25 shadow-inner'
+							} ${className}`}
+						>
+							{children(shouldShowAnimatedState, !!effectiveActive)}
+						</button>
+					)
+				}}
+			</HoverableItem>
+		)
+	}
+
+	const shouldHideHomeNav = isHomeRoute && isHomeVideoExpanded
+	const homeNavTransitionDuration =
+		isHomeRoute && !shouldReduceMotion ? 'duration-[1300ms]' : 'duration-0'
 
 	return (
 		<>
 			<nav className="fixed left-0 top-0 hidden h-svh w-full items-start justify-between overflow-hidden bg-cover bg-center text-center text-xl font-black tracking-tighter text-dark lg:pointer-events-none lg:flex">
 				{/* First Column */}
-				<div className="flex h-full max-w-[var(--width-column-width)] flex-col space-y-1 p-1 lg:pointer-events-auto">
+				<div
+					style={{
+						transformOrigin: 'left center',
+						transitionTimingFunction: HOME_INTRO_EASE,
+					}}
+					className={`flex h-full w-[var(--width-column-width)] shrink-0 flex-col space-y-1 p-1 transition-[opacity,transform] lg:pointer-events-auto ${homeNavTransitionDuration} ${
+						shouldHideHomeNav
+							? '-translate-x-full opacity-0'
+							: 'translate-x-0 opacity-100'
+					}`}
+				>
 					{/* Logo */}
 					<Link
 						href="/"
+						onClick={() => {
+							if (!isHomeRoute) {
+								window.sessionStorage.setItem(SKIP_HOME_INTRO_KEY, 'true')
+								document.documentElement.dataset.homepageVideoExpanded = 'false'
+								setIsHomeVideoExpanded(false)
+							}
+						}}
 						className="group h-auto w-full rounded-md border-0 border-dark hover:bg-dark"
 					>
 						<LogoShortAnimated className="m-1 mb-0 inline-block h-auto w-full rounded-md text-primary lg:w-[15rem]" />
@@ -359,6 +430,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 								<FestivalLogoDesktop
 									className="w-full overflow-visible"
 									theme={getThemeColors(isHovered, isActive)}
+									forceHovered={isHovered}
 								/>
 							)}
 						</NavItem>
@@ -374,27 +446,26 @@ const NavBar = ({ locale }: { locale: string }) => {
 									<BigBangLogo
 										theme={getThemeColors(isHovered, isActive)}
 										className="h-full w-full overflow-visible"
+										forceHovered={isHovered}
 									/>
 								</div>
 							)}
 						</NavItem>
 					</div>
-
-					{/* Bottom Controls */}
-					<div className="flex h-auto w-full items-center justify-between rounded-md p-1 lg:gap-0 lg:px-2">
-						<FaVimeo size={30} className="text-primary lg:p-1" />
-						<FaYoutube size={36} className="text-primary lg:p-1" />
-						<FaFacebook size={30} className="text-primary lg:p-1" />
-						<FaInstagram size={30} className="text-primary lg:p-1" />
-
-						<span className="rounded-md bg-primary px-1 py-0 text-base font-medium tracking-tight text-dark">
-							Contact
-						</span>
-					</div>
 				</div>
 
 				{/* Second Column */}
-				<div className="flex h-full max-w-[var(--width-column-width)] flex-col space-y-1 p-1">
+				<div
+					style={{
+						transformOrigin: 'right center',
+						transitionTimingFunction: HOME_INTRO_EASE,
+					}}
+					className={`flex h-full w-[var(--width-column-width)] shrink-0 flex-col space-y-1 p-1 transition-[opacity,transform] ${homeNavTransitionDuration} ${
+						shouldHideHomeNav
+							? 'translate-x-full opacity-0'
+							: 'translate-x-0 opacity-100'
+					}`}
+				>
 					<div className="no-scrollbar flex h-full w-full flex-col space-y-1 overflow-scroll rounded-md lg:pointer-events-auto">
 						<NavItem
 							isActive={isActive('memoire')}
@@ -406,6 +477,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 									<MemoireLogo
 										theme={getThemeColors(isHovered, isActive)}
 										className="h-full w-full overflow-visible"
+										forceHovered={isHovered}
 									/>
 								</div>
 							)}
@@ -421,6 +493,7 @@ const NavBar = ({ locale }: { locale: string }) => {
 								<FabriqueLogoDesktop
 									theme={getThemeColors(isHovered, isActive)}
 									className="z-10 overflow-visible"
+									forceHovered={isHovered}
 								/>
 							)}
 						</NavItem>
@@ -435,19 +508,35 @@ const NavBar = ({ locale }: { locale: string }) => {
 									<EquipeLogo
 										theme={getThemeColors(isHovered, isActive)}
 										className="h-full w-full overflow-visible"
+										forceHovered={isHovered}
 									/>
 								</div>
 							)}
 						</NavItem>
 					</div>
 
-					{/* Bottom Social and Contact */}
-					<div className="flex h-[2.5rem] w-full items-center justify-between px-2 lg:pointer-events-auto">
-						<span className="rounded-md bg-primary px-1 py-0 text-base font-medium tracking-tight text-dark">
-							Mentions légales
-						</span>
-						<ThemeSwitch />
-						<LocaleSwitcher />
+					{/* Bottom links and controls */}
+					<div className="flex h-[2.5rem] w-full items-center justify-between gap-1 px-2 lg:pointer-events-auto">
+						<div className="flex h-full items-center gap-1">
+							<LocaleSwitcher />
+							<ThemeSwitch themes={themes} />
+							<Link
+								href={`/${locale}/contact`}
+								aria-label={tMenu('contact')}
+								aria-current={isActive('contact') ? 'page' : undefined}
+								className={`flex items-center justify-center text-primary transition-colors hover:text-grayDark ${
+									isActive('contact') ? 'text-grayDark' : ''
+								}`}
+							>
+								<MdContactSupport aria-hidden="true" className="h-7 w-7" />
+							</Link>
+						</div>
+						<SocialLinks
+							social={social}
+							className="flex items-center gap-1 text-primary"
+							linkClassName="flex shrink-0 items-center justify-center text-primary transition-colors hover:text-grayDark"
+							iconClassName="h-[22px] w-[22px]"
+						/>
 					</div>
 				</div>
 			</nav>

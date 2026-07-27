@@ -7,15 +7,9 @@ import FestivalLogoMobile from '../festival/FestivalLogoMobile'
 import MemoireLogoMobile from '../memoire/MemoireLogoMobile'
 import EquipeLogoMobile from '../equipe/EquipeLogoMobile'
 import FabriqueLogoMobile from '../fabrique/FabriqueLogoMobile'
-import { getRandomRotationClass } from '@/lib/utils'
-import {
-	FaFacebook,
-	FaInstagram,
-	FaSquareFacebook,
-	FaYoutube,
-} from 'react-icons/fa6'
+import { MdContactSupport } from 'react-icons/md'
+import SocialLinks from '@/ui/SocialLinks'
 
-import { AiFillInstagram } from 'react-icons/ai'
 import LogoShortAnimated from '../svgs/LogoShortAnimated'
 
 interface MenuItemProps {
@@ -148,9 +142,10 @@ interface MenuProps {
 	menuOpen: boolean
 	locale: string
 	closeMenu: () => void
+	social?: Sanity.Navigation
 }
 
-const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
+const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu, social }) => {
 	const t = useTranslations('menu')
 
 	if (!menuOpen) return null
@@ -214,22 +209,19 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
 				}}
 			>
 				<Link
-					className="w-fit -rotate-0 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
+					className="flex items-center justify-center text-primary"
 					href={`/${locale}/contact`}
 					onClick={closeMenu}
+					aria-label={t('contact')}
 				>
-					{t('legal')}
+					<MdContactSupport aria-hidden="true" className="h-8 w-8" />
 				</Link>
-				<Link
-					className="w-fit rotate-0 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark"
-					href={`/${locale}/contact`}
-					onClick={closeMenu}
-				>
-					{t('contact')}
-				</Link>
-				<span className="w-fit -rotate-0 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark">
-					Instagram
-				</span>
+				<SocialLinks
+					social={social}
+					className="flex items-center gap-1"
+					linkClassName="flex aspect-square h-9 items-center justify-center rounded-md border-2 border-primary bg-primary text-dark"
+					iconClassName="h-5 w-5"
+				/>
 			</motion.div>
 		</motion.div>
 	)

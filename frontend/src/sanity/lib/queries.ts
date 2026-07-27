@@ -14,6 +14,34 @@ const navigationQuery = groq`
 	}
 `
 
+const imageQuery = groq`
+	...,
+	asset->{
+		_id,
+		_type,
+		metadata
+	}
+`
+
+const logoQuery = groq`
+	...,
+	image{
+		default{ ${imageQuery} },
+		light{ ${imageQuery} },
+		dark{ ${imageQuery} }
+	}
+`
+
+const themeQuery = groq`
+	_id,
+	title,
+	slug,
+	"primary": primaryColor.hex,
+	"dark": darkColor.hex,
+	"grayDark": grayDarkColor.hex,
+	imageGrade
+`
+
 export const ctaQuery = groq`
 	...,
 	link{ ${linkQuery} }
@@ -24,13 +52,18 @@ export async function getSite() {
 		query: groq`
 			*[_type == 'site'][0]{
 				...,
+				logo{ ${logoQuery} },
 				ctas[]{ ${ctaQuery} },
 				headerMenu->{ ${navigationQuery} },
 				footerMenu->{ ${navigationQuery} },
 				social->{ ${navigationQuery} },
+				themes[]->{ ${themeQuery} },
+				'favicon': favicon.asset->url,
 				'ogimage': ogimage.asset->url
 			}
 		`,
+		useCdn: false,
+		next: { revalidate: 60 },
 	})
 
 	if (!data) throw Error('No `site` document found in the Studio')

@@ -57,16 +57,31 @@
 	}
 
 	:root {
-		--color-ink: theme(colors.ink);
-		--color-canvas: theme(colors.canvas);
-		--color-accent: theme(colors.accent);
-		--color-primary: theme(colors.primary);
-		--color-secondary: theme(colors.secondary);
-		--color-dark: theme(colors.dark);
+		--color-ink: #1d1d1f;
+		--color-canvas: #fff;
+		--color-accent: #1d1d1f;
+		--color-primary-rgb: 222 254 4;
+		--color-dark-rgb: 18 61 166;
+		--color-grayDark-rgb: 140 140 143;
+		--color-primary: #defe04;
+		--color-secondary: #defe04;
+		--color-dark: #123da6;
 		--color-grayLight: theme(colors.grayLight);
-		--color-grayDark: theme(colors.grayDark);
+		--color-grayDark: #8c8c8f;
+		--image-grade-gray: 1;
+		--image-grade-sepia: 0.72;
+		--image-grade-saturate: 2;
+		--image-grade-hue: 174deg;
+		--image-grade-contrast: 0.92;
+		--image-grade-brightness: 1.08;
 		/* --width-column-width: 18rem; */
 		--width-column-width: 17rem;
+	}
+
+	html,
+	body {
+		background: var(--color-dark);
+		color: var(--color-ink);
 	}
 }
 
@@ -113,6 +128,34 @@
 
 	.text-gradient {
 		@apply bg-gradient-to-br from-accent/5 to-accent bg-clip-text text-transparent;
+	}
+
+	.theme-graded-image {
+		filter: grayscale(var(--image-grade-gray))
+			contrast(var(--image-grade-contrast))
+			brightness(var(--image-grade-brightness))
+			sepia(var(--image-grade-sepia))
+			saturate(var(--image-grade-saturate))
+			hue-rotate(var(--image-grade-hue));
+		transition:
+			filter 420ms cubic-bezier(0.76, 0, 0.24, 1),
+			transform 420ms cubic-bezier(0.76, 0, 0.24, 1);
+	}
+
+	.theme-graded-image:hover,
+	div:hover > .theme-graded-image,
+	picture:hover .theme-graded-image,
+	a:hover .theme-graded-image,
+	button:hover .theme-graded-image,
+	article:hover .theme-graded-image,
+	figure:hover .theme-graded-image {
+		filter: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.theme-graded-image {
+			transition: none;
+		}
 	}
 
 	/* ctas, links */
@@ -276,6 +319,46 @@
 			flex: 0 0 min(var(--size, 300px), 80vw);
 			scroll-snap-align: center;
 		}
+	}
+
+	.festival-section-layer {
+		position: relative;
+	}
+
+	.festival-section-layer[data-stack='film'] {
+		z-index: 30;
+	}
+
+	.festival-section-layer[data-stack='jury'] {
+		z-index: 55;
+	}
+
+	.festival-section-layer[data-stack='exhibition'] {
+		z-index: 40;
+	}
+
+	.festival-section-layer[data-stack='gallery'] {
+		z-index: 50;
+	}
+
+	.festival-section-layer[data-active='true'] {
+		z-index: 100;
+	}
+
+	.festival-section-label {
+		position: relative;
+		cursor: pointer;
+	}
+
+	.festival-section-label[data-active='true'] {
+		z-index: 100;
+	}
+
+	.festival-section-label:hover,
+	.festival-section-label:focus-visible {
+		border-color: var(--color-grayDark);
+		background-color: var(--color-grayDark);
+		color: var(--color-dark);
 	}
 }
 

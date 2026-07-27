@@ -14,7 +14,11 @@ declare global {
 			footerMenu?: Navigation
 			social?: Navigation
 			copyright?: any
+			description?: string
+			keywords?: string[]
+			favicon?: string
 			ogimage?: string
+			themes?: SiteTheme[]
 		}>
 
 		type Navigation = SanityDocument<{
@@ -62,10 +66,27 @@ declare global {
 
 		type Logo = SanityDocument<{
 			name: string
+			svg?: string
 			image?: Partial<{
 				default: Image
 				light: Image
 				dark: Image
+			}>
+		}>
+
+		type SiteTheme = SanityDocument<{
+			title: string
+			slug?: { current: string }
+			primary?: string
+			dark?: string
+			grayDark?: string
+			imageGrade?: Partial<{
+				gray: number
+				sepia: number
+				saturate: number
+				hue: number
+				contrast: number
+				brightness: number
 			}>
 		}>
 
@@ -120,6 +141,7 @@ declare global {
 
 		type Link = {
 			readonly _type: 'link'
+			_key?: string
 			label: string
 			type: 'internal' | 'external'
 			internal?: Page | BlogPost

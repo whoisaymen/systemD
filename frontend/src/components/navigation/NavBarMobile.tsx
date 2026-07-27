@@ -9,9 +9,11 @@ import {
 	useScroll,
 } from 'motion/react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 import ThemeSwitch from '../ThemeSwitch'
 import LocaleSwitcher from './LocaleSwitcher'
+import type { ThemeCombo } from '@/lib/theme'
 
 import BigBangLogoMobile from '../bigbang/BigBangLogoMobile'
 import FestivalLogoMobile from '../festival/FestivalLogoMobile'
@@ -21,7 +23,6 @@ import FabriqueLogoMobile from '../fabrique/FabriqueLogoMobile'
 import LogoShortAnimated from '../svgs/LogoShortAnimated'
 
 import Menu from './MobileMenuItem'
-import LogoShortTsx from '../svgs/LogoShort'
 
 const parentVariants = {
 	visible: { y: 0 },
@@ -37,7 +38,16 @@ const childVariants = {
 	hidden: { opacity: 0, y: '-2rem' },
 }
 
-const NavBarMobile = ({ locale }: { locale: string }) => {
+const NavBarMobile = ({
+	locale,
+	social,
+	themes,
+}: {
+	locale: string
+	social?: Sanity.Navigation
+	themes?: ThemeCombo[]
+}) => {
+	const tMenu = useTranslations('menu')
 	const [menuOpen, setMenuOpen] = useState(false)
 	const pathname = usePathname()
 	const [hidden, setHidden] = useState(false)
@@ -255,6 +265,7 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 						menuOpen={menuOpen}
 						closeMenu={closeMenu}
 						locale={locale}
+						social={social}
 					/>
 				)}
 			</AnimatePresence>
@@ -272,13 +283,13 @@ const NavBarMobile = ({ locale }: { locale: string }) => {
 				</div>
 				<div className="pointer-events-auto flex items-stretch justify-center gap-1">
 					<div className="flex aspect-square h-full overflow-hidden rounded-md border-2 border-primary">
-						<ThemeSwitch />
+						<ThemeSwitch themes={themes} />
 					</div>
 					<button
 						onClick={toggleMenu}
 						className="relative aspect-square min-h-[2.25rem] rounded-md border-2 border-primary bg-dark bg-none text-primary focus:outline-none"
 					>
-						<span className="sr-only">Open main menu</span>
+						<span className="sr-only">{tMenu('openMainMenu')}</span>
 						<div className="absolute left-1/2 top-1/2 block w-6 -translate-x-1/2 -translate-y-1/2 transform">
 							<span
 								aria-hidden="true"

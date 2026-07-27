@@ -1,11 +1,11 @@
 'use client'
 
-import { useDraftModeEnvironment } from 'next-sanity/hooks'
+import { useVisualEditingEnvironment } from 'next-sanity/hooks'
 
 export default function DisableDraftMode() {
-	const environment = useDraftModeEnvironment()
+	const environment = useVisualEditingEnvironment()
 
-	if (!['live', 'unknown'].includes(environment)) return null
+	if (environment && environment !== 'standalone') return null
 
 	return (
 		<a
