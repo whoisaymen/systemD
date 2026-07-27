@@ -23,12 +23,6 @@ export default defineType({
 			type: 'array',
 			of: [{ type: 'actionsBlock' }],
 		}),
-		defineField({
-			name: 'vision',
-			title: 'Vision',
-			type: 'array',
-			of: [{ type: 'visionBlock' }],
-		}),
 	],
 	preview: {
 		prepare: () => ({

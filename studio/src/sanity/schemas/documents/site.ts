@@ -9,6 +9,7 @@ export default defineType({
 		{ name: 'socials', title: 'Réseaux sociaux' },
 		{ name: 'seo', title: 'SEO' },
 		{ name: 'visual', title: 'Identité visuelle' },
+		{ name: 'themes', title: 'Thèmes' },
 	],
 	fields: [
 		defineField({
@@ -29,10 +30,19 @@ export default defineType({
 			name: 'logo',
 			type: 'logo',
 			options: {
-				collapsable: true,
+				collapsible: true,
 				collapsed: true,
 			},
-			group: 'general',
+			group: 'visual',
+		}),
+		defineField({
+			name: 'favicon',
+			title: 'Favicon',
+			type: 'file',
+			options: {
+				accept: 'image/*,.ico',
+			},
+			group: 'visual',
 		}),
 		defineField({
 			name: 'announcements',
@@ -100,42 +110,14 @@ export default defineType({
 			},
 			group: 'seo',
 		}),
-		// visual , title:'Visual identity'fields
 		defineField({
-			name: 'primaryColorLight',
-			title: 'Couleur primaire light mode',
-			type: 'color',
-			group: 'visual',
-		}),
-		defineField({
-			name: 'primaryColorDark',
-			title: 'Couleur primaire dark mode',
-			type: 'color',
-			group: 'visual',
-		}),
-		defineField({
-			name: 'secondaryColorLight',
-			title: 'Couleur secondaire light mode',
-			type: 'color',
-			group: 'visual',
-		}),
-		defineField({
-			name: 'secondaryColorDark',
-			title: 'Couleur secondaire dark mode',
-			type: 'color',
-			group: 'visual',
-		}),
-		defineField({
-			name: 'accentColorLight',
-			title: 'Couleur accentuée light mode',
-			type: 'color',
-			group: 'visual',
-		}),
-		defineField({
-			name: 'accentColorDark',
-			title: 'Couleur accentuée dark mode',
-			type: 'color',
-			group: 'visual',
+			name: 'themes',
+			title: 'Thèmes disponibles',
+			description:
+				"Le premier thème de cette liste est utilisé par défaut. L'ordre défini ici est aussi l'ordre utilisé par le bouton de changement de thème.",
+			type: 'array',
+			of: [{ type: 'reference', to: [{ type: 'theme' }] }],
+			group: 'themes',
 		}),
 	],
 	preview: {

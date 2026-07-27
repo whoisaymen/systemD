@@ -30,7 +30,7 @@ export default defineType({
 		}),
 		defineField({
 			name: 'pastOnTourEvents',
-			title: 'Événements “on tour” passés',
+			title: 'Événements passés',
 			type: 'array',
 			of: [
 				{

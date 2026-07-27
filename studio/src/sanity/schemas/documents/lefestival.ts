@@ -13,6 +13,12 @@ export default defineType({
 			type: 'internationalizedArrayText',
 		}),
 		defineField({
+			name: 'vision',
+			title: 'Notre vision',
+			type: 'array',
+			of: [{ type: 'visionBlock' }],
+		}),
+		defineField({
 			name: 'blocks',
 			title: 'Blocs',
 			type: 'array',

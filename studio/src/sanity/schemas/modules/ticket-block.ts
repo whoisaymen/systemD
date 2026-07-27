@@ -47,7 +47,7 @@ export default defineType({
 						prepare({ title, subtitle }) {
 							const getLocalizedValue = (array: any[], lang: string) => {
 								if (!Array.isArray(array)) return null
-								return array.find((v) => v?._key === lang)?.value
+								return array.find((v) => v?.language === lang || v?._key === lang)?.value
 							}
 
 							const displayTitle =

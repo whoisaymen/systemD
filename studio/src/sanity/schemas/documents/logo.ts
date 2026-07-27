@@ -13,6 +13,14 @@ export default defineType({
 			type: 'string',
 		}),
 		defineField({
+			name: 'svg',
+			title: 'SVG inline',
+			description:
+				'Collez le SVG du logo ici. Utilisez fill="currentColor" pour que le logo suive le thème.',
+			type: 'text',
+			rows: 8,
+		}),
+		defineField({
 			name: 'image',
 			type: 'object',
 			options: {

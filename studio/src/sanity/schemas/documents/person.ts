@@ -40,7 +40,7 @@ export default defineType({
 		},
 		prepare({ title, subtitle, media }) {
 			const subtitleText = subtitle?.length
-				? subtitle?.find((v: KeyedObject) => v?._key === 'fr')?.value
+				? subtitle?.find((v: KeyedObject) => v?.language === 'fr' || v?._key === 'fr')?.value
 				: ``
 
 			return {

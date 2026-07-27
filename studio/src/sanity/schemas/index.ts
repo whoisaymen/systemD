@@ -8,6 +8,7 @@ import homepage from './documents/homepage'
 import announcement from './documents/announcement'
 import redirect from './documents/redirect'
 import logo from './documents/logo'
+import siteTheme from './documents/theme'
 import person from './documents/person'
 import pricing from './documents/pricing'
 import event from './documents/event'
@@ -91,6 +92,7 @@ export const schemaTypes = [
 	announcement,
 	redirect,
 	logo,
+	siteTheme,
 	person,
 	pricing,
 	reputation,

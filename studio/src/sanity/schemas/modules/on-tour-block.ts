@@ -2,12 +2,12 @@ import { defineField, defineType } from 'sanity'
 
 export default defineType({
 	name: 'onTourBlock',
-	title: 'Bloc “on tour”',
+	title: 'Bloc événements',
 	type: 'object',
 	fields: [
 		defineField({
 			name: 'events',
-			title: 'Événements “on tour”',
+			title: 'Événements',
 			type: 'array',
 			of: [{ type: 'reference', to: [{ type: 'event' }] }],
 		}),
@@ -20,7 +20,7 @@ export default defineType({
 	],
 	preview: {
 		prepare: () => ({
-			title: 'Bloc “on tour”',
+			title: 'Bloc événements',
 		}),
 	},
 })

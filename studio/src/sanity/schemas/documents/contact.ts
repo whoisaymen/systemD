@@ -30,16 +30,6 @@ export default defineType({
 			type: 'string',
 		}),
 		defineField({
-			name: 'backgroundColor',
-			title: 'Couleur de fond',
-			type: 'color',
-		}),
-		defineField({
-			name: 'textColor',
-			title: 'Couleur du texte',
-			type: 'color',
-		}),
-		defineField({
 			name: 'partners',
 			title: 'Logos des partenaires',
 			type: 'array',

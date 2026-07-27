@@ -1,6 +1,5 @@
-import { createClient } from 'next-sanity'
+import { createClient } from '@sanity/client'
 import { projectId, dataset, apiVersion } from '@/sanity/lib/env'
-import { dev } from '@/lib/env'
 
 interface SanityAsset {
 	_type: string
@@ -36,10 +35,13 @@ const client = createClient({
 	projectId,
 	dataset,
 	apiVersion,
-	token:
-		'skZWf1rVgT7WpcppWEPiem7oriHw9dyDA81ok3rc9b0CTCRsGFXA20f22DTGj1f8nnenxZJToYuSdcXrYMpa6maRAcol6bm3SO7l5PB8zqHNe2ayIUYKyjjx7b83vCtvN3uEbUKu5by7SobhHm1WWbcxKOPc20EP3ffYP0F1vveHCJ4mQdma', // You'll need a token with write access
+	token: process.env.SANITY_API_WRITE_TOKEN,
 	useCdn: false,
 })
+
+if (!process.env.SANITY_API_WRITE_TOKEN) {
+	throw new Error('Missing SANITY_API_WRITE_TOKEN')
+}
 
 // Migration script
 async function migratePhotoGallery() {

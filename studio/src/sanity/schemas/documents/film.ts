@@ -23,7 +23,7 @@ export default defineType({
 					const defaultLanguage = 'en' // Replace with your default language
 					const titleArray = doc.title || doc.metadata.title
 					const titleObject =
-						titleArray.find((item: any) => item.language === defaultLanguage) ||
+						titleArray.find((item: any) => item.language === defaultLanguage || item._key === defaultLanguage) ||
 						titleArray[0]
 					return titleObject ? titleObject.value : 'untitled'
 				},
@@ -129,7 +129,7 @@ export default defineType({
 
 			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
-				return array.find((v) => v?._key === lang)?.value
+				return array.find((v) => v?.language === lang || v?._key === lang)?.value
 			}
 
 			const displayTitle =

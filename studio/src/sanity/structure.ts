@@ -1,33 +1,17 @@
 import { structureTool } from 'sanity/structure'
-import { group, singleton } from './lib/utils'
-import { VscMultipleWindows, VscServerProcess } from 'react-icons/vsc'
-import { BsDatabaseAdd } from 'react-icons/bs'
+import { singleton } from './lib/utils'
+import { VscCalendar, VscServerProcess, VscSymbolColor } from 'react-icons/vsc'
+import { GiFactory, GiGooExplosion, GiBrain } from 'react-icons/gi'
 import {
-	GiFactory,
-	GiGooExplosion,
-	GiPartyPopper,
-	GiBrain,
-} from 'react-icons/gi'
-import {
-	FaPhotoVideo,
 	FaFilm,
-	FaCamera,
-	FaVideo,
 	FaUserFriends,
 	FaTags,
-	FaFileAlt,
 	FaClipboardList,
 	FaInfoCircle,
-	FaAward,
 	FaHome,
-	FaMapMarkerAlt,
-	FaNewspaper,
-	FaCalendarAlt,
 	FaBook,
 } from 'react-icons/fa'
 import { MdEmail } from 'react-icons/md'
-
-import { VscCalendar } from 'react-icons/vsc'
 
 export const structure = structureTool({
 	name: 'content',
@@ -36,16 +20,13 @@ export const structure = structureTool({
 		S.list()
 			.title('CMS')
 			.items([
-				S.documentTypeListItem('filmSubmission')
-					.title('Film Submissions')
-					.icon(FaClipboardList),
-
-				S.divider(),
-				singleton(S, 'site', 'Réglages').icon(VscServerProcess),
 				singleton(S, 'homepage', "Page d'accueil").icon(FaHome),
-				// S.documentTypeListItem('homepage'),
+				singleton(S, 'site', 'Réglages').icon(VscServerProcess),
+				S.documentTypeListItem('theme').title('Thèmes').icon(VscSymbolColor),
 
 				S.divider(),
+
+				singleton(S, 'lefestival', 'Le Festival').icon(VscCalendar),
 
 				// singleton(S, 'bigbang', 'Big Bang').icon(GiGooExplosion),
 				S.listItem()
@@ -64,10 +45,9 @@ export const structure = structureTool({
 								// 	.icon(FaBook),
 							]),
 					),
+				singleton(S, 'memoire', 'La Mémoire').icon(GiBrain),
 				singleton(S, 'fabrique', 'La Fabrique').icon(GiFactory),
 				S.documentTypeListItem('person').title("L'Équipe"),
-				singleton(S, 'memoire', 'La Mémoire').icon(GiBrain),
-				singleton(S, 'lefestival', 'Le Festival').icon(VscCalendar),
 
 				// S.listItem()
 				// 	.title('Le Festival')
@@ -174,7 +154,10 @@ export const structure = structureTool({
 
 				S.documentTypeListItem('event').title('Événements'),
 				S.divider(),
-
+				singleton(S, 'contact', 'Contact').icon(MdEmail),
+				S.documentTypeListItem('filmSubmission')
+					.title('Soumissions de films')
+					.icon(FaClipboardList),
 				// S.listItem()
 				// 	.title('Médiathèque')
 				// 	.icon(FaPhotoVideo)
@@ -195,7 +178,5 @@ export const structure = structureTool({
 				// group(S, 'Autres', [
 				// 	S.documentTypeListItem('announcement').title('Announcements'),
 				// ]).icon(BsDatabaseAdd),
-
-				singleton(S, 'contact', 'Contact').icon(MdEmail),
 			]),
 })

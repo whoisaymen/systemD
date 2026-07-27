@@ -18,7 +18,7 @@ export default defineType({
 		},
 		prepare({ text }) {
 			const getLocalizedValue = (array: any[], lang: string) =>
-				array?.find((v) => v?._key === lang)?.value
+				array?.find((v) => v?.language === lang || v?._key === lang)?.value
 
 			const displayText =
 				getLocalizedValue(text, 'fr') ||

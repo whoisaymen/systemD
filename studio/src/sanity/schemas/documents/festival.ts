@@ -46,6 +46,19 @@ export default defineType({
 			title: "Lien de l'aftermovie",
 			type: 'url',
 		}),
+		defineField({
+			name: 'jury',
+			title: 'Membres du jury',
+			type: 'array',
+			description: 'Ajoutez les membres du jury pour cette édition.',
+			validation: (Rule) => Rule.unique(),
+			of: [
+				{
+					type: 'reference',
+					to: [{ type: 'jury' }],
+				},
+			],
+		}),
 		// defineField({
 		// 	name: 'filmSelection',
 		// 	title: 'Films sélectionnés',
@@ -57,12 +70,6 @@ export default defineType({
 		// 			to: [{ type: 'film' }],
 		// 		},
 		// 	],
-		// }),
-		// defineField({
-		// 	name: 'jury',
-		// 	title: 'Membres du jury',
-		// 	type: 'array',
-		// 	of: [{ type: 'reference', to: [{ type: 'jury' }] }],
 		// }),
 		defineField({
 			name: 'photoGallery',
