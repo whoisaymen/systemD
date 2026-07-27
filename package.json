@@ -21,6 +21,7 @@
 		"build": "run-s build:next build:studio",
 		"build:next": "npm run build --workspace=frontend",
 		"build:studio": "npm run build --workspace=studio",
+		"deploy:studio": "npm run deploy --workspace=studio",
 		"start": "npm run start --workspace=frontend",
 		"clean": "npm run clean --workspace=frontend",
 		"prelint": "npm run check:node",

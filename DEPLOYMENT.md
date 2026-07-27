@@ -1,83 +1,71 @@
 # Deployment
 
-The repository contains two independently deployed apps. Create two Vercel
-projects connected to the same GitHub repository.
+The frontend deploys automatically to the existing `system-d` Vercel project
+when a branch is pushed to GitHub. The `v1` branch creates Preview deployments;
+`main` remains the Production branch. Sanity Studio is deployed separately to
+Sanity hosting with the Sanity CLI.
 
-| Vercel project | Root Directory | Framework |
-| --- | --- | --- |
-| System D frontend | `frontend` | Next.js |
-| System D Studio | `studio` | Other |
+## Frontend on Vercel
 
-Keep **Include source files outside of the Root Directory in the Build Step**
-enabled for both projects. Vercel then uses the workspace definitions and the
-root `package-lock.json` when installing dependencies.
-
-## Frontend
-
-Use the following Vercel settings:
+The existing `system-d` project needs these settings after the repository split:
 
 - Root Directory: `frontend`
 - Framework Preset: Next.js
 - Build Command: use the project default (`npm run build`)
 - Output Directory: use the project default
 - Node.js Version: 22.x
+- Include source files outside the Root Directory: enabled
 
-Set these environment variables for Production, Preview, and Development unless
-a different scope is noted:
+Set these environment variables in the existing Vercel project:
 
 ```dotenv
-NEXT_PUBLIC_BASE_URL=https://www.example.com
+NEXT_PUBLIC_BASE_URL=https://YOUR-FRONTEND-DOMAIN
 NEXT_PUBLIC_SANITY_PROJECT_ID=s7yacqk1
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-12-01
-NEXT_PUBLIC_SANITY_STUDIO_URL=https://studio.example.com
+NEXT_PUBLIC_SANITY_STUDIO_URL=https://YOUR-STUDIO.sanity.studio
 SANITY_API_READ_TOKEN=
 SANITY_API_WRITE_TOKEN=
 ```
 
 `SANITY_API_READ_TOKEN` is required for draft mode and uncached preview queries.
-`SANITY_API_WRITE_TOKEN` is required by the film submission API route. Both are
-server-only secrets and must be entered as sensitive values in Vercel.
+`SANITY_API_WRITE_TOKEN` is required by the film submission API route. Both must
+remain server-only sensitive values in Vercel.
 
-`NEXT_PUBLIC_GITHUB_TOKEN` is optional. Do not use a private token here: values
-with the `NEXT_PUBLIC_` prefix are included in browser assets.
+`NEXT_PUBLIC_GITHUB_TOKEN` is optional. Do not use a private token here because
+values with the `NEXT_PUBLIC_` prefix are included in browser assets.
 
-## Studio
+Once the Root Directory is updated, the normal deployment flow is:
 
-Use the following Vercel settings:
+```sh
+git push origin v1
+```
 
-- Root Directory: `studio`
-- Framework Preset: Other
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Node.js Version: 22.x
+Vercel will build and deploy `frontend/` from that push just as it did before the
+repository split.
 
-Set these environment variables:
+## Studio on Sanity
+
+Configure the Studio locally in `studio/.env.local`:
 
 ```dotenv
 SANITY_STUDIO_PROJECT_ID=s7yacqk1
 SANITY_STUDIO_DATASET=production
 SANITY_STUDIO_API_VERSION=2024-12-01
-SANITY_STUDIO_PREVIEW_URL=https://www.example.com
+SANITY_STUDIO_PREVIEW_URL=https://YOUR-FRONTEND-DOMAIN
+SANITY_STUDIO_HOST=YOUR-STUDIO-HOST
 ```
 
-The `SANITY_STUDIO_*` values are compiled into the Studio's browser bundle, so
-they must not contain secrets. `SANITY_STUDIO_HOST` is only needed when using
-Sanity's own `sanity deploy` hosting and is not needed on Vercel.
+Deploy it from the repository root:
 
-The Studio's `vercel.json` sends non-file routes to `index.html`, which is
-required when a Studio route is opened or refreshed directly.
+```sh
+npm run deploy:studio
+```
 
-## First Deployment
+This runs `sanity deploy --yes` inside the `studio` workspace. On the first
+deployment, set `SANITY_STUDIO_HOST` to the desired hostname. Subsequent Studio
+deployments use the same hostname.
 
-1. Import the repository as the frontend project and select `frontend`.
-2. Import the same repository again as the Studio project and select `studio`.
-3. Add the environment variables above, then deploy both projects.
-4. Replace the example URLs with the final production domains and redeploy.
-5. In the Sanity project settings, add the frontend and Studio production
-   origins to CORS. Enable credentials for the frontend origin used by Visual
-   Editing.
-
-After both projects are connected, each GitHub push can deploy both apps. Vercel
-can skip a project automatically when its workspace and dependencies were not
-affected by a commit.
+Add the final frontend and `https://YOUR-STUDIO.sanity.studio` origins to the
+Sanity project's CORS settings. Enable credentials for the frontend origin used
+by Visual Editing.
