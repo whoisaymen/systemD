@@ -93,13 +93,13 @@ const capitalizeFirstLetter = (str: string): string => {
 
 const getLocalizedValue = (array: any[], lang: string): string => {
 	if (!Array.isArray(array)) return ''
-	const item = array.find((entry) => entry._key === lang)
+	const item = array.find((entry) => entry.language === lang || entry._key === lang)
 	return item?.value || ''
 }
 
 const getLocalizedText = (array: any[], lang: string): string => {
 	if (!Array.isArray(array)) return ''
-	const item = array.find((entry) => entry._key === lang)
+	const item = array.find((entry) => entry.language === lang || entry._key === lang)
 	return item?.value || ''
 }
 

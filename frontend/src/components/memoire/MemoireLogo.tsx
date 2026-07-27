@@ -8,10 +8,16 @@ interface MemoireLogoProps {
 		icon?: string
 	}
 	className?: string
+	forceHovered?: boolean
 }
 
-const MemoireLogo: React.FC<MemoireLogoProps> = ({ theme, className }) => {
+const MemoireLogo: React.FC<MemoireLogoProps> = ({
+	theme,
+	className,
+	forceHovered = false,
+}) => {
 	const [isHovered, setIsHovered] = useState(false)
+	const shouldAnimate = forceHovered || isHovered
 
 	return (
 		<svg
@@ -25,7 +31,7 @@ const MemoireLogo: React.FC<MemoireLogoProps> = ({ theme, className }) => {
 			<motion.g
 				initial={false}
 				animate={{
-					scale: isHovered ? 0.9 : 1,
+					scale: shouldAnimate ? 0.9 : 1,
 					transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 				}}
 			>
@@ -41,8 +47,8 @@ const MemoireLogo: React.FC<MemoireLogoProps> = ({ theme, className }) => {
 			<motion.g
 				initial={false}
 				animate={{
-					// y: isHovered ? 4 : 0,
-					scale: isHovered ? 1.02 : 1,
+					// y: shouldAnimate ? 4 : 0,
+					scale: shouldAnimate ? 1.02 : 1,
 					transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 				}}
 				className="[@media(max-height:900px)]:hidden"

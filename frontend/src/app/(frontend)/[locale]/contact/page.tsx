@@ -15,12 +15,11 @@ export default async function ContactPage({
 async function getContact() {
 	const query = groq`
     *[_type == 'contact'][0]{
+      _id,
       formEmail,
       address,
       mapLocation,
       phone,
-      backgroundColor,
-      textColor,
       partners[]{
         _key,
         logo {

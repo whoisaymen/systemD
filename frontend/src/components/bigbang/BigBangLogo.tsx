@@ -8,10 +8,16 @@ interface BigBangLogoProps {
 		icon?: string
 	}
 	className?: string
+	forceHovered?: boolean
 }
 
-const BigBangLogo: React.FC<BigBangLogoProps> = ({ theme, className }) => {
+const BigBangLogo: React.FC<BigBangLogoProps> = ({
+	theme,
+	className,
+	forceHovered = false,
+}) => {
 	const [isHovered, setIsHovered] = useState(false)
+	const shouldAnimate = forceHovered || isHovered
 
 	return (
 		<svg
@@ -26,8 +32,8 @@ const BigBangLogo: React.FC<BigBangLogoProps> = ({ theme, className }) => {
 			<motion.g
 				initial={false}
 				animate={{
-					y: isHovered ? 2 : 0,
-					scale: isHovered ? 1.1 : 1,
+					y: shouldAnimate ? 2 : 0,
+					scale: shouldAnimate ? 1.1 : 1,
 					transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 				}}
 			>
@@ -79,10 +85,10 @@ const BigBangLogo: React.FC<BigBangLogoProps> = ({ theme, className }) => {
 				className="relative"
 				initial={false}
 				animate={{
-					scale: isHovered ? 0.95 : 1,
+					scale: shouldAnimate ? 0.95 : 1,
 					transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 				}}
-				style={{ zIndex: isHovered ? -100 : 0 }}
+				style={{ zIndex: shouldAnimate ? -100 : 0 }}
 			>
 				<path
 					d="M190 116.189C190 159.925 153.512 195.379 108.501 195.379C63.4904 195.379 27.002 159.925 27.002 116.189C27.002 72.4543 63.4904 37 108.501 37C153.512 37 190 72.4543 190 116.189Z"
@@ -101,8 +107,8 @@ const BigBangLogo: React.FC<BigBangLogoProps> = ({ theme, className }) => {
 			<motion.g
 				initial={false}
 				animate={{
-					y: isHovered ? 4 : 0,
-					scaleY: isHovered ? 0.85 : 1,
+					y: shouldAnimate ? 4 : 0,
+					scaleY: shouldAnimate ? 0.85 : 1,
 					transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 				}}
 			>

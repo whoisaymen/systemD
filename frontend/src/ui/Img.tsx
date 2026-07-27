@@ -1,15 +1,17 @@
-import {
-	useNextSanityImage,
-	type UseNextSanityImageOptions,
-} from 'next-sanity-image'
-import client from '@/sanity/client'
 import { urlFor } from '@/sanity/lib/image'
 import { preload } from 'react-dom'
 import { stegaClean } from 'next-sanity'
+import { cn } from '@/lib/utils'
 
 const SIZES = [
 	120, 240, 360, 480, 640, 720, 800, 880, 960, 1280, 1440, 1600, 1800, 2000,
 ]
+
+type ImageBuilder = ReturnType<typeof urlFor>
+
+type ImageOptions = {
+	imageBuilder?: (builder: ImageBuilder) => ImageBuilder
+}
 
 export default function Img({
 	image,
@@ -17,20 +19,19 @@ export default function Img({
 	imageSizes = SIZES,
 	alt = '',
 	options,
+	themeGrade = true,
+	className,
 	...props
 }: {
 	image: Sanity.Image | undefined
 	imageWidth?: number
 	imageSizes?: number[]
-	options?: UseNextSanityImageOptions
+	options?: ImageOptions
+	themeGrade?: boolean
 } & React.ImgHTMLAttributes<HTMLImageElement>) {
 	if (!image?.asset) return null
 
-	const { src, width, height } = useNextSanityImage(
-		client,
-		image,
-		imageWidth ? { imageBuilder: (b) => b.width(imageWidth) } : options,
-	)
+	const { src, width, height } = getImageProps(image, imageWidth, options)
 
 	if (stegaClean(image.loading) === 'eager') {
 		preload(src, { as: 'image' })
@@ -46,6 +47,7 @@ export default function Img({
 			loading={stegaClean(image.loading) || 'lazy'}
 			decoding="async"
 			{...props}
+			className={cn(themeGrade && 'theme-graded-image', className)}
 		/>
 	)
 }
@@ -60,16 +62,12 @@ export function Source({
 	image: Sanity.Image | undefined
 	imageWidth?: number
 	imageSizes?: number[]
-	options?: UseNextSanityImageOptions
+	options?: ImageOptions
 	media?: string
 }) {
 	if (!image?.asset) return null
 
-	const { src, width, height } = useNextSanityImage(
-		client,
-		image,
-		imageWidth ? { imageBuilder: (b) => b.width(imageWidth) } : options,
-	)
+	const { src, width, height } = getImageProps(image, imageWidth, options)
 
 	if (stegaClean(image.loading) === 'eager') {
 		preload(src, { as: 'image' })
@@ -83,6 +81,44 @@ export function Source({
 			media={media}
 		/>
 	)
+}
+
+function getImageProps(
+	image: Sanity.Image,
+	imageWidth?: number,
+	options?: ImageOptions,
+) {
+	const builder = imageWidth
+		? urlFor(image).width(imageWidth)
+		: options?.imageBuilder?.(urlFor(image)) || urlFor(image)
+	const dimensions = getImageDimensions(image)
+	const width = imageWidth || dimensions?.width
+	const height =
+		imageWidth && dimensions
+			? Math.round((imageWidth / dimensions.width) * dimensions.height)
+			: dimensions?.height
+
+	return {
+		src: builder.auto('format').url(),
+		width,
+		height,
+	}
+}
+
+function getImageDimensions(image: Sanity.Image) {
+	const dimensions = image.asset?.metadata?.dimensions
+	if (dimensions?.width && dimensions?.height) {
+		return dimensions
+	}
+
+	const ref = image.asset?._ref || image.asset?._id
+	const match = ref?.match(/-(\d+)x(\d+)-/)
+	if (!match) return undefined
+
+	return {
+		width: Number(match[1]),
+		height: Number(match[2]),
+	}
 }
 
 function generateSrcset(

@@ -26,19 +26,13 @@ const AccordionItem = React.forwardRef<
 ))
 AccordionItem.displayName = 'AccordionItem'
 
-// Generate a random delay between min and max values
-const getRandomDelay = (min = 0.1, max = 0.8) => {
-	return Math.random() * (max - min) + min
-}
-
 const AccordionTrigger = React.forwardRef<
 	React.ElementRef<typeof AccordionPrimitive.Trigger>,
 	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & {
 		animationDelay?: number
 	}
 >(({ className, children, animationDelay, ...props }, ref) => {
-	// Use provided delay or generate a random one if not specified
-	const delay = animationDelay !== undefined ? animationDelay : getRandomDelay()
+	const delay = animationDelay ?? 0.2
 
 	return (
 		<motion.div

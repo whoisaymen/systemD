@@ -39,7 +39,9 @@ export default function FestivalContentImproved({
 	// Helper for localized values
 	const getLocalizedValue = (array: any[], lang: string) => {
 		if (!Array.isArray(array)) return ''
-		const item = array.find((entry) => entry._key === lang)
+		const item = array.find(
+			(entry) => entry.language === lang || entry._key === lang,
+		)
 		return item ? item.value : ''
 	}
 
@@ -183,7 +185,7 @@ export default function FestivalContentImproved({
 						</AccordionItem>
 					)}
 
-					{/* On Tour Section */}
+					{/* Events Section */}
 					{onTourBlock && (
 						<AccordionItem
 							value="on-tour"
@@ -193,7 +195,7 @@ export default function FestivalContentImproved({
 								rotation={4}
 								className="-mb-4 w-full sm:text-6xl"
 							>
-								On Tour
+								Events
 							</AccordionTrigger>
 							<AccordionContent className="w-full">
 								<div className="mt-4 w-full">

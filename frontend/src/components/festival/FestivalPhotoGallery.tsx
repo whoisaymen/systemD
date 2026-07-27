@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Img from '@/ui/Img'
-import { motion } from 'framer-motion'
 import { IoChevronDownOutline, IoChevronUpOutline } from 'react-icons/io5'
 
 interface FestivalPhotoGalleryProps {

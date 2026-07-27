@@ -17,7 +17,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 	const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
 
 	const getLocalizedValue = (array: any[], lang: string) =>
-		array?.find((v) => v?._key === lang)?.value
+		array?.find((v) => v?.language === lang || v?._key === lang)?.value
 
 	return (
 		<div className="py-8" id="long-story">
@@ -126,7 +126,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 								>
 									{block.text
-										.filter((paragraph: any) => paragraph._key === lang)
+										.filter((paragraph: any) => paragraph.language === lang || paragraph._key === lang)
 										.map((paragraph: any, idx: number) => (
 											<p key={idx}>
 												{renderParagraph(

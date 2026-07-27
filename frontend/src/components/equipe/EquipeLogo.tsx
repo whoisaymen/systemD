@@ -9,10 +9,16 @@ interface EquipeLogoProps {
 		text?: string
 	}
 	className?: string
+	forceHovered?: boolean
 }
 
-const EquipeLogo: React.FC<EquipeLogoProps> = ({ theme, className }) => {
+const EquipeLogo: React.FC<EquipeLogoProps> = ({
+	theme,
+	className,
+	forceHovered = false,
+}) => {
 	const [isHovered, setIsHovered] = useState(false)
+	const shouldAnimate = forceHovered || isHovered
 
 	return (
 		<>
@@ -28,7 +34,7 @@ const EquipeLogo: React.FC<EquipeLogoProps> = ({ theme, className }) => {
 				<motion.g
 					initial={false}
 					animate={{
-						y: isHovered ? '50%' : '-10%',
+						y: shouldAnimate ? 44.5 : -8.9,
 						transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
 					}}
 				>
@@ -44,7 +50,7 @@ const EquipeLogo: React.FC<EquipeLogoProps> = ({ theme, className }) => {
 				<motion.g
 					initial={false}
 					animate={{
-						y: isHovered ? '-50%' : 0,
+						y: shouldAnimate ? -44.5 : 0,
 						transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
 					}}
 				>

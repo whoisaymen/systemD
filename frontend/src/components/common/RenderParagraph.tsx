@@ -55,10 +55,8 @@ export const renderParagraph = (
 				)
 
 			if (isSystemD) {
-				const randomRotation =
-					rotations[Math.floor(Math.random() * rotations.length)]
-
-				const randomDelay = Math.random() * 1.5 // Random delay between 0 and 1.5 seconds
+				const rotation = rotations[index % rotations.length]
+				const delay = (index % 4) * 0.25
 
 				return (
 					<motion.span
@@ -68,16 +66,16 @@ export const renderParagraph = (
 							rotate: 3,
 							transition: {
 								ease: [0.76, 0, 0.24, 1],
-								duration: 1.5,
-								repeat: Infinity,
-								repeatType: 'reverse',
-								delay: randomDelay,
-							},
-						}}
-					>
-						<LogoShortTsx
-							className={`mr-[0.10rem] inline-block h-auto w-[9rem] rounded-md px-2 py-1 sm:w-[15rem] ${randomRotation} ${logoStyle} ${logoSize || 'w-[9rem] sm:w-[15rem]'}`}
-						/>
+									duration: 1.5,
+									repeat: Infinity,
+									repeatType: 'reverse',
+									delay,
+								},
+							}}
+						>
+							<LogoShortTsx
+								className={`mr-[0.10rem] inline-block h-auto w-[9rem] rounded-md px-2 py-1 sm:w-[15rem] ${rotation} ${logoStyle} ${logoSize || 'w-[9rem] sm:w-[15rem]'}`}
+							/>
 					</motion.span>
 				)
 			}

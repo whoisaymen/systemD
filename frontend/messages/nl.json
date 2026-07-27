@@ -1,7 +1,37 @@
 {
 	"menu": {
 		"legal": "Wettelijke vermeldingen",
-		"contact": "Contacteer ons"
+		"contact": "Contacteer ons",
+		"openMainMenu": "Hoofdmenu openen"
+	},
+
+	"contactPage": {
+		"contact": "Contact",
+		"partners": "Partners",
+		"viewOnMap": "Bekijk op Google Maps",
+		"noContent": "Geen inhoud beschikbaar"
+	},
+
+	"festivalEvents": {
+		"title": "Evenementen",
+		"previousYear": "Vorig jaar",
+		"nextYear": "Volgend jaar",
+		"gridView": "Raster",
+		"listView": "Lijst",
+		"moreEvents": "+{count} meer",
+		"noEvents": "Geen evenementen gepland in {year}",
+		"closeDetails": "Evenementdetails sluiten",
+		"dateLabel": "Datum",
+		"timeLabel": "Tijd",
+		"locationLabel": "Locatie",
+		"descriptionLabel": "Beschrijving",
+		"pressLink": "Perslink",
+		"visionFallback": "Onze visie",
+		"noDescription": "Geen beschrijving beschikbaar",
+		"noContent": "Geen inhoud beschikbaar",
+		"expandVideo": "Festivalvideo vergroten",
+		"closeVideo": "Festivalvideo sluiten",
+		"videoUnsupported": "Je browser ondersteunt deze video niet."
 	},
 
 	"expo": {

@@ -8,13 +8,16 @@ interface FestivalLogoDesktopProps {
 		icon?: string
 	}
 	className?: string
+	forceHovered?: boolean
 }
 
 const FestivalLogoDesktop: React.FC<FestivalLogoDesktopProps> = ({
 	theme,
 	className,
+	forceHovered = false,
 }) => {
 	const [isHovered, setIsHovered] = useState(false)
+	const shouldAnimate = forceHovered || isHovered
 
 	return (
 		<>
@@ -29,7 +32,7 @@ const FestivalLogoDesktop: React.FC<FestivalLogoDesktopProps> = ({
 				<motion.g
 					initial={false}
 					animate={{
-						scale: isHovered ? 1.1 : 1,
+						scale: shouldAnimate ? 1.1 : 1,
 						transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
 					}}
 				>
@@ -55,7 +58,7 @@ const FestivalLogoDesktop: React.FC<FestivalLogoDesktopProps> = ({
 				<motion.g
 					initial={false}
 					animate={{
-						scaleY: isHovered ? 1.03 : 1,
+						scaleY: shouldAnimate ? 1.03 : 1,
 						transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 					}}
 					className="[@media(max-height:900px)]:hidden"

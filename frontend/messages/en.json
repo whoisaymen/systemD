@@ -1,7 +1,37 @@
 {
 	"menu": {
 		"legal": "Legal notice",
-		"contact": "Contact us"
+		"contact": "Contact us",
+		"openMainMenu": "Open main menu"
+	},
+
+	"contactPage": {
+		"contact": "Contact",
+		"partners": "Partners",
+		"viewOnMap": "View on Google Maps",
+		"noContent": "No content available"
+	},
+
+	"festivalEvents": {
+		"title": "Events",
+		"previousYear": "Previous year",
+		"nextYear": "Next year",
+		"gridView": "Grid",
+		"listView": "List",
+		"moreEvents": "+{count} more",
+		"noEvents": "No events scheduled in {year}",
+		"closeDetails": "Close event details",
+		"dateLabel": "Date",
+		"timeLabel": "Time",
+		"locationLabel": "Location",
+		"descriptionLabel": "Description",
+		"pressLink": "Press link",
+		"visionFallback": "Our Vision",
+		"noDescription": "No description available",
+		"noContent": "No content available",
+		"expandVideo": "Expand festival video",
+		"closeVideo": "Close festival video",
+		"videoUnsupported": "Your browser does not support the video tag."
 	},
 
 	"expo": {

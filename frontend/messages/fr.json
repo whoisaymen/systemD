@@ -1,7 +1,37 @@
 {
 	"menu": {
 		"legal": "Mentions légales",
-		"contact": "Contactez-nous"
+		"contact": "Contactez-nous",
+		"openMainMenu": "Ouvrir le menu principal"
+	},
+
+	"contactPage": {
+		"contact": "Contact",
+		"partners": "Partenaires",
+		"viewOnMap": "Voir sur Google Maps",
+		"noContent": "Aucun contenu disponible"
+	},
+
+	"festivalEvents": {
+		"title": "Événements",
+		"previousYear": "Année précédente",
+		"nextYear": "Année suivante",
+		"gridView": "Grille",
+		"listView": "Liste",
+		"moreEvents": "+{count} autres",
+		"noEvents": "Aucun événement programmé en {year}",
+		"closeDetails": "Fermer le détail de l'événement",
+		"dateLabel": "Date",
+		"timeLabel": "Horaire",
+		"locationLabel": "Lieu",
+		"descriptionLabel": "Description",
+		"pressLink": "Lien de presse",
+		"visionFallback": "Notre vision",
+		"noDescription": "Aucune description disponible",
+		"noContent": "Aucun contenu disponible",
+		"expandVideo": "Agrandir la vidéo du festival",
+		"closeVideo": "Réduire la vidéo du festival",
+		"videoUnsupported": "Votre navigateur ne prend pas en charge la vidéo."
 	},
 
 	"expo": {

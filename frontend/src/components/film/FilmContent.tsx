@@ -38,7 +38,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 		if (!Array.isArray(array)) {
 			return ''
 		}
-		const item = array.find((entry) => entry._key === lang)
+		const item = array.find((entry) => entry.language === lang || entry._key === lang)
 		return item ? item.value : ''
 	}
 
@@ -306,15 +306,16 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					showPlayer ? (
 						<div className="relative mx-auto flex max-h-[60vh] min-h-[30vh] w-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:min-h-[60vh]">
 							<ReactPlayer
-								url={film.playFilmUrl}
+								src={film.playFilmUrl}
 								playing
+								muted
 								controls
 								width="100%"
 								height="100%"
 								style={{ position: 'absolute', top: 0, left: 0 }}
 								config={{
-									youtube: { playerVars: { autoplay: 1, mute: 1, rel: 0 } },
-									vimeo: { playerOptions: { autoplay: 1 } },
+									youtube: { rel: 0 },
+									vimeo: {},
 								}}
 							/>
 						</div>

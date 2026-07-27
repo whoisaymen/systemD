@@ -12,7 +12,7 @@ export default async function Announcement() {
 			...,
 			cta{ ${linkQuery} },
 		}`,
-		tag: 'announcements',
+		tags: ['announcements'],
 	})
 
 	if (!announcements) return null

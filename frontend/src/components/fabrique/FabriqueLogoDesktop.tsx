@@ -9,13 +9,16 @@ interface FabriqueLogoDesktopProps {
 		icon?: string
 	}
 	className?: string
+	forceHovered?: boolean
 }
 
 const FabriqueLogoDesktop: React.FC<FabriqueLogoDesktopProps> = ({
 	theme,
 	className,
+	forceHovered = false,
 }) => {
 	const [isHovered, setIsHovered] = useState(false)
+	const shouldAnimate = forceHovered || isHovered
 
 	return (
 		<svg
@@ -28,7 +31,7 @@ const FabriqueLogoDesktop: React.FC<FabriqueLogoDesktopProps> = ({
 		>
 			<motion.g
 				animate={{
-					scale: isHovered ? 0.9 : 1,
+					scale: shouldAnimate ? 0.9 : 1,
 					transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
 				}}
 			>
@@ -60,7 +63,7 @@ const FabriqueLogoDesktop: React.FC<FabriqueLogoDesktopProps> = ({
 			<motion.g
 				initial={false}
 				animate={{
-					scaleY: isHovered ? 1.05 : 0.95,
+					scaleY: shouldAnimate ? 1.05 : 0.95,
 					transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
 				}}
 				className="[@media(max-height:900px)]:hidden"

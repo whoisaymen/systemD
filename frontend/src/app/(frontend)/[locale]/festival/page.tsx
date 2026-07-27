@@ -17,7 +17,9 @@ async function getFestival() {
 	// First fetch the festival content
 	const festivalQuery = groq`
   *[_type == 'lefestival'][0]{
+    _id,
     description,
+    vision,
     blocks[]{
       _type == 'mediaTeaserBlock' => {
         _key,
@@ -82,52 +84,54 @@ async function getFestival() {
         _key,
         _type,
         events[]->{
+          _id,
           title,
           date,
-          location
+          endDate,
+          location,
+          description,
+          pressLink
         },
         show
       }
     }
   }
 `
-	// Then fetch the vision data from fabrique
-	const visionQuery = groq`
+	const fallbackVisionQuery = groq`
     *[_type == 'fabrique'][0]{
-      vision,
-      visionTitle
+      vision
     }
   `
 
-	const [festivalData, visionData] = await Promise.all([
+	const [festivalData, fallbackVisionData] = await Promise.all([
 		fetchSanityLive({ query: festivalQuery }),
-		fetchSanityLive({ query: visionQuery }),
+		fetchSanityLive({ query: fallbackVisionQuery }),
 	])
 
 	if (!festivalData) {
 		return notFound()
 	}
 
-	// Create a vision block and add it to the festival blocks
-	if (visionData && visionData.vision) {
+	const festivalVision = Array.isArray(festivalData.vision)
+		? festivalData.vision
+		: []
+	const fallbackVision = Array.isArray(fallbackVisionData?.vision)
+		? fallbackVisionData.vision
+		: []
+	const vision = festivalVision.length > 0 ? festivalVision : fallbackVision
+	const hasVisionBlock = festivalData.blocks?.some(
+		(block: any) => block?._type === 'visionBlock',
+	)
+
+	if (vision.length > 0 && !hasVisionBlock) {
 		const visionBlock = {
 			_key: 'vision-block',
 			_type: 'visionBlock',
 			show: true,
-			vision: visionData.vision,
-			visionTitle: visionData.visionTitle,
+			vision,
 		}
 
-		// Initialize blocks array if it doesn't exist
-		if (!festivalData.blocks) {
-			festivalData.blocks = []
-		}
-
-		// Add vision block to the beginning of the array using unshift
-		festivalData.blocks.unshift(visionBlock)
-
-		// Alternatively, you can create a new array with vision block first
-		// festivalData.blocks = [visionBlock, ...festivalData.blocks]
+		festivalData.blocks = [visionBlock, ...(festivalData.blocks ?? [])]
 	}
 
 	return festivalData

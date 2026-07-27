@@ -5,6 +5,8 @@ import LogoShortTsx from '../svgs/LogoShort'
 import { useRef } from 'react'
 import BackToTopButton from '../common/BackToTop'
 
+const ease = [0.76, 0, 0.24, 1] as const
+
 const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 	return (
 		<div className="flex flex-col space-y-0 pb-28 sm:space-y-0 sm:py-0">
@@ -39,7 +41,7 @@ const StoryBlock = ({
 				scale: [1, 1.02, 1],
 				transition: {
 					duration: 8,
-					ease: [0.76, 0, 0.24, 1],
+					ease,
 					repeat: Infinity,
 				},
 			},
@@ -48,7 +50,7 @@ const StoryBlock = ({
 				scale: [1, 0.3, 1],
 				transition: {
 					duration: 4,
-					ease: [0.76, 0, 0.24, 1],
+					ease,
 					repeat: Infinity,
 				},
 			},
@@ -58,11 +60,11 @@ const StoryBlock = ({
 	const imageVariants = {
 		mobile: {
 			scale: [1, 0.5, 1],
-			transition: { duration: 4, ease: [0.76, 0, 0.24, 1], repeat: Infinity },
+			transition: { duration: 4, ease, repeat: Infinity },
 		},
 		desktop: {
 			scale: [0.8, 0.5, 0.8],
-			transition: { duration: 4, ease: [0.76, 0, 0.24, 1], repeat: Infinity },
+			transition: { duration: 4, ease, repeat: Infinity },
 		},
 	}
 
@@ -105,7 +107,7 @@ const StoryBlock = ({
 					className="lg:shadowtest shadowtest relative rounded-xl bg-primary px-4 py-6 shadow-sm sm:mx-40 sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none lg:bg-primary lg:bg-gradient-to-t lg:from-primary"
 				>
 					{block.text
-						.filter((paragraph: any) => paragraph._key === lang)
+						.filter((paragraph: any) => paragraph.language === lang || paragraph._key === lang)
 						.map((paragraph: any, index: number) => (
 							<p
 								key={index}
@@ -167,7 +169,7 @@ const renderParagraph = (paragraph: any, titles: string[]) => {
 					animate={{
 						rotate: 3,
 						transition: {
-							ease: [0.76, 0, 0.24, 1],
+							ease,
 							duration: 1.5,
 							repeat: Infinity,
 							repeatType: 'reverse',
