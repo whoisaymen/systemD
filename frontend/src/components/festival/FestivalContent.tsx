@@ -1356,7 +1356,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	return (
 		<div
 			key={festival._id}
-			className="no-scrollbar relative flex h-full w-full flex-col gap-1 p-2 px-4 pb-16 lg:mt-1 lg:grid lg:h-[calc(100svh-10px)] lg:grid-rows-[auto_minmax(12rem,1fr)] lg:overflow-hidden lg:p-0"
+			className="no-scrollbar relative flex h-full w-full flex-col gap-1 p-2 px-4 pb-16 lg:mt-1 lg:grid lg:h-[calc(100svh-10px)] lg:grid-rows-[auto_minmax(12rem,1fr)] lg:overflow-y-auto lg:p-0"
 		>
 			<div className="fixed bottom-0 right-0 z-50 mb-4 flex items-center justify-end px-8 lg:hidden">
 				<BackToTopButton targetId="navbar-mobile" />
