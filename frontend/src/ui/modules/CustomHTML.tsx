@@ -2,7 +2,7 @@
 
 import moduleProps from '@/lib/moduleProps'
 import { stegaClean } from 'next-sanity'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function CustomHTML({
 	className,
@@ -17,39 +17,32 @@ export default function CustomHTML({
 	} & Sanity.Module
 >) {
 	const ref = useRef<HTMLElement>(null)
-	const [firstRender, setFirstRender] = useState(true)
-
-	if (!html?.code) return null
-
-	// if no <script> tag, render as is
-
-	if (!html.code.includes('<script'))
-		return (
-			<section
-				className={stegaClean(className)}
-				dangerouslySetInnerHTML={{ __html: stegaClean(html.code) }}
-				{...moduleProps(props)}
-			/>
-		)
-
-	// if includes <script> tag, ensure script is re-run on each render
+	const renderedCode = useRef<string | null>(null)
+	const code = stegaClean(html?.code ?? '')
+	const containsScripts = /<script[\s>]/i.test(code)
 
 	useEffect(() => {
-		if (firstRender) {
-			setFirstRender(false)
-		} else {
-			const parsed = document
-				.createRange()
-				.createContextualFragment(stegaClean(html.code))
-
-			ref.current?.appendChild(parsed)
+		const element = ref.current
+		if (!containsScripts || !element) {
+			renderedCode.current = null
+			return
 		}
-	}, [ref.current, html.code])
+
+		// Execute each version once, including when Strict Mode replays effects.
+		if (renderedCode.current === code) return
+		const range = document.createRange()
+		range.selectNodeContents(element)
+		element.replaceChildren(range.createContextualFragment(code))
+		renderedCode.current = code
+	}, [code, containsScripts])
+
+	if (!code) return null
 
 	return (
 		<section
 			ref={ref}
 			className={stegaClean(className)}
+			dangerouslySetInnerHTML={containsScripts ? undefined : { __html: code }}
 			{...moduleProps(props)}
 		/>
 	)

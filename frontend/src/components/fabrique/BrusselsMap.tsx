@@ -62,6 +62,7 @@ const BrusselsMap: React.FC<BrusselsMapProps> = ({
 		{pinLink && (
 			<a
 				href={pinLink}
+				className="theme-map-pin"
 				target="_blank"
 				rel="noopener noreferrer"
 				style={{

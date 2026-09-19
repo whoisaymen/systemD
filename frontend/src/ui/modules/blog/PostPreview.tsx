@@ -51,12 +51,13 @@ export default function PostPreview({
 					className="flex flex-wrap items-center gap-4 text-sm"
 					authors={post?.authors}
 					skeleton={skeleton}
+					allowLinks={false}
 				/>
 			)}
 
 			<hr />
 
-			<div className="empty:skeleton flex flex-wrap gap-x-4 text-sm">
+			<div className="flex flex-wrap gap-x-4 text-sm empty:skeleton">
 				<Date value={post?.publishDate} />
 				<Categories
 					className="flex flex-wrap gap-x-2"

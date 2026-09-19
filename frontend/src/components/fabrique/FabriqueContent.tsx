@@ -1,20 +1,23 @@
 'use client'
 
 import { useRef, useMemo } from 'react'
-import { motion, useInView, useScroll, useTransform } from 'motion/react'
+import { motion, useInView } from 'motion/react'
 
-import Img from '@/ui/Img'
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion'
-import { renderParagraph } from '../common/RenderParagraph'
 import LogoShortTsx from '../svgs/LogoShort'
-import FabriqueBracketsIcon from './FabriqueBracketsIcon'
 import BackToTopButton from '../common/BackToTop'
+import RichText from '@/components/common/RichText'
 import FestivalSparkleIcon from '../festival/FestivalSparkleIcon'
+import {
+	localizedRichText,
+	richTextToPlainText,
+	textToRichText,
+} from '@/lib/richText'
 
 // Types
 interface FabriqueContentProps {
@@ -85,63 +88,8 @@ const LOGO_COLLAGE_CONFIG: LogoCollageItem[] = [
 	},
 ]
 
-// Utility functions
-const capitalizeFirstLetter = (str: string): string => {
-	if (!str) return ''
-	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
-}
-
-const getLocalizedValue = (array: any[], lang: string): string => {
-	if (!Array.isArray(array)) return ''
-	const item = array.find((entry) => entry.language === lang || entry._key === lang)
-	return item?.value || ''
-}
-
-const getLocalizedText = (array: any[], lang: string): string => {
-	if (!Array.isArray(array)) return ''
-	const item = array.find((entry) => entry.language === lang || entry._key === lang)
-	return item?.value || ''
-}
-
-// Vision Block Component
-const VisionBlock: React.FC<{
-	vision: any[]
-	visionTitle: any[]
-	language: string
-}> = ({ vision, visionTitle, language }) => (
-	<div className="lg:shadowtest mt-20 lg:flex">
-		<div className="relative mb-12 lg:w-full">
-			<div className="flex items-center justify-center">
-				<FabriqueBracketsIcon
-					className="w-[75vw] sm:w-1/4 lg:hidden"
-					theme={{ fill: 'var(--color-primary)' }}
-				/>
-			</div>
-			<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tight text-primary sm:py-4 sm:text-4xl">
-				{getLocalizedValue(visionTitle, language) || 'Vision'}
-			</h1>
-		</div>
-
-		<div className="pt-2">
-			{vision.map((visionItem: any, index: number) => (
-				<div key={index} className="mt-8">
-					<div className="relative rounded-t-3xl px-4">
-						<h2 className="text-lg font-bold leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
-							{getLocalizedValue(visionItem.title, language)}
-						</h2>
-						<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-16 lg:text-xl">
-							{getLocalizedText(visionItem.text, language) ||
-								'No description available'}
-						</p>
-					</div>
-				</div>
-			))}
-		</div>
-	</div>
-)
-
 // Logo Collage Component
-const LogoCollage: React.FC = () => {
+const LogoCollage = ({ text }: { text: any }) => {
 	const collageRef = useRef(null)
 	const isInView = useInView(collageRef, {
 		once: true,
@@ -149,7 +97,7 @@ const LogoCollage: React.FC = () => {
 	})
 
 	return (
-		<div className="relative z-50 flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-4 lg:mx-auto">
+		<div className="theme-fabrique-logo-collage relative flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-4 lg:mx-auto">
 			<div
 				className="relative mt-24 flex h-[20vh] w-full items-center justify-center lg:max-w-[29vw]"
 				ref={collageRef}
@@ -187,63 +135,44 @@ const LogoCollage: React.FC = () => {
 				))}
 			</div>
 
-			<p className="mx-auto py-2 pt-40 text-center text-3xl font-bold leading-[1.2] tracking-tight text-primary sm:pt-52 sm:text-4xl">
-				For our Brussels stories, resourceful and proud.
-			</p>
+			<RichText
+				className="theme-fabrique-conclusion mx-auto py-2 pt-40 text-center text-base font-normal leading-[1.2] tracking-tight text-primary sm:pt-52 lg:text-xl"
+				value={text}
+			/>
 		</div>
 	)
 }
 
-// Render Action Content Function
-const renderActionContent = (
-	action: any,
-	language: string,
-	subTitle: string,
-) => {
-	if (!action.text?.[language]) return null
+// Keep the artwork and section layout while rendering the editor's formatting.
+const renderActionContent = (action: any, language: string, subtitle: any) => (
+	<div className="relative px-0 py-4 text-primary sm:py-10">
+		{richTextToPlainText(subtitle) && (
+			<div className="flex items-center justify-center">
+				<h2 className="-mt-4 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tight text-dark lg:-mt-8 lg:border-0 lg:text-lg">
+					<RichText value={subtitle} inline />
+				</h2>
+			</div>
+		)}
 
-	return (
-		<div className="relative px-0 py-4 text-primary sm:py-10">
-			{subTitle && (
-				<div className="flex items-center justify-center">
-					<h2 className="-mt-4 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tight text-dark lg:-mt-8 lg:border-0 lg:text-lg">
-						{subTitle}
-					</h2>
-				</div>
-			)}
-			{action.text[language].map((block: any) => {
-				const blockKey = block._key
-
-				// Render h6 blocks as styled paragraphs
+		{textToRichText(localizedRichText(action.text, language)).map(
+			(block: any, index: number) => {
+				const blockKey = block._key ?? index
 				if (block.style === 'h6' && !block.listItem) {
 					return (
 						<div key={blockKey} className="flex justify-start lg:ml-28">
 							<p className="-z-10 m-4 -mb-4 -rotate-0 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tight text-dark">
-								{block.children.map((child: any, idx: number) => (
-									<span key={child._key || idx}>{child.text}</span>
-								))}
+								<RichText value={[block]} inline />
 							</p>
 						</div>
 					)
 				}
-
-				// Render bullet list items
 				if (block.listItem === 'bullet') {
-					const isBold = block.style === 'h6'
 					return (
 						<ul key={blockKey} className="px-9 lg:px-36">
 							<li
-								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-0 lg:text-xl ${
-									isBold ? 'font-bold' : ''
-								}`}
+								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-0 lg:text-xl ${block.style === 'h6' ? 'font-bold' : ''}`}
 							>
-								{block.children.map((child: any, idx: number) => (
-									<span className="ml-0.5" key={child._key || idx}>
-										{child.text}
-									</span>
-								))}
-
-								{/* Replace the div with FestivalSparkleIcon */}
+								<RichText value={[{ ...block, listItem: undefined }]} inline />
 								<FestivalSparkleIcon
 									className="absolute -left-6 top-3.5 h-4 w-4 -translate-y-1/2"
 									theme={{
@@ -255,22 +184,18 @@ const renderActionContent = (
 						</ul>
 					)
 				}
-
-				// Render regular paragraphs
 				return (
-					<p
+					<div
 						key={blockKey}
 						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:px-32 lg:text-xl"
 					>
-						{block.children.map((child: any, idx: number) => (
-							<span key={child._key || idx}>{child.text}</span>
-						))}
-					</p>
+						<RichText value={[block]} />
+					</div>
 				)
-			})}
-		</div>
-	)
-}
+			},
+		)}
+	</div>
+)
 
 // Main Component
 const FabriqueContent: React.FC<FabriqueContentProps> = ({
@@ -278,124 +203,90 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	language,
 }) => {
 	const ref = useRef(null)
-	const { scrollYProgress } = useScroll({
-		target: ref,
-		offset: ['start 0vh', 'end center'],
-	})
-
-	const borderRadius = useTransform(scrollYProgress, [0, 1], [10, 120])
 
 	// Memoize computed values
 	const memoizedValues = useMemo(
 		() => ({
-			title: getLocalizedValue(fabrique?.title, language),
-			description: getLocalizedValue(fabrique?.description, language),
-			visionTitle: fabrique?.visionTitle,
-			vision: fabrique?.vision,
-			actions: fabrique?.actions,
-			image: fabrique?.image,
+			description: localizedRichText(fabrique?.description, language),
+			actions: fabrique?.actions ?? [],
 		}),
 		[fabrique, language],
 	)
 
 	if (!fabrique) {
-		return <p>No data available.</p>
+		return null
 	}
+
+	const actionValues = (memoizedValues.actions ?? []).map(
+		(_: any, index: number) => `action-${index}`,
+	)
+	const renderActionItems = () =>
+		memoizedValues.actions.map((action: any, index: number) => {
+			const actionTitle = localizedRichText(action.title, language)
+			// Older content combined the heading and subtitle in one plain string.
+			const [legacyTitle, legacySubtitle] =
+				typeof actionTitle === 'string' ? actionTitle.split(' - ') : []
+			const mainTitle = legacySubtitle ? legacyTitle : actionTitle
+			const subTitle =
+				localizedRichText(action.subtitle, language) || legacySubtitle
+			const triggerRotation =
+				TRIGGER_ROTATIONS[index % TRIGGER_ROTATIONS.length]
+
+			return (
+				<AccordionItem
+					key={index}
+					value={`action-${index}`}
+					className="flex flex-col items-center justify-center"
+				>
+					<AccordionTrigger className={`theme-fabrique-dropdown-label ${triggerRotation} sm:text-5xl`}>
+						<div className="flex flex-col items-center">
+							<div className="z-10 inline-block w-fit text-3xl tracking-tight lg:text-5xl">
+								<span className="text-center">
+									<RichText value={mainTitle} inline allowLinks={false} />
+								</span>
+							</div>
+						</div>
+					</AccordionTrigger>
+					<AccordionContent>
+						{renderActionContent(action, language, subTitle)}
+					</AccordionContent>
+				</AccordionItem>
+			)
+		})
 
 	return (
 		<div
 			ref={ref}
-			className="no-scrollbar lg:shadowtest flex h-full w-full flex-col overflow-y-scroll px-4 py-32 pt-0 text-base font-medium leading-[1.2] tracking-tight text-dark lg:my-1 lg:h-[calc(100svh-10px)] lg:rounded-xl"
+			className="lg:shadowtest section-folder-content section-folder-content--fabrique theme-fabrique-main-content no-scrollbar relative isolate z-0 flex h-auto w-full flex-col overflow-x-clip px-4 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-0 lg:overflow-y-auto text-base font-medium leading-[1.2] tracking-tight text-dark lg:my-1 lg:h-[calc(100svh-8px)] lg:rounded-xl"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 
-			{/* Image */}
-			{memoizedValues.image?.asset && (
-				<Img
-					image={memoizedValues.image}
-					src={`/${memoizedValues.image.asset._ref.split('-')[1]}-${memoizedValues.image.asset._ref.split('-')[2]}.${memoizedValues.image.asset._ref.split('-')[3]}`}
-					alt={fabrique.name}
-					className="my-4 h-48 w-48 rounded-md object-cover"
-				/>
-			)}
-
 			{/* Single Accordion for all Actions */}
 			{memoizedValues.actions && (
-				<Accordion
-					type="single"
-					collapsible
-					className="mb-0 pt-4 lg:pb-0 lg:pt-16"
-				>
-					{memoizedValues.actions.map((action: any, index: number) => {
-						const actionTitle = getLocalizedValue(action.title, language)
-						const [mainTitle, subTitle] = actionTitle.split(' - ')
-						const triggerRotation =
-							TRIGGER_ROTATIONS[index % TRIGGER_ROTATIONS.length]
-
-						return (
-							<AccordionItem
-								key={index}
-								value={`action-${index}`}
-								className="flex flex-col items-center justify-center"
-							>
-								<AccordionTrigger className={`${triggerRotation} sm:text-5xl`}>
-									<div className="flex flex-col items-center">
-										<div className="z-10 inline-block w-fit text-3xl tracking-tight lg:text-5xl">
-											<span className="text-center">
-												{capitalizeFirstLetter(mainTitle)}
-											</span>
-										</div>
-									</div>
-								</AccordionTrigger>
-								<AccordionContent>
-									{renderActionContent(action, language, subTitle)}
-								</AccordionContent>
-							</AccordionItem>
-						)
-					})}
-				</Accordion>
+				<div className="theme-fabrique-actions mb-0 pt-4 lg:pb-0 lg:pt-16">
+					<Accordion type="single" collapsible className="lg:hidden">
+						{renderActionItems()}
+					</Accordion>
+					<Accordion
+						type="multiple"
+						defaultValue={actionValues}
+						className="hidden lg:block"
+					>
+						{renderActionItems()}
+					</Accordion>
+				</div>
 			)}
 
-			{/* Description */}
-			<div className="shadowtest relative mt-8 rounded-md bg-primary p-4 text-dark lg:mb-4 lg:bg-transparent lg:p-0 lg:shadow-none">
-				<p className="mx-auto py-0 text-xl font-bold leading-[1.2] tracking-tight text-dark sm:py-4 sm:text-4xl lg:mx-16 lg:text-primary">
-					{memoizedValues.description
-						? renderParagraph(
-								{ value: memoizedValues.description },
-								[],
-								'bg-dark text-primary lg:bg-grayDark lg:text-dark',
-							)
-						: 'No description available'}
-				</p>
-			</div>
-
-			<p className="mt-8 text-base font-normal leading-[1.2] tracking-tight text-primary first:mt-0 lg:mt-0 lg:px-16 lg:pb-8 lg:pt-0 lg:text-xl">
-				This festival was like a warm embrace in winter, without covid masks
-				this time. People were happy to see each other, to connect with the
-				community, particularly as the situation in Gaza was rapidly
-				degenerating. Sbeul collective kicked off the festival with an electric
-				performance of As Salem Aleykoum that absolutely brought down the house.
-				Their assertivity, dignity and love were reflected in all other facets
-				of the festival. A retrospective video installation by Maxime Bourlet
-				revisited favorite films of the previous editions, a photo exhibit
-				curated by Neima B Reyale reminded us of the little things we share
-				while the salon du TURFU by Imiskill and Face B invited radical new
-				imaginations of our future.
-			</p>
-
-			{/* Vision */}
-			{/* {memoizedValues.vision && (
-				<VisionBlock
-					vision={memoizedValues.vision}
-					visionTitle={memoizedValues.visionTitle}
-					language={language}
+			{richTextToPlainText(memoizedValues.description) && (
+				<RichText
+					value={memoizedValues.description}
+					className="theme-fabrique-description mt-8 text-base font-normal leading-[1.2] tracking-tight text-primary"
 				/>
-			)} */}
+			)}
 
-			{/* Logo Collage */}
-			<LogoCollage />
+			<LogoCollage text={localizedRichText(fabrique.closingText, language)} />
 		</div>
 	)
 }

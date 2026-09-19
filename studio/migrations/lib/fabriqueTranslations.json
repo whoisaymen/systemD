@@ -1,0 +1,29 @@
+{
+  "description": {
+    "fr": ["System_D et l’équipe Citylab de la Pianofabriek soutiennent vos histoires et vos imaginaires de différentes manières.", "La Fabrique accompagne les projets audiovisuels, accueille des pratiques collectives en résidence et valorise le travail des cinéastes bruxellois. Découvrez ci-dessous les formes de soutien proposées, de la production à la diffusion."],
+    "en": ["System_D and the Citylab team at Pianofabriek support your stories and imagination in several ways.", "La Fabrique supports audiovisual projects, hosts residencies for collective creative practices and promotes the work of Brussels filmmakers. Discover the support available below, from production to screenings."],
+    "nl": ["System_D en het Citylab-team van de Pianofabriek ondersteunen jullie verhalen en verbeelding op verschillende manieren.", "La Fabrique begeleidt audiovisuele projecten, biedt ruimte voor collectieve creatieve praktijken in residentie en zet het werk van Brusselse filmmakers in de kijker. Ontdek hieronder de verschillende vormen van ondersteuning, van productie tot vertoning."]
+  },
+  "closingText": {
+    "fr": "Pour nos histoires bruxelloises, avec débrouillardise et fierté.",
+    "en": "For our Brussels stories, resourceful and proud.",
+    "nl": "Voor onze Brusselse verhalen, vindingrijk en trots."
+  },
+  "actions": {
+    "55a69eb84f3a": {
+      "title": "360° ONDERSTEUNING",
+      "subtitle": "Productie",
+      "text": ["Om onze verhalen meer weerklank te geven, ondersteunen we je op verschillende niveaus bij het realiseren van je audiovisuele project. Die ondersteuning kan bestaan uit artistieke begeleiding, contacten met geschikte creatieve partners, productieondersteuning met financiële en administratieve hulp, residenties, het gebruik van postproductiefaciliteiten en vertoningen in de Pianofabriek."]
+    },
+    "448579d10bc8": {
+      "title": "RESIDENTIES DU TURFU",
+      "subtitle": "Collectieve praktijken",
+      "text": ["System_D is ontstaan uit collectieve creaties: films van groepen jongeren in Brussel die op de problemen in hun stad reageren door samen te creëren en te groeien. Bij zulke creatieve projecten is het proces altijd een belangrijk deel van het resultaat. Het betrekt veel actieve deelnemers, brengt verschillende vormen van kennis samen en versterkt de banden binnen de gemeenschap.", "Door de jaren heen heeft System_D uiteenlopende projecten op verschillende manieren ondersteund. Diverse groepen werden in de Pianofabriek verwelkomd en begeleid om elkaar te ontmoeten, te schrijven, te repeteren, te leren en hun werk te presenteren.", "Enkele projecten die System_D de afgelopen jaren heeft opgezet:", "Le Filet x Feu2Forest: een collectieve reactie op een reeks moorden op politieagenten in Brussel, die leidde tot debatten, tentoonstellingen en voorstellingen in het Kaaitheater, de KVS en Maxima.", "De TURFU-residentie: de teams van System_D en Citylab brachten een week door met Makan Fofana. Ze leerden technieken voor het creëren van denkbeeldige werelden en toekomstverkenning en combineerden die om toekomstscenario’s te ontwikkelen.", "FUBU: een reeks residenties met een groep vrouwelijke filmmakers van kleur. De deelnemers werken samen, delen hun expertise en ontwikkelen nieuwe strategieën om uitdagingen binnen de sector aan te pakken.", ""]
+    },
+    "c2bd530e3a78": {
+      "title": "WAARDERING",
+      "subtitle": "Programmering en expertise",
+      "text": ["System_D zet het werk van Brusselse filmmakers buiten de mainstream in de kijker en viert hun vindingrijkheid en nieuwe perspectieven. Dat doen we door:", "Deze films te programmeren op het System_D-festival en op andere locaties in Brussel en Vlaanderen.", "Onderzoek en kritische reflectie over het Brusselse kunstenveld en de onafhankelijke producties die er deel van uitmaken, zoals het project SYSTEM_TURFU binnen Innoviris Co-Create.", "Gesprekken, masterclasses en samenwerkingen te organiseren en eraan deel te nemen, met een brede groep mensen uit zowel het informele als het formele kunstenveld."]
+    }
+  }
+}

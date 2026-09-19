@@ -1,0 +1,216 @@
+type Schema = { name?: string; type?: string; fields?: Schema[]; of?: Schema[] }
+type JsonObject = Record<string, any>
+
+// Retired controls were never visible in the established page layouts.
+const retiredFields: Record<string, string[]> = {
+	memoire: [
+		'title',
+		'pastOnTourEvents',
+		'pastOnTourEventsTitle',
+		'pressLinkLabel',
+	],
+	fabrique: ['title', 'image', 'vision', 'visionTitle'],
+	customParagraph: ['title', 'image'],
+	actionsBlock: ['image'],
+	lefestival: [
+		'description',
+		'practicalInfo',
+		'callForParticipation',
+		'programming',
+		'press',
+		'award',
+	],
+	mediaTeaserBlock: ['text'],
+	person: ['title', 'displayName'],
+	film: ['directorDisplay', 'productionDisplay', 'links'],
+	festival: ['venueDisplay'],
+	jury: ['nameDisplay'],
+	photoGalleryBlock: ['photographerDisplay'],
+	expoPhotoBlock: ['curatorDisplay'],
+	site: ['announcements', 'copyright'],
+	homepage: [
+		'backgroundType',
+		'backgroundImage',
+		'backgroundColor',
+		'logo',
+		'showLogo',
+		'subtitle',
+		'subtitleText',
+		'showSubtitle',
+	],
+}
+
+export function textToBlocks(text: string) {
+	return text.split(/\n{2,}/).map((paragraph, index) => ({
+		_type: 'block',
+		_key: `block-${index}`,
+		style: 'normal',
+		markDefs: [],
+		children: [
+			{ _type: 'span', _key: `span-${index}`, text: paragraph, marks: [] },
+		],
+	}))
+}
+
+export function localizeText(values: Record<string, string>) {
+	return Object.entries(values).map(([language, text]) => ({
+		_type: 'internationalizedArrayRichTextValue',
+		_key: language,
+		language,
+		value: textToBlocks(text),
+	}))
+}
+
+/** Follow schema fields so technical strings, references and image alt text stay intact. */
+export function migrateEditorialValue(
+	value: any,
+	schema: Schema,
+	types: Map<string, Schema>,
+): any {
+	if (value == null) return value
+	if (schema.type === 'internationalizedArrayString') {
+		const entries = migrateEditorialValue(value, { type: 'internationalizedArrayRichText' }, types)
+		return entries.map((entry: any) => ({
+			...entry,
+			_type: 'internationalizedArrayStringValue',
+			value: typeof entry.value === 'string' ? entry.value : (entry.value ?? [])
+				.map((block: any) => (block.children ?? []).map((span: any) => span.text ?? '').join(''))
+				.join(' ').trim(),
+		}))
+	}
+
+	if (schema.type === 'internationalizedArrayRichText') {
+		if (typeof value === 'string')
+			return localizeText({ fr: value, en: value, nl: value })
+		if (!Array.isArray(value)) {
+			const locales = ['fr', 'en', 'nl'].filter((language) =>
+				Object.hasOwn(value, language),
+			)
+			if (!locales.length)
+				throw new Error(`Expected localized content at ${schema.name}`)
+			return locales.map((language) => ({
+				_type: 'internationalizedArrayRichTextValue',
+				_key: language,
+				language,
+				value:
+					typeof value[language] === 'string'
+						? textToBlocks(value[language])
+						: value[language],
+			}))
+		}
+		return value.map((entry) => ({
+			...entry,
+			_type: 'internationalizedArrayRichTextValue',
+			...(entry.language
+				? {}
+				: ['fr', 'en', 'nl'].includes(entry._key)
+					? { language: entry._key }
+					: {}),
+			value:
+				typeof entry.value === 'string'
+					? textToBlocks(entry.value)
+					: entry.value,
+		}))
+	}
+	const definition = { ...types.get(schema.type ?? ''), ...schema }
+	if (definition.type === 'array') {
+		if (
+			typeof value === 'string' &&
+			definition.of?.some((member) => member.type === 'block')
+		)
+			return textToBlocks(value)
+		if (!Array.isArray(value)) return value
+		return value.map((item) => {
+			const member =
+				definition.of?.find(
+					(member) => (member.name ?? member.type) === item?._type,
+				) ??
+				(definition.of?.length === 1 && definition.of[0].fields
+					? definition.of[0]
+					: undefined)
+			return member ? migrateEditorialValue(item, member, types) : item
+		})
+	}
+	if (typeof value !== 'object' || Array.isArray(value) || !definition.fields)
+		return value
+	const result = { ...value }
+	if (schema.type === 'visionBlock' && value.title !== undefined) {
+		const title = migrateEditorialValue(
+			value.title,
+			{ type: 'internationalizedArrayRichText' },
+			types,
+		)
+		const body = value.text
+			? migrateEditorialValue(
+					value.text,
+					{ type: 'internationalizedArrayRichText' },
+					types,
+				)
+			: []
+		const languages = new Set(
+			[...title, ...body].map((entry: any) => entry.language || entry._key),
+		)
+		result.text = [...languages].map((language) => {
+			const heading = title.find(
+				(entry: any) => (entry.language || entry._key) === language,
+			)
+			const content = body.find(
+				(entry: any) => (entry.language || entry._key) === language,
+			)
+			return {
+				...(content ?? heading),
+				_type: 'internationalizedArrayRichTextValue',
+				language,
+				value: [
+					...(heading?.value ?? []).map((block: any, index: number) => ({
+						...block,
+						_key: `heading-${index}`,
+						style: 'titleLabel',
+					})),
+					...(content?.value ?? []),
+				],
+			}
+		})
+		delete result.title
+	}
+	// Upgrade only headings generated by the earlier title-field migration.
+	if (schema.type === 'visionBlock' && Array.isArray(result.text)) {
+		result.text = result.text.map((entry: any) => ({
+			...entry,
+			value: Array.isArray(entry.value)
+				? entry.value.map((block: any) =>
+						block.style === 'h3' && /^heading-\d+$/.test(block._key ?? '')
+							? { ...block, style: 'titleLabel' }
+							: block,
+					)
+				: entry.value,
+		}))
+	}
+
+	for (const field of definition.fields) {
+		if (field.name && Object.hasOwn(result, field.name))
+			result[field.name] = migrateEditorialValue(
+				result[field.name],
+				field,
+				types,
+			)
+	}
+	for (const field of retiredFields[value._type ?? schema.type ?? ''] ?? [])
+		delete result[field]
+	if (schema.type === 'expoPhotoBlock' && Array.isArray(result.photos)) {
+		result.photos = result.photos.map(
+			({ copyright, artistDisplay, ...photo }: any) => photo,
+		)
+	}
+	return result
+}
+
+export function changedFields(before: JsonObject, after: JsonObject) {
+	return Object.fromEntries(
+		Object.entries(after).filter(
+			([key, value]) =>
+				!key.startsWith('_') &&
+				JSON.stringify(before[key]) !== JSON.stringify(value),
+		),
+	)
+}

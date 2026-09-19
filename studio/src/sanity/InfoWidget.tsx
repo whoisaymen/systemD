@@ -1,6 +1,7 @@
 'use client'
 
-import { Box, Card, Code, Flex, Heading, Label, Stack, Text } from '@sanity/ui'
+import { Box, Card, Flex, Heading, Label, Stack, Text } from '@sanity/ui'
+import { Code } from '@sanity/ui/code'
 import pkg from '../../package.json'
 import { FaGithub, FaBluesky, FaXTwitter } from 'react-icons/fa6'
 import type { DashboardWidget, LayoutConfig } from '@sanity/dashboard'
@@ -18,7 +19,7 @@ export function infoWidget(
 function Widget() {
 	return (
 		<Card paddingY={4}>
-			<Stack space={4}>
+			<Stack gap={4}>
 				<Box paddingX={3} as="header">
 					<Heading size={1} as="h2">
 						<Flex align="flex-end" justify="space-between" wrap="wrap" gap={4}>
@@ -33,6 +34,8 @@ function Widget() {
 										style={{ color: 'inherit' }}
 										href={item.url}
 										target="_blank"
+										rel="noopener noreferrer"
+										aria-label={item.label}
 										key={key}
 									>
 										<item.icon />
@@ -44,7 +47,7 @@ function Widget() {
 				</Box>
 
 				{linkGroups.map((group, i) => (
-					<Stack space={3} key={i}>
+					<Stack gap={3} key={i}>
 						<Card borderBottom padding={3}>
 							<Label size={0} muted>
 								{group.title}
@@ -52,9 +55,9 @@ function Widget() {
 						</Card>
 
 						{group.links.map((link, key) => (
-							<Stack space={4} paddingX={3} key={key}>
+							<Stack gap={4} paddingX={3} key={key}>
 								<Text size={1}>
-									<a href={link.url} target="_blank">
+									<a href={link.url} target="_blank" rel="noopener noreferrer">
 										{link.label}
 									</a>
 								</Text>

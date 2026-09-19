@@ -1,7 +1,6 @@
 import { urlFor } from '@/sanity/lib/image'
 import { preload } from 'react-dom'
 import { stegaClean } from 'next-sanity'
-import { cn } from '@/lib/utils'
 
 const SIZES = [
 	120, 240, 360, 480, 640, 720, 800, 880, 960, 1280, 1440, 1600, 1800, 2000,
@@ -19,7 +18,6 @@ export default function Img({
 	imageSizes = SIZES,
 	alt = '',
 	options,
-	themeGrade = true,
 	className,
 	...props
 }: {
@@ -27,7 +25,6 @@ export default function Img({
 	imageWidth?: number
 	imageSizes?: number[]
 	options?: ImageOptions
-	themeGrade?: boolean
 } & React.ImgHTMLAttributes<HTMLImageElement>) {
 	if (!image?.asset) return null
 
@@ -47,7 +44,7 @@ export default function Img({
 			loading={stegaClean(image.loading) || 'lazy'}
 			decoding="async"
 			{...props}
-			className={cn(themeGrade && 'theme-graded-image', className)}
+			className={className}
 		/>
 	)
 }
@@ -105,7 +102,7 @@ function getImageProps(
 	}
 }
 
-function getImageDimensions(image: Sanity.Image) {
+export function getImageDimensions(image: Sanity.Image) {
 	const dimensions = image.asset?.metadata?.dimensions
 	if (dimensions?.width && dimensions?.height) {
 		return dimensions

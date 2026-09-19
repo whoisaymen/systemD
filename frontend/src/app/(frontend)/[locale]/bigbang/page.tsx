@@ -24,32 +24,15 @@ async function getBigBang() {
 	const query = groq`
 {
   "shortStory": *[_type == 'bigbangShortStory'][0]{
-    body,
+    ...,
+    body[]{..., image{..., asset->{...}}}
   },
   "longStory": *[_type == 'bigbangLongStory'][0]{
-    body[] {
-      _type == 'internationalizedCitationBlock' => {
-        _type,
-        text,
-        author
-      },
-      _type == 'internationalizedParagraphBlock' => {
-        _type,
-        text,
-        title,
-        image,
-        svgMarkup
-      },
-      _type == 'internationalizedImageBlock' => {
-        _type,
-        file {
-          asset->{
-            url,
-            metadata
-          }
-        },
-        caption
-      }
+    ...,
+    body[]{
+      ...,
+      file{..., asset->{...}},
+      uploadedVideo{..., asset->{url}}
     }
   }
 }

@@ -8,6 +8,21 @@ export default defineType({
 	icon: MdEmail,
 	fields: [
 		defineField({
+			name: 'contactTitle',
+			title: 'Titre de la section contact',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'partnersTitle',
+			title: 'Titre des partenaires',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'mapLinkLabel',
+			title: 'Texte du lien vers la carte',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
 			name: 'formEmail',
 			title: 'Email pour le formulaire',
 			type: 'string',
@@ -16,7 +31,7 @@ export default defineType({
 		defineField({
 			name: 'address',
 			title: 'Adresse',
-			type: 'internationalizedArrayText',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'mapLocation',

@@ -119,9 +119,9 @@ export default function FestivalContentImproved({
 											<motion.div
 												key={member._id}
 												className={`cursor-pointer overflow-hidden rounded-lg border-[3px] transition-all ${
-													selectedJuryMember === member._id
-														? 'border-primary shadow-lg'
-														: 'border-gray-300 grayscale hover:grayscale-0'
+												selectedJuryMember === member._id
+													? 'border-primary shadow-lg'
+													: 'border-gray-300'
 												}`}
 												onClick={() =>
 													setSelectedJuryMember(

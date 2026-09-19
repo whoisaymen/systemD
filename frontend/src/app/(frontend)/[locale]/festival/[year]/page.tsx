@@ -8,7 +8,7 @@ export default async function FestivalEditionPage({
 	params: Promise<{ locale: string; year: string }>
 }) {
 	const { locale, year } = await params
-	const content = await getFestivalEdition(year)
+	const content = await getFestivalEdition(year, locale)
 
 	if (!content) {
 		return <div>No content available for this festival edition</div>
@@ -18,19 +18,30 @@ export default async function FestivalEditionPage({
 	return <FestivalEditionContent festival={content} language={locale} />
 }
 
-async function getFestivalEdition(year: string) {
+async function getFestivalEdition(year: string, locale: string) {
 	const query = groq`
 		*[_type == 'festival' && year == $year][0]{
 			_id,
-			title,
 			description,
-			text,
 			year,
 			venue,
 			visual,
 			pressLink,
 			aftermovieLink,
-			"filmSelection": *[_type == 'film' && references(^._id)] | order(year asc, title asc) {
+			overviewTitle,
+			filmsTitle,
+			exhibitionTitle,
+			photosTitle,
+			juryTitle,
+			pressLinkLabel,
+			aftermovieLinkLabel,
+
+			"filmSelection": *[_type == 'film' && references(^._id)] | order(year asc, coalesce(
+				pt::text(title[language == $locale || _key == $locale][0].value),
+				title[language == $locale || _key == $locale][0].value,
+				pt::text(title[0].value),
+				title[0].value
+			) asc) {
 				_id,
 				slug,
 				title,
@@ -59,7 +70,7 @@ async function getFestivalEdition(year: string) {
 				_type == 'jury' &&
 				edition._ref == ^._id &&
 				!(_id in coalesce(^.jury[]._ref, []))
-			] | order(name asc) {
+			] | order(coalesce(pt::text(name), name) asc) {
 				_id,
 				name,
 				image {
@@ -98,13 +109,15 @@ async function getFestivalEdition(year: string) {
 						}
 					},
 					artistName,
-					copyright
 				}
 			}
 		}
 	`
 
-	const data = await fetchSanityLive({ query, params: { year: Number(year) } })
+	const data = await fetchSanityLive({
+		query,
+		params: { year: Number(year), locale },
+	})
 
 	if (!data) {
 		return notFound()

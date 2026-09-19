@@ -15,7 +15,7 @@ export default async function ContactPage({
 async function getContact() {
 	const query = groq`
     *[_type == 'contact'][0]{
-      _id,
+      ...,
       formEmail,
       address,
       mapLocation,
@@ -39,7 +39,7 @@ async function getContact() {
 	const data = await fetchSanityLive({ query })
 
 	if (!data) {
-		throw new Error(`No content found for festival"`)
+		throw new Error(`No contact content found`)
 	}
 
 	return data

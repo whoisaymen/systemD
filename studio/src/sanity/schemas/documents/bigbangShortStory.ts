@@ -1,7 +1,5 @@
-import { defineArrayMember, defineField, defineType } from 'sanity'
+import { defineField, defineType } from 'sanity'
 import { VscCalendar } from 'react-icons/vsc'
-import imageBlock from '../fragments/image-block'
-import internationalizedBlock from './internationalizedBlock'
 
 export default defineType({
 	name: 'bigbangShortStory',
@@ -9,6 +7,11 @@ export default defineType({
 	icon: VscCalendar,
 	type: 'document',
 	fields: [
+		defineField({
+			name: 'tabLabel',
+			title: 'Libellé de l’onglet',
+			type: 'internationalizedArrayString',
+		}),
 		defineField({
 			name: 'body',
 			title: 'Paragraphes',

@@ -1,15 +1,5 @@
-// import EquipeContent from '@/components/equipe/EquipeContent'
-import dynamic from 'next/dynamic'
-
 import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
 import TeamCarousel from '@/components/equipe/TeamCarousel'
-
-const EquipeContent = dynamic(
-	() => import('@/components/equipe/EquipeContent'),
-	{
-		ssr: !!false,
-	},
-)
 
 export default async function EquipePage({
 	params,
@@ -30,7 +20,6 @@ async function getEquipe(tab: string, locale: string) {
       "person": *[_type == 'person']{
         _id,
         name,
-        title,
         biography,
         image
       }

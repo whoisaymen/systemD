@@ -8,9 +8,10 @@ export default defineType({
 	type: 'document',
 	fields: [
 		defineField({
-			name: 'description',
-			title: 'Description',
-			type: 'internationalizedArrayText',
+			name: 'visionTitle',
+			title: 'Intitulé « Notre vision »',
+			description: 'Texte du bouton qui ouvre la section (par exemple « Notre vision » ou « Our vision »).',
+			type: 'internationalizedArrayString',
 		}),
 		defineField({
 			name: 'vision',
@@ -26,7 +27,6 @@ export default defineType({
 				{ type: 'mediaTeaserBlock' },
 				{ type: 'customTextBlock' },
 				{ type: 'juryBlock' },
-				// { type: 'ticketBlock' },
 				{ type: 'onTourBlock' },
 			],
 		}),

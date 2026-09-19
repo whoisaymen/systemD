@@ -3,67 +3,37 @@ import { VscMilestone } from 'react-icons/vsc'
 
 export default defineType({
 	name: 'homepage',
-	title: "Page d'accueil",
+	title: 'Page d’accueil',
 	icon: VscMilestone,
 	type: 'document',
+	fieldsets: [{ name: 'video', title: 'Vidéo de la page d’accueil' }],
 	fields: [
 		defineField({
-			name: 'backgroundType',
-			title: 'Type de fond d’écran',
-			type: 'string',
-			options: {
-				list: [
-					{ title: 'Couleur', value: 'color' },
-					{ title: 'Image', value: 'image' },
-					{ title: 'Vidéo', value: 'video' },
-				],
-				layout: 'radio',
-			},
-		}),
-		defineField({
-			name: 'backgroundColor',
-			title: 'Couleur de fond',
-			type: 'color',
-			hidden: ({ parent }) => parent?.backgroundType !== 'color',
-		}),
-		defineField({
-			name: 'backgroundImage',
-			title: 'Image de fond',
-			type: 'image',
-			hidden: ({ parent }) => parent?.backgroundType !== 'image',
-		}),
-		defineField({
 			name: 'backgroundVideo',
-			title: 'Vidéo de fond',
+			title: 'Fichier vidéo',
+			fieldset: 'video',
+			description:
+				'Vidéo diffusée sur la page d’accueil. Le fichier importé est prioritaire sur l’URL.',
 			type: 'file',
-			hidden: ({ parent }) => parent?.backgroundType !== 'video',
+			options: { accept: 'video/*' },
 		}),
 		defineField({
-			name: 'logo',
-			title: 'Logo',
-			type: 'image',
-		}),
-		defineField({
-			name: 'showLogo',
-			title: 'Montrer le logo',
-			type: 'boolean',
-			initialValue: true,
-		}),
-		defineField({
-			name: 'subtitle',
-			title: 'Sous-titre',
-			type: 'image',
-		}),
-		defineField({
-			name: 'showSubtitle',
-			title: 'Montrer le sous-titre',
-			type: 'boolean',
-			initialValue: true,
+			name: 'backgroundVideoUrl',
+			title: 'URL de la vidéo',
+			fieldset: 'video',
+			description:
+				'Adresse directe du fichier vidéo, en l’absence de fichier importé.',
+			type: 'string',
+			validation: (Rule) =>
+				Rule.custom(
+					(value) =>
+						!value ||
+						/^(https?:\/\/|\/(?!\/))/.test(value) ||
+						'Utilisez un lien http(s) direct vers une vidéo ou un chemin local commençant par /.',
+				),
 		}),
 	],
 	preview: {
-		prepare: () => ({
-			title: 'Page d’accueil',
-		}),
+		prepare: () => ({ title: 'Page d’accueil' }),
 	},
 })

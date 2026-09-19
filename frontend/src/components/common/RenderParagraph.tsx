@@ -1,13 +1,48 @@
 import { motion } from 'motion/react'
 import LogoShortTsx from '@/components/svgs/LogoShort'
+import RichText from './RichText'
 
 export const renderParagraph = (
 	paragraph: any,
 	titles: string[],
 	logoStyle?: string,
-	logoSize?: string,
 ) => {
 	if (!paragraph?.value) return null
+	if (Array.isArray(paragraph.value)) {
+		// A mark keeps the surrounding bold/italic/link annotations on the logo.
+		const blocks = paragraph.value.map((block: any, blockIndex: number) => ({
+			...block,
+			children: block.children?.flatMap((child: any, childIndex: number) => {
+				if (child._type !== 'span' || typeof child.text !== 'string')
+					return child
+				return child.text
+					.split(/(\bsyst(?:em|ème)[ _-]d\b)/gi)
+					.filter(Boolean)
+					.map((text: string, index: number) => ({
+						...child,
+						_key: `${child._key ?? `${blockIndex}-${childIndex}`}-${index}`,
+						text,
+						marks: [
+							...(child.marks ?? []),
+							...(/^syst(?:em|ème)[ _-]d$/i.test(text) ? ['systemDLogo'] : []),
+						],
+					}))
+			}),
+		}))
+		return (
+			<RichText
+				value={blocks}
+				components={{
+					marks: {
+						systemDLogo: () => (
+							<>{renderParagraph({ value: 'System D' }, titles, logoStyle)}</>
+						),
+					},
+				}}
+			/>
+		)
+	}
+	if (typeof paragraph.value !== 'string') return null
 
 	const systemDVariations = [
 		'system d',
@@ -61,21 +96,21 @@ export const renderParagraph = (
 				return (
 					<motion.span
 						key={index}
-						className="z-10 inline-block"
+						className="relative z-10 mx-[0.06em] inline-block align-[-0.08em] leading-none"
 						animate={{
 							rotate: 3,
 							transition: {
 								ease: [0.76, 0, 0.24, 1],
-									duration: 1.5,
-									repeat: Infinity,
-									repeatType: 'reverse',
-									delay,
-								},
-							}}
-						>
-							<LogoShortTsx
-								className={`mr-[0.10rem] inline-block h-auto w-[9rem] rounded-md px-2 py-1 sm:w-[15rem] ${rotation} ${logoStyle} ${logoSize || 'w-[9rem] sm:w-[15rem]'}`}
-							/>
+								duration: 1.5,
+								repeat: Infinity,
+								repeatType: 'reverse',
+								delay,
+							},
+						}}
+					>
+						<LogoShortTsx
+							className={`box-content inline-block h-[0.72em] w-auto rounded-[0.12em] px-[0.16em] py-[0.07em] ${rotation} ${logoStyle ?? ''}`}
+						/>
 					</motion.span>
 				)
 			}

@@ -51,9 +51,8 @@ function Crumb({
 	const content = (
 		<>
 			<span itemProp="name" hidden={hidden}>
-				{stegaClean(
-					children || link?.label || link?.internal?.title || link?.external,
-				)}
+				{children ||
+					stegaClean(link?.label || link?.internal?.title || link?.external)}
 			</span>
 			<meta itemProp="position" content={position.toString()} />
 		</>

@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { richTextToPlainText } from '../../lib/richTextPreview'
 
 export default defineType({
 	name: 'expoPhotoBlock',
@@ -8,7 +9,8 @@ export default defineType({
 		defineField({
 			name: 'curatorName',
 			title: 'Nom du curateur',
-			type: 'string',
+			type: 'array',
+			of: [{ type: 'block' }],
 		}),
 		defineField({
 			name: 'photos',
@@ -29,12 +31,8 @@ export default defineType({
 						defineField({
 							name: 'artistName',
 							title: "Nom de l'artiste",
-							type: 'string',
-						}),
-						defineField({
-							name: 'copyright',
-							title: 'Copyright',
-							type: 'string',
+							type: 'array',
+							of: [{ type: 'block' }],
 						}),
 					],
 				},
@@ -49,7 +47,7 @@ export default defineType({
 		prepare(selection) {
 			const { title, media } = selection
 			return {
-				title,
+				title: richTextToPlainText(title),
 				media,
 			}
 		},

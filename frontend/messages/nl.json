@@ -6,6 +6,7 @@
 	},
 
 	"contactPage": {
+		"title": "Contactez-nous",
 		"contact": "Contact",
 		"partners": "Partners",
 		"viewOnMap": "Bekijk op Google Maps",
@@ -18,6 +19,18 @@
 		"nextYear": "Volgend jaar",
 		"gridView": "Raster",
 		"listView": "Lijst",
+		"calendarView": "Kalender",
+		"agendaView": "Agenda",
+		"eventSingular": "evenement",
+		"eventPlural": "evenementen",
+		"previousMonth": "Vorige maand",
+		"nextMonth": "Volgende maand",
+		"backToYearCalendar": "Terug naar de jaarkalender",
+		"sampleEvent": "Voorbeeldevenement · lay-outvoorbeeld",
+		"monthAgenda": "Maandagenda",
+		"allEvents": "Alles",
+		"noEventsScheduled": "Geen evenementen gepland",
+		"openPressKit": "Open persmap",
 		"moreEvents": "+{count} meer",
 		"noEvents": "Geen evenementen gepland in {year}",
 		"closeDetails": "Evenementdetails sluiten",
@@ -44,14 +57,31 @@
 		"year": "Jaar",
 		"titleCol": "Titel",
 		"director": "Regisseur",
+		"films": "Films",
+		"sort": "Sorteren",
+		"show": "Tonen",
+		"all": "Alle",
+		"award": "Prijs",
+		"winner": "Winnaar",
+		"noAward": "Geen prijs",
 		"winners": "Winnaars",
 		"comingSoon": "Films binnenkort beschikbaar...",
-		"gridView": "Rasterweergave",
-		"listView": "Lijstweergave"
+		"gridView": "Raster",
+		"listView": "Lijst"
 	},
 
 	"photoGallery": {
 		"title": "Fotogalerij",
 		"photosBy": "Foto's door"
+	},
+
+	"festivalEdition": {
+		"overview": "Overzicht",
+		"jury": "Jury",
+		"indexLabel": "Hoofdstukken van de editie"
+	},
+
+	"memoire": {
+		"previousEditions": "Edities"
 	}
 }

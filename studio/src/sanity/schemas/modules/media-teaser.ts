@@ -25,11 +25,6 @@ export default defineType({
 			},
 		}),
 		defineField({
-			name: 'text',
-			title: 'Texte',
-			type: 'internationalizedArrayText',
-		}),
-		defineField({
 			name: 'show',
 			title: 'Afficher',
 			type: 'boolean',

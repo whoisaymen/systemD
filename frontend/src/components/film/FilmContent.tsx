@@ -4,6 +4,9 @@ import { useTransition } from 'react'
 
 import { getRandomRotationClass } from '@/lib/utils'
 import Img from '@/ui/Img'
+import RichText from '@/components/common/RichText'
+import { filmTextLines } from './filmTextLines'
+import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import { GoClockFill } from 'react-icons/go'
 import { FaLocationDot, FaPlay, FaTag } from 'react-icons/fa6'
 import { BiSolidCameraMovie } from 'react-icons/bi'
@@ -34,13 +37,8 @@ const FilmContent: React.FC<FilmContentProps> = ({
 	const tFilmSelection = useTranslations('filmSelection')
 	const [isPending, startTransition] = useTransition()
 
-	const getLocalizedValue = (array: any[], lang: string) => {
-		if (!Array.isArray(array)) {
-			return ''
-		}
-		const item = array.find((entry) => entry.language === lang || entry._key === lang)
-		return item ? item.value : ''
-	}
+	const getLocalizedValue = (value: any, lang: string) =>
+		richTextToPlainText(localizedRichText(value, lang))
 
 	// Reconstruct the sorted films array based on current filters/sorting
 	const sortedFilms = useMemo(() => {
@@ -66,8 +64,8 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					? titleA.localeCompare(titleB)
 					: titleB.localeCompare(titleA)
 			} else if (sortField === 'director') {
-				const directorA = a.director.toLowerCase()
-				const directorB = b.director.toLowerCase()
+				const directorA = richTextToPlainText(a.director).toLowerCase()
+				const directorB = richTextToPlainText(b.director).toLowerCase()
 				return sortOrder === 'asc'
 					? directorA.localeCompare(directorB)
 					: directorB.localeCompare(directorA)
@@ -252,19 +250,13 @@ const FilmContent: React.FC<FilmContentProps> = ({
 					<div className="absolute left-1/2 top-24 flex w-[90%] -translate-x-1/2 flex-col items-center lg:flex-row">
 						{film.title && (
 							<>
-								{splitTitle(getLocalizedValue(film.title, language), 20).map(
-									(line, idx) => (
+								{filmTextLines(localizedRichText(film.title, language), 20).map(
+									(line, index) => (
 										<h1
-											key={idx}
-											className={[
-												'z-10 rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-4xl',
-												idx === 0 ? '' : '-z-0 -mt-1',
-												idx % 2 === 0
-													? '-rotate-1 lg:-rotate-3'
-													: 'rotate-1 lg:rotate-3',
-											].join(' ')}
+											key={index}
+											className={`z-10 max-w-full rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-4xl ${index % 2 === 0 ? '-rotate-1 lg:-rotate-3' : 'rotate-1 lg:rotate-3'} ${index ? '-mt-1' : ''}`}
 										>
-											{line}
+											<RichText value={line} inline />
 										</h1>
 									),
 								)}
@@ -273,19 +265,12 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 						{film.director && (
 							<>
-								{splitTitle(film.director, 26).map((line, idx) => (
+								{filmTextLines(film.director, 26).map((line, index) => (
 									<p
-										key={idx}
-										className={[
-											'z-10 mt-0 inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark lg:border-0 lg:text-2xl',
-
-											idx === 0 ? '' : '-z-0 -mt-[0.15rem]',
-											idx % 2 === 0
-												? '-rotate-1 lg:-rotate-3'
-												: 'rotate-1 lg:rotate-3',
-										].join(' ')}
+										key={index}
+										className={`z-10 mt-0 inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark lg:border-0 lg:text-2xl ${index % 2 === 0 ? '-rotate-1 lg:-rotate-3' : 'rotate-1 lg:rotate-3'}`}
 									>
-										{line}
+										<RichText value={line} inline />
 									</p>
 								))}
 							</>
@@ -323,7 +308,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						<div className="relative mx-1 flex h-full items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:rounded-xl lg:border-[4px]">
 							<Img
 								image={film.affiche}
-								src={film.affiche.asset.url}
+								src={film.affiche?.asset?.url}
 								alt={getLocalizedValue(film.title, language)}
 								className="h-auto w-full object-cover"
 							/>
@@ -341,7 +326,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						<div className="relative mx-1 flex h-auto items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark shadow-md lg:max-h-[60vh] lg:border-[4px]">
 							<Img
 								image={film.affiche}
-								src={film.affiche.asset.url}
+								src={film.affiche?.asset?.url}
 								alt={getLocalizedValue(film.title, language)}
 								className="h-auto w-full object-cover"
 							/>
@@ -354,19 +339,13 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				<div className="flex flex-col items-center lg:hidden lg:flex-row">
 					{film.title && (
 						<>
-							{splitTitle(getLocalizedValue(film.title, language), 20).map(
-								(line, idx) => (
+							{filmTextLines(localizedRichText(film.title, language), 20).map(
+								(line, index) => (
 									<h1
-										key={idx}
-										className={[
-											'z-10 rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-4xl',
-											idx === 0 ? '' : '-z-0 -mt-1',
-											idx % 2 === 0
-												? '-rotate-1 lg:-rotate-3'
-												: 'rotate-1 lg:rotate-3',
-										].join(' ')}
+										key={index}
+										className={`z-10 max-w-full rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-4xl ${index % 2 === 0 ? '-rotate-1 lg:-rotate-3' : 'rotate-1 lg:rotate-3'} ${index ? '-mt-1' : ''}`}
 									>
-										{line}
+										<RichText value={line} inline />
 									</h1>
 								),
 							)}
@@ -375,19 +354,12 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 					{film.director && (
 						<>
-							{splitTitle(film.director, 26).map((line, idx) => (
+							{filmTextLines(film.director, 26).map((line, index) => (
 								<p
-									key={idx}
-									className={[
-										'z-10 mt-0 inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark lg:border-0 lg:text-2xl',
-
-										idx === 0 ? '' : '-z-0 -mt-[0.15rem]',
-										idx % 2 === 0
-											? '-rotate-1 lg:-rotate-3'
-											: 'rotate-1 lg:rotate-3',
-									].join(' ')}
+									key={index}
+									className={`z-10 mt-0 inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark lg:border-0 lg:text-2xl ${index % 2 === 0 ? '-rotate-1 lg:-rotate-3' : 'rotate-1 lg:rotate-3'}`}
 								>
-									{line}
+									<RichText value={line} inline />
 								</p>
 							))}
 						</>
@@ -419,7 +391,12 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						{film.city && (
 							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-md border border-primary px-2 py-0.5 text-primary">
 								<FaLocationDot />
-								<span>{getLocalizedValue(film.city, language)}</span>
+								<span>
+									<RichText
+										value={localizedRichText(film.city, language)}
+										inline
+									/>
+								</span>
 							</span>
 						)}
 					</div>
@@ -428,16 +405,16 @@ const FilmContent: React.FC<FilmContentProps> = ({
 						{film.genre && film.genre.title && (
 							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-md border border-primary px-2 py-0.5 text-primary">
 								<FaTag />
-								{getLocalizedValue(film.genre.title, language) ||
-									(Array.isArray(film.genre.title) &&
-										film.genre.title[0]?.value) ||
-									''}
+								<RichText
+									value={localizedRichText(film.genre.title, language)}
+									inline
+								/>
 							</span>
 						)}
 						{film.production && (
 							<span className="flex items-center justify-center gap-1 whitespace-nowrap rounded-md border border-primary px-2 py-0.5 text-primary">
 								<BiSolidCameraMovie />
-								{film.production}
+								<RichText value={film.production} inline />
 							</span>
 						)}
 					</div>
@@ -446,59 +423,16 @@ const FilmContent: React.FC<FilmContentProps> = ({
 
 			{film.synopsis && (
 				<div className="relative px-2 py-6 lg:py-6">
-					<p className="mx-auto py-2 text-left text-base leading-[1.2] tracking-tight text-primary sm:py-4 lg:text-3xl">
-						{getLocalizedValue(film.synopsis, language)}
-					</p>
+					<RichText
+						value={localizedRichText(film.synopsis, language)}
+						className="mx-auto py-2 text-left text-base leading-[1.2] tracking-tight text-primary sm:py-4 lg:text-3xl"
+					/>
 				</div>
 			)}
 
-			{/* <div className="mx-2 flex items-center justify-center gap-1 pb-32 lg:hidden">
-				<span className="w-fit -rotate-2 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark lg:text-lg">
-					Press link
-				</span>
-				<span className="w-fit rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark lg:text-lg">
-					Instagram
-				</span>
-				<span className="w-fit -rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark lg:text-lg">
-					Prod
-				</span>
-				<span className="w-fit rotate-3 rounded-md border-2 border-primary bg-primary px-2 text-sm font-medium text-dark lg:text-lg">
-					Facebook
-				</span>
-			</div> */}
-
-			<div className="mx-2 flex items-center justify-center gap-1 pb-16 text-lg tracking-tighter text-primary">
-				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
-					Press link
-				</span>
-				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
-					Instagram
-				</span>
-				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
-					Prod
-				</span>
-				<span className="rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base">
-					Facebook
-				</span>
-			</div>
 			<LoadingOverlay isVisible={isPending} />
 		</div>
 	)
 }
 
 export default FilmContent
-
-// Split a string into chunks of maxLength (default 20)
-function splitTitle(title: string, maxLength = 18) {
-	const result = []
-	let str = title
-
-	while (str.length > maxLength) {
-		let idx = str.lastIndexOf(' ', maxLength)
-		if (idx === -1) idx = maxLength // no space found, hard cut
-		result.push(str.slice(0, idx).trim())
-		str = str.slice(idx).trim()
-	}
-	if (str.length) result.push(str)
-	return result
-}

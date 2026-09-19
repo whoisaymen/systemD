@@ -1,3 +1,4 @@
+import { localizedRichTextPreview } from '../../lib/richTextPreview'
 import { defineField, defineType } from 'sanity'
 import { FaAlignLeft } from 'react-icons/fa'
 
@@ -9,7 +10,7 @@ export default defineType({
 		defineField({
 			name: 'text',
 			title: 'Texte',
-			type: 'internationalizedArrayText',
+			type: 'internationalizedArrayRichText',
 		}),
 	],
 	preview: {
@@ -17,8 +18,7 @@ export default defineType({
 			text: 'text',
 		},
 		prepare({ text }) {
-			const getLocalizedValue = (array: any[], lang: string) =>
-				array?.find((v) => v?.language === lang || v?._key === lang)?.value
+			const getLocalizedValue = localizedRichTextPreview
 
 			const displayText =
 				getLocalizedValue(text, 'fr') ||

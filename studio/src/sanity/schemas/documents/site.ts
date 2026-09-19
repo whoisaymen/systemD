@@ -44,13 +44,7 @@ export default defineType({
 			},
 			group: 'visual',
 		}),
-		defineField({
-			name: 'announcements',
-			title: 'News',
-			type: 'array',
-			of: [{ type: 'reference', to: [{ type: 'announcement' }] }],
-			group: 'general',
-		}),
+
 		// defineField({
 		// 	name: 'ctas',
 		// 	title: 'Call-to-action (Site-wide)',
@@ -59,17 +53,7 @@ export default defineType({
 		// 	of: [{ type: 'cta' }],
 		// 	group: 'general',
 		// }),
-		defineField({
-			name: 'copyright',
-			type: 'array',
-			of: [
-				{
-					type: 'block',
-					styles: [{ title: 'Normal', value: 'normal' }],
-				},
-			],
-			group: 'general',
-		}),
+
 		// defineField({
 		// 	name: 'headerMenu',
 		// 	type: 'reference',

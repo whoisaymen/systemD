@@ -46,7 +46,7 @@ export default {
 			},
 			fontFamily: {
 				anisette: ['Anisette', ...fontFamily.mono],
-				geist: ['var(--font-geist)', ...fontFamily.sans],
+				geist: ['var(--font-geist-sans)', ...fontFamily.sans],
 			},
 			width: {
 				'column-width': '16rem',

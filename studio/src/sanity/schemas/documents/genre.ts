@@ -1,3 +1,4 @@
+import { getBlockText } from '@/sanity/lib/utils'
 import { defineField, defineType } from 'sanity'
 import { VscTag } from 'react-icons/vsc'
 
@@ -10,7 +11,7 @@ export default defineType({
 		defineField({
 			name: 'title',
 			title: 'Titre',
-			type: 'internationalizedArrayString',
+			type: 'internationalizedArrayRichText',
 			validation: (Rule) => Rule.required(),
 		}),
 	],
@@ -21,7 +22,10 @@ export default defineType({
 		prepare({ title }) {
 			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
-				return array.find((v) => v?.language === lang || v?._key === lang)?.value
+				const value = array.find(
+					(v) => v?.language === lang || v?._key === lang,
+				)?.value
+				return typeof value === 'string' ? value : getBlockText(value, ' ')
 			}
 
 			const displayTitle =

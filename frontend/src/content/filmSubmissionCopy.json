@@ -1,0 +1,518 @@
+{
+	"successTitle": {
+		"label": "Mission Accomplie! 🚀",
+		"value": "Mission Accomplie! 🚀",
+		"group": "success",
+		"native": false
+	},
+	"successDescription": {
+		"label": "Ton film a été envoyé avec succès vers le TURFU. Nous reviendrons vers toi avant 17h avec une réponse.",
+		"value": "Ton film a été envoyé avec succès vers le TURFU. Nous reviendrons vers toi avant 17h avec une réponse.",
+		"group": "success",
+		"native": false
+	},
+	"successSignoff": {
+		"label": "Bon vent, courageux aventurier!",
+		"value": "Bon vent, courageux aventurier!",
+		"group": "success",
+		"native": false
+	},
+	"title": {
+		"label": "System D Formulaire",
+		"value": "System D Formulaire",
+		"group": "intro",
+		"native": false
+	},
+	"intro": {
+		"label": "Il y a 4 niveaux d'interrogation avant de rejoindre notre voyage vers le TURFU.",
+		"value": "Il y a 4 niveaux d'interrogation avant de rejoindre notre voyage vers le TURFU.",
+		"group": "intro",
+		"native": false
+	},
+	"introSignoff": {
+		"label": "Bon vent aux courageux aventuriers!",
+		"value": "Bon vent aux courageux aventuriers!",
+		"group": "intro",
+		"native": false
+	},
+	"contactName": {
+		"label": "Nom et prénom de la personne de contact *",
+		"value": "Nom et prénom de la personne de contact *",
+		"group": "labels",
+		"native": false
+	},
+	"phoneNumber": {
+		"label": "Numéro de téléphone *",
+		"value": "Numéro de téléphone *",
+		"group": "labels",
+		"native": false
+	},
+	"email": {
+		"label": "E-mail *",
+		"value": "E-mail *",
+		"group": "labels",
+		"native": false
+	},
+	"instagram": {
+		"label": "Instagram *",
+		"value": "Instagram *",
+		"group": "labels",
+		"native": false
+	},
+	"filmTitle": {
+		"label": "Titre du film *",
+		"value": "Titre du film *",
+		"group": "labels",
+		"native": false
+	},
+	"directorProducer": {
+		"label": "Réalisateur et/ou producteur *",
+		"value": "Réalisateur et/ou producteur *",
+		"group": "labels",
+		"native": false
+	},
+	"projectHolder": {
+		"label": "Porteur du projet *",
+		"value": "Porteur du projet *",
+		"group": "labels",
+		"native": false
+	},
+	"filmGenre": {
+		"label": "Genre du film",
+		"value": "Genre du film",
+		"group": "labels",
+		"native": false
+	},
+	"genrePlaceholder": {
+		"label": "Galaxie dans laquelle le film se trouve",
+		"value": "Galaxie dans laquelle le film se trouve",
+		"group": "labels",
+		"native": true
+	},
+	"genreDocumentary": {
+		"label": "Documentaire",
+		"value": "Documentaire",
+		"group": "labels",
+		"native": true
+	},
+	"genreFiction": {
+		"label": "Fiction",
+		"value": "Fiction",
+		"group": "labels",
+		"native": true
+	},
+	"genreAnimation": {
+		"label": "Animation",
+		"value": "Animation",
+		"group": "labels",
+		"native": true
+	},
+	"genreExperimental": {
+		"label": "Expérimental",
+		"value": "Expérimental",
+		"group": "labels",
+		"native": true
+	},
+	"genreMusicVideo": {
+		"label": "Clip musical",
+		"value": "Clip musical",
+		"group": "labels",
+		"native": true
+	},
+	"genreOther": {
+		"label": "Autre",
+		"value": "Autre",
+		"group": "labels",
+		"native": true
+	},
+	"yearOfCreation": {
+		"label": "Année de réalisation *",
+		"value": "Année de réalisation *",
+		"group": "labels",
+		"native": false
+	},
+	"languages": {
+		"label": "Langue(s) *",
+		"value": "Langue(s) *",
+		"group": "labels",
+		"native": false
+	},
+	"filmFormat": {
+		"label": "Format du film *",
+		"value": "Format du film *",
+		"group": "labels",
+		"native": false
+	},
+	"duration": {
+		"label": "Durée du film (en minutes) *",
+		"value": "Durée du film (en minutes) *",
+		"group": "labels",
+		"native": false
+	},
+	"subtitles": {
+		"label": "Sous-titres",
+		"value": "Sous-titres",
+		"group": "labels",
+		"native": false
+	},
+	"subtitlesHint": {
+		"label": "Si tu peux les fournir, dans quelle langue(s)?",
+		"value": "Si tu peux les fournir, dans quelle langue(s)?",
+		"group": "labels",
+		"native": false
+	},
+	"downloadLink": {
+		"label": "Lien de téléchargement *",
+		"value": "Lien de téléchargement *",
+		"group": "labels",
+		"native": false
+	},
+	"professionalSupervision": {
+		"label": "Encadrement professionnel *",
+		"value": "Encadrement professionnel *",
+		"group": "labels",
+		"native": false
+	},
+	"yes": {
+		"label": "Oui",
+		"value": "Oui",
+		"group": "labels",
+		"native": false
+	},
+	"no": {
+		"label": "Non",
+		"value": "Non",
+		"group": "labels",
+		"native": false
+	},
+	"filmSchoolGraduates": {
+		"label": "T'as des diplômés d'école de cinéma dans ton crew? *",
+		"value": "T'as des diplômés d'école de cinéma dans ton crew? *",
+		"group": "labels",
+		"native": false
+	},
+	"previousAwards": {
+		"label": "Récompenses Antérieures",
+		"value": "Récompenses Antérieures",
+		"group": "labels",
+		"native": false
+	},
+	"dataConsent": {
+		"label": "System-D gardera tes infos en tout sécurité pendant et après ton voyage *",
+		"value": "System-D gardera tes infos en tout sécurité pendant et après ton voyage *",
+		"group": "consent",
+		"native": false
+	},
+	"privacyNotice": {
+		"label": "En soumettant ce formulaire, tu acceptes que tes données soient stockées et utilisées uniquement dans le cadre de ta participation au festival System D. Nous respectons ta vie privée et ne partagerons jamais tes informations avec des tiers.",
+		"value": "En soumettant ce formulaire, tu acceptes que tes données soient stockées et utilisées uniquement dans le cadre de ta participation au festival System D. Nous respectons ta vie privée et ne partagerons jamais tes informations avec des tiers.",
+		"group": "consent",
+		"native": false
+	},
+	"previous": {
+		"label": "Précédent",
+		"value": "Précédent",
+		"group": "navigation",
+		"native": false
+	},
+	"next": {
+		"label": "Suivant",
+		"value": "Suivant",
+		"group": "navigation",
+		"native": false
+	},
+	"contactNamePlaceholder": {
+		"label": "Qui répondra avant 17h",
+		"value": "Qui répondra avant 17h",
+		"group": "placeholders",
+		"native": true
+	},
+	"phoneNumberPlaceholder": {
+		"label": "+32 4XX XX XX XX",
+		"value": "+32 4XX XX XX XX",
+		"group": "placeholders",
+		"native": true
+	},
+	"emailPlaceholder": {
+		"label": "ton@email.com",
+		"value": "ton@email.com",
+		"group": "placeholders",
+		"native": true
+	},
+	"instagramPlaceholder": {
+		"label": "@tonhandle",
+		"value": "@tonhandle",
+		"group": "placeholders",
+		"native": true
+	},
+	"filmTitlePlaceholder": {
+		"label": "Le nom de votre mission",
+		"value": "Le nom de votre mission",
+		"group": "placeholders",
+		"native": true
+	},
+	"directorProducerPlaceholder": {
+		"label": "Personne(s) au volant",
+		"value": "Personne(s) au volant",
+		"group": "placeholders",
+		"native": true
+	},
+	"projectHolderPlaceholder": {
+		"label": "De qui/où vient l'idée de faire ce film?",
+		"value": "De qui/où vient l'idée de faire ce film?",
+		"group": "placeholders",
+		"native": true
+	},
+	"yearOfCreationPlaceholder": {
+		"label": "Moment de l'atterrissage",
+		"value": "Moment de l'atterrissage",
+		"group": "placeholders",
+		"native": true
+	},
+	"durationPlaceholder": {
+		"label": "Secondes, minutes, heures… éternité",
+		"value": "Secondes, minutes, heures… éternité",
+		"group": "placeholders",
+		"native": true
+	},
+	"downloadLinkPlaceholder": {
+		"label": "À la vitesse de lumière stp",
+		"value": "À la vitesse de lumière stp",
+		"group": "placeholders",
+		"native": true
+	},
+	"previousAwardsPlaceholder": {
+		"label": "Est-ce que le film a déjà gagné des prix?",
+		"value": "Est-ce que le film a déjà gagné des prix?",
+		"group": "placeholders",
+		"native": true
+	},
+	"step1Title": {
+		"label": "Level 1: Latitude & Longitude",
+		"value": "Level 1: Latitude & Longitude",
+		"group": "steps",
+		"native": false
+	},
+	"step1Subtitle": {
+		"label": "aka coordonnées GPS",
+		"value": "aka coordonnées GPS",
+		"group": "steps",
+		"native": false
+	},
+	"step2Title": {
+		"label": "Level 2: Le vaisseau",
+		"value": "Level 2: Le vaisseau",
+		"group": "steps",
+		"native": false
+	},
+	"step2Subtitle": {
+		"label": "Ton film et ses détails",
+		"value": "Ton film et ses détails",
+		"group": "steps",
+		"native": false
+	},
+	"step3Title": {
+		"label": "Level 3: Control passport",
+		"value": "Level 3: Control passport",
+		"group": "steps",
+		"native": false
+	},
+	"step3Subtitle": {
+		"label": "Ton background professionnel",
+		"value": "Ton background professionnel",
+		"group": "steps",
+		"native": false
+	},
+	"step4Title": {
+		"label": "Level 4: Check de sûreté",
+		"value": "Level 4: Check de sûreté",
+		"group": "steps",
+		"native": false
+	},
+	"step4Subtitle": {
+		"label": "Avant décollage",
+		"value": "Avant décollage",
+		"group": "steps",
+		"native": false
+	},
+	"formatDV": {
+		"label": "Petit (DV)",
+		"value": "Petit (DV)",
+		"group": "labels",
+		"native": false
+	},
+	"formatHD": {
+		"label": "Moyen (HD)",
+		"value": "Moyen (HD)",
+		"group": "labels",
+		"native": false
+	},
+	"format4K": {
+		"label": "Grand (4K)",
+		"value": "Grand (4K)",
+		"group": "labels",
+		"native": false
+	},
+	"languageFrench": {
+		"label": "French",
+		"value": "French",
+		"group": "labels",
+		"native": false
+	},
+	"languageEnglish": {
+		"label": "English",
+		"value": "English",
+		"group": "labels",
+		"native": false
+	},
+	"languageDutch": {
+		"label": "Dutch",
+		"value": "Dutch",
+		"group": "labels",
+		"native": false
+	},
+	"languageGerman": {
+		"label": "German",
+		"value": "German",
+		"group": "labels",
+		"native": false
+	},
+	"languageSpanish": {
+		"label": "Spanish",
+		"value": "Spanish",
+		"group": "labels",
+		"native": false
+	},
+	"languageArabic": {
+		"label": "Arabic",
+		"value": "Arabic",
+		"group": "labels",
+		"native": false
+	},
+	"languagePortuguese": {
+		"label": "Portuguese",
+		"value": "Portuguese",
+		"group": "labels",
+		"native": false
+	},
+	"languageOther": {
+		"label": "Other",
+		"value": "Other",
+		"group": "labels",
+		"native": false
+	},
+	"sending": {
+		"label": "Envoi...",
+		"value": "Envoi...",
+		"group": "navigation",
+		"native": false
+	},
+	"submit": {
+		"label": "Envoyer vers le TURFU",
+		"value": "Envoyer vers le TURFU",
+		"group": "navigation",
+		"native": false
+	},
+	"submissionError": {
+		"label": "Échec de l’envoi",
+		"value": "Something went wrong. Please try again.",
+		"group": "errors",
+		"native": true
+	},
+	"validation1": {
+		"label": "Nom trop court",
+		"value": "Name must be at least 2 characters",
+		"group": "errors",
+		"native": true
+	},
+	"validation2": {
+		"label": "Numéro de téléphone invalide",
+		"value": "Please enter a valid phone number",
+		"group": "errors",
+		"native": true
+	},
+	"validation3": {
+		"label": "Adresse e-mail invalide",
+		"value": "Please enter a valid email address",
+		"group": "errors",
+		"native": true
+	},
+	"validation4": {
+		"label": "Compte Instagram manquant",
+		"value": "Instagram handle is required",
+		"group": "errors",
+		"native": true
+	},
+	"validation5": {
+		"label": "Titre du film manquant",
+		"value": "Film title is required",
+		"group": "errors",
+		"native": true
+	},
+	"validation6": {
+		"label": "Réalisateur ou producteur manquant",
+		"value": "Director/Producer is required",
+		"group": "errors",
+		"native": true
+	},
+	"validation7": {
+		"label": "Porteur du projet manquant",
+		"value": "Project holder is required",
+		"group": "errors",
+		"native": true
+	},
+	"validation8": {
+		"label": "Genre manquant",
+		"value": "Please select a genre",
+		"group": "errors",
+		"native": true
+	},
+	"validation9": {
+		"label": "Année invalide",
+		"value": "Year must be after 1900",
+		"group": "errors",
+		"native": true
+	},
+	"validation10": {
+		"label": "Année dans le futur",
+		"value": "Year cannot be in the future",
+		"group": "errors",
+		"native": true
+	},
+	"validation11": {
+		"label": "Langue manquante",
+		"value": "At least one language is required",
+		"group": "errors",
+		"native": true
+	},
+	"validation12": {
+		"label": "Durée invalide",
+		"value": "Duration must be at least 1 minute",
+		"group": "errors",
+		"native": true
+	},
+	"validation13": {
+		"label": "Lien de téléchargement invalide",
+		"value": "Please enter a valid URL",
+		"group": "errors",
+		"native": true
+	},
+	"validation14": {
+		"label": "Consentement manquant",
+		"value": "You must agree to data storage to submit",
+		"group": "errors",
+		"native": true
+	},
+	"validation15": {
+		"label": "Format manquant",
+		"value": "Veuillez sélectionner un format.",
+		"group": "errors",
+		"native": true
+	},
+	"validation16": {
+		"label": "Réponse manquante",
+		"value": "Veuillez sélectionner une réponse.",
+		"group": "errors",
+		"native": true
+	}
+}

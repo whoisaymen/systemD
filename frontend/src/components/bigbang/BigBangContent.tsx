@@ -1,16 +1,12 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ShortStory from './ShortStory'
-// import LongStory from './LongStory'
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '@/components/ui/accordion'
-import BigBangLogoMobile from './BigBangLogoMobile'
-import FestivalDesktopWithBorder from './FestivalDesktopWithBorder'
 import LongStory from './LongStory'
+import { motion } from 'motion/react'
+import { localizedRichText, richTextToPlainText } from '@/lib/richText'
+import { EDITORIAL_DESKTOP_TAB_STYLE } from '@/components/common/editorialStyles'
+
+const STORY_TAB_STYLE = `relative w-auto rounded-[0.12em] px-[0.16em] py-[0.07em] leading-none ${EDITORIAL_DESKTOP_TAB_STYLE} lg:border-primary lg:bg-dark lg:text-primary lg:transition-colors lg:hover:bg-grayDark lg:hover:text-dark lg:aria-pressed:border-grayDark lg:aria-pressed:bg-grayDark lg:aria-pressed:text-dark`
 
 interface BigBangContentProps {
 	shortStory: any
@@ -24,6 +20,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 	locale,
 }) => {
 	const [activeTab, setActiveTab] = useState<'short' | 'long'>('short')
+	const scrollContainerRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		document
@@ -36,30 +33,47 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 	}
 
 	return (
-		<div className="lg:shadowtest lg:no-scrollbar w-full lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:rounded-xl">
-			<div className="sticky left-0 top-2 z-10 m-6 mx-auto mb-2 flex w-fit justify-between gap-2 rounded-full bg-primary px-1 py-1 text-base font-bold tracking-tighter sm:justify-center lg:my-2 lg:px-1 lg:py-1 lg:text-lg">
+		<div
+			ref={scrollContainerRef}
+			className={`lg:shadowtest section-folder-content section-folder-content--bigbang lg:no-scrollbar w-full [container-type:inline-size] lg:my-1 lg:h-[calc(100svh-8px)] lg:overflow-y-auto lg:rounded-xl lg:rounded-bl-none ${
+				activeTab === 'short'
+					? 'theme-bigbang-short-story'
+					: 'theme-bigbang-long-story'
+			}`}
+		>
+			<div className="theme-bigbang-story-tabs sticky left-0 top-2 z-10 mx-auto mb-2 mt-8 flex w-fit justify-between gap-2 text-base font-bold tracking-tight text-primary sm:justify-center lg:mb-2 lg:mt-[clamp(2.25rem,4.78cqw,5rem)] lg:gap-0">
 				<button
+					type="button"
 					onClick={() => handleTabClick('short')}
-					className={`w-auto px-2.5 py-0 lg:px-4 lg:pb-0.5 ${
-						activeTab === 'short' ? 'bg-dark text-primary' : 'text-dark'
-					} rounded-full transition-all`}
+					aria-pressed={activeTab === 'short'}
+					className={`${STORY_TAB_STYLE} lg:translate-y-0.5 lg:-rotate-3`}
 				>
-					Short Story
+					<span className="relative z-10">
+						{richTextToPlainText(localizedRichText(shortStory?.tabLabel, locale)) || 'Short story'}
+					</span>
+					{activeTab === 'short' && <StoryTabActivePill />}
 				</button>
 				<button
+					type="button"
 					onClick={() => handleTabClick('long')}
-					className={`w-auto px-2.5 py-0 lg:px-4 lg:pb-0.5 ${
-						activeTab === 'long' ? 'bg-dark text-primary' : 'text-dark'
-					} rounded-full transition-all`}
+					aria-pressed={activeTab === 'long'}
+					className={`${STORY_TAB_STYLE} lg:-translate-y-0.5 lg:rotate-3`}
 				>
-					Long Story
+					<span className="relative z-10">
+						{richTextToPlainText(localizedRichText(longStory?.tabLabel, locale)) || 'Long story'}
+					</span>
+					{activeTab === 'long' && <StoryTabActivePill />}
 				</button>
 			</div>
-			<div className="flex flex-col space-y-1 rounded-md sm:p-0">
+			<div className="flex flex-col space-y-1 rounded-md pt-6 lg:pt-10">
 				{activeTab === 'short' ? (
-					<ShortStory content={shortStory.body} lang={locale} />
+					<ShortStory
+						content={shortStory?.body ?? []}
+						lang={locale}
+						scrollContainerRef={scrollContainerRef}
+					/>
 				) : (
-					<LongStory content={longStory.body} lang={locale} />
+					<LongStory content={longStory?.body ?? []} lang={locale} />
 				)}
 			</div>
 		</div>
@@ -67,3 +81,13 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 }
 
 export default BigBangContent
+
+function StoryTabActivePill() {
+	return (
+		<motion.span
+			layoutId="bigbang-story-tab-active-pill"
+			className="absolute inset-0 rounded-[0.12em] bg-grayDark lg:hidden"
+			transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+		/>
+	)
+}

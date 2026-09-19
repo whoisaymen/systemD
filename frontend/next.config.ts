@@ -96,6 +96,9 @@ const nextConfig: NextConfig = {
 			},
 		)
 
+		// The rules above now own SVGs; don't also run Next's image loader.
+		fileLoaderRule.exclude = /\.svg$/i
+
 		return config
 	},
 	// logging: {

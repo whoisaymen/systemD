@@ -282,12 +282,12 @@ const NavBarMobile = ({
 					<LocaleSwitcher />
 				</div>
 				<div className="pointer-events-auto flex items-stretch justify-center gap-1">
-					<div className="flex aspect-square h-full overflow-hidden rounded-md border-2 border-primary">
-						<ThemeSwitch themes={themes} />
+					<div className="flex h-10 w-10 overflow-hidden rounded-lg border-2 border-primary">
+						<ThemeSwitch themes={themes} framed={false} />
 					</div>
 					<button
 						onClick={toggleMenu}
-						className="relative aspect-square min-h-[2.25rem] rounded-md border-2 border-primary bg-dark bg-none text-primary focus:outline-none"
+						className="relative h-10 w-10 rounded-lg border-2 border-primary bg-dark bg-none text-primary focus:outline-none"
 					>
 						<span className="sr-only">{tMenu('openMainMenu')}</span>
 						<div className="absolute left-1/2 top-1/2 block w-6 -translate-x-1/2 -translate-y-1/2 transform">

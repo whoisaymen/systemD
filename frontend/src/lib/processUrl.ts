@@ -1,6 +1,6 @@
 import { stegaClean } from 'next-sanity'
 
-export default function (
+export default function processUrl(
 	page?: Sanity.PageBase,
 	{
 		base = true,

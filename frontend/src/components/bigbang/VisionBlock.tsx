@@ -1,24 +1,13 @@
 'use client'
 import { motion } from 'motion/react'
+import RichText from '@/components/common/RichText'
+import { localizedRichText } from '@/lib/richText'
 import FabriqueBracketsIcon from '../fabrique/FabriqueBracketsIcon'
 
 interface VisionBlockProps {
 	vision: any[]
 	visionTitle: any[]
 	language: string
-}
-
-// Utility functions
-const getLocalizedValue = (array: any[], lang: string): string => {
-	if (!Array.isArray(array)) return ''
-	const item = array.find((entry) => entry.language === lang || entry._key === lang)
-	return item?.value || ''
-}
-
-const getLocalizedText = (array: any[], lang: string): string => {
-	if (!Array.isArray(array)) return ''
-	const item = array.find((entry) => entry.language === lang || entry._key === lang)
-	return item?.value || ''
 }
 
 const VisionBlock: React.FC<VisionBlockProps> = ({
@@ -41,7 +30,7 @@ const VisionBlock: React.FC<VisionBlockProps> = ({
 					/>
 				</div>
 				<h1 className="absolute left-1/2 top-1/2 mx-auto max-w-64 -translate-x-1/2 -translate-y-1/2 px-2 py-24 text-center text-5xl font-bold leading-[1] tracking-tighter text-primary sm:py-4 sm:text-4xl">
-					{getLocalizedValue(visionTitle, language) || 'Vision'}
+					<RichText value={localizedRichText(visionTitle, language)} inline />
 				</h1>
 			</div>
 
@@ -56,12 +45,15 @@ const VisionBlock: React.FC<VisionBlockProps> = ({
 					>
 						<div className="relative rounded-t-3xl px-4">
 							<h2 className="text-lg font-bold leading-[1.2] tracking-tighter text-primary lg:px-32 lg:text-xl">
-								{getLocalizedValue(visionItem.title, language)}
+								<RichText
+									value={localizedRichText(visionItem.title, language)}
+									inline
+								/>
 							</h2>
-							<p className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tighter text-primary lg:px-32 lg:text-xl">
-								{getLocalizedText(visionItem.text, language) ||
-									'No description available'}
-							</p>
+							<RichText
+								className="mx-auto py-2 text-base font-normal leading-[1.2] tracking-tighter text-primary lg:px-32 lg:text-xl"
+								value={localizedRichText(visionItem.text, language)}
+							/>
 						</div>
 					</motion.div>
 				))}

@@ -7,11 +7,13 @@ interface NewArrowRightFullProps {
 		gradient?: string
 	}
 	className?: string
+	strokeWidth?: number
 }
 
 const NewArrowRightFull: React.FC<NewArrowRightFullProps> = ({
 	theme,
 	className,
+	strokeWidth = 13,
 }) => (
 	<svg
 		className={className}
@@ -22,7 +24,7 @@ const NewArrowRightFull: React.FC<NewArrowRightFullProps> = ({
 		<path
 			d="M46 9L67.5 30.5M67.5 30.5L46 52M67.5 30.5H8.5"
 			stroke={theme.stroke}
-			strokeWidth="13"
+			strokeWidth={strokeWidth}
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		/>

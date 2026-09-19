@@ -18,8 +18,8 @@ async function getFestival() {
 	const festivalQuery = groq`
   *[_type == 'lefestival'][0]{
     _id,
-    description,
     vision,
+    visionTitle,
     blocks[]{
       _type == 'mediaTeaserBlock' => {
         _key,
@@ -36,7 +36,6 @@ async function getFestival() {
             url
           }
         },
-        text,
         show
       },
       _type == 'customTextBlock' => {
@@ -47,6 +46,7 @@ async function getFestival() {
         show
       },
       _type == 'juryBlock' => {
+        title,
         _key,
         _type,
         backgroundColor,
@@ -68,27 +68,21 @@ async function getFestival() {
           }
         }
       },
-      _type == 'ticketBlock' => {
-        _key,
-        _type,
-        backgroundColor,
-        textColor,
-        bigTitle,
-        items[]{
-          smallTitle,
-          text
-        },
-        show
-      },
       _type == 'onTourBlock' => {
+        title,
         _key,
         _type,
         events[]->{
           _id,
           title,
+          eventType->{_id, title},
           date,
           endDate,
           location,
+          visual {
+            ...,
+            asset->{_id, url, metadata{dimensions}}
+          },
           description,
           pressLink
         },
@@ -97,28 +91,13 @@ async function getFestival() {
     }
   }
 `
-	const fallbackVisionQuery = groq`
-    *[_type == 'fabrique'][0]{
-      vision
-    }
-  `
-
-	const [festivalData, fallbackVisionData] = await Promise.all([
-		fetchSanityLive({ query: festivalQuery }),
-		fetchSanityLive({ query: fallbackVisionQuery }),
-	])
+	const festivalData = await fetchSanityLive({ query: festivalQuery })
 
 	if (!festivalData) {
 		return notFound()
 	}
 
-	const festivalVision = Array.isArray(festivalData.vision)
-		? festivalData.vision
-		: []
-	const fallbackVision = Array.isArray(fallbackVisionData?.vision)
-		? fallbackVisionData.vision
-		: []
-	const vision = festivalVision.length > 0 ? festivalVision : fallbackVision
+	const vision = Array.isArray(festivalData.vision) ? festivalData.vision : []
 	const hasVisionBlock = festivalData.blocks?.some(
 		(block: any) => block?._type === 'visionBlock',
 	)
@@ -128,10 +107,19 @@ async function getFestival() {
 			_key: 'vision-block',
 			_type: 'visionBlock',
 			show: true,
+			visionTitle: festivalData.visionTitle,
 			vision,
 		}
 
 		festivalData.blocks = [visionBlock, ...(festivalData.blocks ?? [])]
+	}
+
+	if (
+		process.env.NODE_ENV === 'development' &&
+		process.env.FESTIVAL_MOCK_EVENTS !== 'false'
+	) {
+		const { withFestivalMockEvents } = await import('@/content/festivalMockEvents')
+		return withFestivalMockEvents(festivalData)
 	}
 
 	return festivalData

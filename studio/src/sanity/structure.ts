@@ -1,6 +1,6 @@
 import { structureTool } from 'sanity/structure'
 import { singleton } from './lib/utils'
-import { VscCalendar, VscServerProcess, VscSymbolColor } from 'react-icons/vsc'
+import { VscCalendar, VscServerProcess } from 'react-icons/vsc'
 import { GiFactory, GiGooExplosion, GiBrain } from 'react-icons/gi'
 import {
 	FaFilm,
@@ -22,7 +22,6 @@ export const structure = structureTool({
 			.items([
 				singleton(S, 'homepage', "Page d'accueil").icon(FaHome),
 				singleton(S, 'site', 'Réglages').icon(VscServerProcess),
-				S.documentTypeListItem('theme').title('Thèmes').icon(VscSymbolColor),
 
 				S.divider(),
 
@@ -153,11 +152,19 @@ export const structure = structureTool({
 				S.divider(),
 
 				S.documentTypeListItem('event').title('Événements'),
+				S.documentTypeListItem('eventType').title('Types d’événements').icon(FaTags),
 				S.divider(),
 				singleton(S, 'contact', 'Contact').icon(MdEmail),
-				S.documentTypeListItem('filmSubmission')
+				S.listItem()
+					.id('filmSubmissions')
 					.title('Soumissions de films')
-					.icon(FaClipboardList),
+					.icon(FaClipboardList)
+					.child(
+						S.list().title('Soumissions de films').items([
+							singleton(S, 'filmSubmissionSettings', 'Formulaire de participation').icon(FaClipboardList),
+							S.documentTypeListItem('filmSubmission').title('Films reçus').icon(FaFilm),
+						]),
+					),
 				// S.listItem()
 				// 	.title('Médiathèque')
 				// 	.icon(FaPhotoVideo)

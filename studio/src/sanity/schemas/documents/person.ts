@@ -1,5 +1,5 @@
-import { defineField, defineType, KeyedObject } from 'sanity'
-import { FiUser, FiGlobe, FiUsers, FiMapPin } from 'react-icons/fi'
+import { getBlockText } from '@/sanity/lib/utils'
+import { defineField, defineType } from 'sanity'
 import { GoPerson } from 'react-icons/go'
 
 export default defineType({
@@ -11,14 +11,17 @@ export default defineType({
 		defineField({
 			name: 'name',
 			title: 'Nom',
-			type: 'string',
+			type: 'array',
+			of: [
+				{
+					type: 'block',
+					styles: [{ title: 'Normal', value: 'normal' }],
+					lists: [],
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
-		defineField({
-			name: 'title',
-			title: 'Titre',
-			type: 'internationalizedArrayString',
-		}),
+
 		defineField({
 			name: 'image',
 			type: 'image',
@@ -29,23 +32,17 @@ export default defineType({
 		defineField({
 			name: 'biography',
 			title: 'Biographie',
-			type: 'internationalizedArrayText',
+			type: 'internationalizedArrayRichText',
 		}),
 	],
 	preview: {
 		select: {
 			title: 'name',
-			subtitle: 'title',
 			media: 'image',
 		},
-		prepare({ title, subtitle, media }) {
-			const subtitleText = subtitle?.length
-				? subtitle?.find((v: KeyedObject) => v?.language === 'fr' || v?._key === 'fr')?.value
-				: ``
-
+		prepare({ title, media }) {
 			return {
-				title,
-				subtitle: subtitleText ?? ``,
+				title: typeof title === 'string' ? title : getBlockText(title, ' '),
 				media,
 			}
 		},

@@ -8,7 +8,8 @@
 		"studio"
 	],
 	"engines": {
-		"node": ">=22.13"
+		"node": ">=24.15.0 <25",
+		"npm": ">=12.0.2 <13"
 	},
 	"scripts": {
 		"check:node": "node scripts/check-node-version.mjs",
@@ -25,7 +26,7 @@
 		"start": "npm run start --workspace=frontend",
 		"clean": "npm run clean --workspace=frontend",
 		"prelint": "npm run check:node",
-		"lint": "npm run lint --workspace=frontend",
+		"lint": "npm run lint --workspaces",
 		"migrate:festival-content:dry": "npm run migrate:festival-content:dry --workspace=studio",
 		"migrate:festival-content": "npm run migrate:festival-content --workspace=studio",
 		"migrate:festival-jury-2023:dry": "npm run migrate:festival-jury-2023:dry --workspace=studio",
@@ -35,12 +36,35 @@
 		"seed:site-settings:dry": "npm run seed:site-settings:dry --workspace=studio",
 		"seed:site-settings": "npm run seed:site-settings --workspace=studio",
 		"pretypecheck": "npm run check:node",
-		"typecheck": "npm run typecheck --workspaces"
+		"typecheck": "npm run typecheck --workspaces",
+		"preinstall": "npm run check:node",
+		"test": "npm run test:cms --workspace=frontend",
+		"check": "run-s lint typecheck test"
 	},
 	"devDependencies": {
-		"eslint": "^9.39.4",
-		"npm-run-all2": "^8.0.4",
-		"prettier": "^3.9.4",
-		"prettier-plugin-tailwindcss": "^0.8.0"
+		"eslint": "^9.39.5",
+		"npm-run-all2": "^9.0.3",
+		"prettier": "^3.9.8",
+		"prettier-plugin-tailwindcss": "^0.8.1"
+	},
+	"packageManager": "npm@12.0.2",
+	"allowScripts": {
+		"@parcel/watcher@2.6.0": true,
+		"@swc/core@1.16.2": true,
+		"esbuild@0.28.2": true,
+		"unrs-resolver@1.12.2": true,
+		"fsevents@2.3.3": false
+	},
+	"overrides": {
+		"@module-federation/dts-plugin": {
+			"adm-zip": "0.6.1"
+		},
+		"@vercel/frameworks": {
+			"js-yaml": "3.15.2",
+			"smol-toml": "1.8.0"
+		},
+		"typeid-js@1.2.0": {
+			"uuid": "11.1.1"
+		}
 	}
 }

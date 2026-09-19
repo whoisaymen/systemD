@@ -1,21 +1,119 @@
 'use client'
-import { motion } from 'motion/react'
-import Img from '@/ui/Img'
-import LogoShortTsx from '../svgs/LogoShort'
-import { useRef } from 'react'
+import { cubicBezier } from 'motion/react'
+import { createRef, type RefObject, useEffect, useMemo } from 'react'
 import BackToTopButton from '../common/BackToTop'
+import { renderParagraph } from '../common/RenderParagraph'
+import { localizedRichText } from '@/lib/richText'
+import { EDITORIAL_BODY_TEXT } from '@/components/common/editorialStyles'
 
-const ease = [0.76, 0, 0.24, 1] as const
+const scrollEase = cubicBezier(0.76, 0, 0.24, 1)
+// Reserve only the illustration's largest displayed size in the document flow.
+const illustrationLayoutScale = 0.8
+const initialIllustrationScale = 0.5 / illustrationLayoutScale
 
-const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
+const ShortStory = ({
+	content,
+	lang,
+	scrollContainerRef,
+}: {
+	content: any[]
+	lang: any
+	scrollContainerRef: RefObject<HTMLDivElement | null>
+}) => {
+	const paragraphRefs = useMemo(
+		() => content.map(() => createRef<HTMLDivElement>()),
+		[content],
+	)
+	const imageRefs = useMemo(
+		() => content.map(() => createRef<HTMLDivElement>()),
+		[content],
+	)
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(min-width: 1024px)')
+		let animationFrame = 0
+		let removeScrollListener = () => {}
+
+		const clamp = (value: number) => Math.min(1, Math.max(0, value))
+		const scaleForProgress = (progress: number) => {
+			const triangleProgress =
+				progress <= 0.5 ? progress * 2 : (1 - progress) * 2
+
+			return (
+				(0.5 + scrollEase(clamp(triangleProgress)) * 0.3) /
+				illustrationLayoutScale
+			)
+		}
+
+		const updateScales = () => {
+			animationFrame = 0
+			const innerScroller = mediaQuery.matches
+				? scrollContainerRef.current
+				: null
+			const scrollerRect = innerScroller?.getBoundingClientRect()
+			const viewportTop = scrollerRect?.top ?? 0
+			const viewportHeight = innerScroller?.clientHeight ?? window.innerHeight
+			const viewportBottom = viewportTop + viewportHeight
+
+			imageRefs.forEach((imageRef, index) => {
+				const image = imageRef.current
+				const isFinalBlock = index === content.length - 1
+
+				if (isFinalBlock) return
+
+				const target = paragraphRefs[index + 1]?.current
+
+				if (!image || !target) return
+
+				const targetRect = target.getBoundingClientRect()
+				const targetCenter = targetRect.top + targetRect.height / 2
+				const progress = clamp((viewportBottom - targetCenter) / viewportHeight)
+
+				image.style.transform = `scale(${scaleForProgress(progress)})`
+			})
+		}
+
+		const scheduleScaleUpdate = () => {
+			if (animationFrame) return
+			animationFrame = window.requestAnimationFrame(updateScales)
+		}
+
+		const bindScrollListener = () => {
+			removeScrollListener()
+			const scrollTarget = mediaQuery.matches
+				? scrollContainerRef.current
+				: window
+
+			scrollTarget?.addEventListener('scroll', scheduleScaleUpdate, {
+				passive: true,
+			})
+			removeScrollListener = () =>
+				scrollTarget?.removeEventListener('scroll', scheduleScaleUpdate)
+			scheduleScaleUpdate()
+		}
+
+		bindScrollListener()
+		mediaQuery.addEventListener('change', bindScrollListener)
+		window.addEventListener('resize', scheduleScaleUpdate)
+
+		return () => {
+			removeScrollListener()
+			mediaQuery.removeEventListener('change', bindScrollListener)
+			window.removeEventListener('resize', scheduleScaleUpdate)
+			if (animationFrame) window.cancelAnimationFrame(animationFrame)
+		}
+	}, [content.length, imageRefs, paragraphRefs, scrollContainerRef])
+
 	return (
-		<div className="flex flex-col space-y-0 pb-28 sm:space-y-0 sm:py-0">
+		<div className="mx-auto flex w-full flex-col gap-6 pb-12 sm:gap-10 sm:pb-16 lg:max-w-[60rem]">
 			{content.map((block: any, index: number) => (
 				<StoryBlock
 					key={block._key}
 					block={block}
 					lang={lang}
-					animationVariant={index % 3}
+					paragraphRef={paragraphRefs[index]}
+					imageRef={imageRefs[index]}
+					isFinalBlock={index === content.length - 1}
 				/>
 			))}
 		</div>
@@ -25,165 +123,67 @@ const ShortStory = ({ content, lang }: { content: any; lang: any }) => {
 const StoryBlock = ({
 	block,
 	lang,
-	animationVariant = 0,
+	paragraphRef,
+	imageRef,
+	isFinalBlock,
 }: {
 	block: any
 	lang: any
-	animationVariant?: number
+	paragraphRef: RefObject<HTMLDivElement | null>
+	imageRef: RefObject<HTMLDivElement | null>
+	isFinalBlock: boolean
 }) => {
-	const ref = useRef(null)
-
-	const animations = [
-		{
-			// Variant 0 - Slow pulse
-			container: {
-				borderRadius: [10, 50, 10],
-				scale: [1, 1.02, 1],
-				transition: {
-					duration: 8,
-					ease,
-					repeat: Infinity,
-				},
-			},
-			image: {
-				// scale: [0.8, 0.6, 0.8],
-				scale: [1, 0.3, 1],
-				transition: {
-					duration: 4,
-					ease,
-					repeat: Infinity,
-				},
-			},
-		},
-	]
-
-	const imageVariants = {
-		mobile: {
-			scale: [1, 0.5, 1],
-			transition: { duration: 4, ease, repeat: Infinity },
-		},
-		desktop: {
-			scale: [0.8, 0.5, 0.8],
-			transition: { duration: 4, ease, repeat: Infinity },
-		},
-	}
-
-	const animation = animations[animationVariant % animations.length]
-
-	const themeColors = {
-		dark: {
-			fill: 'var(--color-dark)',
-			stroke: 'var(--color-primary)',
-			icon: 'var(--color-primary)',
-		},
-		sparkle: {
-			fill: 'var(--color-primary)',
-			stroke: 'var(--color-dark)',
-		},
-		festival: {
-			fill: 'var(--color-dark)',
-			stroke: 'var(--color-primary)',
-			icon: 'var(--color-grayDark)',
-		},
-		memoire: {
-			fill: 'var(--color-dark)',
-			stroke: '',
-			icon: 'var(--color-primary)',
-		},
-	}
-
 	return (
 		<div
-			ref={ref}
-			className="flex w-full flex-col items-center justify-center space-y-4 rounded-md px-4 text-center sm:my-0 sm:mt-16 sm:space-y-0"
+			className="flex w-full flex-col items-center justify-center gap-6 px-4 text-center sm:gap-10"
 			id="short-story"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 			{block.text && (
-				<motion.div
-					// animate={animation.container}
-					className="lg:shadowtest shadowtest relative rounded-xl bg-primary px-4 py-6 shadow-sm sm:mx-40 sm:mt-1 sm:border-0 sm:py-10 sm:shadow-none lg:bg-primary lg:bg-gradient-to-t lg:from-primary"
+				<div
+					ref={paragraphRef}
+					className="theme-bigbang-short-story-copy relative px-4 sm:mx-40"
 				>
-					{block.text
-						.filter((paragraph: any) => paragraph.language === lang || paragraph._key === lang)
-						.map((paragraph: any, index: number) => (
-							<p
-								key={index}
-								className="py-0 text-center text-xl font-bold leading-[1.1] tracking-tighter text-dark sm:py-2 sm:text-3xl"
-							>
-								{renderParagraph(
-									paragraph,
-									block.title.map((title: any) => title.value),
-								)}
-							</p>
-						))}
-				</motion.div>
+					<div className={`${EDITORIAL_BODY_TEXT} text-center text-primary`}>
+						{renderParagraph(
+							{ value: localizedRichText(block.text, lang) },
+							[],
+							'theme-bigbang-system-d-tag',
+						)}
+					</div>
+				</div>
 			)}
 
-			{block.image && (
-				<motion.div
-					variants={imageVariants}
-					animate={window.innerWidth >= 1024 ? 'desktop' : 'mobile'}
-					className="relative w-full px-2 pt-0 sm:px-8 lg:py-8"
+			{block.svgMarkup && (
+				<div
+					ref={imageRef}
+					style={
+						isFinalBlock
+							? undefined
+							: {
+									transform: `scale(${initialIllustrationScale})`,
+									transformOrigin: 'center',
+								}
+					}
+					className={`relative ${
+						isFinalBlock
+							? 'w-[35%] px-2'
+							: 'w-4/5 px-[0.4rem] will-change-transform sm:px-[1.6rem]'
+					}`}
 				>
-					{/* <Img
-						image={block.image}
-						src={`/${block.image.asset._ref.split('-')[1]}-${block.image.asset._ref.split('-')[2]}.${block.image.asset._ref.split('-')[3]}`}
-						alt="Story Image"
-						style={{
-							filter: 'grayscale(1) hue-rotate(70deg) brightness(0.8)',
-						}}
-						className="h-auto w-full"
-					/> */}
-
 					{block.svgMarkup && (
 						<div
-							className="h-auto w-full"
+							className="theme-bigbang-short-story-art h-auto w-full"
 							style={{ color: 'var(--color-grayDark)' }}
 							dangerouslySetInnerHTML={{ __html: block.svgMarkup }}
 						/>
 					)}
-				</motion.div>
+				</div>
 			)}
 		</div>
 	)
-}
-
-const renderParagraph = (paragraph: any, titles: string[]) => {
-	if (!paragraph?.value) return null
-
-	return paragraph.value
-		.split(/(System D)/i)
-		.map((part: string, index: number) => {
-			const isTitle = titles.some(
-				(title) => title.trim().toLowerCase() === part.trim().toLowerCase(),
-			)
-			const isSystemD = part.trim().toLowerCase() === 'system d'
-
-			return isSystemD ? (
-				<motion.span
-					key={index}
-					className="z-10 inline-block"
-					animate={{
-						rotate: 3,
-						transition: {
-							ease,
-							duration: 1.5,
-							repeat: Infinity,
-							repeatType: 'reverse',
-						},
-					}}
-				>
-					<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[8rem] -rotate-6 rounded-md bg-grayDark px-2 py-1 leading-[0] text-dark sm:w-[15rem]" />
-				</motion.span>
-			) : (
-				<span key={index} className={isTitle ? 'font-bold' : ''}>
-					{part}
-				</span>
-			)
-		})
 }
 
 export default ShortStory

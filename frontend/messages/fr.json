@@ -6,6 +6,7 @@
 	},
 
 	"contactPage": {
+		"title": "Contactez-nous",
 		"contact": "Contact",
 		"partners": "Partenaires",
 		"viewOnMap": "Voir sur Google Maps",
@@ -18,6 +19,18 @@
 		"nextYear": "Année suivante",
 		"gridView": "Grille",
 		"listView": "Liste",
+		"calendarView": "Calendrier",
+		"agendaView": "Agenda",
+		"eventSingular": "événement",
+		"eventPlural": "événements",
+		"previousMonth": "Mois précédent",
+		"nextMonth": "Mois suivant",
+		"backToYearCalendar": "Revenir au calendrier annuel",
+		"sampleEvent": "Événement fictif · aperçu de mise en page",
+		"monthAgenda": "Agenda du mois",
+		"allEvents": "Tout",
+		"noEventsScheduled": "Aucun événement programmé",
+		"openPressKit": "Ouvrir le dossier de presse",
 		"moreEvents": "+{count} autres",
 		"noEvents": "Aucun événement programmé en {year}",
 		"closeDetails": "Fermer le détail de l'événement",
@@ -44,14 +57,31 @@
 		"year": "Année",
 		"titleCol": "Titre",
 		"director": "Réalisateur",
+		"films": "Films",
+		"sort": "Trier",
+		"show": "Afficher",
+		"all": "Tous",
+		"award": "Prix",
+		"winner": "Lauréat",
+		"noAward": "Aucun prix",
 		"winners": "Lauréats",
 		"comingSoon": "Films à venir...",
-		"gridView": "Vue grille",
-		"listView": "Vue liste"
+		"gridView": "Grille",
+		"listView": "Liste"
 	},
 
 	"photoGallery": {
 		"title": "Galerie photo",
 		"photosBy": "Photos par"
+	},
+
+	"festivalEdition": {
+		"overview": "Aperçu",
+		"jury": "Jury",
+		"indexLabel": "Chapitres de l’édition"
+	},
+
+	"memoire": {
+		"previousEditions": "Éditions"
 	}
 }

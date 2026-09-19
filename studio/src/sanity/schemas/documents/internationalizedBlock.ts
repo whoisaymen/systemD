@@ -1,10 +1,5 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
 
-const supportedLanguages = [
-	{ id: 'nb', title: 'Norwegian', isDefault: true },
-	{ id: 'en', title: 'English' },
-]
-
 export default defineType({
 	name: 'internationalizedBlock',
 	title: 'Internationalized Rich Text',

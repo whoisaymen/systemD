@@ -1,6 +1,6 @@
-import { defineField, defineType, KeyedObject } from 'sanity'
+import { defineField, defineType } from 'sanity'
+import { richTextToPlainText } from '../../lib/richTextPreview'
 import { GoPerson } from 'react-icons/go'
-import festival from './festival'
 
 export default defineType({
 	name: 'jury',
@@ -11,7 +11,8 @@ export default defineType({
 		defineField({
 			name: 'name',
 			title: 'Nom',
-			type: 'string',
+			type: 'array',
+			of: [{ type: 'block' }],
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -24,7 +25,7 @@ export default defineType({
 		defineField({
 			name: 'biography',
 			title: 'Biographie',
-			type: 'internationalizedArrayText',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'edition',
@@ -42,7 +43,7 @@ export default defineType({
 		},
 		prepare({ title, festivalYear, media }) {
 			return {
-				title,
+				title: richTextToPlainText(title),
 				subtitle: festivalYear
 					? `Édition ${festivalYear}`
 					: 'Aucune édition associée',

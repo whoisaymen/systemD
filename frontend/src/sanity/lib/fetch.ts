@@ -50,16 +50,72 @@ export const { sanityFetch, SanityLive } = defineLive({
 	browserToken: token,
 })
 
+const SANITY_RETRY_DELAYS = [200, 600]
+const TRANSIENT_FETCH_CODES = new Set([
+	'ECONNRESET',
+	'ECONNREFUSED',
+	'ENETUNREACH',
+	'ENOTFOUND',
+	'EAI_AGAIN',
+	'ETIMEDOUT',
+	'UND_ERR_CONNECT_TIMEOUT',
+	'UND_ERR_SOCKET',
+])
+
+const isTransientFetchError = (error: unknown) => {
+	if (!(error instanceof Error)) return false
+	if (/fetch failed|network|socket|timed?\s*out/i.test(error.message))
+		return true
+
+	const cause = (error as Error & { cause?: { code?: unknown } }).cause
+	return (
+		typeof cause?.code === 'string' && TRANSIENT_FETCH_CODES.has(cause.code)
+	)
+}
+
+const wait = (delay: number) =>
+	new Promise<void>((resolve) => setTimeout(resolve, delay))
+
 export async function fetchSanityLive<T = any>(
 	args: Parameters<typeof sanityFetch>[0],
 ) {
 	const preview = (await draftMode()).isEnabled
+	let lastError: unknown
 
-	const { data } = await sanityFetch({
-		...args,
-		perspective: preview ? 'drafts' : 'published',
-		stega: preview,
-	})
+	for (let attempt = 0; attempt <= SANITY_RETRY_DELAYS.length; attempt += 1) {
+		try {
+			const { data } = await sanityFetch({
+				...args,
+				perspective: preview ? 'drafts' : 'published',
+				stega: preview,
+			})
 
-	return data as T
+			return data as T
+		} catch (error) {
+			lastError = error
+
+			if (
+				!isTransientFetchError(error) ||
+				attempt === SANITY_RETRY_DELAYS.length
+			) {
+				break
+			}
+
+			await wait(SANITY_RETRY_DELAYS[attempt])
+		}
+	}
+
+	if (!preview) {
+		try {
+			return await fetchSanity<T>({
+				query: args.query,
+				params: args.params,
+				useCdn: true,
+			})
+		} catch {
+			// Preserve the original live-fetch error, which contains the useful cause.
+		}
+	}
+
+	throw lastError
 }

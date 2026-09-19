@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { richTextToPlainText } from '../../lib/richTextPreview'
 
 export default defineType({
 	name: 'photoGalleryBlock',
@@ -8,7 +9,8 @@ export default defineType({
 		defineField({
 			name: 'photographer',
 			title: 'Photographer',
-			type: 'string',
+			type: 'array',
+			of: [{ type: 'block' }],
 		}),
 		defineField({
 			name: 'photos',
@@ -71,7 +73,9 @@ export default defineType({
 			const firstPhoto = photos?.[0]?.asset ? photos[0] : undefined
 
 			return {
-				title: title ? `Photos par ${title}` : 'Galerie de photos',
+				title: title
+					? `Photos par ${richTextToPlainText(title)}`
+					: 'Galerie de photos',
 				media: firstPhoto,
 			}
 		},

@@ -23,7 +23,7 @@ const EquipeLogo: React.FC<EquipeLogoProps> = ({
 	return (
 		<>
 			<svg
-				className={`${className ?? ''} block w-full [@media(max-height:900px)]:hidden`}
+				className={`${className ?? ''} block w-full menu-logo-detail max-lg:[@media(max-height:900px)]:hidden`}
 				viewBox="0 0 205 89"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +116,7 @@ const EquipeLogo: React.FC<EquipeLogoProps> = ({
 				</motion.g>
 			</svg>
 			<svg
-				className={`${className ?? ''} hidden w-full px-4 [@media(max-height:900px)]:block`}
+				className={`${className ?? ''} hidden w-full px-4 menu-logo-symbol max-lg:[@media(max-height:900px)]:block`}
 				viewBox="0 0 202 53"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"

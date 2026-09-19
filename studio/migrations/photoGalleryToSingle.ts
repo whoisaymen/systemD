@@ -46,7 +46,7 @@ if (!process.env.SANITY_API_WRITE_TOKEN) {
 // Migration script
 async function migratePhotoGallery() {
 	// Get all festivals
-	const festivals = await client.fetch(`*[_type == "festival"]`)
+	const festivals = await client.fetch<Festival[]>(`*[_type == "festival"]`)
 
 	// Process each festival
 	for (const festival of festivals) {
@@ -54,9 +54,6 @@ async function migratePhotoGallery() {
 			Array.isArray(festival.photoGallery) &&
 			festival.photoGallery.length > 0
 		) {
-			// Take the first photoGalleryBlock and its photos
-			const firstGalleryBlock = festival.photoGallery[0]
-
 			// If there are additional photos in other blocks, merge them
 			const allPhotos = festival.photoGallery.reduce(
 				(acc: SanityAsset[], block: PhotoGalleryBlock) => {
@@ -79,7 +76,6 @@ async function migratePhotoGallery() {
 				.patch(festival._id)
 				.set({ photoGallery: newPhotoGallery })
 				.commit()
-				.then((updatedFestival) => {})
 				.catch((err) => {
 					console.error(`Failed to update festival ${festival._id}:`, err)
 				})

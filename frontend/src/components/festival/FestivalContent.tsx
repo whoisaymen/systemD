@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useEffectEvent, useMemo, useRef } from 'react'
 import {
 	motion,
 	useScroll,
@@ -8,20 +8,29 @@ import {
 	AnimatePresence,
 	LayoutGroup,
 } from 'motion/react'
-import { PortableText } from 'next-sanity'
-import { Maximize2, Minimize2 } from 'lucide-react'
+import RichText from '@/components/common/RichText'
+import {
+	EDITORIAL_BODY_TEXT as FESTIVAL_BODY_TEXT,
+	EDITORIAL_COPY_WIDTH as FESTIVAL_COPY_WIDTH,
+	EDITORIAL_DESKTOP_TAB_STYLE,
+} from '@/components/common/editorialStyles'
+import {
+	combineRichText,
+	localizedRichText,
+	richTextToPlainText,
+} from '@/lib/richText'
+import { Maximize2, Minimize2, X } from 'lucide-react'
+import ReactPlayer from 'react-player'
 import { useTranslations } from 'next-intl'
 
-import Img from '@/ui/Img'
+import Img, { getImageDimensions } from '@/ui/Img'
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion'
-import LogoShortTsx from '../svgs/LogoShort'
 import BackToTopButton from '../common/BackToTop'
-import { IoClose } from 'react-icons/io5'
 import NewArrowRightSimple from '../common/NewArrowRightSimple'
 import SparkleEffect from './SparkleEffect'
 
@@ -41,16 +50,21 @@ interface Event {
 	_id?: string
 	date?: string
 	endDate?: string
-	title: Array<{ _key?: string; language?: string; value: string }>
-	location?: string
-	description?: Array<{ _key?: string; language?: string; value: string }>
+	title: Array<{ _key?: string; language?: string; value: any }>
+	eventType?: {
+		_id?: string
+		title?: Array<{ _key?: string; language?: string; value: any }>
+	} | null
+	location?: any
+	visual?: Sanity.Image
+	isMock?: boolean
+	description?: Array<{ _key?: string; language?: string; value: any }>
 	pressLink?: string
 }
 
 interface EventsListProps {
 	events: Event[]
 	language: string
-	getLocalizedValue: (array: any[], lang: string) => string
 }
 
 interface EventMonthGroup {
@@ -61,7 +75,7 @@ interface EventMonthGroup {
 }
 
 type EventDetailSelection = {
-	event: Event
+	event: Event | null
 	monthGroup: EventMonthGroup
 }
 
@@ -75,25 +89,70 @@ type VideoRect = {
 const MEDIA_TEASER_TRANSITION =
 	'left 800ms cubic-bezier(0.76, 0, 0.24, 1), top 800ms cubic-bezier(0.76, 0, 0.24, 1), width 800ms cubic-bezier(0.76, 0, 0.24, 1), height 800ms cubic-bezier(0.76, 0, 0.24, 1), border-radius 800ms cubic-bezier(0.76, 0, 0.24, 1)'
 const EVENT_CARD_EASE = [0.76, 0, 0.24, 1] as const
-const EVENT_MONTH_FADE_MS = 240
-const EVENT_CONTENT_FADE_MS = 220
-const EVENT_CARD_LAYOUT_MS = 860
+const EVENT_MONTH_FADE_MS = 180
+const EVENT_CONTENT_FADE_MS = 160
+const EVENT_CONTENT_DELAY_MS = 100
+const EVENT_CARD_LAYOUT_MS = 340
 const EVENT_CARD_RADIUS = 8
+const CALENDAR_ARROW_BUTTON =
+	'flex h-7 w-7 shrink-0 items-center justify-center text-primary transition-opacity hover:opacity-60 lg:h-5 lg:w-5'
+const FESTIVAL_TITLE_SIZE =
+	'text-4xl lg:text-[clamp(1rem,2.17cqw,1.5rem)]'
+const FESTIVAL_TITLE_STYLE =
+	`${FESTIVAL_TITLE_SIZE} rounded-md border-[3px] px-2 pr-4 text-center font-bold uppercase italic tracking-tighter shadow-sm ${EDITORIAL_DESKTOP_TAB_STYLE}`
 
-// Custom hook for localized values
-const useLocalizedValue = () => {
-	return (array: any[], lang: string): string => {
-		if (!Array.isArray(array)) return ''
-		const languages = [lang, 'en', 'fr', 'nl']
-		const item = languages
-			.map((language) =>
-				array.find(
-					(entry) => entry.language === language || entry._key === language,
-				),
+const FestivalEventTitle: React.FC<{ title: any }> = ({ title }) => {
+	const containerRef = useRef<HTMLSpanElement>(null)
+	const trackRef = useRef<HTMLSpanElement>(null)
+	const [isOverflowing, setIsOverflowing] = useState(false)
+
+	useEffect(() => {
+		const container = containerRef.current
+		const track = trackRef.current
+		if (!container || !track) return
+
+		const measure = () => {
+			const distance = Math.max(0, track.scrollWidth - container.clientWidth)
+			setIsOverflowing(distance > 1)
+			container.style.setProperty(
+				'--festival-event-marquee-distance',
+				`${distance}px`,
 			)
-			.find(Boolean)
-		return item ? item.value : ''
-	}
+			container.style.setProperty(
+				'--festival-event-marquee-duration',
+				`${Math.max(3, distance / 28 + 1.5)}s`,
+			)
+		}
+
+		measure()
+		const observer = new ResizeObserver(measure)
+		observer.observe(container)
+		document.fonts?.ready.then(measure)
+
+		return () => observer.disconnect()
+	}, [title])
+
+	return (
+		<span
+			ref={containerRef}
+			className="relative block min-w-0 overflow-hidden whitespace-nowrap"
+		>
+			<span
+				className="theme-festival-event-title-static block truncate"
+				data-overflow={isOverflowing}
+			>
+				<RichText value={title} inline allowLinks={false} />
+			</span>
+			<span
+				ref={trackRef}
+				aria-hidden="true"
+				data-overflow={isOverflowing}
+				className="theme-festival-event-title-marquee pointer-events-none absolute left-0 top-0 block w-max whitespace-nowrap opacity-0"
+			>
+				<RichText value={title} inline allowLinks={false} />
+			</span>
+		</span>
+	)
 }
 
 const getValidDate = (value?: string) => {
@@ -107,51 +166,6 @@ const isSameCalendarDay = (a: Date, b: Date) =>
 	a.getFullYear() === b.getFullYear() &&
 	a.getMonth() === b.getMonth() &&
 	a.getDate() === b.getDate()
-
-const formatDateRange = (event: Event, language: string) => {
-	const start = getValidDate(event.date)
-	const end = getValidDate(event.endDate)
-
-	if (!start) return ''
-
-	const fullDateOptions: Intl.DateTimeFormatOptions = {
-		weekday: 'short',
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-	}
-
-	if (!end || isSameCalendarDay(start, end)) {
-		return start.toLocaleDateString(language, fullDateOptions)
-	}
-
-	const shortDateOptions: Intl.DateTimeFormatOptions = {
-		weekday: 'short',
-		day: 'numeric',
-		month: 'long',
-	}
-
-	return `${start.toLocaleDateString(language, shortDateOptions)} - ${end.toLocaleDateString(language, fullDateOptions)}`
-}
-
-const formatTimeRange = (event: Event, language: string) => {
-	const start = getValidDate(event.date)
-	const end = getValidDate(event.endDate)
-
-	if (!start) return ''
-
-	const timeOptions: Intl.DateTimeFormatOptions = {
-		hour: '2-digit',
-		minute: '2-digit',
-	}
-	const startTime = start.toLocaleTimeString(language, timeOptions)
-
-	if (!end || !isSameCalendarDay(start, end)) {
-		return startTime
-	}
-
-	return `${startTime} - ${end.toLocaleTimeString(language, timeOptions)}`
-}
 
 const getEventEndDate = (event: Event) => {
 	const start = getValidDate(event.date)
@@ -175,14 +189,65 @@ const eventOverlapsYear = (event: Event, year: number) => {
 	return start < nextYearStart && end >= yearStart
 }
 
-const getEventDisplayMonth = (event: Event, year: number) => {
+const eventOverlapsMonth = (event: Event, year: number, month: number) => {
 	const start = getValidDate(event.date)
+	const end = getEventEndDate(event)
 
-	if (!start) return null
-	if (start.getFullYear() < year) return 0
-	if (start.getFullYear() > year) return null
+	if (!start || !end) return false
 
-	return start.getMonth()
+	const monthStart = new Date(year, month, 1)
+	const nextMonthStart = new Date(year, month + 1, 1)
+
+	return start < nextMonthStart && end >= monthStart
+}
+
+const eventOccursOnDay = (event: Event, day: Date) => {
+	const start = getValidDate(event.date)
+	const end = getEventEndDate(event)
+
+	if (!start || !end) return false
+
+	const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate())
+	const nextDayStart = new Date(
+		day.getFullYear(),
+		day.getMonth(),
+		day.getDate() + 1,
+	)
+
+	return start < nextDayStart && end >= dayStart
+}
+
+const getCalendarDays = (year: number, month: number) => {
+	const firstDay = new Date(year, month, 1)
+	const mondayOffset = (firstDay.getDay() + 6) % 7
+	const numberOfDays = new Date(year, month + 1, 0).getDate()
+
+	return [
+		...Array.from({ length: mondayOffset }, () => null),
+		...Array.from(
+			{ length: numberOfDays },
+			(_, index) => new Date(year, month, index + 1),
+		),
+	]
+}
+
+const getWeekdayLabels = (language: string) =>
+	Array.from({ length: 7 }, (_, index) =>
+		new Date(2024, 0, index + 1).toLocaleDateString(language, {
+			weekday: 'narrow',
+		}),
+	)
+
+const getEventDayLabel = (event: Event) => {
+	const start = getValidDate(event.date)
+	const end = getEventEndDate(event)
+
+	if (!start) return '--'
+	if (!end || isSameCalendarDay(start, end)) {
+		return String(start.getDate())
+	}
+
+	return `${start.getDate()}-${end.getDate()}`
 }
 
 const getInitialEventYear = (events: Event[]) => {
@@ -218,21 +283,15 @@ const groupEventsByMonth = (
 		label: new Date(year, month, 1).toLocaleDateString(language, {
 			month: 'long',
 		}),
-		events: events.filter(
-			(event) => getEventDisplayMonth(event, year) === month,
-		),
+		events: events.filter((event) => eventOverlapsMonth(event, year, month)),
 	}))
 
-const AnnualEventsList: React.FC<EventsListProps> = ({
-	events,
-	language,
-	getLocalizedValue,
-}) => {
+const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 	const tFestivalEvents = useTranslations('festivalEvents')
 	const [selectedYear, setSelectedYear] = useState(() =>
 		getInitialEventYear(events),
 	)
-	const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar')
+	const [selectedDay, setSelectedDay] = useState<Date | null>(null)
 	const [expandedEvent, setExpandedEvent] =
 		useState<EventDetailSelection | null>(null)
 	const [openingEvent, setOpeningEvent] = useState<EventDetailSelection | null>(
@@ -242,6 +301,7 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 		null,
 	)
 	const [detailContentVisible, setDetailContentVisible] = useState(false)
+	const expandedEventRef = useRef<EventDetailSelection | null>(null)
 	const eventTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
 		null,
 	)
@@ -256,19 +316,30 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 		() => groupEventsByMonth(selectedYearEvents, selectedYear, language),
 		[selectedYearEvents, selectedYear, language],
 	)
-	const monthsWithEvents = monthGroups.filter(
-		(month) => month.events.length > 0,
-	)
 	const selectedEvent = expandedEvent?.event ?? null
+	const selectedImageDimensions = selectedEvent?.visual
+		? getImageDimensions(selectedEvent.visual)
+		: undefined
+	const isPortraitImage = selectedImageDimensions
+		? selectedImageDimensions.height > selectedImageDimensions.width
+		: false
+	const selectedEventType = richTextToPlainText(
+		localizedRichText(selectedEvent?.eventType?.title, language),
+	).trim()
 	const expandedMonthGroup = expandedEvent?.monthGroup ?? null
 	const selectedDescription = selectedEvent
-		? getLocalizedValue(selectedEvent.description ?? [], language)
+		? localizedRichText(selectedEvent.description, language)
 		: ''
 	const openingMonthKey = openingEvent?.monthGroup.key ?? null
 	const closingMonthKey = closingEvent?.monthGroup.key ?? null
 	const transitionMonthKey = openingMonthKey ?? closingMonthKey
 	const isEventTransitioning = Boolean(openingEvent || closingEvent)
 	const isCalendarLayoutHandoff = Boolean(openingEvent || closingEvent)
+	const weekdayLabels = useMemo(() => getWeekdayLabels(language), [language])
+
+	useEffect(() => {
+		expandedEventRef.current = expandedEvent
+	}, [expandedEvent])
 
 	useEffect(() => {
 		return () => {
@@ -298,22 +369,16 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 	const resetEventDetails = () => {
 		clearEventTransitionTimer()
 		clearEventContentTimer()
+		setSelectedDay(null)
 		setOpeningEvent(null)
 		setClosingEvent(null)
 		setExpandedEvent(null)
 		setDetailContentVisible(false)
 	}
 
-	const closeEventDetails = () => {
+	const animateCloseEventDetails = (selection: EventDetailSelection) => {
 		clearEventTransitionTimer()
 		clearEventContentTimer()
-
-		if (!expandedEvent) {
-			resetEventDetails()
-			return
-		}
-
-		const selection = expandedEvent
 		setDetailContentVisible(false)
 		eventContentTimerRef.current = setTimeout(() => {
 			setClosingEvent(selection)
@@ -327,11 +392,52 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 		}, EVENT_CONTENT_FADE_MS)
 	}
 
-	const openEventDetails = (event: Event, monthGroup: EventMonthGroup) => {
-		const selection = { event, monthGroup }
+	const closeEventDetails = () => {
+		const selection = expandedEventRef.current
 
+		if (!selection) return
+		animateCloseEventDetails(selection)
+	}
+
+	const closeEventDetailsOnEscape = useEffectEvent(() => closeEventDetails())
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape' && expandedEventRef.current) {
+				closeEventDetailsOnEscape()
+			}
+		}
+
+		window.addEventListener('keydown', handleKeyDown)
+		return () => {
+			window.removeEventListener('keydown', handleKeyDown)
+		}
+	}, [])
+
+	const getDefaultEvent = (monthGroup: EventMonthGroup) => {
+		if (monthGroup.events.length <= 1) return monthGroup.events[0] ?? null
+
+		const now = new Date()
+		return (
+			monthGroup.events.find((event) => {
+				const end = getEventEndDate(event)
+				return end ? end >= now : false
+			}) ?? monthGroup.events[0]
+		)
+	}
+
+	const selectEvent = (event: Event) => {
+		if (!expandedMonthGroup) return
+		setExpandedEvent({ event, monthGroup: expandedMonthGroup })
+	}
+
+	const openMonth = (monthGroup: EventMonthGroup, event?: Event) => {
+		setSelectedDay(null)
 		if (expandedEvent?.monthGroup.key === monthGroup.key) {
-			setExpandedEvent(selection)
+			setExpandedEvent({
+				event: event ?? getDefaultEvent(monthGroup),
+				monthGroup,
+			})
 			return
 		}
 
@@ -341,28 +447,132 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 		setExpandedEvent(null)
 		setClosingEvent(null)
 		setDetailContentVisible(false)
-		setOpeningEvent(selection)
+		const resolvedSelection = {
+			event: event ?? getDefaultEvent(monthGroup),
+			monthGroup,
+		}
+		setOpeningEvent(resolvedSelection)
 		eventTransitionTimerRef.current = setTimeout(() => {
 			setOpeningEvent(null)
-			setExpandedEvent(selection)
+			setExpandedEvent(resolvedSelection)
 			eventTransitionTimerRef.current = null
 			eventContentTimerRef.current = setTimeout(() => {
 				setDetailContentVisible(true)
 				eventContentTimerRef.current = null
-			}, EVENT_CARD_LAYOUT_MS)
+			}, EVENT_CONTENT_DELAY_MS)
 		}, EVENT_MONTH_FADE_MS)
 	}
+
 	const handleYearChange = (direction: -1 | 1) => {
 		resetEventDetails()
 		setSelectedYear((year) => year + direction)
 	}
-	const handleViewModeChange = (mode: 'calendar' | 'list') => {
-		resetEventDetails()
-		setViewMode(mode)
+
+	const handleMonthChange = (direction: -1 | 1) => {
+		if (!expandedMonthGroup) return
+		setSelectedDay(null)
+
+		const targetDate = new Date(
+			selectedYear,
+			expandedMonthGroup.month + direction,
+			1,
+		)
+		const targetYear = targetDate.getFullYear()
+		const targetMonth = targetDate.getMonth()
+		const targetYearEvents = getEventsForYear(events, targetYear)
+		const targetMonthGroup = groupEventsByMonth(
+			targetYearEvents,
+			targetYear,
+			language,
+		)[targetMonth]
+
+		setSelectedYear(targetYear)
+		setExpandedEvent({
+			event: getDefaultEvent(targetMonthGroup),
+			monthGroup: targetMonthGroup,
+		})
+		setDetailContentVisible(true)
 	}
 
-	const renderExpandedEventDetails = (fillsCalendarStage = false) => {
-		if (!expandedEvent || !expandedMonthGroup || !selectedEvent) return null
+	const getEventCountLabel = (count: number) =>
+		`${count} ${tFestivalEvents(
+			count === 1 ? 'eventSingular' : 'eventPlural',
+		)}`
+
+	const renderMonthEventList = () => {
+		if (!expandedMonthGroup) return null
+		const visibleEvents = selectedDay
+			? expandedMonthGroup.events.filter((event) => eventOccursOnDay(event, selectedDay))
+			: expandedMonthGroup.events
+
+		if (expandedMonthGroup.events.length === 0) {
+			return (
+				<p className="pt-4 text-sm font-semibold uppercase tracking-wide text-primary/65">
+					{tFestivalEvents('noEventsScheduled')}
+				</p>
+			)
+		}
+
+		return (
+			<div className="space-y-1 pt-2 lg:pr-1">
+				{selectedDay && (
+					<div className="grid grid-cols-7 items-center gap-y-1 pb-1 text-xs leading-tight">
+						<h4 className="col-span-6 font-semibold" aria-live="polite">
+							{selectedDay.toLocaleDateString(language, {
+								weekday: 'short',
+								day: 'numeric',
+								month: 'short',
+							})}
+						</h4>
+						<button
+							type="button"
+							onClick={() => setSelectedDay(null)}
+							className="justify-self-center font-semibold underline underline-offset-2 transition-opacity hover:opacity-70"
+						>
+							{tFestivalEvents('allEvents')}
+						</button>
+					</div>
+				)}
+				{visibleEvents.map((event, index) => {
+					const start = getValidDate(event.date)
+					const isActive =
+						event._id && selectedEvent?._id
+							? event._id === selectedEvent._id
+							: event === selectedEvent
+
+					return (
+						<button
+							key={event._id ?? `${expandedMonthGroup.key}-detail-${index}`}
+							type="button"
+							aria-pressed={Boolean(isActive)}
+							onClick={() => selectEvent(event)}
+							className={`theme-festival-month-event group flex w-full items-center gap-1 rounded border border-transparent p-1 text-left text-xs font-semibold normal-case leading-tight transition-colors ${
+								isActive
+									? 'bg-primary text-dark lg:w-[calc(100%+0.25rem)] lg:rounded-r-none lg:pr-2'
+									: 'bg-grayDark text-[var(--color-dark)] hover:border-grayDark hover:bg-[var(--color-dark)] hover:text-grayDark'
+							}`}
+						>
+							{start && (
+								<time dateTime={start.toISOString()} className="shrink-0 whitespace-nowrap tabular-nums tracking-wide">
+									{start.toLocaleTimeString(language, {
+										hour: '2-digit',
+										minute: '2-digit',
+										hourCycle: 'h23',
+									})}
+								</time>
+							)}
+							<FestivalEventTitle title={localizedRichText(event.title, language)} />
+						</button>
+					)
+				})}
+			</div>
+		)
+	}
+
+	const renderExpandedMonth = () => {
+		if (!expandedEvent || !expandedMonthGroup) return null
+
+		const calendarDays = getCalendarDays(selectedYear, expandedMonthGroup.month)
 
 		return (
 			<motion.div
@@ -384,11 +594,7 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 					},
 				}}
 				style={{ borderRadius: EVENT_CARD_RADIUS }}
-				className={`relative flex w-full flex-col overflow-hidden rounded-lg bg-dark p-4 text-primary lg:p-5 ${
-					fillsCalendarStage
-						? 'h-full min-h-0'
-						: 'min-h-[26rem] lg:min-h-[30rem]'
-				}`}
+				className="theme-festival-expanded-month relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-lg border-2 border-dark bg-dark text-primary"
 			>
 				<motion.div
 					data-testid="festival-event-detail-content"
@@ -403,104 +609,170 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 						ease: EVENT_CARD_EASE,
 					}}
 				>
-					<button
-						type="button"
-						onClick={closeEventDetails}
-						className="absolute right-3 top-3 z-10 rounded-full p-1 text-grayDark transition-colors hover:bg-primary hover:text-dark"
-						aria-label={tFestivalEvents('closeDetails')}
-					>
-						<IoClose className="h-5 w-5" />
-					</button>
-
-					<div className="mb-4 pr-8">
-						<p className="text-sm font-semibold tracking-wide text-grayDark">
-							{expandedMonthGroup.label} {selectedYear}
-						</p>
-						<h3 className="-rotate-1 text-2xl font-bold leading-none text-primary lg:text-4xl">
-							{getLocalizedValue(selectedEvent.title, language)}
-						</h3>
+					<div className="flex items-center justify-between gap-4 bg-dark px-2 py-3">
+						<div className="flex min-w-0 items-center gap-2">
+							<button
+								type="button"
+								onClick={() => handleMonthChange(-1)}
+								className={CALENDAR_ARROW_BUTTON}
+								aria-label={tFestivalEvents('previousMonth')}
+							>
+								<NewArrowRightSimple
+									theme={{ stroke: 'currentColor' }}
+									className="h-3.5 w-3.5 rotate-180 lg:h-3 lg:w-3"
+								/>
+							</button>
+							<h3 className="flex min-w-0 items-center gap-1 text-[15px] font-semibold leading-none tracking-tight">
+								<span className="truncate capitalize">
+									{expandedMonthGroup.label}
+								</span>
+								{expandedMonthGroup.events.length > 0 && (
+									<span
+										className="font-normal italic"
+										aria-label={getEventCountLabel(
+											expandedMonthGroup.events.length,
+										)}
+									>
+										({expandedMonthGroup.events.length})
+									</span>
+								)}
+							</h3>
+							<button
+								type="button"
+								onClick={() => handleMonthChange(1)}
+								className={CALENDAR_ARROW_BUTTON}
+								aria-label={tFestivalEvents('nextMonth')}
+							>
+								<NewArrowRightSimple
+									theme={{ stroke: 'currentColor' }}
+									className="h-3.5 w-3.5 lg:h-3 lg:w-3"
+								/>
+							</button>
+						</div>
+						<button
+							type="button"
+							onClick={closeEventDetails}
+							className={CALENDAR_ARROW_BUTTON}
+							aria-label={tFestivalEvents('backToYearCalendar')}
+							title={tFestivalEvents('backToYearCalendar')}
+						>
+							<X className="h-3.5 w-3.5" aria-hidden="true" />
+						</button>
 					</div>
 
-					<div className="grid min-h-0 flex-1 gap-5 lg:grid-cols-[minmax(11rem,15rem)_1fr]">
-						<div className="no-scrollbar min-h-0 space-y-2 overflow-y-auto border-b border-primary/40 pb-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-4">
-							{expandedMonthGroup.events.map((event, index) => {
-								const isActive =
-									event._id && selectedEvent._id
-										? event._id === selectedEvent._id
-										: event === selectedEvent
+					<div className="grid min-h-0 flex-1 lg:grid-cols-[38%_62%] lg:pr-4">
+						<div className="no-scrollbar min-h-0 overflow-y-auto border-b border-primary bg-dark p-4 lg:border-b-0 lg:pr-0 lg:pt-0">
+							<div className="mb-5 lg:mr-1">
+								<div className="mb-1 grid grid-cols-7 text-center text-[0.65rem] font-bold uppercase text-primary/55">
+									{weekdayLabels.map((label, index) => (
+										<span key={`${label}-${index}`}>{label}</span>
+									))}
+								</div>
+								<div className="grid grid-cols-7 gap-y-1 text-center text-xs font-semibold">
+									{calendarDays.map((day, index) => {
+										if (!day) return <span key={`empty-${index}`} />
+										const dayEvents = expandedMonthGroup.events.filter(
+											(event) => eventOccursOnDay(event, day),
+										)
+										const isSelected = selectedDay
+											? isSameCalendarDay(selectedDay, day)
+											: selectedEvent
+												? eventOccursOnDay(selectedEvent, day)
+												: false
+										const dayLabel = `${day.toLocaleDateString(language, {
+											weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+										})} · ${getEventCountLabel(dayEvents.length)}`
 
-								return (
-									<button
-										key={
-											event._id ?? `${expandedMonthGroup.key}-detail-${index}`
-										}
-										type="button"
-										onClick={() => openEventDetails(event, expandedMonthGroup)}
-										className={`block w-full rounded-md border border-primary px-2 py-2 text-left text-sm font-semibold leading-tight transition-colors ${
-											isActive
-												? 'bg-primary text-dark'
-												: 'text-primary hover:bg-primary/10'
-										}`}
-									>
-										<span className="block">
-											{getLocalizedValue(event.title, language)}
-										</span>
-										<span
-											className={`mt-1 block text-xs font-medium ${
-												isActive ? 'text-dark/70' : 'text-grayDark'
-											}`}
-										>
-											{formatDateRange(event, language)}
-										</span>
-									</button>
-								)
-							})}
+										return (
+											<button
+												key={day.toISOString()}
+												type="button"
+												aria-label={dayLabel}
+												aria-pressed={isSelected}
+												title={dayLabel}
+												disabled={dayEvents.length === 0}
+												onClick={() => {
+													setSelectedDay(day)
+													if (!selectedEvent || !eventOccursOnDay(selectedEvent, day)) {
+														selectEvent(dayEvents[0])
+													}
+												}}
+												className={`relative mx-auto flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
+													isSelected
+														? 'bg-primary text-dark'
+														: dayEvents.length > 0
+															? 'bg-grayDark text-[var(--color-dark)] hover:bg-primary hover:text-dark'
+															: 'text-primary/55'
+												}`}
+											>
+												{day.getDate()}
+												{dayEvents.length > 1 && (
+													<span aria-hidden="true" className="pointer-events-none absolute bottom-[3px] flex gap-[2px]">
+														<span className="h-0.5 w-0.5 rounded-full bg-current" />
+														<span className="h-0.5 w-0.5 rounded-full bg-current" />
+													</span>
+												)}
+											</button>
+										)
+									})}
+								</div>
+							</div>
+							{renderMonthEventList()}
 						</div>
 
-						<div className="no-scrollbar min-h-0 space-y-4 overflow-y-auto pr-1 text-grayDark">
-							<div>
-								<span className="mb-1 block text-xs font-semibold tracking-wide text-primary">
-									{tFestivalEvents('dateLabel')}
-								</span>
-								<span>{formatDateRange(selectedEvent, language)}</span>
-							</div>
+						<div className="no-scrollbar min-h-0 overflow-y-auto rounded-lg bg-primary p-5 text-dark lg:p-4">
+							{selectedEvent ? (
+								<div className="flex min-h-full flex-col">
+									{selectedEventType && (
+										<span
+											data-testid="festival-event-type"
+											className="mb-2 w-fit rounded border border-dark px-1.5 py-0.5 text-xs font-semibold normal-case leading-tight text-dark"
+										>
+											{selectedEventType}
+										</span>
+									)}
+									<h4 className="text-4xl font-bold normal-case leading-tight text-dark lg:text-[clamp(1.2rem,2.6cqw,1.8rem)] lg:leading-none">
+										<RichText
+											value={localizedRichText(selectedEvent.title, language)}
+											inline
+										/>
+									</h4>
+									{selectedEvent.location && (
+										<p className="mt-1 text-sm">
+											<span className="font-semibold text-dark">
+												@
+											</span>{' '}
+											<RichText value={selectedEvent.location} inline />
+										</p>
+									)}
 
-							<div>
-								<span className="mb-1 block text-xs font-semibold tracking-wide text-primary">
-									{tFestivalEvents('timeLabel')}
-								</span>
-								<span>{formatTimeRange(selectedEvent, language)}</span>
-							</div>
-
-							{selectedEvent.location && (
-								<div>
-									<span className="mb-1 block text-xs font-semibold tracking-wide text-primary">
-										{tFestivalEvents('locationLabel')}
-									</span>
-									<span>{selectedEvent.location}</span>
+									<Img
+										image={selectedEvent.visual}
+										alt={richTextToPlainText(localizedRichText(selectedEvent.title, language))}
+										imageWidth={960}
+										className={`mt-5 rounded-md ${isPortraitImage ? 'h-auto max-h-[clamp(10rem,28svh,16rem)] w-auto max-w-full shrink-0 self-start object-contain' : 'aspect-video w-full object-cover'}`}
+									/>
+									{selectedDescription && (
+										<RichText
+											value={selectedDescription}
+											className="mt-6 max-w-2xl text-sm font-normal leading-[1.2] tracking-tight"
+										/>
+									)}
+									{selectedEvent.pressLink && (
+										<a
+											href={selectedEvent.pressLink}
+											target="_blank"
+											rel="noreferrer"
+											className="mt-auto inline-block w-fit text-sm normal-case text-dark underline transition-opacity hover:opacity-80"
+										>
+											{tFestivalEvents('openPressKit')} ↗
+										</a>
+									)}
 								</div>
-							)}
-
-							{selectedDescription && (
-								<div>
-									<span className="mb-1 block text-xs font-semibold tracking-wide text-primary">
-										{tFestivalEvents('descriptionLabel')}
-									</span>
-									<p className="text-sm leading-relaxed">
-										{selectedDescription}
-									</p>
+							) : (
+								<div className="flex h-full items-center justify-center text-center text-sm font-semibold uppercase tracking-wide text-dark">
+									{tFestivalEvents('noEventsScheduled')}
 								</div>
-							)}
-
-							{selectedEvent.pressLink && (
-								<a
-									href={selectedEvent.pressLink}
-									target="_blank"
-									rel="noreferrer"
-									className="inline-block rounded-md bg-primary px-3 py-1 text-sm font-semibold text-dark"
-								>
-									{tFestivalEvents('pressLink')}
-								</a>
 							)}
 						</div>
 					</div>
@@ -513,333 +785,241 @@ const AnnualEventsList: React.FC<EventsListProps> = ({
 		<>
 			<div
 				data-testid="festival-events-box"
-				className="relative z-[49] rounded-xl bg-grayDark lg:mx-32"
+				className="theme-festival-events-surface relative z-[49] rounded-xl bg-grayDark lg:mx-[min(8rem,11.6%)]"
 			>
-				<div className="flex flex-col gap-3 p-3 lg:flex-row lg:items-center lg:justify-between">
+				<div className="p-3">
 					<div className="flex items-center gap-2">
 						<button
 							type="button"
 							onClick={() => handleYearChange(-1)}
-							className="rounded-md bg-dark p-1 text-primary"
+							className={`${CALENDAR_ARROW_BUTTON} rounded bg-dark`}
 							aria-label={tFestivalEvents('previousYear')}
 						>
 							<NewArrowRightSimple
-								theme={{ stroke: 'var(--color-primary)' }}
-								className="h-5 w-5 rotate-180"
+								theme={{ stroke: 'currentColor' }}
+								className="h-3.5 w-3.5 rotate-180 lg:h-3 lg:w-3"
 							/>
 						</button>
-						<h3 className="-rotate-3 rounded-md bg-grayDark px-2 text-xl font-semibold tracking-tight text-dark lg:rounded-xl lg:border-[3px] lg:border-dark lg:text-2xl">
+						<h3 className={`${FESTIVAL_TITLE_STYLE} theme-festival-events-year -rotate-3 border-dark bg-grayDark text-dark`}>
 							{selectedYear}
 						</h3>
 						<button
 							type="button"
 							onClick={() => handleYearChange(1)}
-							className="rounded-md bg-dark p-1 text-primary"
+							className={`${CALENDAR_ARROW_BUTTON} rounded bg-dark`}
 							aria-label={tFestivalEvents('nextYear')}
 						>
 							<NewArrowRightSimple
-								theme={{ stroke: 'var(--color-primary)' }}
-								className="h-5 w-5"
+								theme={{ stroke: 'currentColor' }}
+								className="h-3.5 w-3.5 lg:h-3 lg:w-3"
 							/>
-						</button>
-					</div>
-
-					<div className="flex w-fit rounded-lg bg-dark p-1">
-						<button
-							data-testid="festival-events-grid-toggle"
-							type="button"
-							onClick={() => handleViewModeChange('calendar')}
-							className={`rounded px-3 py-1 text-sm font-semibold transition-colors ${
-								viewMode === 'calendar'
-									? 'bg-primary text-dark'
-									: 'text-grayDark'
-							}`}
-						>
-							{tFestivalEvents('gridView')}
-						</button>
-						<button
-							data-testid="festival-events-list-toggle"
-							type="button"
-							onClick={() => handleViewModeChange('list')}
-							className={`rounded px-3 py-1 text-sm font-semibold transition-colors ${
-								viewMode === 'list' ? 'bg-primary text-dark' : 'text-grayDark'
-							}`}
-						>
-							{tFestivalEvents('listView')}
 						</button>
 					</div>
 				</div>
 
-				<AnimatePresence mode="wait">
-					{viewMode === 'calendar' ? (
-						<LayoutGroup id={`festival-events-calendar-${selectedYear}`}>
-							<div className="px-3 pb-2">
-								<div
-									data-testid="festival-calendar-stage"
-									className="h-[101.5rem] sm:h-[50.5rem] lg:h-[33.5rem] xl:h-[25rem]"
-								>
-									<AnimatePresence initial={false} mode="popLayout">
-										{expandedEvent && expandedMonthGroup ? (
-											renderExpandedEventDetails(true)
-										) : (
-											<motion.div
-												key={`calendar-${selectedYear}`}
-												initial={
-													isCalendarLayoutHandoff
-														? { opacity: 1, y: 0 }
-														: { opacity: 0, y: 12 }
-												}
-												animate={{ opacity: 1, y: 0 }}
-												exit={
-													isCalendarLayoutHandoff
-														? { opacity: 1, y: 0 }
-														: { opacity: 0, y: -12 }
-												}
-												transition={{
-													opacity: { duration: 0.25 },
-													y: { duration: 0.25 },
-												}}
-												className="grid h-full auto-rows-fr grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-											>
-												{monthGroups.map((monthGroup) => {
-													const isTransitionSelected =
-														transitionMonthKey === monthGroup.key
-													const isFadingOut =
-														Boolean(transitionMonthKey) && !isTransitionSelected
+				<LayoutGroup id={`festival-events-calendar-${selectedYear}`}>
+					<div className="px-3 pb-2">
+						<div
+							data-testid="festival-calendar-stage"
+							className={
+								expandedEvent
+									? 'h-[52rem] lg:h-[34rem] xl:h-[29rem]'
+									: 'h-[101.5rem] sm:h-[50.5rem] lg:h-[clamp(18rem,40svh,25rem)]'
+							}
+						>
+							<AnimatePresence initial={false} mode="popLayout">
+								{expandedEvent && expandedMonthGroup ? (
+									renderExpandedMonth()
+								) : (
+									<motion.div
+										key={`calendar-${selectedYear}`}
+										initial={
+											isCalendarLayoutHandoff
+												? { opacity: 1, y: 0 }
+												: { opacity: 0, y: 12 }
+										}
+										animate={{ opacity: 1, y: 0 }}
+										exit={
+											isCalendarLayoutHandoff
+												? { opacity: 1, y: 0 }
+												: { opacity: 0, y: -12 }
+										}
+										transition={{
+											opacity: { duration: 0.25 },
+											y: { duration: 0.25 },
+										}}
+										className="grid h-full auto-rows-fr grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4"
+									>
+										{monthGroups.map((monthGroup) => {
+											const hasEvents = monthGroup.events.length > 0
+											const isTransitionSelected =
+												transitionMonthKey === monthGroup.key
+											const isFadingOut =
+												Boolean(transitionMonthKey) && !isTransitionSelected
 
-													return (
-														<motion.div
-															data-testid="festival-month-card"
-															key={monthGroup.key}
-															layout
-															layoutId={`month-card-${monthGroup.key}`}
-															style={{ borderRadius: EVENT_CARD_RADIUS }}
-															className={`min-h-0 overflow-hidden rounded-lg p-3 ${
-																monthGroup.events.length > 0
-																	? 'bg-dark'
-																	: 'border-2 border-dark bg-grayDark'
-															}`}
-															initial={{ opacity: isFadingOut ? 0 : 1 }}
-															animate={{ opacity: isFadingOut ? 0 : 1 }}
-															transition={{
-																layout: {
-																	duration: EVENT_CARD_LAYOUT_MS / 1000,
-																	ease: EVENT_CARD_EASE,
-																},
-																opacity: {
-																	duration: isFadingOut
-																		? EVENT_MONTH_FADE_MS / 1000
-																		: 0.2,
-																	ease: EVENT_CARD_EASE,
-																},
-															}}
-														>
-															<motion.div
-																data-testid="festival-month-card-content"
-																initial={{
-																	opacity: isTransitionSelected ? 0 : 1,
-																}}
-																animate={{
-																	opacity: isTransitionSelected ? 0 : 1,
-																	pointerEvents: isTransitionSelected
-																		? 'none'
-																		: 'auto',
-																}}
-																transition={{
-																	duration: EVENT_CONTENT_FADE_MS / 1000,
-																	ease: EVENT_CARD_EASE,
-																}}
-															>
-																<div className="flex items-start justify-between gap-2">
-																	<div className="flex items-center gap-2">
-																		<h4
-																			data-testid="festival-month-title"
-																			className={`text-sm font-semibold capitalize leading-none tracking-tight ${
-																				monthGroup.events.length > 0
-																					? 'text-primary'
-																					: 'text-dark'
-																			}`}
-																		>
-																			{monthGroup.label}
-																		</h4>
-																		{monthGroup.events.length > 0 && (
-																			<span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-2 text-xs font-bold leading-none text-dark">
-																				{monthGroup.events.length}
-																			</span>
-																		)}
-																	</div>
-																</div>
-
-																{monthGroup.events.length > 0 && (
-																	<div className="mt-4 space-y-1">
-																		{monthGroup.events
-																			.slice(0, 2)
-																			.map((event, index) => (
-																				<button
-																					data-testid="festival-event-preview"
-																					key={
-																						event._id ??
-																						`${monthGroup.key}-preview-${index}`
-																					}
-																					type="button"
-																					disabled={isEventTransitioning}
-																					onClick={() =>
-																						openEventDetails(event, monthGroup)
-																					}
-																					className="block w-full rounded-md bg-grayDark px-2 py-1 text-left text-sm font-semibold leading-tight text-dark transition-opacity hover:opacity-80 disabled:pointer-events-none"
-																				>
-																					{getLocalizedValue(
-																						event.title,
-																						language,
-																					)}
-																				</button>
-																			))}
-																		{monthGroup.events.length > 2 && (
-																			<p className="text-sm font-semibold text-primary">
-																				{tFestivalEvents('moreEvents', {
-																					count: monthGroup.events.length - 2,
-																				})}
-																			</p>
-																		)}
-																	</div>
-																)}
-															</motion.div>
-														</motion.div>
-													)
-												})}
-											</motion.div>
-										)}
-									</AnimatePresence>
-								</div>
-							</div>
-						</LayoutGroup>
-					) : (
-						<LayoutGroup id={`festival-events-list-${selectedYear}`}>
-							<div className="px-3 pb-2">
-								<AnimatePresence initial={false} mode="wait">
-									{expandedEvent && expandedMonthGroup ? (
-										renderExpandedEventDetails()
-									) : (
-										<motion.div
-											key={`list-${selectedYear}`}
-											initial={{ opacity: 0, y: 12 }}
-											animate={{ opacity: 1, y: 0 }}
-											exit={{ opacity: 0, y: -12 }}
-											transition={{ duration: 0.25 }}
-											className="space-y-6"
-										>
-											{monthsWithEvents.length > 0 ? (
-												monthsWithEvents.map((monthGroup) => (
-													<section key={monthGroup.key} className="space-y-2">
-														<h4 className="border-b border-dark pb-1 text-left text-sm font-semibold uppercase tracking-wide text-dark">
-															{monthGroup.label}
-														</h4>
-
-														<div className="divide-y divide-dark">
-															{monthGroup.events.map((event, index) => (
-																<motion.button
-																	key={
-																		event._id ?? `${monthGroup.key}-${index}`
-																	}
-																	type="button"
-																	onClick={() =>
-																		openEventDetails(event, monthGroup)
-																	}
-																	className="grid w-full gap-2 py-3 text-left transition-opacity hover:opacity-80 lg:grid-cols-[minmax(12rem,18rem)_7rem_1fr]"
-																	whileHover={{ x: 4 }}
-																	whileTap={{ scale: 0.99 }}
+											return (
+												<motion.div
+													data-testid="festival-month-card"
+													key={monthGroup.key}
+													layout
+													layoutId={`month-card-${monthGroup.key}`}
+													style={{ borderRadius: EVENT_CARD_RADIUS }}
+													className={`theme-festival-events-month-card min-h-0 overflow-hidden rounded-lg p-3 lg:p-[clamp(0.5rem,1.2svh,0.75rem)] ${
+														hasEvents
+															? 'theme-festival-events-month-card--has-events cursor-pointer bg-dark'
+															: 'cursor-default border-2 border-dark bg-grayDark'
+													}`}
+													role="button"
+													tabIndex={hasEvents ? 0 : -1}
+													aria-disabled={!hasEvents}
+													aria-label={`${monthGroup.label} ${selectedYear}`}
+													onClick={hasEvents ? () => openMonth(monthGroup) : undefined}
+													onKeyDown={(event) => {
+														if (
+															hasEvents &&
+															event.currentTarget === event.target &&
+															(event.key === 'Enter' || event.key === ' ')
+														) {
+															event.preventDefault()
+															openMonth(monthGroup)
+														}
+													}}
+													initial={{ opacity: isFadingOut ? 0 : 1 }}
+													animate={{ opacity: isFadingOut ? 0 : 1 }}
+													transition={{
+														layout: {
+															duration: EVENT_CARD_LAYOUT_MS / 1000,
+															ease: EVENT_CARD_EASE,
+														},
+														opacity: {
+															duration: isFadingOut
+																? EVENT_MONTH_FADE_MS / 1000
+																: 0.2,
+															ease: EVENT_CARD_EASE,
+														},
+													}}
+												>
+													<motion.div
+														data-testid="festival-month-card-content"
+														className="flex h-full min-h-0 flex-col"
+														initial={{
+															opacity: isTransitionSelected ? 0 : 1,
+														}}
+														animate={{
+															opacity: isTransitionSelected ? 0 : 1,
+															pointerEvents: isTransitionSelected
+																? 'none'
+																: 'auto',
+														}}
+														transition={{
+															duration: EVENT_CONTENT_FADE_MS / 1000,
+															ease: EVENT_CARD_EASE,
+														}}
+													>
+														<div className="flex shrink-0 items-start justify-between gap-2">
+															<div className="flex items-center gap-1">
+																<h4
+																	data-testid="festival-month-title"
+																	className={`text-[15px] font-semibold capitalize leading-none tracking-tight ${
+																		monthGroup.events.length > 0
+																			? 'text-primary'
+																			: 'text-dark'
+																	}`}
 																>
-																	<span className="text-sm font-semibold text-dark">
-																		{formatDateRange(event, language)}
-																	</span>
-																	<span className="text-sm text-dark">
-																		{formatTimeRange(event, language)}
-																	</span>
-																	<span>
-																		<span className="block text-base font-semibold leading-tight text-dark">
-																			{getLocalizedValue(event.title, language)}
-																		</span>
-																		{event.location && (
-																			<span className="mt-1 block text-sm text-dark/70">
-																				{event.location}
-																			</span>
+																	{monthGroup.label}
+																</h4>
+																{monthGroup.events.length > 0 && (
+																	<span
+																		className="text-sm font-normal italic leading-none text-primary"
+																		aria-label={getEventCountLabel(
+																			monthGroup.events.length,
 																		)}
+																	>
+																		({monthGroup.events.length})
 																	</span>
-																</motion.button>
-															))}
+																)}
+															</div>
 														</div>
-													</section>
-												))
-											) : (
-												<div className="py-8 text-center text-lg tracking-tight text-dark">
-													{tFestivalEvents('noEvents', { year: selectedYear })}
-												</div>
-											)}
-										</motion.div>
-									)}
-								</AnimatePresence>
-							</div>
-						</LayoutGroup>
-					)}
-				</AnimatePresence>
+
+														{monthGroup.events.length > 0 && (
+															<div className="no-scrollbar mt-4 min-h-0 space-y-1 overflow-y-auto lg:mt-2">
+																{monthGroup.events.map((event, index) => (
+																	<button
+																		data-testid="festival-event-preview"
+																		key={
+																			event._id ??
+																			`${monthGroup.key}-preview-${index}`
+																		}
+																		type="button"
+																		disabled={isEventTransitioning}
+																		onClick={(clickEvent) => {
+																			clickEvent.stopPropagation()
+																			openMonth(monthGroup, event)
+																		}}
+																		className="group grid w-full grid-cols-[minmax(1.125rem,max-content)_minmax(0,1fr)] items-center gap-1 rounded border-b border-primary/25 bg-primary p-1 text-left text-xs font-semibold normal-case leading-tight text-dark disabled:pointer-events-none"
+																	>
+																		<span className="whitespace-nowrap">{getEventDayLabel(event)}</span>
+																		<FestivalEventTitle
+																			title={localizedRichText(
+																				event.title,
+																				language,
+																			)}
+																		/>
+																	</button>
+																))}
+															</div>
+														)}
+													</motion.div>
+												</motion.div>
+											)
+										})}
+									</motion.div>
+								)}
+							</AnimatePresence>
+						</div>
+					</div>
+				</LayoutGroup>
 			</div>
 		</>
 	)
 }
 
 const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
-	const getLocalizedValue = useLocalizedValue()
 	const tFestivalEvents = useTranslations('festivalEvents')
 
-	if (!block.show) return null
+	if (block.show === false) return null
 
 	return (
 		<AccordionItem
 			value={`vision-${index}`}
-			className="relative flex flex-col items-center justify-center"
+			className="relative flex flex-col items-center justify-center lg:contents"
 		>
-			<AccordionTrigger className="-rotate-3 lg:text-5xl">
-				{getLocalizedValue(block.visionTitle, language) ||
+			<AccordionTrigger
+				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label -rotate-3 lg:translate-y-0.5`}
+				animationDelay={0.15}
+			>
+				{richTextToPlainText(localizedRichText(block.visionTitle, language)) ||
 					tFestivalEvents('visionFallback')}
 			</AccordionTrigger>
 			<AccordionContent>
-				<div className="mb-4 pt-2">
+				<div className={`${FESTIVAL_BODY_TEXT} mb-4 pt-2 lg:mb-[0.89em] lg:pt-[0.45em]`}>
 					{block.vision?.map((visionItem: any, vIndex: number) => (
 						<motion.div
 							key={vIndex}
-							className="mt-4 first:-mt-2"
+							className="mt-4 first:-mt-2 lg:mt-[0.89em] lg:first:-mt-[0.45em]"
 							// initial={{ opacity: 0, x: -20 }}
 							// animate={{ opacity: 1, x: 0 }}
 							// transition={{ duration: 0.5, delay: vIndex * 0.2 }}
 						>
-							<div className="relative mb-8 flex flex-col items-center rounded-t-3xl px-4">
-								{/* <h3 className="-z-10 -mt-0 inline-block -rotate-0 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tight text-dark lg:z-0 lg:mx-20 lg:mb-2 lg:text-lg">
-									{getLocalizedValue(visionItem.title, language)}
-								</h3> */}
-
-								<>
-									{splitTitle(
-										getLocalizedValue(visionItem.title, language),
-										30,
-									).map((line, idx) => (
-										<h1
-											key={idx}
-											className={[
-												'-z-10 -mt-0 inline-block -rotate-0 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tight text-dark lg:z-0 lg:mx-20 lg:mb-2 lg:text-lg',
-												idx === 0 ? '' : '-z-0 -mt-1',
-												idx % 2 === 0
-													? '-rotate-1 lg:-rotate-3'
-													: 'rotate-1 lg:rotate-3',
-											].join(' ')}
-										>
-											{line}
-										</h1>
-									))}
-								</>
-								<p className="mx-auto -mt-2 py-2 text-base font-normal leading-[1.2] tracking-tight text-primary lg:px-32 lg:text-xl">
-									{getLocalizedValue(visionItem.text, language) ||
-										tFestivalEvents('noDescription')}
-								</p>
+							<div className="relative mb-8 flex flex-col items-center rounded-t-3xl lg:mb-[1.78em]">
+								<RichText
+									value={combineRichText(
+										localizedRichText(visionItem.title, language),
+										localizedRichText(visionItem.text, language),
+										'titleLabel',
+									)}
+									className={`${FESTIVAL_COPY_WIDTH} mx-auto py-2 text-primary lg:py-[0.45em] [&>*]:text-[length:inherit]`}
+								/>
 							</div>
 						</motion.div>
 					))}
@@ -851,30 +1031,26 @@ const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 
 // Custom Text Block Component
 const CustomTextBlock: React.FC<BlockProps> = ({ block, index, language }) => {
-	if (!block.show) return null
+	if (block.show === false) return null
 
 	return (
 		<AccordionItem
 			value={`custom-${index}`}
-			className="flex flex-col items-center justify-center hover:relative hover:z-50"
+			className="flex flex-col items-center justify-center hover:relative hover:z-50 lg:contents"
 		>
-			<AccordionTrigger className="-mb-0 rotate-3 lg:text-5xl">
-				{block.title}
+			<AccordionTrigger
+				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label -mb-0 rotate-3 lg:-translate-y-1 lg:-rotate-6`}
+				animationDelay={0.43}
+			>
+				<RichText
+					value={localizedRichText(block.title, language)}
+					inline
+					allowLinks={false}
+				/>
 			</AccordionTrigger>
 			<AccordionContent>
-				<div className="px-2 pb-0 pt-4 text-base leading-[1.2] tracking-tight text-primary lg:mx-16 lg:rounded-md lg:pb-8 lg:pt-8 lg:text-xl lg:leading-[1.5rem] lg:text-primary">
-					{block.content?.[language] && (
-						<PortableText
-							value={block.content[language]}
-							components={{
-								block: {
-									normal: ({ children }) => (
-										<p className="mb-4 last:mb-0">{children}</p>
-									),
-								},
-							}}
-						/>
-					)}
+				<div className={`${FESTIVAL_COPY_WIDTH} ${FESTIVAL_BODY_TEXT} pb-0 pt-4 text-primary lg:rounded-md lg:pb-8 lg:pt-8`}>
+					<RichText value={localizedRichText(block.content, language)} />
 				</div>
 			</AccordionContent>
 		</AccordionItem>
@@ -887,17 +1063,15 @@ const YellowBannerBlock: React.FC<BlockProps> = ({
 	index,
 	language,
 }) => {
-	const getLocalizedValue = useLocalizedValue()
 	const { scrollY } = useScroll()
 	const borderRadius = useTransform(scrollY, (value) =>
 		Math.max(80 - value, 10),
 	)
 
-	const text = getLocalizedValue(block.text, language)
-	const paragraphs = text.split('\n\n')
+	const text = localizedRichText(block.text, language)
 
 	return (
-		<div className="">
+		<div className="lg:hidden">
 			<motion.div
 				style={{ borderRadius }}
 				transition={{
@@ -906,41 +1080,17 @@ const YellowBannerBlock: React.FC<BlockProps> = ({
 				}}
 				className="relative border-2 border-dark bg-primary px-4 py-10 shadow-sm lg:hidden lg:border-0 lg:py-10"
 			>
-				{paragraphs.map((paragraph: string, i: number) => (
-					<p
-						key={i}
-						className="mx-auto py-2 text-center text-xl font-bold leading-[1.2] tracking-tight text-dark lg:py-4 lg:text-3xl"
-					>
-						{paragraph.split(/(System D)/).map((part, partIndex) =>
-							part === 'System D' ? (
-								<motion.span
-									key={partIndex}
-									className="z-10 inline-block"
-									animate={{
-										rotate: 3,
-										transition: {
-											ease: [0.76, 0, 0.24, 1],
-											duration: 1.5,
-											repeat: Infinity,
-											repeatType: 'reverse',
-										},
-									}}
-								>
-									<LogoShortTsx className="mr-[0.10rem] inline-block h-auto w-[9rem] -rotate-6 rounded-md bg-dark px-2 py-1 text-primary lg:w-[15rem]" />
-								</motion.span>
-							) : (
-								part
-							),
-						)}
-					</p>
-				))}
+				<RichText
+					value={text}
+					className={`${FESTIVAL_BODY_TEXT} mx-auto py-2 text-center text-dark lg:py-4`}
+				/>
 			</motion.div>
 		</div>
 	)
 }
 
 // Media Teaser Block Component
-const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
+const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	const tFestivalEvents = useTranslations('festivalEvents')
 	const teaserRef = useRef<HTMLDivElement>(null)
 	const [overlayMode, setOverlayMode] = useState<
@@ -1057,19 +1207,27 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 		}
 	}
 
+	if (block.show === false) return null
+	const source = block.uploadedVideo?.asset?.url || block.video
+	const poster = block.image?.asset?.url
+	const isEmbeddedVideo =
+		source && /(?:youtube\.com|youtu\.be|vimeo\.com)/i.test(source)
+	const videoSource =
+		source || (poster ? undefined : '/assets/videos/teaser2.mp4')
+
 	return (
 		<>
 			<div
 				ref={teaserRef}
 				data-testid="festival-video-teaser"
-				className={`lg:rounded-0xl relative mx-0 h-[65vh] w-full cursor-pointer rounded-lg pb-10 pt-2 lg:h-full lg:p-0 ${
+				className={`relative h-[65vh] w-full cursor-pointer lg:aspect-video lg:h-auto ${
 					isOverlayActive ? 'overflow-visible' : 'overflow-hidden'
 				}`}
 				onClick={handleVideoClick}
 			>
 				<div
 					data-testid={isOverlayActive ? 'festival-video-overlay' : undefined}
-					className={`overflow-hidden bg-dark ${
+					className={`group/festival-video overflow-hidden bg-dark ${
 						isOverlayActive ? 'fixed z-[70]' : 'relative h-full w-full'
 					}`}
 					style={
@@ -1092,16 +1250,38 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 					}
 					onTransitionEnd={handleFrameTransitionEnd}
 				>
-					<video
-						className="h-full w-full transform rounded-none border-0 object-cover"
-						autoPlay
-						muted
-						loop
-						playsInline
-					>
-						<source src="/assets/videos/teaser2.mp4" type="video/mp4" />
-						{tFestivalEvents('videoUnsupported')}
-					</video>
+					{isEmbeddedVideo ? (
+						<ReactPlayer
+							src={source}
+							width="100%"
+							height="100%"
+							playing
+							muted
+							loop
+							playsInline
+							controls={overlayMode === 'open'}
+						/>
+					) : videoSource ? (
+						<video
+							key={videoSource}
+							className="h-full w-full rounded-none border-0 object-cover"
+							suppressHydrationWarning
+							autoPlay
+							muted
+							loop
+							playsInline
+							poster={poster}
+						>
+							<source src={videoSource} />
+							{tFestivalEvents('videoUnsupported')}
+						</video>
+					) : (
+						<Img
+							image={block.image}
+							alt=""
+							className="h-full w-full object-cover"
+						/>
+					)}
 
 					{isOverlayActive && (
 						<>
@@ -1120,10 +1300,10 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 								event.stopPropagation()
 								handleVideoClick()
 							}}
-							className="absolute bottom-8 right-8 z-10 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark/90 text-primary shadow-md backdrop-blur transition-colors hover:bg-primary hover:text-dark focus:outline-none"
+							className="pointer-events-none absolute right-8 top-8 z-10 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark focus:outline-none focus-visible:pointer-events-auto focus-visible:opacity-100 group-hover/festival-video:pointer-events-auto group-hover/festival-video:opacity-100"
 							aria-label={tFestivalEvents('expandVideo')}
-							initial={{ opacity: 0, scale: 0.8, y: 8 }}
-							animate={{ opacity: 1, scale: 1, y: 0 }}
+							initial={{ scale: 0.8, y: 8 }}
+							animate={{ scale: 1, y: 0 }}
 							whileHover={{ scale: 1.06 }}
 							transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
 						>
@@ -1136,10 +1316,10 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index }) => {
 							data-testid="festival-video-close"
 							type="button"
 							onClick={handleCloseFullscreen}
-							className="absolute bottom-8 right-8 z-40 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark/90 text-primary shadow-md backdrop-blur transition-colors hover:bg-primary hover:text-dark focus:outline-none"
+							className="pointer-events-none absolute right-8 top-8 z-40 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark focus:outline-none focus-visible:pointer-events-auto focus-visible:opacity-100 group-hover/festival-video:pointer-events-auto group-hover/festival-video:opacity-100"
 							aria-label={tFestivalEvents('closeVideo')}
-							initial={{ opacity: 0, scale: 0.8, y: 8 }}
-							animate={{ opacity: 1, scale: 1, y: 0 }}
+							initial={{ scale: 0.8, y: 8 }}
+							animate={{ scale: 1, y: 0 }}
 							whileHover={{ scale: 1.06 }}
 							transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
 						>
@@ -1157,7 +1337,6 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	const [isVisible, setIsVisible] = useState(false)
 	const [isOpen, setIsOpen] = useState(false) // track accordion open state
 	const juryRef = useRef<HTMLDivElement>(null)
-	const getLocalizedValue = useLocalizedValue()
 
 	const members = block.juryMembers || []
 	const total = members.length
@@ -1182,24 +1361,29 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 		return () => observer.disconnect()
 	}, [isOpen])
 
-	if (!block.show || !currentMember) return null
+	if (block.show === false || !currentMember) return null
 
 	return (
 		<AccordionItem
 			value={`jury-${index}`}
-			className="flex flex-col items-center justify-center"
+			className="flex flex-col items-center justify-center lg:contents"
 		>
 			<AccordionTrigger
-				className="-rotate-6 lg:text-5xl"
+				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label -rotate-6 lg:-translate-y-0.5 lg:rotate-3`}
+				animationDelay={0.31}
 				onClick={() => setIsOpen((prev) => !prev)}
 			>
-				Jury
+				<RichText
+					value={localizedRichText(block.title, language) || 'Jury'}
+					inline
+					allowLinks={false}
+				/>
 			</AccordionTrigger>
 
 			<AccordionContent>
 				<div
 					ref={juryRef}
-					className="relative flex w-full flex-col items-center justify-center pt-4 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:px-32 lg:py-8"
+					className={`${FESTIVAL_COPY_WIDTH} relative flex flex-col items-center justify-center pt-4 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:py-8`}
 				>
 					{/* Desktop arrows */}
 					<button
@@ -1234,20 +1418,20 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 					<div className="flex flex-col items-center">
 						<Img
 							image={currentMember.image}
-							src={currentMember.image?.asset.url}
-							alt={currentMember.name}
+							alt={richTextToPlainText(currentMember.name)}
 							className="aspect-video w-full rounded-lg border-[3px] border-primary object-cover lg:h-80 lg:w-56 lg:border-4"
 						/>
 						<h2 className="z-10 -mt-4 inline-block w-auto -rotate-3 rounded-md border-0 border-dark bg-primary px-2 py-0 text-center text-xl font-medium tracking-tighter text-dark lg:text-2xl">
-							{currentMember.name}
+							<RichText value={currentMember.name} inline />
 						</h2>
 					</div>
 
 					<div className="mt-6 flex flex-1 flex-col items-center lg:mt-0 lg:items-start lg:text-left">
 						{currentMember.biography && (
-							<p className="mb-4 text-base font-normal leading-[1.2] tracking-tight text-primary lg:text-xl lg:leading-[1.5rem]">
-								{getLocalizedValue(currentMember.biography, language)}
-							</p>
+							<RichText
+								value={localizedRichText(currentMember.biography, language)}
+								className={`${FESTIVAL_BODY_TEXT} mb-4 text-primary`}
+							/>
 						)}
 					</div>
 				</div>
@@ -1278,26 +1462,30 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 }
 
 const EventsBlock: React.FC<BlockProps> = ({ block, index, language }) => {
-	const getLocalizedValue = useLocalizedValue()
 	const tFestivalEvents = useTranslations('festivalEvents')
 
-	if (!block.show) return null
+	if (block.show === false) return null
 
 	return (
 		<AccordionItem
 			value={`events-${index}`}
-			className="flex flex-col items-center justify-center"
+			className="flex flex-col items-center justify-center lg:contents"
 		>
-			<AccordionTrigger className="rotate-6 lg:text-5xl">
-				{tFestivalEvents('title')}
+			<AccordionTrigger
+				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label rotate-6 lg:translate-y-1`}
+				animationDelay={0.24}
+			>
+				<RichText
+					value={
+						localizedRichText(block.title, language) || tFestivalEvents('title')
+					}
+					inline
+					allowLinks={false}
+				/>
 			</AccordionTrigger>
 			<AccordionContent className="relative w-full">
-				<div className="relative mt-4 w-full">
-					<AnnualEventsList
-						events={block.events || []}
-						language={language}
-						getLocalizedValue={getLocalizedValue}
-					/>
+				<div className="relative mt-4 w-full lg:mt-8">
+					<AnnualEventsList events={block.events || []} language={language} />
 				</div>
 			</AccordionContent>
 		</AccordionItem>
@@ -1310,7 +1498,42 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	language,
 }) => {
 	const tFestivalEvents = useTranslations('festivalEvents')
-	const handleAccordionValueChange = () => {
+	const accordionBlocks = useMemo(
+		() =>
+			festival?.blocks?.filter(
+				(block: any) => block._type !== 'mediaTeaserBlock',
+			) ?? [],
+		[festival?.blocks],
+	)
+	const mediaTeaserBlocks = useMemo(
+		() =>
+			festival?.blocks?.filter(
+				(block: any) =>
+					block._type === 'mediaTeaserBlock' && block.show !== false,
+			) ?? [],
+		[festival?.blocks],
+	)
+	const eventsAccordionValue = useMemo(() => {
+		const eventsBlockIndex = accordionBlocks.findIndex(
+			(block: any) => block._type === 'onTourBlock' && block.show !== false,
+		)
+
+		return eventsBlockIndex >= 0 ? `events-${eventsBlockIndex}` : ''
+	}, [accordionBlocks])
+	const [accordionValue, setAccordionValue] = useState('')
+	const [isDesktop, setIsDesktop] = useState(false)
+
+	useEffect(() => {
+		const desktopQuery = window.matchMedia('(min-width: 1024px)')
+		const updateLayout = () => setIsDesktop(desktopQuery.matches)
+		updateLayout()
+		setAccordionValue(desktopQuery.matches ? eventsAccordionValue : '')
+		desktopQuery.addEventListener('change', updateLayout)
+		return () => desktopQuery.removeEventListener('change', updateLayout)
+	}, [eventsAccordionValue, festival?._id])
+
+	const handleAccordionValueChange = (value: any) => {
+		setAccordionValue(value)
 		const navbar = document.getElementById('navbar-mobile')
 		if (navbar) {
 			navbar.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -1324,14 +1547,6 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	// Setup sparkle image for snowfall
 	// const sparkleImg = new window.Image()
 	// sparkleImg.src = '/assets/svg/SparkleSnow2.svg'
-
-	// Separate accordion items from media teaser
-	const accordionBlocks = festival.blocks?.filter(
-		(block: any) => block._type !== 'mediaTeaserBlock',
-	)
-	const mediaTeaserBlocks = festival.blocks?.filter(
-		(block: any) => block._type === 'mediaTeaserBlock',
-	)
 
 	const renderBlock = (block: any, index: number) => {
 		const blockProps = { block, index, language }
@@ -1356,7 +1571,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 	return (
 		<div
 			key={festival._id}
-			className="no-scrollbar relative flex h-full w-full flex-col gap-1 p-2 px-4 pb-16 lg:mt-1 lg:grid lg:h-[calc(100svh-10px)] lg:grid-rows-[auto_minmax(12rem,1fr)] lg:overflow-hidden lg:p-0"
+			className="no-scrollbar relative flex h-full w-full flex-col p-2 px-4 pb-16 lg:my-1 lg:h-[calc(100svh-8px)] lg:overflow-hidden lg:p-0"
 		>
 			<div className="fixed bottom-0 right-0 z-50 mb-4 flex items-center justify-end px-8 lg:hidden">
 				<BackToTopButton targetId="navbar-mobile" />
@@ -1373,7 +1588,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 			<div
 				id="festival-content"
 				data-testid="festival-accordion-area"
-				className="no-scrollbar lg:shadowtest relative z-10 shrink-0 rounded-md border-primary lg:min-h-0 lg:overflow-y-auto lg:rounded-xl lg:border-[0px] lg:bg-dark"
+				className="lg:shadowtest section-folder-content section-folder-content--festival no-scrollbar relative z-10 rounded-md border-primary lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:rounded-xl lg:border-[0px] lg:bg-dark [container-type:inline-size]"
 			>
 				<SparkleEffect
 					count={15}
@@ -1385,49 +1600,36 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 					speed={[15, 25]}
 					wind={[-50, 50]}
 				/>
+
 				{/* Accordion Items */}
 				<Accordion
 					type="single"
 					collapsible
+					orientation={isDesktop ? 'horizontal' : 'vertical'}
+					value={accordionValue}
 					onValueChange={handleAccordionValueChange}
-					// className="lg:rounded-md lg:bg-dark lg:bg-gradient-to-t lg:from-grayDark lg:py-16 lg:shadow-inner"
-					className="lg:rounded-lg lg:border-0 lg:border-primary lg:bg-transparent lg:py-16"
+					className="mt-4 lg:mt-[clamp(0.75rem,1.45cqw,1rem)] lg:flex lg:flex-wrap lg:items-start lg:justify-center lg:gap-y-[min(1.5rem,1.67cqw)] lg:rounded-lg lg:border-0 lg:border-primary lg:bg-transparent lg:py-[clamp(1.5rem,3.33cqw,4rem)] lg:[&>div>[role=region]]:order-1 lg:[&>div>[role=region]]:basis-full"
 				>
 					{accordionBlocks?.map(renderBlock)}
 				</Accordion>
+				{mediaTeaserBlocks?.length ? (
+					<div
+						data-testid="festival-video-area"
+						className="relative z-[49] mt-6 space-y-4 pb-4 lg:mx-[min(8rem,11.6%)] lg:mt-0 lg:pb-8"
+					>
+						{mediaTeaserBlocks.map((block: any, index: number) => (
+							<MediaTeaserBlock
+								key={`media-${index}`}
+								block={block}
+								index={index}
+								language={language}
+							/>
+						))}
+					</div>
+				) : null}
 			</div>
-			{/* Media Teaser Blocks - Outside of Accordion content area */}
-			{mediaTeaserBlocks?.length ? (
-				<div
-					data-testid="festival-video-area"
-					className="relative z-10 min-h-[18rem] flex-1 lg:min-h-0 lg:overflow-visible"
-				>
-					{mediaTeaserBlocks.map((block: any, index: number) => (
-						<MediaTeaserBlock
-							key={`media-${index}`}
-							block={block}
-							index={index}
-							language={language}
-						/>
-					))}
-				</div>
-			) : null}
 		</div>
 	)
 }
 
 export default FestivalContent
-
-function splitTitle(title: string, maxLength = 18) {
-	const result = []
-	let str = title
-
-	while (str.length > maxLength) {
-		let idx = str.lastIndexOf(' ', maxLength)
-		if (idx === -1) idx = maxLength // no space found, hard cut
-		result.push(str.slice(0, idx).trim())
-		str = str.slice(idx).trim()
-	}
-	if (str.length) result.push(str)
-	return result
-}

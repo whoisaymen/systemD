@@ -13,8 +13,9 @@ import { ViewTransitions } from 'next-view-transitions'
 import NavBar from '@/components/navigation/NavBar'
 import { Metadata } from 'next'
 import NavBarMobile from '@/components/navigation/NavBarMobile'
+import ThemeDevPanel from '@/components/ThemeDevPanel'
 import { getSite } from '@/sanity/lib/queries'
-import { buildThemeInitializerScript, resolveThemeCombos } from '@/lib/theme'
+import { resolveThemeCombos } from '@/lib/theme'
 
 const FALLBACK_TITLE = 'System_D | Empowering self-made filmmakers'
 const FALLBACK_DESCRIPTION =
@@ -61,7 +62,6 @@ export default async function RootLayout({
 	const messages = await getMessages()
 	const site = await getOptionalSite()
 	const themes = resolveThemeCombos(site)
-	const themeInitializer = buildThemeInitializerScript(themes)
 
 	return (
 		<ViewTransitions>
@@ -69,15 +69,13 @@ export default async function RootLayout({
 				lang={locale}
 				suppressHydrationWarning
 				data-scroll-behavior="smooth"
+				data-theme-config={JSON.stringify(themes)}
 				className="no-scrollbar"
 			>
-				<head>
-					<script dangerouslySetInnerHTML={{ __html: themeInitializer }} />
-				</head>
 				{/* <GoogleTagManager gtmId='' /> */}
 
 				<body
-					className={`${GeistSans.className} relative bg-dark text-ink antialiased`}
+					className={`${GeistSans.className} ${GeistSans.variable} relative bg-dark text-ink antialiased`}
 				>
 					{/* <ThemeProvider attribute="class" defaultTheme="dark"> */}
 					<NextIntlClientProvider messages={messages}>
@@ -88,6 +86,9 @@ export default async function RootLayout({
 								social={site?.social}
 								themes={themes}
 							/>
+							{process.env.NODE_ENV === 'development' && (
+								<ThemeDevPanel theme={themes[themes.length - 1]} />
+							)}
 
 							{/* <Header /> */}
 							{/* <main id="main-content" role="main" tabIndex={-1}>

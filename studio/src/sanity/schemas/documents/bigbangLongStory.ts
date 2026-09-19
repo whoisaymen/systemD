@@ -8,6 +8,11 @@ export default defineType({
 	type: 'document',
 	fields: [
 		defineField({
+			name: 'tabLabel',
+			title: 'Libellé de l’onglet',
+			type: 'internationalizedArrayString',
+		}),
+		defineField({
 			name: 'body',
 			title: 'Paragraphes',
 			type: 'array',

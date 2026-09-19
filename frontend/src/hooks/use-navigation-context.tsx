@@ -1,13 +1,14 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import type { PortableTextBlock } from 'next-sanity'
 
 interface NavigationState {
 	films: Array<{
 		_id: string
 		slug: { current: string } | null
 		title: any[]
-		director: string
+		director: string | PortableTextBlock[]
 		year: number
 	}>
 	sortField: 'year' | 'title' | 'director'

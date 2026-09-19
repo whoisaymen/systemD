@@ -1,4 +1,4 @@
-import { Stack, Card, Flex, Text } from '@sanity/ui'
+import { Stack, Flex } from '@sanity/ui'
 import StudioLogo from '@/components/StudioLogo'
 
 const NewNavbar = (props: any) => (

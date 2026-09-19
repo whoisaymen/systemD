@@ -6,6 +6,11 @@ export default defineType({
 	type: 'object',
 	fields: [
 		defineField({
+			name: 'title',
+			title: 'Titre de la section',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
 			name: 'backgroundColor',
 			title: 'Couleur de fond',
 			type: 'color',

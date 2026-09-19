@@ -243,21 +243,33 @@ import FabriqueLogoDesktop from '../fabrique/FabriqueLogoDesktop'
 import FestivalLogoDesktop from '../festival/FestivalLogoDesktop'
 import SocialLinks from '@/ui/SocialLinks'
 import type { ThemeCombo } from '@/lib/theme'
+import SectionFolderSurface, { type FolderSection } from './SectionFolderSurface'
 
 import { MdContactSupport } from 'react-icons/md'
 import Loading from '@/app/(frontend)/[locale]/loading'
 import { SKIP_HOME_INTRO_KEY } from '@/components/homepage/HomepageVideoIntro'
 
 // Theme configuration
-const getThemeColors = (isHovered: boolean, isActive: boolean = false) => ({
-	fill: isHovered ? 'var(--color-primary)' : 'var(--color-primary)',
-	stroke: isHovered ? 'var(--color-dark)' : 'var(--color-dark)',
-	icon: isActive
-		? 'var(--color-primary)'
-		: isHovered
-			? 'var(--color-primary)'
-			: 'var(--color-dark)',
-})
+const getThemeColors = (isHovered: boolean, isActive: boolean = false) => {
+	const idleFill = 'var(--color-menu-item-idle-fill, var(--color-dark))'
+	const idleStroke = 'var(--color-menu-item-idle-stroke, var(--color-dark))'
+	const hoverFill = 'var(--color-menu-item-hover-fill, var(--color-primary))'
+	const activeFill = 'var(--color-menu-item-active-fill, var(--color-primary))'
+	const activeHoverFill = `var(--color-menu-item-active-hover-fill, ${hoverFill})`
+
+	return {
+		fill: 'var(--color-primary)',
+		stroke: isActive ? 'var(--color-dark)' : idleStroke,
+		iconStroke: 'var(--color-menu-item-icon-stroke, var(--color-dark))',
+		icon: isHovered
+			? isActive
+				? activeHoverFill
+				: hoverFill
+			: isActive
+				? activeFill
+				: idleFill,
+	}
+}
 
 const HOME_INTRO_EASE = 'cubic-bezier(0.76, 0, 0.24, 1)'
 const HOME_VIDEO_EXPANDED_EVENT = 'homepage-video-expanded-change'
@@ -265,7 +277,11 @@ const HOME_VIDEO_EXPANDED_EVENT = 'homepage-video-expanded-change'
 const normalizeNavHref = (href: string) => href.replace(/\/$/, '')
 
 // Type for render function
-type RenderFunction = (isHovered: boolean, isActive: boolean) => ReactNode
+type RenderFunction = (
+	shouldAnimate: boolean,
+	isActive: boolean,
+	isHovered: boolean,
+) => ReactNode
 
 // NavBar component (contains a local NavItem that uses transition+router)
 const NavBar = ({
@@ -290,12 +306,21 @@ const NavBar = ({
 	const [isLoading, setIsLoading] = useState(false)
 	const [pendingHref, setPendingHref] = useState<string | null>(null)
 	const [isHomeVideoExpanded, setIsHomeVideoExpanded] = useState(true)
+	const displayedPathname = pendingHref ?? normalizedPathname
+	const isMemoireRoute =
+		displayedPathname === `/${locale}/memoire` ||
+		new RegExp(`^/${locale}/festival/\\d{4}$`).test(displayedPathname)
+	const isFestivalRoute = displayedPathname === `/${locale}/festival`
+	const isBigBangRoute = displayedPathname === `/${locale}/bigbang`
+	const isFabriqueRoute = displayedPathname === `/${locale}/fabrique`
+	const isEquipeRoute = displayedPathname === `/${locale}/equipe`
 
-	// when the pathname changes, hide the loader (navigation finished)
+	// Keep the destination surface until that navigation has committed.
 	useEffect(() => {
+		if (pendingHref !== normalizedPathname) return
 		setIsLoading(false)
 		setPendingHref(null)
-	}, [pathname])
+	}, [normalizedPathname, pendingHref])
 
 	useEffect(() => {
 		if (!isHomeRoute) {
@@ -336,31 +361,43 @@ const NavBar = ({
 	// Local NavItem component (keeps same props and children API)
 	const NavItem = ({
 		href,
+		label,
 		children,
 		className = '',
-		growClass = 'grow',
 		isActive: active = false,
+		folderTab,
 	}: {
 		href: string
+		label: string
 		children: RenderFunction
 		className?: string
-		growClass?: string
 		isActive?: boolean
+		folderTab?: FolderSection
 	}) => {
 		const navHref = normalizeNavHref(href)
 		const effectiveActive = pendingHref ? pendingHref === navHref : active
 
 		return (
-			<HoverableItem className={`flex h-auto w-full ${growClass}`}>
+			<HoverableItem className="flex min-h-0 w-full">
 				{(isHovered) => {
 					const shouldShowAnimatedState = isHovered || effectiveActive
 
 					return (
-						// use a button and trigger router.push inside startTransition
-						<button
-							type="button"
+						<Link
+							href={href}
+							aria-label={label}
 							aria-current={effectiveActive ? 'page' : undefined}
-							onClick={() => {
+							onClick={(event) => {
+								if (
+									event.metaKey ||
+									event.ctrlKey ||
+									event.shiftKey ||
+									event.altKey
+								) {
+									return
+								}
+
+								event.preventDefault()
 								if (navHref === normalizedPathname) return
 
 								setPendingHref(navHref)
@@ -369,14 +406,14 @@ const NavBar = ({
 									router.push(href)
 								})
 							}}
-							className={`relative flex h-full w-full cursor-pointer items-center justify-center rounded-md shadow-inner transition-colors duration-200 ${
+							className={`theme-menu-item relative flex h-full w-full cursor-pointer items-center justify-center rounded-md shadow-inner transition-colors duration-200 ${
 								effectiveActive
-									? 'shadowtest bg-[#8C8C8F] shadow-inner lg:relative lg:z-50'
-									: 'shadowtest bg-gradient-to-b from-primary to-grayDark/25 shadow-inner'
+									? `shadowtest ${folderTab ? `section-folder-tab section-folder-tab--${folderTab}` : ''} bg-dark lg:relative lg:z-50`
+									: 'theme-menu-card-gradient shadowtest bg-dark bg-gradient-to-b from-primary to-grayDark/25 shadow-inner'
 							} ${className}`}
 						>
-							{children(shouldShowAnimatedState, !!effectiveActive)}
-						</button>
+							{children(shouldShowAnimatedState, !!effectiveActive, isHovered)}
+						</Link>
 					)
 				}}
 			</HoverableItem>
@@ -385,18 +422,26 @@ const NavBar = ({
 
 	const shouldHideHomeNav = isHomeRoute && isHomeVideoExpanded
 	const homeNavTransitionDuration =
-		isHomeRoute && !shouldReduceMotion ? 'duration-[1300ms]' : 'duration-0'
+		isHomeRoute && !shouldReduceMotion ? 'duration-[1000ms]' : 'duration-0'
+	const folderSection: FolderSection | null = isFestivalRoute ? 'festival'
+		: isBigBangRoute ? 'bigbang'
+		: isMemoireRoute ? 'memoire'
+		: isFabriqueRoute ? 'fabrique'
+		: isEquipeRoute ? 'equipe' : null
 
 	return (
 		<>
-			<nav className="fixed left-0 top-0 hidden h-svh w-full items-start justify-between overflow-hidden bg-cover bg-center text-center text-xl font-black tracking-tighter text-dark lg:pointer-events-none lg:flex">
+			{folderSection && (
+				<SectionFolderSurface key={folderSection} section={folderSection} />
+			)}
+			<nav className="desktop-navigation fixed left-0 top-0 hidden h-svh w-full items-start justify-between overflow-hidden bg-cover bg-center text-center text-xl font-black tracking-tighter text-dark lg:pointer-events-none lg:flex">
 				{/* First Column */}
 				<div
 					style={{
 						transformOrigin: 'left center',
 						transitionTimingFunction: HOME_INTRO_EASE,
 					}}
-					className={`flex h-full w-[var(--width-column-width)] shrink-0 flex-col space-y-1 p-1 transition-[opacity,transform] lg:pointer-events-auto ${homeNavTransitionDuration} ${
+					className={`flex h-full min-h-0 w-[var(--width-column-width)] shrink-0 flex-col space-y-1 p-1 transition-[opacity,transform] lg:pointer-events-auto ${homeNavTransitionDuration} ${
 						shouldHideHomeNav
 							? '-translate-x-full opacity-0'
 							: 'translate-x-0 opacity-100'
@@ -412,26 +457,28 @@ const NavBar = ({
 								setIsHomeVideoExpanded(false)
 							}
 						}}
-						className="group h-auto w-full rounded-md border-0 border-dark hover:bg-dark"
+						className="group block w-full shrink-0 rounded-md border-0 border-dark px-2 py-1 transition-opacity hover:opacity-80"
 					>
-						<LogoShortAnimated className="m-1 mb-0 inline-block h-auto w-full rounded-md text-primary lg:w-[15rem]" />
+						<LogoShortAnimated className="block h-auto w-full rounded-md text-primary" />
 					</Link>
 
 					{/* Navigation Items */}
-					<div className="no-scrollbar flex h-full w-full flex-col space-y-1 overflow-scroll rounded-md">
+					<div className="desktop-menu-left grid min-h-0 flex-1 grid-rows-[minmax(0,2fr)_minmax(0,1fr)] gap-1 rounded-md">
 						{/* Festival */}
 						<NavItem
 							href={`/${locale}/festival`}
-							growClass="grow-[4]"
-							className="p-8 transition-all duration-300 [@media(max-height:900px)]:p-4"
+							label="Festival"
 							isActive={isActive('festival')}
+							folderTab={isFestivalRoute ? 'festival' : undefined}
 						>
-							{(isHovered, isActive) => (
-								<FestivalLogoDesktop
-									className="w-full overflow-visible"
-									theme={getThemeColors(isHovered, isActive)}
-									forceHovered={isHovered}
-								/>
+							{(shouldAnimate, isActive, isHovered) => (
+								<div className="menu-artwork">
+									<FestivalLogoDesktop
+										className="w-full overflow-visible"
+										theme={getThemeColors(isHovered, isActive)}
+										forceHovered={shouldAnimate}
+									/>
+								</div>
 							)}
 						</NavItem>
 
@@ -439,14 +486,15 @@ const NavBar = ({
 						<NavItem
 							isActive={isActive('bigbang')}
 							href={`/${locale}/bigbang`}
-							className="py-1"
+							label="Big Bang"
+							folderTab={isBigBangRoute ? 'bigbang' : undefined}
 						>
-							{(isHovered, isActive) => (
-								<div className="w-full px-3">
+							{(shouldAnimate, isActive, isHovered) => (
+								<div className="menu-artwork">
 									<BigBangLogo
 										theme={getThemeColors(isHovered, isActive)}
 										className="h-full w-full overflow-visible"
-										forceHovered={isHovered}
+										forceHovered={shouldAnimate}
 									/>
 								</div>
 							)}
@@ -460,24 +508,25 @@ const NavBar = ({
 						transformOrigin: 'right center',
 						transitionTimingFunction: HOME_INTRO_EASE,
 					}}
-					className={`flex h-full w-[var(--width-column-width)] shrink-0 flex-col space-y-1 p-1 transition-[opacity,transform] ${homeNavTransitionDuration} ${
+					className={`flex h-full min-h-0 w-[var(--width-column-width)] shrink-0 flex-col space-y-1 p-1 transition-[opacity,transform] ${homeNavTransitionDuration} ${
 						shouldHideHomeNav
 							? 'translate-x-full opacity-0'
 							: 'translate-x-0 opacity-100'
 					}`}
 				>
-					<div className="no-scrollbar flex h-full w-full flex-col space-y-1 overflow-scroll rounded-md lg:pointer-events-auto">
+					<div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1.2fr)_minmax(0,2.1fr)_minmax(0,1fr)] gap-1 rounded-md lg:pointer-events-auto">
 						<NavItem
 							isActive={isActive('memoire')}
+							folderTab={isMemoireRoute ? 'memoire' : undefined}
 							href={`/${locale}/memoire`}
-							className="py-1"
+							label="Mémoire"
 						>
-							{(isHovered, isActive) => (
-								<div className="w-full px-3 py-4">
+							{(shouldAnimate, isActive, isHovered) => (
+								<div className="menu-artwork">
 									<MemoireLogo
 										theme={getThemeColors(isHovered, isActive)}
 										className="h-full w-full overflow-visible"
-										forceHovered={isHovered}
+										forceHovered={shouldAnimate}
 									/>
 								</div>
 							)}
@@ -487,28 +536,32 @@ const NavBar = ({
 						<NavItem
 							isActive={isActive('fabrique')}
 							href={`/${locale}/fabrique`}
-							className="px-3 py-4"
+							label="Fabrique"
+							folderTab={isFabriqueRoute ? 'fabrique' : undefined}
 						>
-							{(isHovered, isActive) => (
-								<FabriqueLogoDesktop
-									theme={getThemeColors(isHovered, isActive)}
-									className="z-10 overflow-visible"
-									forceHovered={isHovered}
-								/>
+							{(shouldAnimate, isActive, isHovered) => (
+								<div className="menu-artwork">
+									<FabriqueLogoDesktop
+										theme={getThemeColors(isHovered, isActive)}
+										className="z-10 overflow-visible"
+										forceHovered={shouldAnimate}
+									/>
+								</div>
 							)}
 						</NavItem>
 
 						<NavItem
 							isActive={isActive('equipe')}
 							href={`/${locale}/equipe`}
-							className="py-1"
+							label="Équipe"
+							folderTab={isEquipeRoute ? 'equipe' : undefined}
 						>
-							{(isHovered, isActive) => (
-								<div className="w-full px-3 py-4">
+							{(shouldAnimate, isActive, isHovered) => (
+								<div className="menu-artwork">
 									<EquipeLogo
 										theme={getThemeColors(isHovered, isActive)}
 										className="h-full w-full overflow-visible"
-										forceHovered={isHovered}
+										forceHovered={shouldAnimate}
 									/>
 								</div>
 							)}
@@ -516,8 +569,8 @@ const NavBar = ({
 					</div>
 
 					{/* Bottom links and controls */}
-					<div className="flex h-[2.5rem] w-full items-center justify-between gap-1 px-2 lg:pointer-events-auto">
-						<div className="flex h-full items-center gap-1">
+					<div className="desktop-menu-controls flex h-8 w-full shrink-0 items-center justify-between px-1 lg:pointer-events-auto">
+						<div className="flex h-full items-center">
 							<LocaleSwitcher />
 							<ThemeSwitch themes={themes} />
 							<Link
@@ -533,7 +586,7 @@ const NavBar = ({
 						</div>
 						<SocialLinks
 							social={social}
-							className="flex items-center gap-1 text-primary"
+							className="flex items-center text-primary"
 							linkClassName="flex shrink-0 items-center justify-center text-primary transition-colors hover:text-grayDark"
 							iconClassName="h-[22px] w-[22px]"
 						/>
@@ -543,7 +596,7 @@ const NavBar = ({
 
 			{/* Global loader overlay (shows instantly when user clicks a NavItem) */}
 			{isLoading && (
-				<div className="z-40 w-full rounded-md border-0 lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
+				<div className="navigation-loading-overlay fixed inset-0 z-[45] hidden lg:flex lg:items-center lg:justify-center lg:px-[var(--width-column-width)]" aria-busy="true">
 					<Loading />
 				</div>
 			)}

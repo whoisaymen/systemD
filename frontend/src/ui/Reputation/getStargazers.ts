@@ -1,11 +1,12 @@
+import 'server-only'
 import { Octokit } from 'octokit'
 import { stegaClean } from 'next-sanity'
 
 const octokit = new Octokit({
-	auth: process.env.NEXT_PUBLIC_GITHUB_TOKEN!,
+	auth: process.env.GITHUB_TOKEN,
 })
 
-export default async function (reputation?: Sanity.Reputation) {
+export default async function getStargazers(reputation?: Sanity.Reputation) {
 	if (!reputation) return {}
 
 	const [owner, repo] = stegaClean(reputation.repo)?.split('/') ?? []

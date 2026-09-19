@@ -1,3 +1,4 @@
+import { localizedRichTextPreview } from '../../lib/richTextPreview'
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
@@ -8,33 +9,28 @@ export default defineType({
 		defineField({
 			name: 'title',
 			title: 'Titre',
-			type: 'internationalizedArrayString',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'subtitle',
+			title: 'Sous-titre',
+			description:
+				'Affiché sous le titre de l’action, au-dessus de son contenu.',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'text',
 			title: 'Texte',
 			type: 'internationalizedBlock',
 		}),
-		defineField({
-			name: 'image',
-			title: 'Image',
-			type: 'image',
-			options: {
-				hotspot: true,
-			},
-		}),
 	],
 	preview: {
 		select: {
 			title: 'title',
 			text: 'text',
-			media: 'image',
 		},
-		prepare({ title, text, media }) {
-			const getLocalizedValue = (array: any[], lang: string) => {
-				if (!Array.isArray(array)) return null
-				return array.find((v) => v?.language === lang || v?._key === lang)?.value
-			}
+		prepare({ title, text }) {
+			const getLocalizedValue = localizedRichTextPreview
 
 			const displayTitle =
 				getLocalizedValue(title, 'fr') ||
@@ -51,7 +47,6 @@ export default defineType({
 			return {
 				title: displayTitle,
 				subtitle: displayText.substring(0, 100), // Show the first 100 characters of the text
-				media,
 			}
 		},
 	},

@@ -2,7 +2,10 @@ import groq from 'groq'
 import { presentationTool } from 'sanity/presentation'
 
 const previewOrigin =
-	process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
+	process.env.SANITY_STUDIO_PREVIEW_URL ||
+	(process.env.NODE_ENV === 'production'
+		? 'https://systemd.brussels'
+		: 'http://localhost:3000')
 
 export const presentation = presentationTool({
 	name: 'editor',

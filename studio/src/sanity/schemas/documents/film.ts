@@ -1,3 +1,4 @@
+import { getBlockText } from '@/sanity/lib/utils'
 import { defineField, defineType } from 'sanity'
 import { VscCalendar } from 'react-icons/vsc'
 
@@ -10,7 +11,7 @@ export default defineType({
 		defineField({
 			name: 'title',
 			title: 'Titre',
-			type: 'internationalizedArrayString',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'slug',
@@ -21,11 +22,18 @@ export default defineType({
 			options: {
 				source: (doc: any) => {
 					const defaultLanguage = 'en' // Replace with your default language
-					const titleArray = doc.title || doc.metadata.title
+					const titleArray = doc.title || []
 					const titleObject =
-						titleArray.find((item: any) => item.language === defaultLanguage || item._key === defaultLanguage) ||
-						titleArray[0]
-					return titleObject ? titleObject.value : 'untitled'
+						titleArray.find(
+							(item: any) =>
+								item.language === defaultLanguage ||
+								item._key === defaultLanguage,
+						) || titleArray[0]
+					return titleObject
+						? typeof titleObject.value === 'string'
+							? titleObject.value
+							: getBlockText(titleObject.value, ' ')
+						: 'untitled'
 				},
 				slugify: (input: string) =>
 					input
@@ -43,13 +51,28 @@ export default defineType({
 		defineField({
 			name: 'director',
 			title: 'Nom du réalisateur',
-			type: 'string',
+			type: 'array',
+			of: [
+				{
+					type: 'block',
+					styles: [{ title: 'Normal', value: 'normal' }],
+					lists: [],
+				},
+			],
 		}),
 		defineField({
 			name: 'production',
 			title: 'Nom de la production',
-			type: 'string',
+			type: 'array',
+			of: [
+				{
+					type: 'block',
+					styles: [{ title: 'Normal', value: 'normal' }],
+					lists: [],
+				},
+			],
 		}),
+
 		defineField({
 			name: 'year',
 			title: 'Année',
@@ -67,12 +90,12 @@ export default defineType({
 		defineField({
 			name: 'synopsis',
 			title: 'Synopsis',
-			type: 'internationalizedArrayText',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'city',
 			title: 'Ville',
-			type: 'internationalizedArrayString',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'length',
@@ -98,6 +121,7 @@ export default defineType({
 			title: 'URL',
 			type: 'url',
 		}),
+
 		defineField({
 			name: 'festival',
 			title: 'Festival',
@@ -129,7 +153,10 @@ export default defineType({
 
 			const getLocalizedValue = (array: any[], lang: string) => {
 				if (!Array.isArray(array)) return null
-				return array.find((v) => v?.language === lang || v?._key === lang)?.value
+				const value = array.find(
+					(v) => v?.language === lang || v?._key === lang,
+				)?.value
+				return typeof value === 'string' ? value : getBlockText(value, ' ')
 			}
 
 			const displayTitle =
@@ -145,7 +172,7 @@ export default defineType({
 
 			return {
 				title: `${displayTitle} (${displayYear}) ${isWinner ? '★' : ''}`,
-				subtitle: `Réalisé par ${director}`,
+				subtitle: `Réalisé par ${typeof director === 'string' ? director : getBlockText(director, ' ')}`,
 				media,
 			}
 		},

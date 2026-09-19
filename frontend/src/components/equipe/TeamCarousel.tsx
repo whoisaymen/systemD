@@ -4,13 +4,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Transition } from 'motion/react'
 import Img from '@/ui/Img'
-import NewArrowRightSimple from '../common/NewArrowRightSimple'
+import RichText from '@/components/common/RichText'
+import { localizedRichText, richTextToPlainText } from '@/lib/richText'
+import CartoonLeftArrow from '../common/CartoonLeftArrow'
+import {
+	EDITORIAL_BODY_TEXT,
+	EDITORIAL_COPY_WIDTH,
+} from '@/components/common/editorialStyles'
 
 interface TeamMember {
 	id: string
 	name: string
-	description: string
-	title: string
+	description: any
+	nameContent?: any
 	image: any
 	hasImage: boolean
 	shape: ShapeProfile
@@ -29,6 +35,7 @@ interface ShapeProfile {
 }
 
 const ease = [0.76, 0, 0.24, 1] as const
+const shapeRadius = 6
 
 const shapeProfiles: ShapeProfile[] = [
 	{ desktopWidth: 118, mobileWidth: 72, y: 24, rotate: -1.5 },
@@ -60,14 +67,11 @@ const clamp = (value: number, min: number, max: number) =>
 const wrapIndex = (index: number, total: number) =>
 	((index % total) + total) % total
 
-const getLocalizedValue = (array: any[] | undefined, lang: string) => {
-	if (!Array.isArray(array)) return ''
-
-	const item = array.find((entry) => entry.language === lang || entry._key === lang)
-	return item ? item.value : ''
-}
-
-const getCircularOffset = (index: number, activeIndex: number, total: number) => {
+const getCircularOffset = (
+	index: number,
+	activeIndex: number,
+	total: number,
+) => {
 	if (total <= 1) return 0
 
 	let offset = index - activeIndex
@@ -84,7 +88,11 @@ const getInitialSlots = (total: number, activeIndex: number) =>
 		getCircularOffset(index, activeIndex, total),
 	)
 
-const normalizeSlots = (slots: number[], total: number, visibleRange: number) => {
+const normalizeSlots = (
+	slots: number[],
+	total: number,
+	visibleRange: number,
+) => {
 	if (total <= 0) return slots
 
 	return slots.map((slot) => {
@@ -97,11 +105,7 @@ const normalizeSlots = (slots: number[], total: number, visibleRange: number) =>
 	})
 }
 
-const getNameParts = (name: string) =>
-	name
-		.trim()
-		.split(/\s+/)
-		.filter(Boolean)
+const getNameParts = (name: string) => name.trim().split(/\s+/).filter(Boolean)
 
 const getStableNoise = (seed: string, index: number, salt: number) => {
 	let hash = 2166136261
@@ -117,31 +121,15 @@ const getStableNoise = (seed: string, index: number, salt: number) => {
 
 const getNamePillPose = (index: number, total: number, seed: string) => {
 	const rotations = [-3.5, 2.5, -1.5, 3, -2.25]
-	const yOffsets = [-2, 18, 4, 20, 6]
+	const yOffsets = [-2, 3, 0, 4, 1]
 	const centerOffset = index - (total - 1) / 2
-	const jitterX = getStableNoise(seed, index, 0) * 18
-	const jitterY = getStableNoise(seed, index, 1) * 4
-	const jitterRotate = getStableNoise(seed, index, 2) * 3.5
-	const stampOrigins = [
-		{ x: 0.22, y: 0.78 },
-		{ x: 0.76, y: 0.35 },
-		{ x: 0.44, y: 0.84 },
-		{ x: 0.64, y: 0.24 },
-		{ x: 0.32, y: 0.56 },
-	]
-
+	const jitterX = getStableNoise(seed, index, 0) * 3
+	const jitterY = getStableNoise(seed, index, 1) * 2
+	const jitterRotate = getStableNoise(seed, index, 2) * 1.5
 	return {
 		rotate: rotations[index % rotations.length] + jitterRotate,
-		x: centerOffset * 4 + jitterX,
+		x: centerOffset * 2 + jitterX,
 		y: yOffsets[index % yOffsets.length] + jitterY,
-		enterX: centerOffset * 10 + (index % 2 === 0 ? -8 : 8),
-		enterY: -10 - Math.abs(centerOffset) * 4,
-		enterRotate:
-			rotations[index % rotations.length] +
-			jitterRotate +
-			(index % 2 === 0 ? -8 : 8),
-		origin: stampOrigins[index % stampOrigins.length],
-		zIndex: 20 + Math.round(getStableNoise(seed, index, 3) * 5),
 	}
 }
 
@@ -158,11 +146,9 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 		() =>
 			persons.map((person, index) => ({
 				id: person._id,
-				name: person.name,
-				title: getLocalizedValue(person.title, language),
-				description:
-					getLocalizedValue(person.biography, language) ||
-					'No description available',
+				name: richTextToPlainText(person.name),
+				nameContent: person.name,
+				description: localizedRichText(person.biography, language),
 				image: person.image,
 				hasImage: Boolean(person.image?.asset),
 				shape: shapeProfiles[index % shapeProfiles.length],
@@ -185,6 +171,15 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	)
 	const activeMember = teamMembers[activeIndex]
 	const activeNameParts = getNameParts(activeMember?.name || '')
+	const useFormattedName = Boolean(
+		activeMember?.nameContent &&
+		(richTextToPlainText(activeMember.nameContent) !== activeMember.name ||
+			activeMember.nameContent.some?.(
+				(block: any) =>
+					block.markDefs?.length ||
+					block.children?.some((span: any) => span.marks?.length),
+			)),
+	)
 
 	useEffect(() => {
 		const element = containerRef.current
@@ -287,18 +282,15 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	const viewportWidth = containerWidth || windowWidth || 960
 	const viewportHeight = windowHeight || 820
 	const isDesktop = (windowWidth || viewportWidth) >= 1024
-	const desktopActiveMinSize = viewportHeight < 650 ? 280 : 330
+	const desktopActiveMinSize = viewportHeight < 650 ? 240 : 280
 	const activeSize = isDesktop
 		? clamp(
-				Math.min(viewportWidth * 0.5, viewportHeight * 0.48),
+				Math.min(viewportWidth * 0.45, viewportHeight * 0.42),
 				desktopActiveMinSize,
-				560,
+				440,
 			)
 		: clamp(viewportWidth * 0.72, 236, 330)
-	const stageHeight = Math.round(activeSize + (isDesktop ? 74 : 82))
-	const bioPanelHeight = isDesktop
-		? clamp(viewportHeight * 0.2, 150, 220)
-		: 272
+	const stageHeight = Math.round(activeSize + 24)
 	const visibleRange = isDesktop ? 2 : 1
 	const slotSpacing = activeSize * (isDesktop ? 0.72 : 0.66)
 	const shapeHeight = activeSize * (isDesktop ? 0.68 : 0.7)
@@ -307,9 +299,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 		? { duration: 0.2, ease }
 		: { type: 'spring', stiffness: 150, damping: 20, mass: 0.8 }
 	const ringSlots = Array.from({ length: visibleRange * 2 }, (_, index) =>
-		index < visibleRange
-			? index - visibleRange
-			: index - visibleRange + 1,
+		index < visibleRange ? index - visibleRange : index - visibleRange + 1,
 	)
 	const occupiedSlots = new Set(
 		slotPositions
@@ -336,7 +326,11 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	const goToNext = () => navigate(1)
 
 	const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-		if (totalMembers <= 1 || animationPhase !== 'idle' || wheelLockRef.current) {
+		if (
+			totalMembers <= 1 ||
+			animationPhase !== 'idle' ||
+			wheelLockRef.current
+		) {
 			return
 		}
 
@@ -353,78 +347,30 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 		wheelLockRef.current = true
 		navigate(horizontalDelta > 0 ? 1 : -1)
 
-		window.setTimeout(() => {
-			wheelLockRef.current = false
-		}, shouldReduceMotion ? 240 : 850)
+		window.setTimeout(
+			() => {
+				wheelLockRef.current = false
+			},
+			shouldReduceMotion ? 240 : 850,
+		)
 	}
 
 	return (
-		<div className="lg:shadowtest no-scrollbar relative flex w-full flex-col lg:my-1 lg:h-[calc(100svh-10px)] lg:justify-center lg:overflow-y-auto lg:rounded-xl lg:py-6">
-			<button
-				onClick={goToPrev}
-				className="pointer-events-auto fixed bottom-4 left-8 z-40 lg:hidden"
-				aria-label="Previous team member"
-				disabled={totalMembers <= 1}
-			>
-				<NewArrowRightSimple
-					theme={{
-						stroke: 'var(--color-dark)',
-					}}
-					className="h-[2.50rem] w-[2.50rem] -rotate-180 rounded-lg border-2 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
-				/>
-			</button>
-			<button
-				onClick={goToNext}
-				className="pointer-events-auto fixed bottom-4 right-8 z-40 lg:hidden"
-				aria-label="Next team member"
-				disabled={totalMembers <= 1}
-			>
-				<NewArrowRightSimple
-					theme={{
-						stroke: 'var(--color-dark)',
-					}}
-					className="h-[2.50rem] w-[2.50rem] rounded-lg border-2 border-primary bg-grayDark p-2 lg:h-auto lg:w-7"
-				/>
-			</button>
-
-			<button
-				onClick={goToPrev}
-				className="absolute bottom-[50%] left-4 z-30 hidden md:left-4 lg:bottom-[30%] lg:block"
-				aria-label="Previous team member"
-				disabled={totalMembers <= 1}
-			>
-				<NewArrowRightSimple
-					theme={{
-						stroke: 'var(--color-grayDark)',
-					}}
-					className="h-auto w-5 -rotate-180 lg:w-7"
-				/>
-			</button>
-
-			<button
-				onClick={goToNext}
-				className="absolute bottom-[50%] right-4 z-30 hidden md:right-4 lg:bottom-[30%] lg:block"
-				aria-label="Next team member"
-				disabled={totalMembers <= 1}
-			>
-				<NewArrowRightSimple
-					theme={{
-						stroke: 'var(--color-grayDark)',
-					}}
-					className="h-auto w-5 lg:w-7"
-				/>
-			</button>
-
+		<div
+			className="team-carousel lg:shadowtest section-folder-content section-folder-content--equipe theme-equipe-main-content no-scrollbar relative flex w-full flex-col pb-28 text-primary [container-type:inline-size] lg:my-1 lg:h-[calc(100svh-8px)] lg:overflow-y-auto lg:rounded-xl lg:py-10"
+			onKeyDown={(event) => {
+				if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+					event.preventDefault()
+					navigate(event.key === 'ArrowLeft' ? -1 : 1)
+				}
+			}}
+		>
 			<div
 				ref={containerRef}
-				className="shrink-0 overflow-hidden pb-2 pt-16 lg:pb-1 lg:pt-0"
+				className="shrink-0 overflow-hidden pt-12 lg:mt-auto lg:pt-3"
 				onWheel={handleWheel}
 			>
-				<div
-					className="relative w-full"
-					style={{ height: stageHeight }}
-					aria-live="polite"
-				>
+				<div className="relative w-full" style={{ height: stageHeight }}>
 					{bufferShapes.map(({ member, slot }) => {
 						const cardWidth = isDesktop
 							? member.shape.desktopWidth
@@ -434,7 +380,8 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 							(activeSize - shapeHeight) / 2 +
 							member.shape.y * (isDesktop ? 1 : 0.62)
 						const targetY = Math.max(18, inactiveY + 18)
-						const pulse = shapePulse[wrapIndex(activeIndex + slot, shapePulse.length)]
+						const pulse =
+							shapePulse[wrapIndex(activeIndex + slot, shapePulse.length)]
 						const shouldPulse = animationPhase === 'idle' && !shouldReduceMotion
 
 						return (
@@ -452,10 +399,12 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 									opacity: 1,
 									rotate: member.shape.rotate,
 								}}
-								transition={isNormalizingSlots ? { duration: 0 } : travelTransition}
+								transition={
+									isNormalizingSlots ? { duration: 0 } : travelTransition
+								}
 							>
 								<motion.div
-									className="h-full w-full rounded-[18px] bg-primary shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
+									className="h-full w-full rounded-md bg-grayDark shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
 									style={{ transformOrigin: 'center' }}
 									animate={{
 										scaleX: shouldPulse ? pulse.animate.scaleX : 1,
@@ -487,23 +436,33 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 							isVisible &&
 							animationPhase === 'idle' &&
 							!shouldReduceMotion
-						const clampedOffset = clamp(slot, -visibleRange - 1, visibleRange + 1)
+						const clampedOffset = clamp(
+							slot,
+							-visibleRange - 1,
+							visibleRange + 1,
+						)
 						const cardWidth = isActive
 							? activeSize
 							: isDesktop
 								? member.shape.desktopWidth
 								: member.shape.mobileWidth
 						const cardHeight = isActive ? activeSize : shapeHeight
-						const targetX = centerX + clampedOffset * slotSpacing - cardWidth / 2
+						const targetX =
+							centerX + clampedOffset * slotSpacing - cardWidth / 2
 						const inactiveY =
-							(activeSize - shapeHeight) / 2 + member.shape.y * (isDesktop ? 1 : 0.62)
+							(activeSize - shapeHeight) / 2 +
+							member.shape.y * (isDesktop ? 1 : 0.62)
 						const targetY = isActive ? 0 : Math.max(18, inactiveY + 18)
 						const pulse = shapePulse[index % shapePulse.length]
 
 						return (
-							<motion.article
+							<motion.button
 								key={member.id}
-								className="absolute left-0 top-0 cursor-pointer overflow-visible"
+								type="button"
+								aria-label={member.name}
+								aria-pressed={isActive}
+								tabIndex={isVisible ? 0 : -1}
+								className="absolute left-0 top-0 cursor-pointer rounded-md border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
 								style={{
 									zIndex: isActive ? 30 : Math.max(1, 18 - distance),
 									pointerEvents: isVisible ? 'auto' : 'none',
@@ -519,9 +478,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 									rotate: isActive ? 0 : member.shape.rotate,
 								}}
 								transition={{
-									...(isNormalizingSlots
-										? { duration: 0 }
-										: travelTransition),
+									...(isNormalizingSlots ? { duration: 0 } : travelTransition),
 									opacity: {
 										duration: isNormalizingSlots ? 0 : 0.24,
 										ease,
@@ -533,23 +490,19 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 								aria-hidden={!isVisible}
 							>
 								<motion.div
-									className={`relative h-full w-full overflow-hidden border-primary bg-primary ${
+									className={`relative h-full w-full overflow-hidden rounded-md border-primary bg-grayDark ${
 										isActive
 											? 'shadow-[0_8px_20px_rgba(0,0,0,0.09)]'
 											: 'shadow-[0_14px_34px_rgba(0,0,0,0.16)]'
 									}`}
 									style={{ transformOrigin: 'center' }}
 									animate={{
-										borderRadius: isActive ? 30 : 18,
-										borderWidth: isActive ? 4 : 0,
+										borderRadius: shapeRadius,
+										borderWidth: isActive ? 2 : 0,
 										scaleX: shouldPulse ? pulse.animate.scaleX : 1,
 										scaleY: shouldPulse ? pulse.animate.scaleY : 1,
 									}}
 									transition={{
-										borderRadius: {
-											duration: shouldReduceMotion ? 0.12 : 0.34,
-											ease,
-										},
 										borderWidth: {
 											duration: shouldReduceMotion ? 0.12 : 0.28,
 											ease,
@@ -563,7 +516,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 									}}
 								>
 									<motion.div
-										className="absolute inset-0 bg-primary"
+										className="absolute inset-0 bg-grayDark"
 										animate={{
 											opacity: isPortraitOpen ? 0 : 1,
 										}}
@@ -586,164 +539,110 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 									>
 										<Img
 											image={member.image}
-											alt={member.name}
+											alt=""
 											imageWidth={900}
 											className="h-full w-full object-cover"
 										/>
-										<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,transparent_44%,rgba(0,0,0,0.2)_100%)]" />
 									</motion.div>
 
 									<motion.div
-										className="pointer-events-none absolute inset-0 border-primary"
+										className="pointer-events-none absolute inset-0 rounded-md border-grayDark"
 										animate={{
-											borderRadius: isActive ? 26 : 18,
+											borderRadius: shapeRadius,
 											borderWidth: isActive ? 0 : 2,
 											opacity: isActive ? 0 : 0.18,
 										}}
 										transition={{ duration: 0.25, ease }}
 									/>
 								</motion.div>
-
-								<AnimatePresence>
-									{isPortraitOpen && (
-										<motion.div
-											key={`${member.id}-label`}
-											className="absolute -bottom-7 left-1/2 z-20 flex w-[116%] flex-wrap items-center justify-center gap-0 lg:-bottom-9"
-											initial={{
-												opacity: 0,
-												x: '-50%',
-												y: 10,
-											}}
-											animate={{
-												opacity: 1,
-												x: '-50%',
-												y: 0,
-											}}
-											exit={{
-												opacity: 0,
-												x: '-50%',
-												y: 12,
-											}}
-											transition={{
-												duration: shouldReduceMotion ? 0.12 : 0.22,
-												ease,
-											}}
-										>
-											{activeNameParts.map((namePart, namePartIndex) => {
-												const pose = getNamePillPose(
-													namePartIndex,
-													activeNameParts.length,
-													activeMember.id || activeMember.name,
-												)
-
-												return (
-													<motion.span
-														key={`${member.id}-${namePart}-${namePartIndex}`}
-														className="-ml-2 block max-w-full rounded-md border-[3px] border-primary bg-dark px-2 text-center text-2xl font-black italic leading-[0.92] tracking-tight text-primary shadow-[0_4px_12px_rgba(0,0,0,0.14)] first:ml-0 sm:-ml-3 sm:text-3xl lg:-ml-4 lg:px-3 lg:text-5xl"
-														style={{
-															transformOrigin: `${pose.origin.x * 100}% ${pose.origin.y * 100}%`,
-															zIndex: pose.zIndex,
-														}}
-														initial={
-															shouldReduceMotion
-																? { opacity: 0 }
-																: {
-																		opacity: 0,
-																		x: pose.enterX,
-																		y: pose.enterY,
-																		rotate: pose.enterRotate,
-																		scale: 1.65,
-																	}
-														}
-														animate={
-															shouldReduceMotion
-																? { opacity: 1 }
-																: {
-																		opacity: [0, 1, 1, 1],
-																		x: [pose.enterX, pose.x, pose.x + 2, pose.x],
-																		y: [pose.enterY, pose.y, pose.y + 1, pose.y],
-																		rotate: [
-																			pose.enterRotate,
-																			pose.rotate,
-																			pose.rotate + (namePartIndex % 2 === 0 ? 1 : -1),
-																			pose.rotate,
-																		],
-																		scale: [1.65, 0.9, 1.04, 1],
-																		boxShadow: [
-																			'0 28px 38px rgba(0,0,0,0)',
-																			'0 1px 0 rgba(0,0,0,0.16)',
-																			'0 6px 12px rgba(0,0,0,0.13)',
-																			'0 4px 12px rgba(0,0,0,0.14)',
-																		],
-																	}
-														}
-														exit={
-															shouldReduceMotion
-																? { opacity: 0 }
-																: {
-																		opacity: 0,
-																		scale: 0.86,
-																		y: pose.y + 8,
-																		rotate:
-																			pose.rotate +
-																			(namePartIndex % 2 === 0 ? -5 : 5),
-																	}
-														}
-														transition={{
-															duration: shouldReduceMotion ? 0.12 : 0.36,
-															delay: shouldReduceMotion
-																? 0
-																: 0.08 + namePartIndex * 0.075,
-															times: [0, 0.34, 0.62, 1],
-															ease,
-														}}
-													>
-														{namePart}
-													</motion.span>
-												)
-											})}
-										</motion.div>
-									)}
-								</AnimatePresence>
-							</motion.article>
+							</motion.button>
 						)
 					})}
 				</div>
 			</div>
 
+			<div className="team-member-controls relative z-30 mx-auto -mt-8 grid w-[calc(100%-2rem)] max-w-[38rem] shrink-0 grid-cols-[3rem_minmax(0,1fr)_3rem] items-center gap-2 sm:gap-4">
+				<button
+					type="button"
+					onClick={goToPrev}
+					className="flex min-h-12 items-center justify-center rounded-sm transition-transform hover:-translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
+					aria-label="Previous team member"
+					disabled={totalMembers <= 1}
+				>
+					<CartoonLeftArrow className="h-auto w-11" />
+				</button>
+				<div
+					className="flex min-h-16 items-center justify-center"
+					aria-live="polite"
+					aria-atomic="true"
+				>
+					<AnimatePresence mode="wait" initial={false}>
+						<motion.h2
+							key={activeMember.id}
+							className="team-member-name flex flex-wrap items-center justify-center gap-x-1 gap-y-2 py-2 text-lg font-bold italic leading-none tracking-tight lg:text-[clamp(1rem,2.17cqw,1.5rem)]"
+							initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 6 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -4 }}
+							transition={{ duration: shouldReduceMotion ? 0.1 : 0.18, ease }}
+						>
+							{(useFormattedName ? ['formatted-name'] : activeNameParts).map(
+								(namePart, index) => {
+									const pose = getNamePillPose(
+										index,
+										activeNameParts.length,
+										activeMember.id || activeMember.name,
+									)
+									return (
+										<motion.span
+											key={`${activeMember.id}-${index}`}
+											className={`block max-w-full rounded-sm px-1.5 py-0.5 text-dark ${index % 2 ? 'bg-grayDark' : 'bg-primary'}`}
+											initial={false}
+											animate={{ rotate: pose.rotate, x: pose.x, y: pose.y }}
+											transition={{
+												duration: shouldReduceMotion ? 0 : 0.2,
+												ease,
+											}}
+										>
+											{useFormattedName ? (
+												<RichText
+													value={activeMember.nameContent}
+													inline
+													allowLinks={false}
+												/>
+											) : (
+												namePart
+											)}
+										</motion.span>
+									)
+								},
+							)}
+						</motion.h2>
+					</AnimatePresence>
+				</div>
+				<button
+					type="button"
+					onClick={goToNext}
+					className="flex min-h-12 items-center justify-center rounded-sm transition-transform hover:translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
+					aria-label="Next team member"
+					disabled={totalMembers <= 1}
+				>
+					<CartoonLeftArrow className="h-auto w-11 rotate-180" />
+				</button>
+			</div>
+
 			<div
-				className="relative mx-4 mt-1 shrink-0 overflow-hidden rounded-[1.75rem] bg-primary px-4 py-4 text-dark shadow-[0_14px_34px_rgba(0,0,0,0.14)] sm:mx-8 lg:mx-auto lg:mt-0 lg:w-[78%] lg:max-w-[48rem] lg:rounded-[2rem] lg:px-6 lg:py-5"
-				style={{ height: bioPanelHeight }}
+				className={`theme-equipe-bio mx-auto mt-5 min-h-36 shrink-0 text-primary lg:mb-auto lg:mt-6 ${EDITORIAL_COPY_WIDTH}`}
 			>
-				<AnimatePresence mode="wait">
+				<AnimatePresence mode="wait" initial={false}>
 					<motion.div
 						key={activeMember.id}
-						className="no-scrollbar h-full overflow-y-auto pr-1"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
+						className={`mx-auto max-w-[60ch] ${EDITORIAL_BODY_TEXT}`}
+						initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 6 }}
+						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0 }}
-						transition={{ duration: shouldReduceMotion ? 0.12 : 0.22, ease }}
+						transition={{ duration: shouldReduceMotion ? 0.1 : 0.18, ease }}
 					>
-						<motion.p
-							className="text-base font-normal leading-[1.18] tracking-tight text-dark lg:text-xl lg:leading-[1.3]"
-							initial={{
-								opacity: 0,
-								y: shouldReduceMotion ? 0 : 16,
-								filter: shouldReduceMotion ? 'blur(0px)' : 'blur(6px)',
-							}}
-							animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-							exit={{
-								opacity: 0,
-								y: shouldReduceMotion ? 0 : -10,
-								filter: shouldReduceMotion ? 'blur(0px)' : 'blur(4px)',
-							}}
-							transition={{
-								duration: shouldReduceMotion ? 0.12 : 0.34,
-								ease,
-							}}
-						>
-							{activeMember.description}
-						</motion.p>
+						<RichText value={activeMember.description} />
 					</motion.div>
 				</AnimatePresence>
 			</div>

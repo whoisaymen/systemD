@@ -1,69 +1,79 @@
 'use client'
-import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
-import { PortableText } from '@portabletext/react'
+import RichText from '@/components/common/RichText'
+import {
+	EDITORIAL_BODY_TEXT,
+	EDITORIAL_COPY_WIDTH,
+} from '@/components/common/editorialStyles'
+import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import { renderParagraph } from '../common/RenderParagraph'
 import BackToTopButton from '../common/BackToTop'
 import { useState } from 'react'
-import CloseIcon from '../common/CloseIcon'
-import SectionTitle from '../ui/SectionTitle'
+import { createPortal } from 'react-dom'
+import { Maximize2 } from 'lucide-react'
+import FestivalCarousel, {
+	type GalleryRect,
+} from '../festival/FestivalCarousel'
 
 interface LongStoryProps {
 	content: any[]
 	lang: string
 }
 
-const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
-	const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
+type FullscreenImage = {
+	image: any
+	originRect: GalleryRect
+}
 
-	const getLocalizedValue = (array: any[], lang: string) =>
-		array?.find((v) => v?.language === lang || v?._key === lang)?.value
+const getStableNumber = (seed: string, minimum: number, maximum: number) => {
+	let hash = 2166136261
+
+	for (let index = 0; index < seed.length; index += 1) {
+		hash ^= seed.charCodeAt(index)
+		hash = Math.imul(hash, 16777619)
+	}
+
+	return minimum + ((hash >>> 0) % (maximum - minimum + 1))
+}
+
+const quoteWords = (value: any): any[] => {
+	if (typeof value === 'string') return value.split(/\s+/).filter(Boolean)
+	if (!Array.isArray(value)) return []
+	return value.flatMap((block) =>
+		(block.children ?? []).flatMap((child: any) =>
+			(typeof child.text === 'string'
+				? child.text.split(/\s+/).filter(Boolean)
+				: []
+			).map((word: string, index: number) => [
+				{
+					...block,
+					style: 'normal',
+					children: [{ ...child, _key: `${child._key}-${index}`, text: word }],
+				},
+			]),
+		),
+	)
+}
+
+const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
+	const [fullscreenImage, setFullscreenImage] =
+		useState<FullscreenImage | null>(null)
 
 	return (
-		<div className="py-8" id="long-story">
+		<div className={`${EDITORIAL_COPY_WIDTH} pb-8`} id="long-story">
 			<div className="fixed bottom-4 right-4 z-50 sm:hidden">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 
-			<AnimatePresence>
-				{fullscreenImage && (
-					<motion.div
-						className="fixed inset-0 z-50 flex items-center justify-center bg-dark"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						transition={{ duration: 0.25 }}
-						onClick={() => setFullscreenImage(null)}
-					>
-						<motion.img
-							src={fullscreenImage}
-							alt="Fullscreen"
-							className="max-h-[95vh] max-w-[95vw] rounded-lg border-[3px] border-primary shadow-2xl"
-							initial={{ scale: 0.95, opacity: 0 }}
-							animate={{ scale: 1, opacity: 1 }}
-							exit={{ scale: 0.95, opacity: 0 }}
-							transition={{ duration: 0.25 }}
-							onClick={(e) => e.stopPropagation()}
-						/>
-						<motion.button
-							className="z-60 absolute right-4 top-4 rounded-full bg-dark/80 p-2 text-primary"
-							initial={{ opacity: 0, y: -20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: -20 }}
-							transition={{ duration: 0.2 }}
-							onClick={(e) => {
-								e.stopPropagation()
-								setFullscreenImage(null)
-							}}
-						>
-							<CloseIcon
-								theme={{ fill: 'var(--color-primary)' }}
-								className="h-auto w-5 -rotate-180 lg:w-9"
-							/>
-						</motion.button>
-					</motion.div>
-				)}
-			</AnimatePresence>
+			{fullscreenImage && createPortal(
+				<FestivalCarousel
+					photos={[{ photo: fullscreenImage.image }]}
+					originRect={fullscreenImage.originRect}
+					onClose={() => setFullscreenImage(null)}
+					variant="image"
+				/>,
+				document.body,
+			)}
 			{/* 
 			<SectionTitle className="lg:py-8" text="Big Bang" /> */}
 
@@ -75,39 +85,42 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={block._key || index}
-								className="relative flex flex-wrap items-center justify-center gap-2 rounded-none px-5 py-8 sm:gap-4 lg:px-20"
+								className="relative flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 rounded-none py-4 sm:gap-x-3 lg:-mx-[6cqw]"
 							>
-								<span className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-primary lg:text-7xl">
+								<span className="inline-block text-[1.05rem] font-bold leading-none tracking-tight text-primary lg:text-[3.15rem]">
 									"
 								</span>
-								{getLocalizedValue(block.text, lang)
-									.split(' ')
-									.map((word: string, index: number) => {
-										// Generate random rotation and position
-										const randomRotation = Math.floor(Math.random() * 21) - 10 // Random rotation between -5 and 5 degrees
-										const randomMarginTop = Math.floor(Math.random() * 10) - 5 // Random margin-top between -5px and 5px
-										const randomMarginLeft = Math.floor(Math.random() * 10) - 5 // Random margin-left between -5px and 5px
+								{quoteWords(localizedRichText(block.text, lang)).map(
+									(word: any, wordIndex: number) => {
+										const seed = `${block._key ?? index}-${lang}-${wordIndex}-${richTextToPlainText(word)}`
+										const rotation = getStableNumber(seed, -10, 10)
+										const marginTop = getStableNumber(`${seed}-top`, -5, 5)
+										const marginLeft = getStableNumber(`${seed}-left`, -5, 5)
 
 										return (
 											<span
-												key={index}
-												className="inline-block text-2xl font-bold leading-[1.2] tracking-tight text-primary lg:text-5xl"
+												key={wordIndex}
+												className="inline-block text-[1.05rem] font-bold leading-[1.1] tracking-tight text-primary lg:text-[2.1rem]"
 												style={{
-													transform: `rotate(${randomRotation}deg)`,
-													marginTop: `${randomMarginTop}px`,
-													marginLeft: `${randomMarginLeft}px`,
+													transform: `rotate(${rotation}deg)`,
+													marginTop: `${marginTop}px`,
+													marginLeft: `${marginLeft}px`,
 												}}
 											>
-												{word}
+												<RichText value={word} inline />
 											</span>
 										)
-									})}
-								<span className="inline-block text-3xl font-bold leading-[1.2] tracking-tight text-primary lg:text-7xl">
+									},
+								)}
+								<span className="inline-block text-[1.3125rem] font-bold leading-none tracking-tight text-primary lg:text-[3.15rem]">
 									"
 								</span>
 								{block.author && (
 									<span className="pl-4 pt-0 text-right font-mono text-sm font-normal tracking-[-0.1em] text-grayDark lg:mt-0 lg:text-base">
-										{block.author}
+										<RichText
+											value={localizedRichText(block.author, lang)}
+											inline
+										/>
 									</span>
 								)}
 							</div>
@@ -119,24 +132,17 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={index}
-								className="flex flex-col items-center justify-center lg:py-8"
+								className={`flex flex-col items-center justify-center lg:pb-8 ${index > 0 ? 'lg:pt-8' : ''}`}
 							>
 								<div
-									className="px-4 text-base leading-[1.2] tracking-tight text-primary lg:px-16 lg:text-xl"
+									className={`${EDITORIAL_BODY_TEXT} w-full text-primary`}
 									style={{ whiteSpace: 'pre-wrap' }} // Preserve spaces and line breaks
 								>
-									{block.text
-										.filter((paragraph: any) => paragraph.language === lang || paragraph._key === lang)
-										.map((paragraph: any, idx: number) => (
-											<p key={idx}>
-												{renderParagraph(
-													paragraph,
-													[],
-													'bg-grayDark text-dark',
-													'!w-[6rem] !md:w-[100rem] !px-1 !py-0.5 !rounded-[0.15rem]',
-												)}
-											</p>
-										))}
+									{renderParagraph(
+										{ value: localizedRichText(block.text, lang) },
+										[],
+										'theme-bigbang-system-d-tag bg-grayDark text-dark',
+									)}
 								</div>
 							</div>
 						)
@@ -145,7 +151,10 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						// Handle cases where video or image is provided
 						if (block.video) {
 							return (
-								<div key={index} className="relative mx-auto w-full max-w-4xl">
+								<div
+									key={index}
+									className="relative mx-auto w-full"
+								>
 									<video
 										controls
 										className="w-full rounded-md"
@@ -155,7 +164,10 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									</video>
 									{block.caption && (
 										<p className="mt-2 text-center text-sm italic text-primary">
-											{getLocalizedValue(block.caption, lang)}
+											<RichText
+												value={localizedRichText(block.caption, lang)}
+												inline
+											/>
 										</p>
 									)}
 								</div>
@@ -163,9 +175,12 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						}
 
 						if (block.uploadedVideo?.asset) {
-							const uploadedVideoUrl = `/${block.uploadedVideo.asset._ref.split('-')[1]}-${block.uploadedVideo.asset._ref.split('-')[2]}.${block.uploadedVideo.asset._ref.split('-')[3]}`
+							const uploadedVideoUrl = block.uploadedVideo.asset.url
 							return (
-								<div key={index} className="relative mx-auto w-full max-w-4xl">
+								<div
+									key={index}
+									className="relative mx-auto w-full"
+								>
 									<video
 										controls
 										className="w-full rounded-md"
@@ -175,7 +190,10 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									</video>
 									{block.caption && (
 										<p className="mt-2 text-center text-sm italic text-primary">
-											{getLocalizedValue(block.caption, lang)}
+											<RichText
+												value={localizedRichText(block.caption, lang)}
+												inline
+											/>
 										</p>
 									)}
 								</div>
@@ -186,20 +204,51 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 							return (
 								<div
 									key={index}
-									className="relative mx-4 overflow-hidden rounded-xl border-2 border-primary shadow-md sm:mx-0 sm:h-auto sm:border-[3px] lg:mx-16 lg:mt-8"
-									onClick={() => setFullscreenImage(block.file.asset.url)}
+									className="relative mx-auto w-full lg:mt-8"
 								>
-									{/* <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-primary opacity-75 mix-blend-screen" /> */}
-									<Image
-										src={block.file.asset.url}
-										alt={getLocalizedValue(block.caption, lang) || 'Image'}
-										width={block.file.asset.metadata.dimensions.width}
-										height={block.file.asset.metadata.dimensions.height}
-										className="aspect-video h-full w-full object-cover object-[100%_45%]"
-									/>
+									<button
+										type="button"
+										className="group/story-image relative block w-full overflow-hidden shadow-md"
+										aria-expanded={Boolean(fullscreenImage?.image === block.file)}
+										onClick={(event) => {
+											const rect = event.currentTarget.getBoundingClientRect()
+
+											setFullscreenImage({
+												image: block.file,
+												originRect: {
+													height: rect.height,
+													left: rect.left,
+													top: rect.top,
+													width: rect.width,
+												},
+											})
+										}}
+										aria-label="Open image fullscreen"
+									>
+										<Image
+											src={block.file.asset.url}
+											alt={
+												richTextToPlainText(
+													localizedRichText(block.caption, lang),
+												) || 'Image'
+											}
+											width={block.file.asset.metadata.dimensions.width}
+											height={block.file.asset.metadata.dimensions.height}
+											className="aspect-video h-full w-full object-cover object-[100%_45%]"
+										/>
+										<span
+											aria-hidden="true"
+											className="absolute right-8 top-8 flex h-8 w-8 items-center justify-center rounded-md border-2 border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark group-hover/story-image:opacity-100 group-focus-visible/story-image:opacity-100 [@media(hover:none)]:opacity-100"
+										>
+											<Maximize2 className="h-5 w-5" />
+										</span>
+									</button>
 									{block.caption && (
 										<p className="mt-2 text-center text-sm italic text-primary">
-											{getLocalizedValue(block.caption, lang)}
+											<RichText
+												value={localizedRichText(block.caption, lang)}
+												inline
+											/>
 										</p>
 									)}
 								</div>

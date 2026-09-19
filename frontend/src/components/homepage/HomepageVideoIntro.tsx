@@ -1,13 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Maximize2, Minimize2 } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 
 import LogoShortAnimated from '@/components/svgs/LogoShortAnimated'
+import MediaExpandIcon from '@/components/common/MediaExpandIcon'
 
-const INTRO_DELAY_MS = 2500
-const SQUEEZE_DURATION_MS = 1300
+const INTRO_DELAY_MS = 1000
+const SQUEEZE_DURATION_MS = 1000
 const SQUEEZE_EASE = 'cubic-bezier(0.76, 0, 0.24, 1)'
 const HOME_VIDEO_EXPANDED_EVENT = 'homepage-video-expanded-change'
 export const SKIP_HOME_INTRO_KEY = 'system-d-skip-home-intro-once'
@@ -70,29 +70,30 @@ const VideoChrome = () => (
 		<div className="absolute z-30 flex items-center justify-center sm:hidden">
 			<LogoShortAnimated
 				className="w-[85vw] -rotate-6 text-primary"
-				theme={{
-					fill: 'var(--color-primary)',
-					stroke: 'var(--color-dark)',
-				}}
+				theme={{ fill: 'var(--color-primary)', stroke: 'var(--color-dark)' }}
 			/>
 		</div>
 	</>
 )
 
-const HomepageVideo = () => (
-	<video
-		className="h-full w-full transform rounded-none border-0 object-cover"
-		autoPlay
-		loop
-		muted
-		playsInline
-	>
-		<source src="/assets/videos/teaser2.mp4" type="video/mp4" />
-		Your browser does not support the video tag.
-	</video>
-)
+const HomepageVideo = ({ homepage }: { homepage?: any }) => {
+	const src =
+		homepage?.backgroundVideoUrlResolved || homepage?.backgroundVideoUrl
+	if (!src) return null
+	return (
+		<video
+			key={src}
+			className="h-full w-full transform rounded-none border-0 object-cover"
+			autoPlay
+			loop
+			muted
+			playsInline
+			src={src}
+		/>
+	)
+}
 
-const HomepageVideoIntro = () => {
+const HomepageVideoIntro = ({ homepage }: { homepage?: any }) => {
 	const reduceMotion = useReducedMotion()
 	const shouldReduceMotion = reduceMotion === true
 	const [initialIntroState] = useState(getInitialIntroState)
@@ -161,14 +162,14 @@ const HomepageVideoIntro = () => {
 		<>
 			<div className="relative flex h-svh w-full items-center justify-center overflow-hidden tracking-tight lg:hidden">
 				<VideoChrome />
-				<HomepageVideo />
+				<HomepageVideo homepage={homepage} />
 			</div>
 
 			<div
 				data-testid="homepage-video-shell"
 				data-expanded={isExpanded}
-				className={`shadowtest fixed z-40 hidden overflow-hidden bg-dark tracking-tight transition-[left,right,top,bottom,border-radius] lg:block ${
-					shouldAnimateShell ? 'duration-[1300ms]' : 'duration-0'
+				className={`group/homepage-video shadowtest fixed z-40 hidden overflow-hidden bg-dark tracking-tight transition-[left,right,top,bottom,border-radius] lg:block ${
+					shouldAnimateShell ? 'duration-[1000ms]' : 'duration-0'
 				} ${
 					isExpanded
 						? 'bottom-0 left-0 right-0 top-0 rounded-none'
@@ -179,7 +180,7 @@ const HomepageVideoIntro = () => {
 				}}
 			>
 				<VideoChrome />
-				<HomepageVideo />
+				<HomepageVideo homepage={homepage} />
 
 				{showControl && (
 					<motion.button
@@ -191,20 +192,18 @@ const HomepageVideoIntro = () => {
 							}
 							updateExpandedState(!isExpanded)
 						}}
-						className="absolute bottom-8 right-8 z-40 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-2 border-primary bg-dark/90 text-primary shadow-md backdrop-blur transition-colors hover:bg-primary hover:text-dark focus:outline-none"
+						className="pointer-events-none absolute right-8 top-8 z-40 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-[1.5px] border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark focus:outline-none focus-visible:pointer-events-auto focus-visible:opacity-100 group-hover/homepage-video:pointer-events-auto group-hover/homepage-video:opacity-100"
 						aria-label={
-							isExpanded ? 'Shrink homepage video' : 'Expand homepage video'
+							isExpanded
+								? 'Narrow video and show menu columns'
+								: 'Widen video and hide menu columns'
 						}
-						initial={{ opacity: 0, scale: 0.8, y: 8 }}
-						animate={{ opacity: 1, scale: 1, y: 0 }}
+						initial={{ scale: 0.8, y: 8 }}
+						animate={{ scale: 1, y: 0 }}
 						whileHover={{ scale: 1.06 }}
 						transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
 					>
-						{isExpanded ? (
-							<Minimize2 aria-hidden="true" className="h-5 w-5" />
-						) : (
-							<Maximize2 aria-hidden="true" className="h-5 w-5" />
-						)}
+						<MediaExpandIcon expanded={isExpanded} />
 					</motion.button>
 				)}
 			</div>

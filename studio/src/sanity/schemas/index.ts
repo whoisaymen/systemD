@@ -1,5 +1,6 @@
 // documents
 import site from './documents/site'
+import filmSubmissionSettings from './documents/filmSubmissionSettings'
 import page from './documents/page'
 import blogPost from './documents/blog.post'
 import blogCategory from './documents/blog.category'
@@ -12,6 +13,7 @@ import siteTheme from './documents/theme'
 import person from './documents/person'
 import pricing from './documents/pricing'
 import event from './documents/event'
+import eventType from './documents/eventType'
 import reputation from './documents/reputation'
 import testimonial from './documents/testimonial'
 import fabrique from './documents/lafabrique'
@@ -62,7 +64,6 @@ import stepList from './modules/step-list'
 import tabbedContent from './modules/tabbed-content'
 import testimonialFeatured from './modules/testimonial.featured'
 import testimonialList from './modules/testimonial-list'
-import callforparticipation from './documents/callForParticipation'
 import internationalizedBlock from './documents/internationalizedBlock'
 import quote from './modules/quote'
 import paragraph from './modules/paragraph'
@@ -84,6 +85,7 @@ import filmSubmission from './documents/filmSubmission'
 export const schemaTypes = [
 	// documents
 	site,
+	filmSubmissionSettings,
 	page,
 	blogPost,
 	blogCategory,
@@ -98,6 +100,7 @@ export const schemaTypes = [
 	reputation,
 	testimonial,
 	event,
+	eventType,
 	fabrique,
 	lefestival,
 	festival,

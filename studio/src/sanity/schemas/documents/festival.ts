@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { richTextToPlainText } from '../../lib/richTextPreview'
 
 export default defineType({
 	name: 'festival',
@@ -15,7 +16,21 @@ export default defineType({
 		defineField({
 			name: 'venue',
 			title: 'Lieu',
-			type: 'string',
+			type: 'array',
+			of: [{ type: 'block' }],
+		}),
+		defineField({
+			name: 'startDate',
+			title: 'Date de début',
+			type: 'date',
+			description: "Optionnel. Utilisée pour afficher les dates de l'édition.",
+		}),
+		defineField({
+			name: 'endDate',
+			title: 'Date de fin',
+			type: 'date',
+			description: 'Optionnel. À remplir pour une édition sur plusieurs jours.',
+			validation: (Rule) => Rule.min(Rule.valueOfField('startDate')),
 		}),
 		defineField({
 			name: 'visual',
@@ -28,13 +43,9 @@ export default defineType({
 		defineField({
 			name: 'description',
 			title: 'Description',
-			type: 'internationalizedArrayText',
-			validation: (Rule) => Rule.max(250),
-		}),
-		defineField({
-			name: 'text',
-			title: 'Texte',
-			type: 'internationalizedBlock',
+			type: 'internationalizedArrayRichText',
+			description:
+				'Présentation complète de l’édition. Utilisez « Titre de niveau 2 » pour une introduction plus grande et « Normal » pour les paragraphes.',
 		}),
 		defineField({
 			name: 'pressLink',
@@ -83,6 +94,41 @@ export default defineType({
 			type: 'array',
 			of: [{ type: 'expoPhotoBlock' }],
 		}),
+		defineField({
+			name: 'overviewTitle',
+			title: 'Titre : présentation',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'filmsTitle',
+			title: 'Titre : sélection des films',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'exhibitionTitle',
+			title: 'Titre : exposition photo',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'photosTitle',
+			title: 'Titre : galerie photo',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'juryTitle',
+			title: 'Titre : jury',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'pressLinkLabel',
+			title: 'Texte du lien de presse',
+			type: 'internationalizedArrayRichText',
+		}),
+		defineField({
+			name: 'aftermovieLinkLabel',
+			title: 'Texte du lien de l’aftermovie',
+			type: 'internationalizedArrayRichText',
+		}),
 	],
 	preview: {
 		select: {
@@ -93,7 +139,7 @@ export default defineType({
 		prepare({ title, subtitle, media }) {
 			return {
 				title: `Édition ${title}`,
-				subtitle,
+				subtitle: richTextToPlainText(subtitle),
 				media,
 			}
 		},

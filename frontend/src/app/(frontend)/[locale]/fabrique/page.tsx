@@ -16,10 +16,9 @@ async function getFabrique() {
 	const query = groq`
     {
       "fabrique": *[_type == 'fabrique'][0]{
-        title,
         description,
-        actions,
-        vision
+        closingText,
+        actions
       }
     }
   `

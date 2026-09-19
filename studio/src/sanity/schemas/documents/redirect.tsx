@@ -27,24 +27,8 @@ export default defineType({
 			name: 'permanent',
 			type: 'boolean',
 			initialValue: true,
-			description: (
-				<>
-					<p>
-						If <code>true</code> will use the 308 status code which instructs
-						clients/search engines to cache the redirect forever, if{' '}
-						<code>false</code> will use the 307 status code which is temporary
-						and is not cached.
-					</p>
-					<p>
-						<a
-							href="https://nextjs.org/docs/app/api-reference/next-config-js/redirects"
-							target="_blank"
-						>
-							Next.js redirects documentation
-						</a>
-					</p>
-				</>
-			),
+			description:
+				'Une redirection permanente utilise le code 308 et peut être conservée dans le cache. Une redirection temporaire utilise le code 307.',
 		}),
 	],
 	preview: {

@@ -3,6 +3,7 @@ import processUrl from '@/lib/processUrl'
 import { Feed } from 'feed'
 import { escapeHTML, toHTML } from '@portabletext/to-html'
 import { urlFor } from '@/sanity/lib/image'
+import { richTextToPlainText } from '@/lib/richText'
 
 export async function GET() {
 	const { blog, posts, copyright } = await fetchSanity<{
@@ -29,11 +30,8 @@ export async function GET() {
 		}`,
 	})
 
-	if (!blog || !posts) {
-		return new Response(
-			'Missing either a blog page or blog posts in Sanity Studio',
-			{ status: 500 },
-		)
+	if (!blog) {
+		return new Response('This site does not have a blog feed.', { status: 404 })
 	}
 
 	const url = processUrl(blog)
@@ -57,7 +55,9 @@ export async function GET() {
 			link: processUrl(post),
 			published: new Date(post.publishDate),
 			date: new Date(post.publishDate),
-			author: post.authors?.map((author) => ({ name: author.name })),
+			author: post.authors?.map((author) => ({
+				name: richTextToPlainText(author.name),
+			})),
 			content: toHTML(post.body, {
 				components: {
 					types: {

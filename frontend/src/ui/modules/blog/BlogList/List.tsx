@@ -2,6 +2,7 @@
 
 import PostPreview from '../PostPreview'
 import { useCategory } from '../store'
+import { filterPosts } from './filterPosts'
 
 export default function List({
 	posts,
@@ -9,7 +10,8 @@ export default function List({
 }: {
 	posts: Sanity.BlogPost[]
 } & React.ComponentProps<'ul'>) {
-	const filtered = filterPosts(posts)
+	const { category } = useCategory()
+	const filtered = filterPosts(posts, category)
 
 	if (!filtered.length) {
 		return <div>No posts found...</div>
@@ -23,15 +25,5 @@ export default function List({
 				</li>
 			))}
 		</ul>
-	)
-}
-
-export function filterPosts(posts: Sanity.BlogPost[]) {
-	const { category } = useCategory()
-
-	return posts.filter(
-		(post) =>
-			category === 'All' ||
-			post.categories?.some(({ slug }) => slug?.current === category),
 	)
 }

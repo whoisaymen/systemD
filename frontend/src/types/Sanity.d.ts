@@ -91,7 +91,7 @@ declare global {
 		}>
 
 		type Person = SanityDocument<{
-			name: string
+			name: string | import('next-sanity').PortableTextBlock[]
 			image?: Image
 		}>
 

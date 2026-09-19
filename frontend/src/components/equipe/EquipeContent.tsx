@@ -1,17 +1,14 @@
 'use client'
 import { motion } from 'motion/react'
 import Img from '@/ui/Img'
+import RichText from '@/components/common/RichText'
+import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import { useState, useEffect, useRef } from 'react'
 import ArrowRight from '../common/ArrowRight'
 
 interface EquipeContentProps {
 	persons: any[]
 	language: string
-}
-
-const getLocalizedValue = (array: any[], lang: string) => {
-	const item = array.find((entry) => entry.language === lang || entry._key === lang)
-	return item ? item.value : ''
 }
 
 const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
@@ -162,7 +159,7 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 															? `/${person.image.asset._ref.split('-')[1]}-${person.image.asset._ref.split('-')[2]}.${person.image.asset._ref.split('-')[3]}`
 															: ''
 													}
-													alt={person.name}
+													alt={richTextToPlainText(person.name)}
 													className="aspect-square h-full w-full object-cover"
 												/>
 											</div>
@@ -171,26 +168,26 @@ const EquipeContent: React.FC<EquipeContentProps> = ({ persons, language }) => {
 												<div className="mb-4 flex flex-col">
 													{person.name && (
 														<h3 className="inline-block text-xl font-bold tracking-tighter text-primary sm:text-2xl">
-															{person.name}
+															<RichText value={person.name} inline />
 														</h3>
-													)}
-													{person.title && (
-														<p className="mt-0 inline-block self-start rounded-md bg-grayDark px-1 text-left text-xs font-bold uppercase tracking-tighter text-dark">
-															{getLocalizedValue(person.title, language)}
-														</p>
 													)}
 												</div>
 												{person.biography && (
-													<p className="text-base leading-tight tracking-tighter text-primary sm:text-sm">
-														{getLocalizedValue(person.biography, language)}
-													</p>
+													<div className="text-base leading-tight tracking-tighter text-primary sm:text-sm">
+														<RichText
+															value={localizedRichText(
+																person.biography,
+																language,
+															)}
+														/>
+													</div>
 												)}
 											</div>
 										</div>
 									) : (
 										<div
 											className="mt-20 aspect-square w-full cursor-pointer rounded-3xl bg-primary"
-											title={person.name}
+											title={richTextToPlainText(person.name)}
 										/>
 									)}
 								</motion.div>

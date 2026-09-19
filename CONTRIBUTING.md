@@ -1,49 +1,42 @@
-# Contributing to SanityPress
+# Contributing to System D
 
-Thanks for contributing to SanityPress! Here's how to get started:
+Follow [the local setup guide](README.md) and work from the repository root.
+The frontend and Sanity Studio are npm workspaces with one shared lockfile.
 
-1. Fork & Clone the Repo
+Create a branch, keep changes focused, and follow the conventions in the files
+you edit. Include a regression test when fixing behavior covered by the test
+suite. Avoid broad formatting changes unrelated to your work.
 
-Fork the repo and clone your fork locally.
-
-```sh
-git clone https://github.com/your-username/sanitypress.git
-```
-
-2. Create a Branch
-
-Make a new branch for your changes.
+Before opening a pull request, run:
 
 ```sh
-git checkout -b feature-or-bugfix-name
+npm run check
+npm run build
 ```
 
-3. Make Changes
+The frontend build requires the environment and Sanity access described in the
+README. GitHub Actions runs lint, type checking, regression tests, and the Studio
+build without private tokens. Vercel validates the frontend build using its own
+environment configuration.
 
-Ensure your code follows existing conventions, is documented, and includes tests (if relevant).
+For dependency updates, use the pinned Node and npm versions, update dependencies
+from the root, and commit the affected manifests together with
+`package-lock.json`. Check peer dependencies and release notes before updating a
+major version; do not bypass compatibility checks with `--force` or
+`--legacy-peer-deps`. After an update, verify `npm ci` and the checks above.
 
-4. Commit
+npm 12 also requires explicit approval for dependency installation scripts. The
+root `allowScripts` policy records the reviewed native build dependencies. After
+updating one of these packages, review its script and run
+`npm approve-scripts <package>` from the repository root to update the
+version-specific approval.
+`npm install-scripts ls` lists pending scripts without changing anything. Commit
+the updated policy with the dependency changes and verify a clean `npm ci`.
 
-Write clear commit messages and reference issue numbers.
+Keep `.nvmrc`, `.node-version`, root `engines` and `packageManager`, and the runtime
+versions in the README and deployment guide consistent when updating Node or npm.
+CI reads these pins directly.
 
-```sh
-git commit -m "Brief description of changes"
-```
-
-5. Push
-
-Push your branch to your fork.
-
-```sh
-git push origin feature-or-bugfix-name
-```
-
-6. Submit a PR
-
-Open a pull request to the main branch.
-
-7. Issues & Bugs
-
-For bugs, open an issue with details. Feature requests are welcome, too.
-
-## 🖤 Thanks for helping make SanityPress better!
+Describe the resulting behavior and validation in your pull request. Mention any
+environment, hosting, or content migration steps reviewers need to apply. Never
+commit credentials or migration backups.

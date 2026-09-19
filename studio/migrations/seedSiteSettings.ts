@@ -97,9 +97,9 @@ const themes: ThemeSeed[] = [
 		id: 'theme-system-d-neon-black',
 		title: 'Noir / Néon',
 		slug: 'system-d-neon-black',
-		primary: '#DFFF00',
-		dark: '#10110B',
-		grayDark: '#A855F7',
+		primary: '#FF9D4D',
+		dark: '#253237',
+		grayDark: '#7C6E6E',
 		imageGrade: {
 			gray: 0.25,
 			sepia: 0.18,

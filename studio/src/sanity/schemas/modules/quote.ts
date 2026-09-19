@@ -1,3 +1,4 @@
+import { localizedRichTextPreview } from '../../lib/richTextPreview'
 import { defineField, defineType } from 'sanity'
 import { FaQuoteRight } from 'react-icons/fa'
 
@@ -9,12 +10,13 @@ export default defineType({
 		defineField({
 			name: 'text',
 			title: 'Texte',
-			type: 'internationalizedArrayText',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'author',
 			title: 'Auteur',
-			type: 'string',
+			type: 'array',
+			of: [{ type: 'block' }],
 		}),
 	],
 	preview: {
@@ -23,8 +25,7 @@ export default defineType({
 			author: 'author',
 		},
 		prepare({ text, author }) {
-			const getLocalizedValue = (array: any[], lang: string) =>
-				array?.find((v) => v?.language === lang || v?._key === lang)?.value
+			const getLocalizedValue = localizedRichTextPreview
 
 			const displayText =
 				getLocalizedValue(text, 'fr') ||
@@ -33,7 +34,7 @@ export default defineType({
 				''
 
 			return {
-				title: author || 'Unknown Author',
+				title: localizedRichTextPreview(author) || 'Unknown Author',
 				subtitle: displayText.substring(0, 100), // Show the first 100 characters of the text
 				media: FaQuoteRight,
 			}

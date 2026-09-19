@@ -1,4 +1,5 @@
 export const THEME_STORAGE_KEY = 'system-d-theme'
+export const THEME_CHANGE_EVENT = 'system-d-theme-change'
 
 type ThemeImageGradeInput = Partial<{
 	gray: number | string
@@ -22,6 +23,31 @@ export type ThemeCombo = {
 		hue: string
 		contrast: string
 		brightness: string
+	}
+}
+
+export function applyThemeColors(
+	{ key, primary, dark, grayDark, imageGrade }: ThemeCombo,
+	root: HTMLElement,
+) {
+	// These optional Noir Lab overrides must never leak into another palette.
+	for (const property of [
+		'--color-theme-content',
+		'--color-theme-content-rgb',
+		'--color-theme-text',
+		'--color-theme-box-edge',
+	]) {
+		root.style.removeProperty(property)
+	}
+	root.dataset.theme = key
+	for (const [name, color] of Object.entries({ primary, dark, grayDark })) {
+		const hex = color.replace('#', '')
+		const rgb = [0, 2, 4].map(offset => parseInt(hex.slice(offset, offset + 2), 16)).join(' ')
+		root.style.setProperty(`--color-${name}`, color)
+		root.style.setProperty(`--color-${name}-rgb`, rgb)
+	}
+	for (const [name, value] of Object.entries(imageGrade)) {
+		root.style.setProperty(`--image-grade-${name}`, value)
 	}
 }
 
@@ -89,9 +115,9 @@ export const FALLBACK_THEME_COMBOS: ThemeCombo[] = [
 	{
 		key: 'system-d-neon-black',
 		name: 'Noir / Néon',
-		primary: '#DFFF00',
-		dark: '#10110B',
-		grayDark: '#A855F7',
+		primary: '#FF9D4D',
+		dark: '#253237',
+		grayDark: '#7C6E6E',
 		imageGrade: {
 			gray: '0.25',
 			sepia: '0.18',
@@ -127,50 +153,6 @@ export function resolveThemeCombos(site?: Pick<Sanity.Site, 'themes'> | null) {
 			FALLBACK_THEME_COMBOS[index] ?? FALLBACK_THEME_COMBOS[0],
 		),
 	)
-}
-
-export function buildThemeInitializerScript(themes: ThemeCombo[]) {
-	const serializedThemes = JSON.stringify(
-		themes.length ? themes : FALLBACK_THEME_COMBOS,
-	)
-
-	return `
-(function () {
-	try {
-		var combos = ${serializedThemes};
-		var savedValue = window.localStorage.getItem('${THEME_STORAGE_KEY}');
-		var savedNumber = Number.parseInt(savedValue || '', 10);
-		var index = combos.findIndex(function (combo) {
-			return combo.key === savedValue;
-		});
-
-		if (index < 0 && Number.isFinite(savedNumber) && combos[savedNumber]) {
-			index = savedNumber;
-		}
-
-		var combo = combos[index >= 0 ? index : 0];
-		var hexToRgb = function (hex) {
-			var value = /^#?([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2})$/i.exec(hex);
-			return value
-				? parseInt(value[1], 16) + ' ' + parseInt(value[2], 16) + ' ' + parseInt(value[3], 16)
-				: '0 0 0';
-		};
-		var root = document.documentElement;
-		root.style.setProperty('--color-primary', combo.primary);
-		root.style.setProperty('--color-primary-rgb', hexToRgb(combo.primary));
-		root.style.setProperty('--color-dark', combo.dark);
-		root.style.setProperty('--color-dark-rgb', hexToRgb(combo.dark));
-		root.style.setProperty('--color-grayDark', combo.grayDark);
-		root.style.setProperty('--color-grayDark-rgb', hexToRgb(combo.grayDark));
-		root.style.setProperty('--image-grade-gray', combo.imageGrade.gray);
-		root.style.setProperty('--image-grade-sepia', combo.imageGrade.sepia);
-		root.style.setProperty('--image-grade-saturate', combo.imageGrade.saturate);
-		root.style.setProperty('--image-grade-hue', combo.imageGrade.hue);
-		root.style.setProperty('--image-grade-contrast', combo.imageGrade.contrast);
-		root.style.setProperty('--image-grade-brightness', combo.imageGrade.brightness);
-	} catch (error) {}
-})();
-`
 }
 
 function normalizeTheme(

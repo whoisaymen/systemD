@@ -7,7 +7,9 @@ export default defineType({
 	fields: [
 		defineField({
 			name: 'title',
-			title: 'Titre',
+			title: 'Nom du bloc dans le Studio',
+			description:
+				'Repère interne. Le texte visible sur le site se modifie dans Contenu.',
 			type: 'string',
 		}),
 		defineField({

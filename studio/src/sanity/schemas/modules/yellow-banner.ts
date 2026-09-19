@@ -8,7 +8,7 @@ export default defineType({
 		defineField({
 			name: 'text',
 			title: 'Texte',
-			type: 'internationalizedArrayText',
+			type: 'internationalizedArrayRichText',
 		}),
 		defineField({
 			name: 'show',

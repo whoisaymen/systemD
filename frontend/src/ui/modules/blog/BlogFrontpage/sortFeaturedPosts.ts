@@ -1,4 +1,4 @@
-export default function (
+export default function sortFeaturedPosts(
 	posts: Sanity.BlogPost[],
 	showFeaturedPostsFirst: boolean = true,
 ) {

@@ -40,7 +40,6 @@ export default function CmsLogo({
 				image={image}
 				alt={alt || logo?.name || ''}
 				className={className}
-				themeGrade={false}
 			/>
 		)
 	}

@@ -50,6 +50,7 @@ export default function PostPreviewLarge({ post }: { post: Sanity.BlogPost }) {
 					<Authors
 						className="flex flex-wrap items-center gap-4"
 						authors={post.authors}
+						allowLinks={false}
 					/>
 				)}
 			</div>

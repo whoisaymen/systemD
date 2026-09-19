@@ -8,15 +8,19 @@ export default defineType({
 	type: 'document',
 	fields: [
 		defineField({
-			name: 'title',
-			title: 'Titre',
-			type: 'internationalizedArrayString',
-		}),
-		defineField({
 			name: 'description',
 			title: 'Description',
-			type: 'internationalizedArrayText',
+			description:
+				'Texte d’introduction affiché au-dessus des éditions. Utilisez le style Normal pour le texte courant, comme dans Short story.',
+			type: 'internationalizedArrayRichText',
 		}),
+		defineField({
+			name: 'pastFestivalsTitle',
+			title: 'Titre des éditions précédentes',
+			description: 'Affiché sur mobile.',
+			type: 'internationalizedArrayRichText',
+		}),
+
 		defineField({
 			name: 'pastFestivals',
 			title: 'Festivals passés',
@@ -25,17 +29,6 @@ export default defineType({
 				{
 					type: 'reference',
 					to: [{ type: 'festival' }],
-				},
-			],
-		}),
-		defineField({
-			name: 'pastOnTourEvents',
-			title: 'Événements passés',
-			type: 'array',
-			of: [
-				{
-					type: 'reference',
-					to: [{ type: 'event' }],
 				},
 			],
 		}),
