@@ -9,8 +9,8 @@ export default defineCliConfig({
 	studioHost: process.env.SANITY_STUDIO_HOST || 'systemd',
 	vite: {
 		ssr: {
-			// Preserve the CommonJS exports used by the Vercel widget's Yup validator.
-			external: ['toposort'],
+			// Let Node load the CommonJS dependencies of the dashboard and ordering plugins.
+			external: ['toposort', 'lexorank'],
 		},
 	},
 	deployment: {
