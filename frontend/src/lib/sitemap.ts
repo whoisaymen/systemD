@@ -7,7 +7,7 @@ const PUBLIC_PATHS = [
 	'/fabrique',
 	'/memoire',
 	'/equipe',
-	'/contact',
+	'/about',
 	'/apply',
 ] as const
 

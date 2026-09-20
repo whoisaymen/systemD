@@ -17,9 +17,10 @@ export default async function EquipePage({
 async function getEquipe(tab: string, locale: string) {
 	const query = groq`
     {
-      "person": *[_type == 'person']{
+      "person": *[_type == 'person'] | order(orderRank asc, _id asc){
         _id,
         name,
+        role,
         biography,
         image
       }

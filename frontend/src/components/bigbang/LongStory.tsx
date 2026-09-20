@@ -141,7 +141,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									{renderParagraph(
 										{ value: localizedRichText(block.text, lang) },
 										[],
-										'theme-bigbang-system-d-tag bg-grayDark text-dark',
+										'bg-primary text-dark',
 									)}
 								</div>
 							</div>

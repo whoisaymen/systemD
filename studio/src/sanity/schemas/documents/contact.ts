@@ -1,11 +1,11 @@
 import { defineField, defineType } from 'sanity'
-import { MdEmail } from 'react-icons/md'
+import { FaInfoCircle } from 'react-icons/fa'
 
 export default defineType({
 	name: 'contact',
-	title: 'Contact',
+	title: 'About',
 	type: 'document',
-	icon: MdEmail,
+	icon: FaInfoCircle,
 	fields: [
 		defineField({
 			name: 'contactTitle',
@@ -17,10 +17,11 @@ export default defineType({
 			title: 'Titre des partenaires',
 			type: 'internationalizedArrayRichText',
 		}),
+		// Retain the old label in saved drafts without exposing a retired control.
 		defineField({
 			name: 'mapLinkLabel',
-			title: 'Texte du lien vers la carte',
 			type: 'internationalizedArrayRichText',
+			hidden: true,
 		}),
 		defineField({
 			name: 'formEmail',
@@ -61,8 +62,10 @@ export default defineType({
 							name: 'logo',
 							title: 'Logo',
 							type: 'image',
+							description:
+								'Importez un SVG vectoriel monochrome sur fond transparent. Le site applique automatiquement la couleur du thème.',
 							options: {
-								hotspot: true,
+								accept: 'image/svg+xml',
 							},
 						}),
 						defineField({
@@ -80,11 +83,17 @@ export default defineType({
 				},
 			],
 		}),
+		defineField({
+			name: 'credits',
+			title: 'Crédits',
+			description: 'Texte affiché dans l’onglet Crédits de la page About.',
+			type: 'internationalizedArrayRichText',
+		}),
 	],
 	preview: {
 		prepare() {
 			return {
-				title: 'Contact',
+				title: 'About',
 			}
 		},
 	},

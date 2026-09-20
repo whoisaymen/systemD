@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 				'/fabrique': *[_type == 'fabrique'][0...1]{ ${documentMetadata} },
 				'/memoire': *[_type == 'memoire'][0...1]{ ${documentMetadata} },
 				'/equipe': *[_type == 'person']{ _id, _updatedAt },
-				'/contact': *[_type == 'contact'][0...1]{ ${documentMetadata} },
+				'/about': *[_type == 'contact'][0...1]{ ${documentMetadata} },
 				'/apply': *[_type == 'filmSubmissionSettings' && _id == 'filmSubmissionSettings']{
 					${documentMetadata}
 				}

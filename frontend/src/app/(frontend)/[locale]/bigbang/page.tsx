@@ -24,8 +24,8 @@ async function getBigBang() {
 	const query = groq`
 {
   "shortStory": *[_type == 'bigbangShortStory'][0]{
-    ...,
-    body[]{..., image{..., asset->{...}}}
+    tabLabel,
+    body[]{_key, _type, text, svgMarkup, size}
   },
   "longStory": *[_type == 'bigbangLongStory'][0]{
     ...,

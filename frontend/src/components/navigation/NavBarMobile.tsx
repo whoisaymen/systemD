@@ -200,7 +200,7 @@ const NavBarMobile = ({
 					className="overflow-visible text-dark"
 				/>
 			)
-		} else if (pathname.includes('/contact')) {
+		} else if (pathname.includes('/about')) {
 			return (
 				<LogoShortAnimated
 					theme={themeColors.sparkle}

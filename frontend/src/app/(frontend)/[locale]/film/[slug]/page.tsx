@@ -54,7 +54,7 @@ async function getFilm(slug: string) {
       city,
       length,
       playFilmUrl,
-      affiche,
+      affiche{..., asset->{_id, metadata{dimensions, lqip}}},
       description,
       slug,
       festival,

@@ -8,7 +8,7 @@ test('all public routes have localized URLs and reciprocal language alternatives
 	const entries = buildSitemap({}, options)
 	assert.equal(entries.length, 8 * 3)
 	for (const locale of options.locales) {
-		for (const path of ['', '/bigbang', '/festival', '/fabrique', '/memoire', '/equipe', '/contact', '/apply']) {
+		for (const path of ['', '/bigbang', '/festival', '/fabrique', '/memoire', '/equipe', '/about', '/apply']) {
 			const entry = entries.find(({ url }) => url === `https://system-d.test/${locale}${path}`)
 			assert.ok(entry)
 			assert.deepEqual(entry.alternates?.languages, {
@@ -44,7 +44,7 @@ test('published festival and film routes use their real year and slug fields', (
 test('noIndex excludes static and dynamic routes and blog requires a public template', () => {
 	const data: SitemapData = {
 		pages: {
-			'/contact': [{ _id: 'contact', metadata: { noIndex: true } }],
+			'/about': [{ _id: 'contact', metadata: { noIndex: true } }],
 			'/bigbang': [
 				{ _id: 'short', _updatedAt: '2026-07-01T00:00:00Z' },
 				{ _id: 'long', _updatedAt: '2026-08-01T00:00:00Z' },
@@ -59,7 +59,7 @@ test('noIndex excludes static and dynamic routes and blog requires a public temp
 	}
 	const entries = buildSitemap(data, options)
 	assert.equal(entries.length, 7 * 3)
-	assert.ok(entries.every(({ url }) => !/contact|2024|private|blog/.test(url)))
+	assert.ok(entries.every(({ url }) => !/about|2024|private|blog/.test(url)))
 	assert.equal(entries.find(({ url }) => url.endsWith('/en/bigbang'))?.lastModified, '2026-08-01T00:00:00Z')
 	assert.equal(buildSitemap({ ...data, blogTemplate: { _id: 'blog-template' } }, options).length, 8 * 3)
 	assert.equal(buildSitemap({ ...data, blogTemplate: { _id: 'blog-template', metadata: { noIndex: true } } }, options).length, 7 * 3)

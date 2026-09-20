@@ -8,7 +8,7 @@ import {
 	type PortableTextBlock,
 	type PortableTextComponentProps,
 } from 'next-sanity'
-import { safeRichTextHref, textToRichText } from '@/lib/richText'
+import { richTextBlockAlignment, safeRichTextHref, textToRichText } from '@/lib/richText'
 
 type Props = {
 	value: any
@@ -26,6 +26,44 @@ const labelTilts = [
 	'-rotate-2 translate-y-0.5',
 	'rotate-3 -translate-y-px',
 ]
+
+type TextBlockProps = PortableTextComponentProps<PortableTextBlock>
+
+const ParagraphBlock = ({ children, value }: TextBlockProps) => (
+	<p
+		className="mb-4 whitespace-pre-line last:mb-0"
+		style={{ textAlign: richTextBlockAlignment(value) }}
+	>
+		{children}
+	</p>
+)
+
+const Heading2Block = ({ children, value }: TextBlockProps) => (
+	<h2
+		className="mb-3 mt-6 text-[1.4em] font-bold leading-tight first:mt-0"
+		style={{ textAlign: richTextBlockAlignment(value) }}
+	>
+		{children}
+	</h2>
+)
+
+const Heading3Block = ({ children, value }: TextBlockProps) => (
+	<h3
+		className="mb-3 mt-5 text-[1.2em] font-bold leading-tight first:mt-0"
+		style={{ textAlign: richTextBlockAlignment(value) }}
+	>
+		{children}
+	</h3>
+)
+
+const QuoteBlock = ({ children, value }: TextBlockProps) => (
+	<blockquote
+		className="my-4 border-l-2 border-current pl-4 italic"
+		style={{ textAlign: richTextBlockAlignment(value) }}
+	>
+		{children}
+	</blockquote>
+)
 
 /** One rendering contract for localized editorial copy, including legacy strings. */
 export default function RichText({
@@ -71,30 +109,27 @@ export default function RichText({
 							</h3>
 						)
 					},
-					normal: ({ children }) => (
-						<p className="mb-4 whitespace-pre-line last:mb-0">{children}</p>
-					),
-					h1: ({ children }) => (
-						<h1 className="mb-4 text-[1.6em] font-bold leading-tight">
+					normal: ParagraphBlock,
+					normalCenter: ParagraphBlock,
+					h1: ({ children, value }) => (
+						<h1
+							className="mb-4 text-[1.6em] font-bold leading-tight"
+							style={{ textAlign: richTextBlockAlignment(value) }}
+						>
 							{children}
 						</h1>
 					),
-					h2: ({ children }) => (
-						<h2 className="mb-3 mt-6 text-[1.4em] font-bold leading-tight first:mt-0">
+					h2: Heading2Block,
+					h2Center: Heading2Block,
+					h3: Heading3Block,
+					h3Center: Heading3Block,
+					h4: ({ children, value }) => (
+						<h4 className="mb-3 font-bold" style={{ textAlign: richTextBlockAlignment(value) }}>
 							{children}
-						</h2>
+						</h4>
 					),
-					h3: ({ children }) => (
-						<h3 className="mb-3 mt-5 text-[1.2em] font-bold leading-tight first:mt-0">
-							{children}
-						</h3>
-					),
-					h4: ({ children }) => <h4 className="mb-3 font-bold">{children}</h4>,
-					blockquote: ({ children }) => (
-						<blockquote className="my-4 border-l-2 border-current pl-4 italic">
-							{children}
-						</blockquote>
-					),
+					blockquote: QuoteBlock,
+					blockquoteCenter: QuoteBlock,
 				},
 		list: inline
 			? ({ children }) => <>{children}</>
@@ -113,8 +148,11 @@ export default function RichText({
 						{children}
 					</>
 				)
-			: undefined,
+			: ({ children, value }) => (
+					<li style={{ textAlign: richTextBlockAlignment(value) }}>{children}</li>
+				),
 		marks: {
+			alignCenter: ({ children }) => <>{children}</>,
 			systemDLogo: () => <SystemDLogoPill />,
 			strong: ({ children }) => (
 				<strong className="font-bold">{children}</strong>

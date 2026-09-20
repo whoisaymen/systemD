@@ -6,7 +6,7 @@ import { motion } from 'motion/react'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import { EDITORIAL_DESKTOP_TAB_STYLE } from '@/components/common/editorialStyles'
 
-const STORY_TAB_STYLE = `relative w-auto rounded-[0.12em] px-[0.16em] py-[0.07em] leading-none ${EDITORIAL_DESKTOP_TAB_STYLE} lg:border-primary lg:bg-dark lg:text-primary lg:transition-colors lg:hover:bg-grayDark lg:hover:text-dark lg:aria-pressed:border-grayDark lg:aria-pressed:bg-grayDark lg:aria-pressed:text-dark`
+const STORY_TAB_STYLE = `relative w-auto rounded-[0.12em] px-[0.16em] py-[0.07em] leading-none ${EDITORIAL_DESKTOP_TAB_STYLE} lg:border-primary lg:bg-dark lg:text-primary lg:transition-colors lg:hover:border-grayDark lg:hover:bg-grayDark lg:hover:text-dark lg:aria-pressed:border-grayDark lg:aria-pressed:bg-grayDark lg:aria-pressed:text-dark`
 
 interface BigBangContentProps {
 	shortStory: any
@@ -41,12 +41,12 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 					: 'theme-bigbang-long-story'
 			}`}
 		>
-			<div className="theme-bigbang-story-tabs sticky left-0 top-2 z-10 mx-auto mb-2 mt-8 flex w-fit justify-between gap-2 text-base font-bold tracking-tight text-primary sm:justify-center lg:mb-2 lg:mt-[clamp(2.25rem,4.78cqw,5rem)] lg:gap-0">
+			<div className="theme-bigbang-story-tabs sticky left-0 top-2 z-10 mx-auto mb-2 mt-8 flex w-fit justify-between gap-2 text-base font-bold tracking-tight text-primary sm:justify-center lg:top-[clamp(2.25rem,4.78cqw,5rem)] lg:mb-2 lg:mt-[clamp(2.25rem,4.78cqw,5rem)] lg:gap-0">
 				<button
 					type="button"
 					onClick={() => handleTabClick('short')}
 					aria-pressed={activeTab === 'short'}
-					className={`${STORY_TAB_STYLE} lg:translate-y-0.5 lg:-rotate-3`}
+					className={`interactive-title-motion ${STORY_TAB_STYLE} lg:translate-y-0.5 lg:-rotate-3`}
 				>
 					<span className="relative z-10">
 						{richTextToPlainText(localizedRichText(shortStory?.tabLabel, locale)) || 'Short story'}
@@ -57,7 +57,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 					type="button"
 					onClick={() => handleTabClick('long')}
 					aria-pressed={activeTab === 'long'}
-					className={`${STORY_TAB_STYLE} lg:-translate-y-0.5 lg:rotate-3`}
+					className={`interactive-title-motion ${STORY_TAB_STYLE} lg:-translate-y-0.5 lg:rotate-3`}
 				>
 					<span className="relative z-10">
 						{richTextToPlainText(localizedRichText(longStory?.tabLabel, locale)) || 'Long story'}
@@ -65,7 +65,7 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 					{activeTab === 'long' && <StoryTabActivePill />}
 				</button>
 			</div>
-			<div className="flex flex-col space-y-1 rounded-md pt-6 lg:pt-10">
+			<div className="relative z-0 flex flex-col space-y-1 rounded-md pt-6 lg:pt-10">
 				{activeTab === 'short' ? (
 					<ShortStory
 						content={shortStory?.body ?? []}

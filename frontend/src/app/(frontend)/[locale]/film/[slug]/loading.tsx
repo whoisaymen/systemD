@@ -1,6 +1,6 @@
 export default function Loading() {
 	return (
-		<div className="theme-main-content-surface theme-loading-surface lg:shadowtest no-scrollbar flex w-full items-start justify-center border-0 bg-dark p-6 lg:my-1 lg:h-[calc(100svh-10px)] lg:overflow-y-auto lg:rounded-xl lg:pt-32">
+		<div className="theme-main-content-surface theme-loading-surface lg:shadowtest no-scrollbar flex w-full items-start justify-center border-0 bg-dark p-6 lg:my-1 lg:h-[calc(100svh-8px)] lg:overflow-y-auto lg:rounded-xl lg:pt-32">
 			<div className="w-full lg:px-16">
 				<div className="animate-pulse">
 					{/* Poster skeleton */}

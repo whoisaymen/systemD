@@ -1,5 +1,6 @@
 'use client'
-import { motion } from 'motion/react'
+import { useState, type CSSProperties } from 'react'
+import styles from './SparkleEffect.module.css'
 
 interface SparkleProps {
 	count?: number
@@ -51,6 +52,76 @@ const SparkleIcon = ({
 	</svg>
 )
 
+interface SparkleParticleProps {
+	x: number
+	size: number
+	rotate: number
+	speed: number
+	windDrift: number
+	delay: number
+	color: { fill?: string; stroke?: string }
+	scale: number
+}
+
+const SparkleParticle = ({ sparkle }: { sparkle: SparkleParticleProps }) => {
+	const [shooting, setShooting] = useState(false)
+	const [departureOpacity, setDepartureOpacity] = useState(0.85)
+	const [cycle, setCycle] = useState(0)
+	const direction = sparkle.x < 50 ? 1 : -1
+
+	return (
+		<div
+			key={cycle}
+			className={styles.particle}
+			data-shooting={shooting}
+			style={
+				{
+					left: `${sparkle.x}%`,
+					width: sparkle.size,
+					height: sparkle.size,
+					color: sparkle.color.fill ?? 'var(--color-primary)',
+					'--fall-duration': `${sparkle.speed}s`,
+					'--fall-delay': `${cycle === 0 ? sparkle.delay : 0.8 + sparkle.x / 100}s`,
+					'--wind-drift': `${sparkle.windDrift}px`,
+					'--star-rotation': `${sparkle.rotate}deg`,
+					'--star-scale': sparkle.scale,
+					'--departure-opacity': departureOpacity,
+					'--flight-x': `calc(${direction} * clamp(200px, 25vw, 360px))`,
+					'--flight-y': 'clamp(96px, 12vw, 172.8px)',
+					'--flight-angle': `${direction === 1 ? 25.64 : 154.36}deg`,
+				} as CSSProperties
+			}
+			onPointerEnter={(event) => {
+				if (event.pointerType === 'touch' || shooting) return
+				const flight = event.currentTarget.firstElementChild
+				if (!flight) return
+				// Keep the current brightness so a faint star never flashes on hover.
+				setDepartureOpacity(Number(getComputedStyle(flight).opacity))
+				setShooting(true)
+			}}
+		>
+			<div
+				className={styles.flight}
+				onAnimationEnd={(event) => {
+					// Ignore the head and trail finishing inside the flight.
+					if (event.target !== event.currentTarget || !shooting) return
+					setShooting(false)
+					setCycle((previous) => previous + 1)
+				}}
+			>
+				<span className={styles.trajectory}>
+					<span className={styles.trail} />
+				</span>
+				<span className={styles.head}>
+					<span className={styles.spin}>
+						<SparkleIcon fill="currentColor" className="h-full w-full" />
+					</span>
+				</span>
+			</div>
+		</div>
+	)
+}
+
 const SparkleEffect: React.FC<SparkleProps> = ({
 	count = 15,
 	colors = [{ fill: 'var(--color-primary)', stroke: 'var(--color-dark)' }],
@@ -76,37 +147,12 @@ const SparkleEffect: React.FC<SparkleProps> = ({
 	})
 
 	return (
-		<div className="pointer-events-none absolute inset-0 z-[48] overflow-hidden">
+		<div
+			className={`pointer-events-none absolute inset-0 z-[48] overflow-hidden ${styles.field}`}
+			aria-hidden="true"
+		>
 			{sparkles.map((sparkle, index) => (
-				<motion.div
-					key={index}
-					className="absolute"
-					style={{
-						left: `${sparkle.x}%`,
-						top: '-15%',
-						width: sparkle.size,
-						height: sparkle.size,
-					}}
-					animate={{
-						opacity: [0, 0.85, 0.85, 0],
-						scale: [sparkle.scale, sparkle.scale * 1.1, sparkle.scale],
-						x: [0, sparkle.windDrift],
-						top: ['-15%', '115%'],
-						rotate: [
-							sparkle.rotate,
-							sparkle.rotate + 180,
-							sparkle.rotate + 360,
-						],
-					}}
-					transition={{
-						duration: sparkle.speed,
-						ease: 'linear',
-						delay: sparkle.delay,
-						repeat: Infinity,
-					}}
-				>
-					<SparkleIcon fill={sparkle.color.fill} className="h-full w-full" />
-				</motion.div>
+				<SparkleParticle key={index} sparkle={sparkle} />
 			))}
 		</div>
 	)

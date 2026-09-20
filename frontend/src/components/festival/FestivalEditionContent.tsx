@@ -3,7 +3,8 @@ import { motion } from 'motion/react'
 import { useTranslations } from 'next-intl'
 import Img from '@/ui/Img'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import { IoGrid, IoList } from 'react-icons/io5'
 import {
 	Accordion,
@@ -12,19 +13,33 @@ import {
 	AccordionTrigger,
 } from '@/components/ui/accordion'
 import FestivalCarousel, { type GalleryRect } from './FestivalCarousel'
+import AftermoviePlayer from './AftermoviePlayer'
+import ExhibitionCollage from './ExhibitionCollage'
+import { photoCreditRotation } from './photoCreditStyles'
 import BackToTopButton from '../common/BackToTop'
 import RichText from '@/components/common/RichText'
+import OverflowText from '@/components/common/OverflowText'
 import {
 	EDITORIAL_BODY_TEXT,
 	EDITORIAL_COPY_WIDTH,
 	EDITORIAL_DESKTOP_TAB_STYLE,
+	EDITORIAL_RICH_TEXT_HEADINGS,
 } from '@/components/common/editorialStyles'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
+import {
+	DEFAULT_FILM_SORT,
+	DEFAULT_FILM_ORDER,
+	sortFilmSelection,
+	type FilmSortField,
+	type FilmSortOrder,
+} from '@/lib/filmSelection'
 import { richTextLines } from '@/lib/richTextLines'
 import { useRouter, useSearchParams } from 'next/navigation'
-import CartoonLeftArrow from '../common/CartoonLeftArrow'
+import NewArrowRightFull from '../common/NewArrowRightFull'
 import FilterIcon from '../svgs/FilterIcon'
 import FilmHoverPreview from './FilmHoverPreview'
+import { FILM_LABEL_TEXT, FILM_TITLE_TEXT } from '../film/filmLabelStyles'
+import contactSheet from './FestivalContactSheet.module.css'
 
 interface FestivalEditionContentProps {
 	festival: any
@@ -32,6 +47,9 @@ interface FestivalEditionContentProps {
 }
 
 type EditionChapter = 'overview' | 'films' | 'exhibition' | 'photos' | 'jury'
+
+const FILM_FILTER_BUTTON_STYLE =
+	'relative flex items-center justify-center gap-1 rounded-md border-2 border-transparent px-1 py-0 transition-colors hover:bg-primary hover:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
 
 const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	festival,
@@ -49,18 +67,16 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	} | null>(null)
 	const [isFilmSectionOpen, setIsFilmSectionOpen] = useState(false)
 	const [isPhotoGalleryOpen, setIsPhotoGalleryOpen] = useState(false)
-	const [photoExhibitionValue, setPhotoExhibitionValue] = useState<
-		string | undefined
-	>()
-	const [sortField, setSortField] = useState<'year' | 'title' | 'director'>('title')
-	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+	const [photosPerRow, setPhotosPerRow] = useState(3)
+	const [photoExhibitionValue, setPhotoExhibitionValue] = useState('')
+	const [sortField, setSortField] = useState<FilmSortField>(DEFAULT_FILM_SORT)
+	const [sortOrder, setSortOrder] = useState<FilmSortOrder>(DEFAULT_FILM_ORDER)
 
 	const [isLightboxOpen, setIsLightboxOpen] = useState(false)
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 	const [lightboxOriginRect, setLightboxOriginRect] =
 		useState<GalleryRect | null>(null)
 	const [showWinnersOnly, setShowWinnersOnly] = useState(false)
-	const [selectedArtist, setSelectedArtist] = useState<string | null>(null)
 	const [isJuryOpen, setIsJuryOpen] = useState(false)
 	const [activeChapter, setActiveChapter] = useState<EditionChapter>('overview')
 
@@ -79,9 +95,10 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	const juryMembers = useMemo(() => festival?.jury ?? [], [festival?.jury])
 
 	const selectChapter = (chapter: EditionChapter) => {
+		setHoveredFilm(null)
 		setActiveChapter(chapter)
 		setIsFilmSectionOpen(chapter === 'films')
-		setPhotoExhibitionValue(chapter === 'exhibition' ? 'item-3' : undefined)
+		setPhotoExhibitionValue(chapter === 'exhibition' ? 'item-3' : '')
 		setIsPhotoGalleryOpen(chapter === 'photos')
 		setIsJuryOpen(chapter === 'jury')
 	}
@@ -108,6 +125,14 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		setLightboxOriginRect(null)
 	}
 
+	useEffect(() => {
+		const desktop = window.matchMedia('(min-width: 1024px)')
+		const updatePhotosPerRow = () => setPhotosPerRow(desktop.matches ? 5 : 3)
+		updatePhotosPerRow()
+		desktop.addEventListener('change', updatePhotosPerRow)
+		return () => desktop.removeEventListener('change', updatePhotosPerRow)
+	}, [])
+
 	function chunkArray(array: any[], size: number) {
 		return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
 			array.slice(i * size, i * size + size),
@@ -117,9 +142,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		() =>
 			chunkArray(
 				photoGallery.flatMap((gallery: any) => gallery.photos ?? []),
-				3,
+				photosPerRow,
 			),
-		[photoGallery],
+		[photoGallery, photosPerRow],
 	)
 
 	const getLocalizedValue = (value: any, language: string) =>
@@ -131,37 +156,27 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		photoExhibitionValue === 'item-3' ||
 		isPhotoGalleryOpen
 
-	const filteredFilms = showWinnersOnly
-		? filmSelection.filter((film: any) => film.isWinner)
-		: filmSelection
-
-	const sortedFilms = [...filteredFilms].sort((a: any, b: any) => {
-		if (sortField === 'year') {
-			if (!a.year && b.year) return 1
-			if (a.year && !b.year) return -1
-			return sortOrder === 'asc'
-				? (a.year ?? 0) - (b.year ?? 0)
-				: (b.year ?? 0) - (a.year ?? 0)
-		} else if (sortField === 'title') {
-			const titleA = getLocalizedValue(a.title, language).toLowerCase()
-			const titleB = getLocalizedValue(b.title, language).toLowerCase()
-			return sortOrder === 'asc'
-				? titleA.localeCompare(titleB)
-				: titleB.localeCompare(titleA)
-		} else if (sortField === 'director') {
-			const directorA = richTextToPlainText(a.director).trim().toLowerCase()
-			const directorB = richTextToPlainText(b.director).trim().toLowerCase()
-			if (!directorA && directorB) return 1
-			if (directorA && !directorB) return -1
-			return sortOrder === 'asc'
-				? directorA.localeCompare(directorB)
-				: directorB.localeCompare(directorA)
-		}
-		return 0
-	})
+	const sortedFilms = useMemo(
+		() =>
+			sortFilmSelection(filmSelection, {
+				language,
+				sort: sortField,
+				order: sortOrder,
+				winnersOnly: showWinnersOnly,
+			}),
+		[filmSelection, language, sortField, sortOrder, showWinnersOnly],
+	)
 
 	const router = useRouter()
 	const searchParams = useSearchParams()
+	const filmQuery: Record<string, string> = {
+		...Object.fromEntries(searchParams.entries()),
+		sort: sortField,
+		order: sortOrder,
+		view,
+	}
+	if (showWinnersOnly) filmQuery.winners = '1'
+	else delete filmQuery.winners
 
 	function updateQuery(params: Record<string, string | undefined>) {
 		const newParams = new URLSearchParams(searchParams.toString())
@@ -214,7 +229,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		const winners = searchParams.get('winners') === '1'
 		const view = searchParams.get('view') as 'grid' | 'list'
 
-		if (sort === 'year' || sort === 'title' || sort === 'director') setSortField(sort)
+		if (sort === 'year' || sort === 'title' || sort === 'director')
+			setSortField(sort)
 		if (order) setSortOrder(order)
 		setShowWinnersOnly(winners)
 		if (view) setView(view)
@@ -225,13 +241,14 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 		if (currentFilmSlug) {
 			// We're returning from a film, open the film selection and scroll to that film
+			sessionStorage.removeItem('currentFilmSlug')
+			sessionStorage.removeItem('festivalScroll')
 			setIsFilmSectionOpen(true)
 			setActiveChapter('films')
 
 			// Use a timeout to ensure the DOM is rendered
 			setTimeout(() => {
 				scrollToFilm(currentFilmSlug)
-				sessionStorage.removeItem('currentFilmSlug')
 			}, 100)
 
 			return
@@ -260,6 +277,24 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	}
 
 	const festivalDescription = localizedRichText(festival.description, language)
+	const overviewTrigger = (
+		<button
+			type="button"
+			onClick={() => selectChapter('overview')}
+			aria-expanded={activeChapter === 'overview'}
+			aria-controls="edition-description"
+			className="interactive-title-motion group relative flex flex-col items-start"
+		>
+			<span
+				className={`relative rotate-2 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-colors group-hover:border-grayDark group-hover:bg-grayDark group-hover:text-dark ${EDITORIAL_DESKTOP_TAB_STYLE} ${activeChapter === 'overview' ? 'border-grayDark bg-grayDark text-dark' : 'border-primary bg-dark text-primary'}`}
+			>
+				<RichText value={festival.venue} inline allowLinks={false} />
+			</span>
+			<span className="relative -mt-0.5 rotate-6 rounded-md bg-primary px-1 text-xl font-black leading-none text-dark lg:text-[clamp(1rem,2.17cqw,1.5rem)]">
+				{festival.year}
+			</span>
+		</button>
+	)
 	const sectionLabel = (field: string, fallback: string) => (
 		<RichText
 			value={localizedRichText(festival[field], language) || fallback}
@@ -267,10 +302,29 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			allowLinks={false}
 		/>
 	)
+	const curators = expoPhoto.filter((expo: any) => richTextToPlainText(expo.curatorName))
+	const photographers = photoGallery.filter((gallery: any) => richTextToPlainText(gallery.photographer))
+	const exhibitionCredit = curators.length > 0 ? (
+		<>{tExpo('curatedBy')}{' '}{curators.map((expo: any, index: number) => (
+			<span key={expo._key ?? index}>{index > 0 && ', '}<RichText value={expo.curatorName} inline /></span>
+		))}</>
+	) : null
+	const galleryCredit = photographers.length > 0 ? (
+		<>{tPhotoGallery('photosBy')}{' '}{photographers.map((gallery: any, index: number) => (
+			<span key={index}>{index > 0 && ', '}<RichText value={gallery.photographer} inline /></span>
+		))}</>
+	) : null
+	const creditPill = (credit: React.ReactNode, rotation: string) => (
+		<span style={{ rotate: rotation }} className={`block rounded-md border-2 border-dark bg-primary px-1.5 py-0 text-center text-dark ${FILM_LABEL_TEXT}`}>
+			{credit}
+		</span>
+	)
 	const chapters: Array<{
 		key: EditionChapter
 		label: React.ReactNode
 		titleClassName: string
+		credit?: React.ReactNode
+		creditRotation?: string
 	}> = [
 		{
 			key: 'films',
@@ -279,11 +333,15 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		},
 		{
 			key: 'exhibition',
+			credit: exhibitionCredit,
+			creditRotation: photoCreditRotation(curators.map((expo: any) => richTextToPlainText(expo.curatorName)).join(', ')),
 			label: sectionLabel('exhibitionTitle', tExpo('title')),
 			titleClassName: 'rotate-6 translate-y-1',
 		},
 		{
 			key: 'photos',
+			credit: galleryCredit,
+			creditRotation: '3deg',
 			label: sectionLabel('photosTitle', tPhotoGallery('title')),
 			titleClassName: '-rotate-6 -translate-y-1',
 		},
@@ -303,10 +361,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					type="single"
 					collapsible
 					value={isJuryOpen ? 'jury' : ''}
-					onValueChange={(value) => {
-						setIsJuryOpen(value === 'jury')
-						setActiveChapter(value === 'jury' ? 'jury' : 'overview')
-					}}
+					onValueChange={(value) =>
+						selectChapter(value === 'jury' ? 'jury' : 'overview')
+					}
 				>
 					<AccordionItem
 						value="jury"
@@ -389,83 +446,35 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			<div className="fixed bottom-4 right-12 z-50 lg:bottom-2 lg:right-[16.5%]">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
-			<div className="absolute -top-1 z-50 rounded-md text-3xl font-semibold text-dark lg:hidden">
+			<div className="absolute -top-3 z-50 rounded-md text-3xl font-semibold text-dark lg:hidden">
 				<button
+					type="button"
 					onClick={() => router.push(`/${language}/memoire`)}
 					aria-label="Go back"
 				>
-					<CartoonLeftArrow className="h-auto w-10 scale-[0.8]" />
+					<NewArrowRightFull
+						theme={{ stroke: 'var(--color-primary)' }}
+						strokeWidth={8}
+						className="h-auto w-10 translate-y-1 rotate-180 scale-[0.55]"
+					/>
 				</button>
 			</div>
 
-			<div className="absolute left-6 top-4 z-50 hidden w-fit items-start lg:mt-0 lg:flex lg:flex-col lg:gap-1">
-				<div className="grid w-max grid-cols-[max-content] gap-2">
-					<button
-						type="button"
-						onClick={() => router.push(`/${language}/memoire`)}
-						aria-label="Go back"
-						className="relative aspect-[1172/908] w-full rounded-md transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
-					>
-						<CartoonLeftArrow className="absolute inset-0 h-full w-full scale-[0.8]" />
-					</button>
-					<motion.div
-						className="pointer-events-none relative z-20 rounded-md bg-grayDark px-1 text-xl font-semibold tracking-tight text-dark lg:text-[clamp(1rem,2.17cqw,1.5rem)] lg:leading-none"
-						initial={{ rotate: -6 }}
-						animate={{
-							scale: [1, 0.9, 1, 1, 1],
-							rotate: [-6, 360, -6, -6, -6],
-							transition: {
-								duration: 5,
-								ease: [0.76, 0, 0.24, 1],
-							},
-						}}
-					>
-						<RichText value={festival.venue} inline allowLinks={false} />
-					</motion.div>
-				</div>
-				<motion.div
-					className="pointer-events-none relative z-10 rounded-md border-[0px] border-primary bg-primary px-1 text-xl font-black tracking-tight text-primary lg:bg-primary lg:text-[clamp(1rem,2.17cqw,1.5rem)] lg:leading-none lg:text-dark"
-					initial={{ rotate: 6 }}
-					animate={{
-						scale: [1, 0.9, 1, 1, 1],
-						rotate: [6, 360, 6, 6, 6],
-						transition: {
-							duration: 5,
-							ease: [0.76, 0, 0.24, 1],
-						},
-					}}
+			<div className="absolute left-6 top-0 z-50 hidden flex-col items-start gap-1 lg:flex">
+				<button
+					type="button"
+					onClick={() => router.push(`/${language}/memoire`)}
+					aria-label="Go back"
+					className="relative aspect-[76/61] w-14 rounded-md transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
 				>
-					<span>{festival.year}</span>
-				</motion.div>
+					<NewArrowRightFull
+						theme={{ stroke: 'var(--color-primary)' }}
+						strokeWidth={8}
+						className="absolute inset-0 h-full w-full -translate-x-1/4 translate-y-1 rotate-180 scale-[0.55]"
+					/>
+				</button>
+				{overviewTrigger}
 			</div>
-			<motion.div
-				className={`absolute -top-4 left-[3.5rem] z-10 -rotate-6 rounded-md bg-grayDark px-2 text-2xl font-semibold tracking-tighter text-dark lg:right-[1rem] lg:top-4 lg:hidden lg:w-fit lg:rounded-xl lg:border-[3px] lg:border-dark lg:px-4 lg:text-5xl`}
-				initial={{ rotate: -6 }}
-				animate={{
-					scale: [1, 0.9, 1, 1, 1],
-					rotate: [-6, 360, -6, -6, -6],
-					transition: {
-						duration: 5,
-						ease: [0.76, 0, 0.24, 1],
-					},
-				}}
-			>
-				<RichText value={festival.venue} inline allowLinks={false} />
-			</motion.div>
-			<motion.div
-				className={`absolute -top-3 right-[0.5rem] z-20 rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark lg:top-8 lg:hidden lg:w-fit lg:bg-dark lg:text-3xl lg:text-primary`}
-				initial={{ rotate: 6 }}
-				animate={{
-					scale: [1, 0.9, 1, 1, 1],
-					rotate: [6, 360, 6, 6, 6],
-					transition: {
-						duration: 5,
-						ease: [0.76, 0, 0.24, 1],
-					},
-				}}
-			>
-				<span>{festival.year}</span>
-			</motion.div>
 
 			<div>
 				<nav
@@ -477,14 +486,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							const isActive = activeChapter === chapter.key
 
 							return (
-								<li key={chapter.key}>
+								<li key={chapter.key} className="relative">
 									<button
 										type="button"
-										onClick={() =>
-											selectChapter(isActive ? 'overview' : chapter.key)
-										}
+										onClick={() => selectChapter(chapter.key)}
 										aria-expanded={isActive}
-										className={`relative text-center transition-colors hover:border-grayDark hover:bg-grayDark hover:text-dark ${EDITORIAL_DESKTOP_TAB_STYLE} ${chapter.titleClassName} ${
+										className={`interactive-title-motion relative z-20 text-center transition-colors hover:border-grayDark hover:bg-grayDark hover:text-dark ${EDITORIAL_DESKTOP_TAB_STYLE} ${chapter.titleClassName} ${
 											isActive
 												? 'border-grayDark bg-grayDark text-dark'
 												: 'border-primary bg-dark text-primary'
@@ -492,6 +499,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									>
 										{chapter.label}
 									</button>
+									{isActive && chapter.credit && (
+										<div className={`absolute left-1/2 top-full z-30 w-max max-w-[min(22rem,40cqw)] -translate-x-1/2 ${chapter.key === 'exhibition' ? 'mt-2' : 'mt-0.5'}`}>
+											{creditPill(chapter.credit, chapter.creditRotation ?? '0deg')}
+										</div>
+									)}
 								</li>
 							)
 						})}
@@ -501,6 +513,49 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				<main
 					className={`min-w-0 lg:pt-6 ${activeChapter === 'overview' ? '' : 'lg:px-6'}`}
 				>
+					<div className="flex justify-center pt-8 lg:hidden">
+						{overviewTrigger}
+					</div>
+
+					<div
+						id="edition-description"
+						className={`${EDITORIAL_BODY_TEXT} ${EDITORIAL_COPY_WIDTH} mx-auto py-4 pt-3 text-primary lg:pb-8 lg:pt-[0.45em] ${
+							activeChapter === 'overview' ? 'block' : 'hidden'
+						}`}
+					>
+						<RichText
+							value={festivalDescription}
+							className={`festival-edition-description ${EDITORIAL_RICH_TEXT_HEADINGS}`}
+						/>
+
+						{festival.pressLink && (
+							<div className="mt-6">
+								<a
+									href={festival.pressLink}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="underline underline-offset-4 hover:opacity-75"
+								>
+									{{ fr: 'Presse', en: 'Press', nl: 'Pers' }[language] || 'Presse'}
+								</a>
+							</div>
+						)}
+
+						{festival.aftermovieLink && activeChapter === 'overview' && (
+							<figure className="mt-8" aria-label={`Aftermovie ${festival.year}`}>
+								<div className="overflow-hidden bg-dark">
+									<div className="aspect-video">
+										<AftermoviePlayer
+											source={festival.aftermovieLink}
+											title={`Aftermovie ${festival.year}`}
+											language={language}
+										/>
+									</div>
+								</div>
+							</figure>
+						)}
+					</div>
+
 					<div
 						className={`mb-8 pt-8 lg:pt-0 ${
 							activeChapter === 'films' ? 'lg:block' : 'lg:hidden'
@@ -508,29 +563,20 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						id="film-selection"
 					>
 						<div
-							className="festival-section-layer sticky top-[0px] flex flex-col items-center justify-center bg-dark pt-2 lg:static lg:mx-0 lg:items-stretch lg:pt-0"
+							className="festival-section-layer sticky top-[0px] flex flex-col items-center justify-center bg-dark pt-2 lg:sticky lg:mx-0 lg:items-stretch lg:pt-0"
 							data-active={isFilmSectionOpen}
 							data-any-active={hasActiveSection}
 							data-stack="film"
 						>
 							<div className="flex items-center justify-center lg:hidden">
-								<motion.div
-									initial={{ rotate: -1 }}
-									animate={{
-										rotate: 1,
-										transition: {
-											duration: 0.3,
-											repeat: Infinity,
-											delay: 5,
-											repeatType: 'reverse',
-											ease: 'easeInOut',
-										},
-									}}
+								<button
+									type="button"
+									aria-expanded={isFilmSectionOpen}
 									onClick={() =>
 										selectChapter(isFilmSectionOpen ? 'overview' : 'films')
 									}
 									data-active={isFilmSectionOpen}
-									className={`festival-section-label relative flex w-fit cursor-pointer items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all hover:border-grayDark hover:bg-grayDark hover:text-dark lg:text-5xl ${
+									className={`interactive-title-motion festival-section-label relative flex w-fit -rotate-1 cursor-pointer items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-colors hover:border-grayDark hover:bg-grayDark hover:text-dark lg:text-5xl ${
 										isFilmSectionOpen
 											? 'border-grayDark bg-grayDark text-dark'
 											: 'border-primary bg-dark text-primary'
@@ -539,20 +585,16 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									<span>
 										{sectionLabel('filmsTitle', tFilmSelection('title'))}
 									</span>
-								</motion.div>
+								</button>
 							</div>
 
 							{isFilmSectionOpen && (
 								<>
 									{filmSelection.length > 0 ? (
 										<div
-											className={`festival-film-filters mt-0 flex w-full flex-wrap items-center justify-between gap-2 bg-dark text-primary lg:mt-2 ${EDITORIAL_BODY_TEXT}`}
+											className={`festival-film-filters mt-0 flex w-full flex-wrap items-center justify-between gap-2 bg-dark text-primary lg:mt-2 ${FILM_LABEL_TEXT}`}
 										>
 											{[
-												{
-													field: 'year' as const,
-													label: tFilmSelection('year'),
-												},
 												{
 													field: 'title' as const,
 													label: tFilmSelection('titleCol'),
@@ -561,8 +603,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													field: 'director' as const,
 													label: tFilmSelection('director'),
 												},
+												{
+													field: 'year' as const,
+													label: tFilmSelection('year'),
+												},
 											].map(({ field, label }) => {
-												const isActive = sortField === field
+												const isActive = !showWinnersOnly && sortField === field
 												return (
 													<button
 														key={field}
@@ -572,32 +618,31 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																isActive && sortOrder === 'asc' ? 'desc' : 'asc'
 															setSortField(field)
 															setSortOrder(nextOrder)
-															updateQuery({ sort: field, order: nextOrder })
+															setShowWinnersOnly(false)
+															updateQuery({
+																sort: field,
+																order: nextOrder,
+																winners: undefined,
+															})
 														}}
 														aria-pressed={isActive}
-														className="relative flex items-center justify-center py-1"
+														className={`${FILM_FILTER_BUTTON_STYLE} ${isActive ? 'bg-primary text-dark' : 'text-primary'}`}
 													>
 														<span className="flex items-center gap-1">
 															<FilterIcon
 																theme={{
 																	upArrow:
 																		isActive && sortOrder === 'asc'
-																			? 'var(--color-primary)'
+																			? 'var(--color-dark)'
 																			: 'var(--color-grayDark)',
 																	downArrow:
 																		isActive && sortOrder === 'desc'
-																			? 'var(--color-primary)'
+																			? 'var(--color-dark)'
 																			: 'var(--color-grayDark)',
 																}}
 																className="h-[1em] w-auto shrink-0"
 															/>
-															<span
-																className={
-																	isActive ? 'underline underline-offset-4' : ''
-																}
-															>
-																{label}
-															</span>
+															<span>{label}</span>
 														</span>
 													</button>
 												)
@@ -611,18 +656,10 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													})
 												}}
 												aria-pressed={showWinnersOnly}
-												className="flex items-center gap-1 py-1"
+												className={`${FILM_FILTER_BUTTON_STYLE} ${showWinnersOnly ? 'bg-primary text-dark' : 'text-primary'}`}
 											>
-												{showWinnersOnly && <span aria-hidden="true">×</span>}
-												<span
-													className={
-														showWinnersOnly
-															? 'underline underline-offset-4'
-															: ''
-													}
-												>
-													{tFilmSelection('winners')}
-												</span>
+												{showWinnersOnly && <span aria-hidden="true">★</span>}
+												<span>{tFilmSelection('winners')}</span>
 											</button>
 											<div className="flex items-center justify-center">
 												{[
@@ -702,6 +739,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 														<Img
 															image={film.affiche}
 															alt={title}
+															imageWidth={1200}
+															sizes="(min-width: 1024px) 22vw, (min-width: 640px) 46vw, calc(100vw - 64px)"
+															loading={index < 3 ? 'eager' : 'lazy'}
 															className="aspect-square h-auto w-full rounded-lg border-2 border-primary object-cover lg:border-dark"
 														/>
 													) : (
@@ -717,7 +757,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																).map((line, lineIndex) => (
 																	<span
 																		key={lineIndex}
-																		className={`relative rounded-md border-2 border-primary bg-dark px-2 text-center text-3xl font-black italic text-primary lg:text-xl ${lineIndex === 0 ? 'z-10' : 'z-0 -mt-1'} ${lineIndex % 2 === 0 ? '-rotate-1' : 'rotate-1'}`}
+																		className={`relative rounded-md border-2 border-primary bg-dark px-2 text-center text-primary ${FILM_TITLE_TEXT} ${lineIndex === 0 ? 'z-10' : 'z-0 -mt-1'} ${lineIndex % 2 === 0 ? '-rotate-1' : 'rotate-1'}`}
 																	>
 																		<RichText
 																			value={line}
@@ -732,7 +772,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															(line, lineIndex) => (
 																<p
 																	key={lineIndex}
-																	className={`relative inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center font-medium tracking-tighter text-dark ${lineIndex === 0 ? 'z-10' : 'z-0 -mt-[0.15rem]'} ${lineIndex % 2 === 0 ? '-rotate-1' : 'rotate-1'}`}
+																	className={`relative inline-block w-auto rounded-md border-2 border-dark bg-grayDark px-1.5 py-0 text-center text-dark ${FILM_LABEL_TEXT} ${lineIndex === 0 ? 'z-10' : 'z-0 -mt-[0.15rem]'} ${lineIndex % 2 === 0 ? '-rotate-1' : 'rotate-1'}`}
 																>
 																	<RichText
 																		value={line}
@@ -761,9 +801,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 														<Link
 															href={{
 																pathname: `/${language}/film/${film.slug.current}`,
-																query: searchParams
-																	? Object.fromEntries(searchParams.entries())
-																	: {},
+																query: filmQuery,
 															}}
 															onClick={() => {
 																sessionStorage.setItem(
@@ -783,12 +821,17 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										})}
 									</ul>
 								) : (
-									<table className="festival-film-list relative mt-4 w-full table-auto border-collapse text-sm lg:text-lg">
+									<table className="festival-film-list relative mt-4 w-full table-fixed border-separate border-spacing-0 text-sm lg:text-lg">
+										<colgroup>
+											<col className="w-1/3" />
+											<col />
+											<col className="w-20 lg:w-24" />
+										</colgroup>
 										<thead className="sr-only">
 											<tr>
-												<th scope="col">{tFilmSelection('year')}</th>
-												<th scope="col">{tFilmSelection('director')}</th>
 												<th scope="col">{tFilmSelection('titleCol')}</th>
+												<th scope="col">{tFilmSelection('director')}</th>
+												<th scope="col">{tFilmSelection('year')}</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -797,7 +840,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												const filmHref = film.slug?.current
 													? {
 															pathname: `/${language}/film/${film.slug.current}`,
-															query: Object.fromEntries(searchParams.entries()),
+															query: filmQuery,
 														}
 													: null
 												const title = getLocalizedValue(film.title, language)
@@ -806,74 +849,54 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 														'festivalScroll',
 														window.scrollY.toString(),
 													)
-												const director = (
-													<RichText
-														value={film.director}
-														inline
-														allowLinks={false}
-													/>
-												)
+												const director = <OverflowText value={film.director} />
 												const filmTitle = (
 													<>
 														{film.isWinner && (
-															<span aria-label={tFilmSelection('winner')}>
+															<span
+																className="shrink-0"
+																aria-label={tFilmSelection('winner')}
+															>
 																★
 															</span>
 														)}
-														<RichText
+														<OverflowText
 															value={localizedRichText(film.title, language)}
-															inline
-															allowLinks={false}
+															className="flex-1"
 														/>
 													</>
 												)
 												return (
 													<tr
 														key={filmKey}
-														onMouseEnter={(event) =>
-															setHoveredFilm({
-																key: filmKey,
-																row: event.currentTarget,
-															})
-														}
-														onMouseLeave={() => setHoveredFilm(null)}
-														className={`relative text-primary hover:bg-primary/15 ${film.isWinner ? 'font-black' : ''}`}
+														className={`relative ${film.isWinner ? 'text-dark [&>td:first-child]:pl-2 [&>td]:bg-grayDark' : 'text-primary hover:bg-primary/15'}`}
 														data-film-slug={film.slug?.current}
 													>
-														<td className="border-b border-primary py-2">
-															{filmHref ? (
-																<Link href={filmHref} onClick={saveScroll}>
-																	{film.year}
-																</Link>
-															) : (
-																<span className="text-grayDark">
-																	{film.year}
-																</span>
-															)}
-														</td>
-														<td className="border-b border-primary px-4 py-2">
-															{filmHref ? (
-																<Link href={filmHref} onClick={saveScroll}>
-																	{director}
-																</Link>
-															) : (
-																director
-															)}
-														</td>
-														<td className="border-b border-primary px-4 py-2 pr-8">
-															{filmHref ? (
-																<Link
-																	href={filmHref}
-																	onClick={saveScroll}
-																	className="flex gap-x-1"
-																>
-																	{filmTitle}
-																</Link>
-															) : (
-																<span className="flex gap-x-1 text-grayDark">
-																	{filmTitle}
-																</span>
-															)}
+														<td
+															className="group border-b border-primary py-2"
+															onMouseEnter={(event) => {
+																const row = event.currentTarget.closest('tr')
+																if (row) setHoveredFilm({ key: filmKey, row })
+															}}
+															onMouseLeave={() => setHoveredFilm(null)}
+														>
+															<div className="w-fit max-w-full">
+																{filmHref ? (
+																	<Link
+																		href={filmHref}
+																		onClick={saveScroll}
+																		className="group flex gap-x-1"
+																	>
+																		{filmTitle}
+																	</Link>
+																) : (
+																	<span
+																		className={`flex gap-x-1 ${film.isWinner ? '' : 'text-grayDark'}`}
+																	>
+																		{filmTitle}
+																	</span>
+																)}
+															</div>
 															{hoveredFilm &&
 																hoveredFilm.key === filmKey &&
 																film.affiche && (
@@ -881,36 +904,45 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																		anchor={hoveredFilm.row}
 																		onClose={() => setHoveredFilm(null)}
 																	>
-																		<div className="relative">
-																			<Img
-																				image={film.affiche}
-																				alt={title}
-																				className="max-h-[var(--preview-max-height)] max-w-full rounded-md border-[3px] border-primary object-contain"
-																			/>
-																			<div className="absolute left-1/2 top-1/2 flex w-[90%] -translate-x-1/2 flex-col items-center">
-																				{film.year && (
-																					<p className="relative z-10 -rotate-6 rounded-md bg-primary px-2 text-xl font-black text-dark">
-																						{film.year}
-																					</p>
-																				)}
-																				{richTextLines(film.director, 26).map(
-																					(line, lineIndex) => (
-																						<p
-																							key={lineIndex}
-																							className={`relative rounded-md border-2 border-dark bg-grayDark px-2 text-center font-medium tracking-tighter text-dark ${lineIndex ? '-mt-[0.15rem]' : ''} ${lineIndex % 2 === 0 ? '-rotate-1' : 'rotate-1'}`}
-																						>
-																							<RichText
-																								value={line}
-																								inline
-																								allowLinks={false}
-																							/>
-																						</p>
-																					),
-																				)}
-																			</div>
-																		</div>
+																		<Img
+																			image={film.affiche}
+																			alt={title}
+																			imageWidth={960}
+																			sizes="480px"
+																			loading="eager"
+																			placeholderFit="contain"
+																			className="max-h-[var(--preview-max-height)] max-w-full object-contain"
+																		/>
 																	</FilmHoverPreview>
 																)}
+														</td>
+														<td className="border-b border-primary px-4 py-2">
+															{filmHref ? (
+																<Link
+																	href={filmHref}
+																	onClick={saveScroll}
+																	className="group block"
+																>
+																	{director}
+																</Link>
+															) : (
+																<span className="group block">{director}</span>
+															)}
+														</td>
+														<td className="border-b border-primary px-4 py-2 pr-8">
+															{filmHref ? (
+																<Link href={filmHref} onClick={saveScroll}>
+																	{film.year}
+																</Link>
+															) : (
+																<span
+																	className={
+																		film.isWinner ? '' : 'text-grayDark'
+																	}
+																>
+																	{film.year}
+																</span>
+															)}
 														</td>
 													</tr>
 												)
@@ -931,10 +963,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							type="single"
 							collapsible
 							value={photoExhibitionValue}
-							onValueChange={(value) => {
-								setPhotoExhibitionValue(value)
-								setActiveChapter(value === 'item-3' ? 'exhibition' : 'overview')
-							}}
+							onValueChange={(value) =>
+								selectChapter(value === 'item-3' ? 'exhibition' : 'overview')
+							}
 						>
 							<AccordionItem
 								value="item-3"
@@ -949,129 +980,13 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								>
 									{sectionLabel('exhibitionTitle', tExpo('title'))}
 								</AccordionTrigger>
+								{photoExhibitionValue === 'item-3' && exhibitionCredit && (
+									<div className="relative z-30 -mt-1 flex justify-center px-4 lg:hidden">
+										{creditPill(exhibitionCredit, photoCreditRotation(curators.map((expo: any) => richTextToPlainText(expo.curatorName)).join(', ')))}
+									</div>
+								)}
 								<AccordionContent>
-									{expoPhoto.length > 0 && (
-										<div className="my-4">
-											{/* Curator Name */}
-											{expoPhoto.map((expo: any, expoIndex: number) => {
-												// Group photos by artist
-												const photosByArtist = expo.photos?.reduce(
-													(acc: any, photo: any) => {
-														const artistName =
-															richTextToPlainText(photo.artistName) ||
-															'Unknown Artist'
-														if (!acc[artistName]) {
-															acc[artistName] = []
-														}
-														acc[artistName].push(photo)
-														return acc
-													},
-													{},
-												)
-
-												return (
-													<div key={expoIndex} className="mb-4">
-														<div className="flex justify-center">
-															<h3 className="z-0 -mt-3 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark lg:text-lg">
-																{tExpo('curatedBy')}{' '}
-																<RichText value={expo.curatorName} inline />
-															</h3>
-														</div>
-
-														{/* Artist Names */}
-														{photosByArtist &&
-														Object.keys(photosByArtist).length > 0 ? (
-															<ul className="mt-2 text-base text-primary lg:text-primary">
-																{Object.keys(photosByArtist).map(
-																	(artistName, artistIndex) => {
-																		const isExpanded =
-																			selectedArtist === artistName
-
-																		return (
-																			<li
-																				key={artistIndex}
-																				className="border-b border-primary/50 lg:border-primary"
-																			>
-																				<div
-																					className="flex cursor-pointer items-center justify-between py-2"
-																					onClick={() =>
-																						setSelectedArtist(
-																							isExpanded ? null : artistName,
-																						)
-																					}
-																				>
-																					<RichText
-																						value={
-																							photosByArtist[artistName][0]
-																								?.artistName
-																						}
-																						inline
-																					/>
-																					<span>
-																						{isExpanded ? (
-																							<span className="font-bold">
-																								-
-																							</span>
-																						) : (
-																							<span className="font-bold">
-																								+
-																							</span>
-																						)}
-																					</span>
-																					{/* <ArrowGallery
-																				className="mr-1 h-auto w-2 -rotate-90 lg:w-9"
-																				theme={{
-																					fill: 'var(--color-primary)',
-																				}}
-																			/> */}
-																				</div>
-
-																				{/* Photos for Selected Artist */}
-																				{isExpanded &&
-																					photosByArtist[artistName] && (
-																						<div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-																							{photosByArtist[artistName].map(
-																								(
-																									photo: any,
-																									photoIndex: number,
-																								) => (
-																									<figure
-																										key={
-																											photo.photo?._key ||
-																											`${artistName}-${photoIndex}`
-																										}
-																									>
-																										<Img
-																											key={
-																												photo.photo?._key ||
-																												photo.photo?.asset
-																													?._id ||
-																												`${artistName}-${photoIndex}`
-																											}
-																											image={photo.photo}
-																											alt={`Photo by ${artistName}`}
-																											className="aspect-square h-auto w-full rounded-md object-cover"
-																										/>
-																									</figure>
-																								),
-																							)}
-																						</div>
-																					)}
-																			</li>
-																		)
-																	},
-																)}
-															</ul>
-														) : (
-															<p className="mt-2 text-base text-primary">
-																No photos available.
-															</p>
-														)}
-													</div>
-												)
-											})}
-										</div>
-									)}
+									<ExhibitionCollage exhibitions={expoPhoto} />
 								</AccordionContent>
 							</AccordionItem>
 						</Accordion>
@@ -1089,23 +1004,14 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 							data-any-active={hasActiveSection}
 							data-stack="gallery"
 						>
-							<motion.div
-								initial={{ rotate: -3 }}
-								animate={{
-									rotate: 1,
-									transition: {
-										duration: 0.3,
-										repeat: Infinity,
-										delay: 5,
-										repeatType: 'reverse',
-										ease: 'easeInOut',
-									},
-								}}
+							<button
+								type="button"
+								aria-expanded={isPhotoGalleryOpen}
 								onClick={() =>
 									selectChapter(isPhotoGalleryOpen ? 'overview' : 'photos')
 								}
 								data-active={isPhotoGalleryOpen}
-								className={`festival-section-label relative flex w-fit cursor-pointer items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-all hover:border-grayDark hover:bg-grayDark hover:text-dark lg:hidden ${
+								className={`interactive-title-motion festival-section-label relative flex w-fit -rotate-3 cursor-pointer items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-colors hover:border-grayDark hover:bg-grayDark hover:text-dark lg:hidden ${
 									isPhotoGalleryOpen
 										? 'border-grayDark bg-grayDark text-dark'
 										: 'border-primary bg-dark text-primary'
@@ -1114,77 +1020,70 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 								<span>
 									{sectionLabel('photosTitle', tPhotoGallery('title'))}
 								</span>
-							</motion.div>
+							</button>
 						</div>
 
 						{isPhotoGalleryOpen && (
 							<div className="relative">
-								<div className="flex justify-center">
-									<h3 className="-z-10 -mt-0 inline-block rotate-2 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-base font-medium tracking-tighter text-dark lg:z-0 lg:text-lg">
-										{tPhotoGallery('photosBy')}{' '}
-										{photoGallery.map((gallery: any, index: number) => (
-											<span key={index}>
-												{index > 0 && ', '}
-												<RichText value={gallery.photographer} inline />
-											</span>
-										))}
-									</h3>
-								</div>
+								{galleryCredit && (
+									<div className="relative z-30 -mt-1 flex justify-center px-4 lg:hidden">
+										{creditPill(galleryCredit, '3deg')}
+									</div>
+								)}
 
-								<div className="relative space-y-4 pt-4">
+								<div
+									className={contactSheet.sheet}
+									style={{ '--frames-per-row': photosPerRow } as CSSProperties}
+								>
 									{photoRows.map((row, rowIndex) => (
 										<div
 											key={rowIndex}
-											className="relative flex flex-col items-center justify-center rounded-md bg-grayDark py-4 lg:py-[2.4rem]"
+											className={contactSheet.strip}
+											style={{ '--frames-in-row': row.length } as CSSProperties}
 										>
-											{/* Top perforation */}
-											<div className="absolute left-0 top-1 flex w-full justify-between px-2 lg:top-2">
-												{[...Array(28)].map((_, i) => (
-													<div
-														key={i}
-														className="hidden h-2 w-4 rounded-sm bg-dark lg:block lg:h-[1.45rem] lg:w-[1.15rem] lg:rounded-[0.25rem] lg:bg-dark"
-													/>
-												))}
-												{[...Array(12)].map((_, i) => (
-													<div
-														key={i}
-														className="h-2 w-4 rounded-sm bg-dark lg:hidden lg:h-[1.45rem] lg:w-3 lg:rounded-[0.25rem] lg:bg-dark"
-													/>
-												))}
-											</div>
-											{/* Bottom perforation */}
-											<div className="absolute bottom-1 left-0 flex w-full justify-between px-2 lg:bottom-2">
-												{[...Array(28)].map((_, i) => (
-													<div
-														key={i}
-														className="hidden h-2 w-4 rounded-sm bg-dark lg:block lg:h-[1.45rem] lg:w-[1.15rem] lg:rounded-[0.25rem] lg:bg-dark"
-													/>
-												))}
-												{[...Array(12)].map((_, i) => (
-													<div
-														key={i}
-														className="h-2 w-4 rounded-sm bg-dark lg:hidden lg:h-[1.45rem] lg:w-3 lg:rounded-[0.25rem] lg:bg-dark"
-													/>
-												))}
-											</div>
-											{/* Images */}
-											<div className="z-10 grid w-full max-w-3xl grid-cols-3 lg:max-w-full lg:gap-2">
+											{['top', 'bottom'].map((edge) => (
+												<div
+													key={edge}
+													aria-hidden="true"
+													className={contactSheet.perforations}
+													data-edge={edge}
+												>
+													{Array.from({ length: row.length * 8 }, (_, index) => (
+														<span key={index} />
+													))}
+												</div>
+											))}
+											<div className={contactSheet.frames}>
 												{row.map((photo: any, index: number) => (
 													<button
 														key={index}
+														type="button"
 														onClick={(event) =>
 															openLightbox(
-																rowIndex * 3 + index,
+																rowIndex * photosPerRow + index,
 																event.currentTarget,
 															)
 														}
-														className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+														className={contactSheet.frame}
 													>
 														<Img
 															image={photo}
-															alt={`Photo ${rowIndex * 3 + index + 1}`}
-															className="aspect-square h-auto w-full rounded-none object-cover lg:aspect-video"
+															alt={`Photo ${rowIndex * photosPerRow + index + 1}`}
+															imageWidth={1000}
+															sizes="(min-width: 1024px) 14vw, 32vw"
+															loading={rowIndex === 0 ? 'eager' : 'lazy'}
+															className={contactSheet.photo}
 														/>
+														{['top', 'bottom'].map((edge) => (
+															<span
+																key={edge}
+																className={contactSheet.frameNumber}
+																data-edge={edge}
+																aria-hidden="true"
+															>
+																{String(rowIndex * photosPerRow + index + 1).padStart(2, '0')}
+															</span>
+														))}
 													</button>
 												))}
 											</div>
@@ -1192,7 +1091,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									))}
 								</div>
 
-								{isLightboxOpen && (
+								{isLightboxOpen && createPortal(
 									<FestivalCarousel
 										photos={photoGallery.flatMap((gallery: any) =>
 											(gallery.photos ?? []).map((photo: any) => ({
@@ -1203,67 +1102,14 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 										initialIndex={currentImageIndex}
 										originRect={lightboxOriginRect}
 										onClose={closeLightbox}
-									/>
+									/>,
+									document.body,
 								)}
 							</div>
 						)}
 					</div>
 
 					{jurySection}
-
-					<div
-						className={`${EDITORIAL_BODY_TEXT} ${EDITORIAL_COPY_WIDTH} mx-auto py-4 pt-3 text-primary lg:pb-8 lg:pt-[0.45em] ${
-							activeChapter === 'overview' ? 'lg:block' : 'lg:hidden'
-						}`}
-					>
-						<RichText
-							value={festivalDescription}
-							className="festival-edition-description [&>h2]:text-[1.7em]"
-						/>
-
-						{(festival.pressLink || festival.aftermovieLink) && (
-							<div className="mt-6 flex flex-wrap gap-2">
-								{festival.pressLink && (
-									<a
-										href={festival.pressLink}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="inline-block rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base"
-									>
-										<RichText
-											value={
-												localizedRichText(festival.pressLinkLabel, language) ||
-												{ fr: 'Presse', en: 'Press', nl: 'Pers' }[language] ||
-												'Presse'
-											}
-											inline
-											allowLinks={false}
-										/>
-									</a>
-								)}
-
-								{festival.aftermovieLink && (
-									<a
-										href={festival.aftermovieLink}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="inline-block rounded-md border-2 border-primary bg-primary px-2 py-0 text-sm font-medium text-dark lg:text-base"
-									>
-										<RichText
-											value={
-												localizedRichText(
-													festival.aftermovieLinkLabel,
-													language,
-												) || 'Aftermovie'
-											}
-											inline
-											allowLinks={false}
-										/>
-									</a>
-								)}
-							</div>
-						)}
-					</div>
 				</main>
 			</div>
 		</div>

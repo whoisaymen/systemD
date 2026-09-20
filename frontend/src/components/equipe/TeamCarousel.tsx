@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Transition } from 'motion/react'
-import Img from '@/ui/Img'
+import Img, { getImageDimensions } from '@/ui/Img'
 import RichText from '@/components/common/RichText'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
-import CartoonLeftArrow from '../common/CartoonLeftArrow'
+import NewArrowRightFull from '../common/NewArrowRightFull'
+import { FILM_LABEL_TEXT } from '../film/filmLabelStyles'
 import {
 	EDITORIAL_BODY_TEXT,
 	EDITORIAL_COPY_WIDTH,
@@ -15,10 +16,9 @@ import {
 interface TeamMember {
 	id: string
 	name: string
+	role: string
 	description: any
-	nameContent?: any
 	image: any
-	hasImage: boolean
 	shape: ShapeProfile
 }
 
@@ -119,18 +119,10 @@ const getStableNoise = (seed: string, index: number, salt: number) => {
 	return ((hash >>> 0) % 1000) / 500 - 1
 }
 
-const getNamePillPose = (index: number, total: number, seed: string) => {
+const getNamePillRotation = (index: number, seed: string) => {
 	const rotations = [-3.5, 2.5, -1.5, 3, -2.25]
-	const yOffsets = [-2, 3, 0, 4, 1]
-	const centerOffset = index - (total - 1) / 2
-	const jitterX = getStableNoise(seed, index, 0) * 3
-	const jitterY = getStableNoise(seed, index, 1) * 2
 	const jitterRotate = getStableNoise(seed, index, 2) * 1.5
-	return {
-		rotate: rotations[index % rotations.length] + jitterRotate,
-		x: centerOffset * 2 + jitterX,
-		y: yOffsets[index % yOffsets.length] + jitterY,
-	}
+	return rotations[index % rotations.length] + jitterRotate
 }
 
 export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
@@ -141,45 +133,40 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	const [containerWidth, setContainerWidth] = useState(0)
 	const [windowWidth, setWindowWidth] = useState(0)
 	const [windowHeight, setWindowHeight] = useState(0)
+	const [nameHeight, setNameHeight] = useState(0)
+	const measureName = useCallback((element: HTMLHeadingElement | null) => {
+		if (!element) return
+		const updateHeight = () => setNameHeight(element.offsetHeight)
+		updateHeight()
+		const observer = new ResizeObserver(updateHeight)
+		observer.observe(element)
+		return () => observer.disconnect()
+	}, [])
 
 	const teamMembers: TeamMember[] = useMemo(
 		() =>
 			persons.map((person, index) => ({
 				id: person._id,
 				name: richTextToPlainText(person.name),
-				nameContent: person.name,
+				role: richTextToPlainText(localizedRichText(person.role, language)),
 				description: localizedRichText(person.biography, language),
 				image: person.image,
-				hasImage: Boolean(person.image?.asset),
 				shape: shapeProfiles[index % shapeProfiles.length],
 			})),
 		[language, persons],
 	)
 
 	const totalMembers = teamMembers.length
-	const defaultActiveIndex = Math.max(
-		0,
-		teamMembers.findIndex((member) => member.hasImage),
-	)
-	const [activeIndex, setActiveIndex] = useState(defaultActiveIndex)
+	const [activeIndex, setActiveIndex] = useState(0)
 	const [animationPhase, setAnimationPhase] = useState<
 		'idle' | 'closing' | 'opening'
 	>('idle')
 	const [isNormalizingSlots, setIsNormalizingSlots] = useState(false)
 	const [slotPositions, setSlotPositions] = useState<number[]>(() =>
-		getInitialSlots(totalMembers, defaultActiveIndex),
+		getInitialSlots(totalMembers, 0),
 	)
 	const activeMember = teamMembers[activeIndex]
 	const activeNameParts = getNameParts(activeMember?.name || '')
-	const useFormattedName = Boolean(
-		activeMember?.nameContent &&
-		(richTextToPlainText(activeMember.nameContent) !== activeMember.name ||
-			activeMember.nameContent.some?.(
-				(block: any) =>
-					block.markDefs?.length ||
-					block.children?.some((span: any) => span.marks?.length),
-			)),
-	)
 
 	useEffect(() => {
 		const element = containerRef.current
@@ -290,11 +277,35 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 				440,
 			)
 		: clamp(viewportWidth * 0.72, 236, 330)
-	const stageHeight = Math.round(activeSize + 24)
+	const imageDimensions = activeMember.image
+		? getImageDimensions(activeMember.image)
+		: undefined
+	const imageRatio = imageDimensions
+		? imageDimensions.width / imageDimensions.height
+		: 1
+	// Fit the photo at its native ratio, with room for the 2px frame.
+	const activeWidth = (activeSize - 4) * Math.min(1, imageRatio) + 4
+	const activeHeight = (activeSize - 4) / Math.max(1, imageRatio) + 4
+	const stageHeight = activeSize
 	const visibleRange = isDesktop ? 2 : 1
-	const slotSpacing = activeSize * (isDesktop ? 0.72 : 0.66)
 	const shapeHeight = activeSize * (isDesktop ? 0.68 : 0.7)
 	const centerX = viewportWidth / 2
+	const cardGap = isDesktop ? 10 : 8
+	const slotCenters = new Map([[0, centerX]])
+	for (const direction of [-1, 1]) {
+		let edge = centerX + direction * (activeWidth / 2)
+		for (let distance = 1; distance <= visibleRange + 1; distance += 1) {
+			const slot = direction * distance
+			const memberIndex = slotPositions.indexOf(slot)
+			const member = teamMembers[
+				memberIndex >= 0 ? memberIndex : wrapIndex(activeIndex + slot, totalMembers)
+			]
+			const width = isDesktop ? member.shape.desktopWidth : member.shape.mobileWidth
+			const slotCenter = edge + direction * (cardGap + width / 2)
+			slotCenters.set(slot, slotCenter)
+			edge = slotCenter + direction * (width / 2)
+		}
+	}
 	const travelTransition: Transition = shouldReduceMotion
 		? { duration: 0.2, ease }
 		: { type: 'spring', stiffness: 150, damping: 20, mass: 0.8 }
@@ -375,7 +386,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 						const cardWidth = isDesktop
 							? member.shape.desktopWidth
 							: member.shape.mobileWidth
-						const targetX = centerX + slot * slotSpacing - cardWidth / 2
+						const targetX = slotCenters.get(slot)! - cardWidth / 2
 						const inactiveY =
 							(activeSize - shapeHeight) / 2 +
 							member.shape.y * (isDesktop ? 1 : 0.62)
@@ -442,17 +453,18 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 							visibleRange + 1,
 						)
 						const cardWidth = isActive
-							? activeSize
+							? activeWidth
 							: isDesktop
 								? member.shape.desktopWidth
 								: member.shape.mobileWidth
-						const cardHeight = isActive ? activeSize : shapeHeight
-						const targetX =
-							centerX + clampedOffset * slotSpacing - cardWidth / 2
+						const cardHeight = isActive ? activeHeight : shapeHeight
+						const targetX = slotCenters.get(clampedOffset)! - cardWidth / 2
 						const inactiveY =
 							(activeSize - shapeHeight) / 2 +
 							member.shape.y * (isDesktop ? 1 : 0.62)
-						const targetY = isActive ? 0 : Math.max(18, inactiveY + 18)
+						const targetY = isActive
+							? activeSize - activeHeight
+							: Math.max(18, inactiveY + 18)
 						const pulse = shapePulse[index % shapePulse.length]
 
 						return (
@@ -517,6 +529,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 								>
 									<motion.div
 										className="absolute inset-0 bg-grayDark"
+										initial={false}
 										animate={{
 											opacity: isPortraitOpen ? 0 : 1,
 										}}
@@ -525,6 +538,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 									<motion.div
 										className="absolute inset-0"
+										initial={false}
 										style={{
 											clipPath: 'none',
 											filter: 'none',
@@ -539,9 +553,11 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 									>
 										<Img
 											image={member.image}
+											draggable={false}
 											alt=""
 											imageWidth={900}
-											className="h-full w-full object-cover"
+											className="h-full w-full object-contain"
+											placeholderFit="contain"
 										/>
 									</motion.div>
 
@@ -561,73 +577,94 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 				</div>
 			</div>
 
-			<div className="team-member-controls relative z-30 mx-auto -mt-8 grid w-[calc(100%-2rem)] max-w-[38rem] shrink-0 grid-cols-[3rem_minmax(0,1fr)_3rem] items-center gap-2 sm:gap-4">
-				<button
-					type="button"
-					onClick={goToPrev}
-					className="flex min-h-12 items-center justify-center rounded-sm transition-transform hover:-translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
-					aria-label="Previous team member"
-					disabled={totalMembers <= 1}
-				>
-					<CartoonLeftArrow className="h-auto w-11" />
-				</button>
+			<div
+				className="team-member-controls relative z-30 mx-auto w-[calc(100%-2rem)] max-w-[38rem] shrink-0"
+				style={{ marginTop: -nameHeight / 2 }}
+			>
 				<div
-					className="flex min-h-16 items-center justify-center"
+					className="min-w-0"
 					aria-live="polite"
 					aria-atomic="true"
 				>
 					<AnimatePresence mode="wait" initial={false}>
-						<motion.h2
+						<motion.div
 							key={activeMember.id}
-							className="team-member-name flex flex-wrap items-center justify-center gap-x-1 gap-y-2 py-2 text-lg font-bold italic leading-none tracking-tight lg:text-[clamp(1rem,2.17cqw,1.5rem)]"
-							initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 6 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -4 }}
+							className="min-w-0"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
 							transition={{ duration: shouldReduceMotion ? 0.1 : 0.18, ease }}
 						>
-							{(useFormattedName ? ['formatted-name'] : activeNameParts).map(
-								(namePart, index) => {
-									const pose = getNamePillPose(
+							<h2
+								ref={measureName}
+								className="team-member-name flex flex-wrap items-center justify-center text-lg font-bold italic leading-none tracking-tight lg:text-[clamp(1rem,2.17cqw,1.5rem)]"
+							>
+								{activeNameParts.map((namePart, index) => {
+									const rotation = getNamePillRotation(
 										index,
-										activeNameParts.length,
 										activeMember.id || activeMember.name,
 									)
 									return (
 										<motion.span
 											key={`${activeMember.id}-${index}`}
-											className={`block max-w-full rounded-sm px-1.5 py-0.5 text-dark ${index % 2 ? 'bg-grayDark' : 'bg-primary'}`}
+											className={`block max-w-full rounded-md border-2 border-current py-0.5 pl-1.5 pr-2.5 text-dark ${index > 0 ? '-ml-1.5' : ''} ${index % 2 ? 'bg-grayDark' : 'bg-primary'}`}
 											initial={false}
-											animate={{ rotate: pose.rotate, x: pose.x, y: pose.y }}
+											animate={{ rotate: rotation }}
 											transition={{
 												duration: shouldReduceMotion ? 0 : 0.2,
 												ease,
 											}}
 										>
-											{useFormattedName ? (
-												<RichText
-													value={activeMember.nameContent}
-													inline
-													allowLinks={false}
-												/>
-											) : (
-												namePart
-											)}
+											{namePart}
 										</motion.span>
 									)
-								},
-							)}
-						</motion.h2>
+								})}
+							</h2>
+						</motion.div>
 					</AnimatePresence>
 				</div>
-				<button
-					type="button"
-					onClick={goToNext}
-					className="flex min-h-12 items-center justify-center rounded-sm transition-transform hover:translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
-					aria-label="Next team member"
-					disabled={totalMembers <= 1}
-				>
-					<CartoonLeftArrow className="h-auto w-11 rotate-180" />
-				</button>
+				<div className="team-member-role-controls mx-auto mt-1 flex w-fit max-w-full items-center justify-center gap-2">
+					<button
+						type="button"
+						onClick={goToPrev}
+						className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-sm transition-transform before:absolute before:-inset-1.5 hover:-translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
+						aria-label="Previous team member"
+						disabled={totalMembers <= 1}
+					>
+						<NewArrowRightFull
+							theme={{ stroke: 'var(--color-primary)' }}
+							strokeWidth={8}
+							className="h-auto w-6 rotate-180"
+						/>
+					</button>
+					<AnimatePresence mode="wait" initial={false}>
+						{activeMember.role && (
+							<motion.p
+								key={activeMember.id}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: shouldReduceMotion ? 0.1 : 0.18, ease }}
+								className={`team-member-role relative z-10 min-w-0 -rotate-3 rounded-md border-2 border-primary bg-dark px-1.5 py-0 text-center text-primary ${FILM_LABEL_TEXT}`}
+							>
+								{activeMember.role}
+							</motion.p>
+						)}
+					</AnimatePresence>
+					<button
+						type="button"
+						onClick={goToNext}
+						className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-sm transition-transform before:absolute before:-inset-1.5 hover:translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
+						aria-label="Next team member"
+						disabled={totalMembers <= 1}
+					>
+						<NewArrowRightFull
+							theme={{ stroke: 'var(--color-primary)' }}
+							strokeWidth={8}
+							className="h-auto w-6"
+						/>
+					</button>
+				</div>
 			</div>
 
 			<div

@@ -1,16 +1,33 @@
 {
 	"menu": {
 		"legal": "Legal notice",
-		"contact": "Contact us",
+		"about": "About",
 		"openMainMenu": "Open main menu"
 	},
 
 	"contactPage": {
-		"title": "Contactez-nous",
+		"title": "About",
 		"contact": "Contact",
 		"partners": "Partners",
+		"credits": "Credits",
 		"viewOnMap": "View on Google Maps",
-		"noContent": "No content available"
+		"noContent": "No content available",
+		"map": {
+			"label": "Interactive map of Brussels around Pianofabriek",
+			"controls": "Map controls",
+			"zoomIn": "Zoom in",
+			"zoomOut": "Zoom out",
+			"reset": "Back to System D",
+			"venueLink": "System D at Pianofabriek — open in Google Maps",
+			"openDirections": "Open directions",
+			"instructions": "Drag to explore. Use + and − to zoom, or hold Ctrl / ⌘ while scrolling. On touch screens, use two fingers. With the map focused, use the arrow keys to move and + / − to zoom.",
+			"scrollHint": "Use Ctrl + scroll to zoom the map",
+			"scrollHintMac": "Use ⌘ + scroll to zoom the map",
+			"touchHint": "Use two fingers to move the map",
+			"loading": "Finding our corner of Brussels…",
+			"unavailable": "The live map is unavailable. You can still open directions.",
+			"retry": "Try again"
+		}
 	},
 
 	"festivalEvents": {
@@ -48,6 +65,8 @@
 	},
 
 	"expo": {
+		"enlargePhoto": "Enlarge photo",
+		"enlargePhotoBy": "Enlarge photo by {artist}",
 		"curatedBy": "Curated by",
 		"title": "Photo Exhibition"
 	},

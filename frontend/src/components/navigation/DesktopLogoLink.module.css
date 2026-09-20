@@ -1,0 +1,22 @@
+.overlay {
+	position: fixed;
+	inset: 4px var(--width-column-width);
+	z-index: 60;
+	display: none;
+	place-items: center;
+	overflow: hidden;
+	border-radius: 12px;
+	pointer-events: none;
+	user-select: none;
+}
+
+.heart {
+	position: relative;
+	width: min(78%, 34rem, calc(100svh - 3rem));
+}
+
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+	.overlay {
+		display: grid;
+	}
+}

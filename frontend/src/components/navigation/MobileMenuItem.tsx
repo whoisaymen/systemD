@@ -7,7 +7,7 @@ import FestivalLogoMobile from '../festival/FestivalLogoMobile'
 import MemoireLogoMobile from '../memoire/MemoireLogoMobile'
 import EquipeLogoMobile from '../equipe/EquipeLogoMobile'
 import FabriqueLogoMobile from '../fabrique/FabriqueLogoMobile'
-import { MdContactSupport } from 'react-icons/md'
+import AboutIcon from './AboutIcon'
 import SocialLinks from '@/ui/SocialLinks'
 
 import LogoShortAnimated from '../svgs/LogoShortAnimated'
@@ -210,11 +210,11 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu, social }) => {
 			>
 				<Link
 					className="flex items-center justify-center text-primary"
-					href={`/${locale}/contact`}
+					href={`/${locale}/about`}
 					onClick={closeMenu}
-					aria-label={t('contact')}
+					aria-label={t('about')}
 				>
-					<MdContactSupport aria-hidden="true" className="h-8 w-8" />
+					<AboutIcon aria-hidden="true" className="h-8 w-8" />
 				</Link>
 				<SocialLinks
 					social={social}

@@ -26,16 +26,6 @@ const editionLabels: Record<string, Record<string, string>> = {
 		en: 'Jury',
 		nl: 'Jury',
 	},
-	pressLinkLabel: {
-		fr: 'Presse',
-		en: 'Press',
-		nl: 'Pers',
-	},
-	aftermovieLinkLabel: {
-		fr: 'Aftermovie',
-		en: 'Aftermovie',
-		nl: 'Aftermovie',
-	},
 }
 
 /** Preserve existing fields, including deliberately empty values, when exposing labels in Studio. */

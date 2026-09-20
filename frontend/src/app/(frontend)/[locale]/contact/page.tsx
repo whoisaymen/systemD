@@ -1,46 +1,17 @@
-import ContactContent from '@/components/contact/ContactContent'
-import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
+import { permanentRedirect } from 'next/navigation'
 
-export default async function ContactPage({
+export default async function ContactRedirect({
 	params,
+	searchParams,
 }: {
 	params: Promise<{ locale: string }>
+	searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-	const { locale } = await params
-	const content = await getContact()
-
-	return <ContactContent contact={content} language={locale} />
-}
-
-async function getContact() {
-	const query = groq`
-    *[_type == 'contact'][0]{
-      ...,
-      formEmail,
-      address,
-      mapLocation,
-      phone,
-      partners[]{
-        _key,
-        logo {
-          asset->{
-            url,
-            metadata {
-              dimensions,
-              lqip
-            }
-          }
-        },
-        name,
-        url
-      }
-    }
-  `
-	const data = await fetchSanityLive({ query })
-
-	if (!data) {
-		throw new Error(`No contact content found`)
+	const [{ locale }, query] = await Promise.all([params, searchParams])
+	const search = new URLSearchParams()
+	for (const [key, value] of Object.entries(query)) {
+		for (const entry of Array.isArray(value) ? value : value === undefined ? [] : [value])
+			search.append(key, entry)
 	}
-
-	return data
+	permanentRedirect(`/${locale}/about${search.size ? `?${search}` : ''}`)
 }

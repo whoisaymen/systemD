@@ -88,6 +88,37 @@ test('renderer preserves bold, italic, links and block layout', () => {
 	assert.match(heading, /<h2 /)
 })
 
+test('center alignment preserves text styles and marks without centering adjacent copy', () => {
+	for (const [style, tag] of [
+		['normal', 'p'],
+		['h2', 'h2'],
+		['h3', 'h3'],
+		['blockquote', 'blockquote'],
+		['normalCenter', 'p'],
+		['h2Center', 'h2'],
+		['h3Center', 'h3'],
+		['blockquoteCenter', 'blockquote'],
+	]) {
+		const centered = {
+			...blocks[0],
+			_key: 'centered',
+			style,
+			children: blocks[0].children.map((child) => ({
+				...child,
+				marks: style.endsWith('Center') ? child.marks : [...child.marks, 'alignCenter'],
+			})),
+		}
+		const html = renderToStaticMarkup(<RichText value={[centered, blocks[0]]} />)
+		assert.match(html, new RegExp(`<${tag}[^>]*style="text-align:center"`))
+		assert.equal((html.match(/text-align:center/g) ?? []).length, 1)
+		assert.equal((html.match(/<strong/g) ?? []).length, 2)
+		assert.equal((html.match(/href="https:\/\/example.com"/g) ?? []).length, 2)
+		const inline = renderToStaticMarkup(<RichText value={[centered]} inline />)
+		assert.doesNotMatch(inline, /<(p|h2|h3|blockquote)[ >]|text-align/)
+		assert.match(inline, /Our vision/)
+	}
+})
+
 test('inline content avoids block markup and nested links in clickable cards', () => {
 	const html = renderToStaticMarkup(
 		<a href="/festival">

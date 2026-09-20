@@ -1,0 +1,100 @@
+.sheet {
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: clamp(0.5rem, 1.2cqw, 0.75rem);
+	width: 100%;
+	margin-inline: auto;
+	padding: 2.5rem 2% 2rem;
+}
+
+@media (min-width: 1024px) {
+	.sheet {
+		padding-inline: 0;
+	}
+}
+
+.strip {
+	--frame-width: calc(100cqw / var(--frames-per-row));
+	--film-gap: clamp(3px, calc(var(--frame-width) * 0.035), 8px);
+	--rail: clamp(15px, calc(var(--frame-width) * 0.15), 36px);
+	--hole-height: clamp(6px, calc(var(--frame-width) * 0.08), 20px);
+	position: relative;
+	width: calc(100% * var(--frames-in-row) / var(--frames-per-row));
+	padding: var(--rail) var(--film-gap);
+	background: var(--color-grayDark);
+	border-radius: 2px;
+}
+
+.perforations {
+	position: absolute;
+	left: var(--film-gap);
+	right: var(--film-gap);
+	display: flex;
+	justify-content: space-between;
+	pointer-events: none;
+}
+
+.perforations[data-edge='top'] {
+	top: calc(var(--rail) - var(--hole-height) - 2px);
+}
+
+.perforations[data-edge='bottom'] {
+	bottom: calc(var(--rail) - var(--hole-height) - 2px);
+}
+
+.perforations span {
+	width: clamp(5px, calc(var(--frame-width) * 0.055), 14px);
+	height: var(--hole-height);
+	border-radius: 2px;
+	background: var(--color-dark);
+}
+
+.frames {
+	display: grid;
+	grid-template-columns: repeat(var(--frames-in-row), minmax(0, 1fr));
+	gap: var(--film-gap);
+}
+
+.frame {
+	position: relative;
+	display: block;
+	min-width: 0;
+	aspect-ratio: 3 / 2;
+	cursor: zoom-in;
+	background: var(--color-dark);
+	outline-offset: 2px;
+}
+
+.frame:focus-visible {
+	outline: 2px solid var(--color-primary);
+	z-index: 1;
+}
+
+.photo {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.frameNumber {
+	position: absolute;
+	left: 8%;
+	color: var(--color-dark);
+	font-family: monospace;
+	font-size: clamp(4px, calc(var(--frame-width) * 0.038), 8px);
+	font-weight: 400;
+	line-height: 1;
+	letter-spacing: 0.04em;
+	pointer-events: none;
+}
+
+.frameNumber[data-edge='top'] {
+	top: calc(1px - var(--rail));
+}
+
+.frameNumber[data-edge='bottom'] {
+	bottom: calc(1px - var(--rail));
+}

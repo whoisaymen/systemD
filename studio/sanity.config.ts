@@ -1,5 +1,8 @@
 import '@sanity/ui/styles.css'
 import { TitleLabelStyle } from './src/sanity/components/TitleLabelStyle'
+import { AlignedTextBlock, TextAlignmentPlugins } from './src/sanity/components/TextAlignment'
+import { CENTER_TEXT_MARK } from './src/sanity/lib/textAlignmentBehavior'
+import { FiAlignCenter } from 'react-icons/fi'
 import { defineArrayMember, defineConfig, defineField } from 'sanity'
 import { projectId, dataset } from '@/sanity/lib/env'
 import { structure } from './src/sanity/structure'
@@ -29,10 +32,14 @@ const localizedRichText = defineField({
 	title: 'Texte enrichi',
 	type: 'array',
 	description:
-		'Entrée crée un paragraphe. Majuscule + Entrée insère un saut de ligne.',
+		'Entrée crée un paragraphe. Majuscule + Entrée insère un saut de ligne. Le bouton « Centrer le texte » centre le paragraphe ou les blocs sélectionnés, sans changer leur style. Cliquez à nouveau pour rétablir l’alignement.',
+	components: {
+		portableText: { plugins: TextAlignmentPlugins },
+	},
 	of: [
 		defineArrayMember({
 			type: 'block',
+			components: { block: AlignedTextBlock },
 			styles: [
 				{ title: 'Normal', value: 'normal' },
 				{ title: 'Titre de niveau 2', value: 'h2' },
@@ -50,6 +57,7 @@ const localizedRichText = defineField({
 					{ title: 'Italic', value: 'em' },
 					{ title: 'Underline', value: 'underline' },
 					{ title: 'Strikethrough', value: 'strike-through' },
+					{ title: 'Centrer le texte', value: CENTER_TEXT_MARK, icon: FiAlignCenter },
 				],
 				annotations: [
 					defineField({

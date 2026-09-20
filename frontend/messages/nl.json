@@ -1,16 +1,33 @@
 {
 	"menu": {
 		"legal": "Wettelijke vermeldingen",
-		"contact": "Contacteer ons",
+		"about": "Over ons",
 		"openMainMenu": "Hoofdmenu openen"
 	},
 
 	"contactPage": {
-		"title": "Contactez-nous",
+		"title": "Over ons",
 		"contact": "Contact",
 		"partners": "Partners",
+		"credits": "Credits",
 		"viewOnMap": "Bekijk op Google Maps",
-		"noContent": "Geen inhoud beschikbaar"
+		"noContent": "Geen inhoud beschikbaar",
+		"map": {
+			"label": "Interactieve kaart van Brussel rond de Pianofabriek",
+			"controls": "Kaartbediening",
+			"zoomIn": "Inzoomen",
+			"zoomOut": "Uitzoomen",
+			"reset": "Terug naar System D",
+			"venueLink": "System D in de Pianofabriek — openen in Google Maps",
+			"openDirections": "Route bekijken",
+			"instructions": "Sleep om te verkennen. Gebruik + en − om te zoomen, of houd Ctrl / ⌘ ingedrukt tijdens het scrollen. Gebruik op een aanraakscherm twee vingers. Als de kaart geselecteerd is, gebruik je de pijltjestoetsen om te bewegen en + / − om te zoomen.",
+			"scrollHint": "Gebruik Ctrl + scrollen om op de kaart in te zoomen",
+			"scrollHintMac": "Gebruik ⌘ + scrollen om op de kaart in te zoomen",
+			"touchHint": "Gebruik twee vingers om de kaart te verplaatsen",
+			"loading": "Even ons plekje in Brussel zoeken…",
+			"unavailable": "De interactieve kaart is niet beschikbaar. Je kunt de route nog steeds openen.",
+			"retry": "Opnieuw proberen"
+		}
 	},
 
 	"festivalEvents": {
@@ -48,6 +65,8 @@
 	},
 
 	"expo": {
+		"enlargePhoto": "Foto vergroten",
+		"enlargePhotoBy": "Foto van {artist} vergroten",
 		"curatedBy": "Gecureerd door",
 		"title": "Foto-expo"
 	},

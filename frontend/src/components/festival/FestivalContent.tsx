@@ -9,6 +9,7 @@ import {
 	LayoutGroup,
 } from 'motion/react'
 import RichText from '@/components/common/RichText'
+import OverflowText from '@/components/common/OverflowText'
 import {
 	EDITORIAL_BODY_TEXT as FESTIVAL_BODY_TEXT,
 	EDITORIAL_COPY_WIDTH as FESTIVAL_COPY_WIDTH,
@@ -96,64 +97,8 @@ const EVENT_CARD_LAYOUT_MS = 340
 const EVENT_CARD_RADIUS = 8
 const CALENDAR_ARROW_BUTTON =
 	'flex h-7 w-7 shrink-0 items-center justify-center text-primary transition-opacity hover:opacity-60 lg:h-5 lg:w-5'
-const FESTIVAL_TITLE_SIZE =
-	'text-4xl lg:text-[clamp(1rem,2.17cqw,1.5rem)]'
 const FESTIVAL_TITLE_STYLE =
-	`${FESTIVAL_TITLE_SIZE} rounded-md border-[3px] px-2 pr-4 text-center font-bold uppercase italic tracking-tighter shadow-sm ${EDITORIAL_DESKTOP_TAB_STYLE}`
-
-const FestivalEventTitle: React.FC<{ title: any }> = ({ title }) => {
-	const containerRef = useRef<HTMLSpanElement>(null)
-	const trackRef = useRef<HTMLSpanElement>(null)
-	const [isOverflowing, setIsOverflowing] = useState(false)
-
-	useEffect(() => {
-		const container = containerRef.current
-		const track = trackRef.current
-		if (!container || !track) return
-
-		const measure = () => {
-			const distance = Math.max(0, track.scrollWidth - container.clientWidth)
-			setIsOverflowing(distance > 1)
-			container.style.setProperty(
-				'--festival-event-marquee-distance',
-				`${distance}px`,
-			)
-			container.style.setProperty(
-				'--festival-event-marquee-duration',
-				`${Math.max(3, distance / 28 + 1.5)}s`,
-			)
-		}
-
-		measure()
-		const observer = new ResizeObserver(measure)
-		observer.observe(container)
-		document.fonts?.ready.then(measure)
-
-		return () => observer.disconnect()
-	}, [title])
-
-	return (
-		<span
-			ref={containerRef}
-			className="relative block min-w-0 overflow-hidden whitespace-nowrap"
-		>
-			<span
-				className="theme-festival-event-title-static block truncate"
-				data-overflow={isOverflowing}
-			>
-				<RichText value={title} inline allowLinks={false} />
-			</span>
-			<span
-				ref={trackRef}
-				aria-hidden="true"
-				data-overflow={isOverflowing}
-				className="theme-festival-event-title-marquee pointer-events-none absolute left-0 top-0 block w-max whitespace-nowrap opacity-0"
-			>
-				<RichText value={title} inline allowLinks={false} />
-			</span>
-		</span>
-	)
-}
+	`text-4xl rounded-md border-[3px] px-2 pr-4 text-center font-bold uppercase italic tracking-tighter shadow-sm ${EDITORIAL_DESKTOP_TAB_STYLE}`
 
 const getValidDate = (value?: string) => {
 	if (!value) return null
@@ -561,7 +506,7 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 									})}
 								</time>
 							)}
-							<FestivalEventTitle title={localizedRichText(event.title, language)} />
+							<OverflowText value={localizedRichText(event.title, language)} />
 						</button>
 					)
 				})}
@@ -959,8 +904,8 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 																		className="group grid w-full grid-cols-[minmax(1.125rem,max-content)_minmax(0,1fr)] items-center gap-1 rounded border-b border-primary/25 bg-primary p-1 text-left text-xs font-semibold normal-case leading-tight text-dark disabled:pointer-events-none"
 																	>
 																		<span className="whitespace-nowrap">{getEventDayLabel(event)}</span>
-																		<FestivalEventTitle
-																			title={localizedRichText(
+																		<OverflowText
+																			value={localizedRichText(
 																				event.title,
 																				language,
 																			)}

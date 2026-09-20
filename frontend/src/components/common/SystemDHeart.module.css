@@ -1,0 +1,27 @@
+.heart {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1;
+	container-type: inline-size;
+	pointer-events: none;
+	user-select: none;
+}
+
+.anchor {
+	position: absolute;
+	transform: translate(-50%, -50%);
+}
+
+.label {
+	width: 100%;
+	border-radius: 0.8cqw;
+	padding: 0.5cqw 1cqw;
+	background: var(--color-grayDark);
+	color: var(--color-dark);
+}
+
+.label svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}

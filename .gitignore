@@ -15,6 +15,7 @@
 /frontend/.next/
 /out/
 /frontend/out/
+/frontend/public/vendor/maplibre/
 
 # production
 /build

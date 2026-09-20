@@ -1,8 +1,6 @@
 'use client'
-import { motion } from 'motion/react'
 import * as React from 'react'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { ChevronDown } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -31,31 +29,21 @@ const AccordionTrigger = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & {
 		animationDelay?: number
 	}
->(({ className, children, animationDelay, ...props }, ref) => {
+>(({ className, children, animationDelay, style, ...props }, ref) => {
 	const delay = animationDelay ?? 0.2
 
 	return (
-		<motion.div
-			className="z-20"
-			animate={{
-				rotate: 1,
-				transition: {
-					duration: 0.3,
-					repeat: Infinity,
-					delay: delay,
-					repeatType: 'reverse',
-					ease: 'easeInOut',
-				},
-			}}
-		>
+		<div className="z-20">
 			<AccordionPrimitive.Header className="flex">
 				<AccordionPrimitive.Trigger
 					ref={ref}
+					style={{ animationDelay: `${delay}s`, ...style }}
 					className={cn(
-						'flex items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:text-7xl',
+						'interactive-title-motion',
+						'flex items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:pt-px lg:text-7xl',
 						'border-primary bg-dark text-primary',
 						'data-[state=open]:border-grayDark data-[state=open]:bg-grayDark data-[state=open]:text-dark',
-						'lg:hover:bg-grayDark lg:hover:text-dark',
+						'lg:hover:border-grayDark lg:hover:bg-grayDark lg:hover:text-dark',
 						className,
 					)}
 					{...props}
@@ -64,7 +52,7 @@ const AccordionTrigger = React.forwardRef<
 					{/* <ChevronDown className="text-muted-foreground h-full w-12 shrink-0 transition-transform duration-200" /> */}
 				</AccordionPrimitive.Trigger>
 			</AccordionPrimitive.Header>
-		</motion.div>
+		</div>
 	)
 })
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName

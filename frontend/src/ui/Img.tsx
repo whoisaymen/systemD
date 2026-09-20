@@ -1,6 +1,7 @@
 import { urlFor } from '@/sanity/lib/image'
 import { preload } from 'react-dom'
 import { stegaClean } from 'next-sanity'
+import ProgressiveImage from './ProgressiveImage'
 
 const SIZES = [
 	120, 240, 360, 480, 640, 720, 800, 880, 960, 1280, 1440, 1600, 1800, 2000,
@@ -19,33 +20,59 @@ export default function Img({
 	alt = '',
 	options,
 	className,
+	sizes = '100vw',
+	loading,
+	placeholderFit = 'cover',
 	...props
 }: {
 	image: Sanity.Image | undefined
 	imageWidth?: number
 	imageSizes?: number[]
 	options?: ImageOptions
+	placeholderFit?: 'cover' | 'contain'
 } & React.ImgHTMLAttributes<HTMLImageElement>) {
 	if (!image?.asset) return null
 
 	const { src, width, height } = getImageProps(image, imageWidth, options)
+	const responsive = generateSrcset(image, {
+		width: imageWidth,
+		sizes: imageSizes,
+		options,
+	})
+	const resolvedLoading = loading || stegaClean(image.loading) || 'lazy'
+	const placeholder = image.asset?.metadata?.lqip
 
-	if (stegaClean(image.loading) === 'eager') {
-		preload(src, { as: 'image' })
+	if (resolvedLoading === 'eager' && props.fetchPriority === 'high') {
+		preload(src, {
+			as: 'image',
+			imageSrcSet: responsive.srcSet,
+			imageSizes: sizes,
+		})
 	}
 
-	return (
-		<img
-			src={src}
-			{...generateSrcset(image, { width: imageWidth, sizes: imageSizes })}
-			width={width}
-			height={height}
-			alt={image.alt || alt}
-			loading={stegaClean(image.loading) || 'lazy'}
-			decoding="async"
-			{...props}
-			className={className}
+	const imageProps: React.ImgHTMLAttributes<HTMLImageElement> = {
+		src,
+		...responsive,
+		sizes,
+		width,
+		height,
+		alt: image.alt || alt,
+		loading: resolvedLoading,
+		decoding: 'async',
+		...props,
+		className,
+	}
+
+	return placeholder ? (
+		<ProgressiveImage
+			{...imageProps}
+			placeholder={placeholder}
+			placeholderFit={placeholderFit}
 		/>
+	) : (
+		// Sanity's CDN supplies the responsive, optimized image URLs.
+		// eslint-disable-next-line @next/next/no-img-element
+		<img {...imageProps} alt={imageProps.alt || ''} />
 	)
 }
 
@@ -72,7 +99,11 @@ export function Source({
 
 	return (
 		<source
-			{...generateSrcset(image, { width: imageWidth, sizes: imageSizes })}
+			{...generateSrcset(image, {
+				width: imageWidth,
+				sizes: imageSizes,
+				options,
+			})}
 			width={width}
 			height={height}
 			media={media}
@@ -85,18 +116,17 @@ function getImageProps(
 	imageWidth?: number,
 	options?: ImageOptions,
 ) {
-	const builder = imageWidth
-		? urlFor(image).width(imageWidth)
-		: options?.imageBuilder?.(urlFor(image)) || urlFor(image)
 	const dimensions = getImageDimensions(image)
-	const width = imageWidth || dimensions?.width
-	const height =
-		imageWidth && dimensions
-			? Math.round((imageWidth / dimensions.width) * dimensions.height)
-			: dimensions?.height
+	const width = Math.min(
+		imageWidth || SIZES.at(-1)!,
+		dimensions?.width || Infinity,
+	)
+	const height = dimensions
+		? Math.round((width / dimensions.width) * dimensions.height)
+		: undefined
 
 	return {
-		src: builder.auto('format').url(),
+		src: buildImageUrl(image, width, options),
 		width,
 		height,
 	}
@@ -104,18 +134,36 @@ function getImageProps(
 
 export function getImageDimensions(image: Sanity.Image) {
 	const dimensions = image.asset?.metadata?.dimensions
-	if (dimensions?.width && dimensions?.height) {
-		return dimensions
-	}
-
 	const ref = image.asset?._ref || image.asset?._id
 	const match = ref?.match(/-(\d+)x(\d+)-/)
-	if (!match) return undefined
+	const width = dimensions?.width || (match && Number(match[1]))
+	const height = dimensions?.height || (match && Number(match[2]))
+	if (!width || !height) return undefined
 
 	return {
-		width: Number(match[1]),
-		height: Number(match[2]),
+		width: Math.max(
+			1,
+			Math.round(
+				width * (1 - (image.crop?.left || 0) - (image.crop?.right || 0)),
+			),
+		),
+		height: Math.max(
+			1,
+			Math.round(
+				height * (1 - (image.crop?.top || 0) - (image.crop?.bottom || 0)),
+			),
+		),
 	}
+}
+
+function buildImageUrl(
+	image: Sanity.Image,
+	width: number,
+	options?: ImageOptions,
+) {
+	const base = urlFor(image).fit('max')
+	const builder = options?.imageBuilder?.(base) || base
+	return builder.width(width).auto('format').url()
 }
 
 function generateSrcset(
@@ -123,28 +171,27 @@ function generateSrcset(
 	{
 		width,
 		sizes = SIZES,
+		options,
 	}: {
 		width?: number
 		sizes: number[]
+		options?: ImageOptions
 	},
 ) {
-	const filtered = sizes.filter((size) => !width || size <= width)
+	const maximum = Math.min(
+		width || sizes.at(-1) || 2000,
+		getImageDimensions(image)?.width || Infinity,
+	)
+	const filtered = [
+		...new Set([...sizes.filter((size) => size < maximum), maximum]),
+	]
 
 	return {
 		srcSet:
 			filtered
-				.map(
-					(size) =>
-						`${urlFor(image).width(size).auto('format').url()} ${size}w`,
-				)
+				.map((size) => `${buildImageUrl(image, size, options)} ${size}w`)
 				.join(', ') || undefined,
 
-		sizes:
-			filtered
-				.map(
-					(size, i) =>
-						`${i < filtered.length - 1 ? `(max-width: ${size + 1}px) ` : ''}${size}px`,
-				)
-				.join(', ') || undefined,
+		sizes: '100vw',
 	}
 }

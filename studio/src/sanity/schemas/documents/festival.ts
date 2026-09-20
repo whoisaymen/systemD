@@ -16,8 +16,7 @@ export default defineType({
 		defineField({
 			name: 'venue',
 			title: 'Lieu',
-			type: 'array',
-			of: [{ type: 'block' }],
+			type: 'string',
 		}),
 		defineField({
 			name: 'startDate',
@@ -117,16 +116,6 @@ export default defineType({
 		defineField({
 			name: 'juryTitle',
 			title: 'Titre : jury',
-			type: 'internationalizedArrayRichText',
-		}),
-		defineField({
-			name: 'pressLinkLabel',
-			title: 'Texte du lien de presse',
-			type: 'internationalizedArrayRichText',
-		}),
-		defineField({
-			name: 'aftermovieLinkLabel',
-			title: 'Texte du lien de l’aftermovie',
 			type: 'internationalizedArrayRichText',
 		}),
 	],

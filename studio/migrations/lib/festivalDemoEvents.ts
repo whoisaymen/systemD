@@ -1,30 +1,44 @@
-import { textToRichText } from '@/lib/richText'
+import { textToBlocks } from './editorialContent'
 
 const localized = (en: string, fr: string, nl: string) =>
 	[en, fr, nl].map((text, index) => ({
+		_type: 'internationalizedArrayRichTextValue',
 		_key: ['en', 'fr', 'nl'][index],
 		language: ['en', 'fr', 'nl'][index],
-		value: textToRichText(text),
+		value: textToBlocks(text),
 	}))
 
-const eventType = (en: string, fr: string, nl: string) => ({
+const eventType = (id: string, en: string, fr: string, nl: string) => ({
+	_id: `demo-festival-event-type-${id}`,
+	_type: 'eventType',
 	title: [en, fr, nl].map((value, index) => ({
+		_type: 'internationalizedArrayStringValue',
 		_key: ['en', 'fr', 'nl'][index],
 		language: ['en', 'fr', 'nl'][index],
 		value,
 	})),
 })
 
-const mockEventTypes = {
-	screening: eventType('Screening', 'Projection', 'Filmvertoning'),
-	talk: eventType('Talk', 'Discussion', 'Gesprek'),
-	performance: eventType('Performance', 'Performance', 'Performance'),
-	workshop: eventType('Workshop', 'Atelier', 'Workshop'),
-	exhibition: eventType('Exhibition', 'Exposition', 'Tentoonstelling'),
-	meetup: eventType('Meetup', 'Rencontre', 'Ontmoeting'),
+export const demoEventTypes = {
+	screening: eventType('screening', 'Screening', 'Projection', 'Filmvertoning'),
+	talk: eventType('talk', 'Talk', 'Discussion', 'Gesprek'),
+	performance: eventType(
+		'performance',
+		'Performance',
+		'Performance',
+		'Performance',
+	),
+	workshop: eventType('workshop', 'Workshop', 'Atelier', 'Workshop'),
+	exhibition: eventType(
+		'exhibition',
+		'Exhibition',
+		'Exposition',
+		'Tentoonstelling',
+	),
+	meetup: eventType('meetup', 'Meetup', 'Rencontre', 'Ontmoeting'),
 }
 
-// Existing festival archive photographs; these fixtures never create CMS records.
+// Reuse existing festival archive photographs; the seed does not upload assets.
 const archiveImages = [
 	'image-011a481c248adb5deb485bd04dc9e47555a29445-1080x720-jpg',
 	'image-01dd157cac518bab21b4e36ca7d0965fe8a46f55-1080x720-jpg',
@@ -39,11 +53,15 @@ const portraitImages = {
 const samples = [
 	{
 		id: 'neighbourhood-screening',
-		eventType: mockEventTypes.screening,
+		eventType: demoEventTypes.screening,
 		start: '03-12T18:00:00Z',
 		end: '03-12T21:00:00Z',
 		location: 'Cinema room · Brussels',
-		title: localized('Stories from the neighbourhood', 'Histoires de quartier', 'Verhalen uit de buurt'),
+		title: localized(
+			'Stories from the neighbourhood',
+			'Histoires de quartier',
+			'Verhalen uit de buurt',
+		),
 		description: localized(
 			'A shared screen for stories usually left out of the frame. Discover four short films about everyday life in Brussels, followed by a conversation with the people who made them.\n\nDoors open 30 minutes before the screening. Films in their original languages with French and Dutch subtitles. Free entry, subject to available seats.',
 			'Un écran partagé pour des récits qui restent souvent hors champ. Découvrez quatre courts métrages sur la vie quotidienne à Bruxelles, suivis d’une discussion avec leurs équipes.\n\nOuverture des portes 30 minutes avant la projection. Films en version originale, sous-titrés en français et en néerlandais. Entrée libre dans la limite des places disponibles.',
@@ -52,11 +70,15 @@ const samples = [
 	},
 	{
 		id: 'film-workshop',
-		eventType: mockEventTypes.workshop,
+		eventType: demoEventTypes.workshop,
 		start: '06-09T08:00:00Z',
 		end: '06-10T15:00:00Z',
 		location: 'Workshop studio · Brussels',
-		title: localized('Film it your way', 'Filme à ta façon', 'Film op jouw manier'),
+		title: localized(
+			'Film it your way',
+			'Filme à ta façon',
+			'Film op jouw manier',
+		),
 		description: localized(
 			'Two days to turn an idea into a first film. Work in small groups, try out a camera, record sound and edit a short scene with support from local filmmakers. No previous experience needed.\n\nDay one: ideas, framing and filming. Day two: editing, sound and a collective screening. Bring a phone or camera if you have one; shared equipment is available.\n\nFor ages 16 and up. Sessions in French, Dutch and English. Twelve places; lunch and equipment included.',
 			'Deux jours pour transformer une idée en premier film. En petits groupes, expérimentez la caméra, la prise de son et le montage d’une scène avec des cinéastes bruxellois. Aucune expérience préalable nécessaire.\n\nPremier jour : idées, cadrage et tournage. Deuxième jour : montage, son et projection collective. Apportez un téléphone ou une caméra si vous en avez ; du matériel est disponible sur place.\n\nDès 16 ans. Atelier en français, néerlandais et anglais. Douze places ; repas et matériel compris.',
@@ -65,11 +87,15 @@ const samples = [
 	},
 	{
 		id: 'city-after-dark',
-		eventType: mockEventTypes.screening,
+		eventType: demoEventTypes.screening,
 		start: '09-18T17:00:00Z',
 		end: '09-18T19:00:00Z',
 		location: 'Screening room · Brussels',
-		title: localized('City after dark', 'La ville à la nuit tombée', 'De stad na zonsondergang'),
+		title: localized(
+			'City after dark',
+			'La ville à la nuit tombée',
+			'De stad na zonsondergang',
+		),
 		description: localized(
 			'A programme of short films following the city after sunset: night workers, late journeys and unexpected encounters. An intimate look at the people who keep Brussels moving.\n\nThe screening lasts 75 minutes and is followed by a short audience discussion. Original versions with subtitles. Pay what you can.',
 			'Un programme de courts métrages qui suit la ville après le coucher du soleil : travail de nuit, derniers trajets et rencontres inattendues. Un regard intime sur celles et ceux qui font vivre Bruxelles.\n\nLa projection dure 75 minutes et se poursuit par un échange avec le public. Versions originales sous-titrées. Prix libre.',
@@ -79,11 +105,15 @@ const samples = [
 	{
 		id: 'meet-filmmakers',
 		imageRef: portraitImages.conversation,
-		eventType: mockEventTypes.talk,
+		eventType: demoEventTypes.talk,
 		start: '09-18T19:30:00Z',
 		end: '09-18T21:00:00Z',
 		location: 'Festival foyer · Brussels',
-		title: localized('Meet the filmmakers', 'Rencontre avec les cinéastes', 'Ontmoet de filmmakers'),
+		title: localized(
+			'Meet the filmmakers',
+			'Rencontre avec les cinéastes',
+			'Ontmoet de filmmakers',
+		),
 		description: localized(
 			'Stay after the screening for an informal conversation about first films, shared resources and finding your own voice. Bring your questions, an idea in progress or simply your curiosity.\n\nFree entry. Conversation in French, Dutch and English, with time to meet the guests afterwards.',
 			'Restez après la projection pour une conversation informelle sur les premiers films, les ressources partagées et la recherche de sa propre voix. Venez avec vos questions, une idée en cours ou simplement votre curiosité.\n\nEntrée libre. Échanges en français, néerlandais et anglais, puis rencontre avec les invité·es.',
@@ -92,11 +122,15 @@ const samples = [
 	},
 	{
 		id: 'no-budget-lab',
-		eventType: mockEventTypes.workshop,
+		eventType: demoEventTypes.workshop,
 		start: '09-26T11:00:00Z',
 		end: '09-26T16:00:00Z',
 		location: 'Editing lab · Brussels',
-		title: localized('No-budget film lab', 'Labo cinéma sans budget', 'Filmlab zonder budget'),
+		title: localized(
+			'No-budget film lab',
+			'Labo cinéma sans budget',
+			'Filmlab zonder budget',
+		),
 		description: localized(
 			'How much can you make with what you already have? A hands-on afternoon exploring homemade lighting, simple sound recording and creative editing.\n\nBring a short piece of footage or start from the shared material. Open to beginners and returning makers. Equipment is provided; places are limited to ten participants.',
 			'Que peut-on créer avec ce que l’on a déjà ? Un après-midi pratique autour de la lumière bricolée, de la prise de son simple et du montage créatif.\n\nApportez quelques images ou utilisez les rushes proposés. Ouvert aux débutant·es et aux personnes qui pratiquent déjà. Matériel fourni ; dix participant·es maximum.',
@@ -106,7 +140,7 @@ const samples = [
 	{
 		id: 'open-studio',
 		imageRef: portraitImages.festival,
-		eventType: mockEventTypes.meetup,
+		eventType: demoEventTypes.meetup,
 		start: '09-03T15:00:00Z',
 		end: '09-03T18:00:00Z',
 		location: 'Workshop studio · Brussels',
@@ -119,11 +153,15 @@ const samples = [
 	},
 	{
 		id: 'sound-walk',
-		eventType: mockEventTypes.workshop,
+		eventType: demoEventTypes.workshop,
 		start: '09-05T08:00:00Z',
 		end: '09-05T11:00:00Z',
 		location: 'Festival foyer · Brussels',
-		title: localized('Listen to the city', 'Écouter la ville', 'Luister naar de stad'),
+		title: localized(
+			'Listen to the city',
+			'Écouter la ville',
+			'Luister naar de stad',
+		),
 		description: localized(
 			'A guided sound walk through the neighbourhood. Record street rhythms, small conversations and the sounds we usually overlook.\n\nMeet at the festival foyer. Recorders are provided; comfortable shoes recommended.',
 			'Une promenade sonore guidée dans le quartier. Enregistrez les rythmes de la rue, les conversations et les sons qui passent souvent inaperçus.\n\nRendez-vous dans le foyer du festival. Enregistreurs fournis ; chaussures confortables conseillées.',
@@ -133,11 +171,15 @@ const samples = [
 	{
 		id: 'archive-evening',
 		imageRef: null,
-		eventType: mockEventTypes.performance,
+		eventType: demoEventTypes.performance,
 		start: '09-10T17:00:00Z',
 		end: '09-10T19:00:00Z',
 		location: 'Cinema room · Brussels',
-		title: localized('From the archives', 'Dans les archives', 'Uit het archief'),
+		title: localized(
+			'From the archives',
+			'Dans les archives',
+			'Uit het archief',
+		),
 		description: localized(
 			'Archive images meet live music in a one-off performance. Two artists remix footage from earlier festival editions, creating new connections between memories, faces and places.\n\nA 60-minute live cinema performance followed by a conversation with the artists. Free entry.',
 			'Des images d’archives rencontrent la musique en direct le temps d’une performance unique. Deux artistes remixent des images des éditions précédentes et tissent de nouveaux liens entre souvenirs, visages et lieux.\n\nUne performance de cinéma en direct de 60 minutes, suivie d’une discussion avec les artistes. Entrée libre.',
@@ -146,25 +188,33 @@ const samples = [
 	},
 	{
 		id: 'animation-workshop',
-		eventType: mockEventTypes.workshop,
+		eventType: demoEventTypes.workshop,
 		start: '09-12T12:00:00Z',
 		end: '09-12T15:00:00Z',
 		location: 'Workshop studio · Brussels',
-		title: localized('Small objects, big adventures', 'Petits objets, grandes aventures', 'Kleine voorwerpen, grote avonturen'),
+		title: localized(
+			'Small objects, big adventures',
+			'Petits objets, grandes aventures',
+			'Kleine voorwerpen, grote avonturen',
+		),
 		description: localized(
 			'Turn everyday objects into the stars of a stop-motion film. Build a tiny set, invent a character and create a short animated scene.\n\nA family workshop for ages eight and up, with an accompanying adult. Materials included.',
 			'Transformez les objets du quotidien en vedettes d’un film en stop motion. Construisez un décor miniature, inventez un personnage et animez une courte scène.\n\nAtelier familial dès huit ans, avec un adulte accompagnant. Matériel compris.',
 			'Maak van alledaagse voorwerpen de sterren van een stop-motionfilm. Bouw een klein decor, verzin een personage en animeer een korte scène.\n\n' +
-			'Een familieworkshop vanaf acht jaar, samen met een volwassene. Materiaal inbegrepen.',
+				'Een familieworkshop vanaf acht jaar, samen met een volwassene. Materiaal inbegrepen.',
 		),
 	},
 	{
 		id: 'rough-cut-club',
-		eventType: mockEventTypes.workshop,
+		eventType: demoEventTypes.workshop,
 		start: '09-19T13:00:00Z',
 		end: '09-19T16:00:00Z',
 		location: 'Editing lab · Brussels',
-		title: localized('Rough-cut club', 'Le club des premiers montages', 'Ruwemontageclub'),
+		title: localized(
+			'Rough-cut club',
+			'Le club des premiers montages',
+			'Ruwemontageclub',
+		),
 		description: localized(
 			'Share a work in progress in a small, supportive group. We watch unfinished scenes and exchange practical feedback on rhythm, structure and sound.\n\nBring up to ten minutes of footage. You are also welcome to watch and join the discussion.',
 			'Partagez un projet en cours au sein d’un petit groupe bienveillant. Regardons des scènes inachevées et échangeons sur le rythme, la structure et le son.\n\nApportez jusqu’à dix minutes d’images. Vous pouvez aussi simplement participer à la discussion.',
@@ -174,11 +224,15 @@ const samples = [
 	{
 		id: 'neighbourhood-portraits',
 		imageRef: portraitImages.conversation,
-		eventType: mockEventTypes.exhibition,
+		eventType: demoEventTypes.exhibition,
 		start: '09-24T16:00:00Z',
 		end: '09-24T19:00:00Z',
 		location: 'Exhibition space · Brussels',
-		title: localized('Portraits of a neighbourhood', 'Portraits de quartier', 'Portretten van een buurt'),
+		title: localized(
+			'Portraits of a neighbourhood',
+			'Portraits de quartier',
+			'Portretten van een buurt',
+		),
 		description: localized(
 			'Photographs and short filmed portraits made with local residents. Explore the exhibition and meet the people on both sides of the camera.\n\nDrop in at any time. A shared conversation begins one hour after opening. Free entry.',
 			'Des photographies et de courts portraits filmés réalisés avec les habitant·es. Découvrez l’exposition et rencontrez les personnes devant et derrière la caméra.\n\nVenez à tout moment. Un échange collectif débute une heure après l’ouverture. Entrée libre.',
@@ -187,11 +241,15 @@ const samples = [
 	},
 	{
 		id: 'outdoor-screening',
-		eventType: mockEventTypes.screening,
+		eventType: demoEventTypes.screening,
 		start: '09-30T17:00:00Z',
 		end: '09-30T20:00:00Z',
 		location: 'Festival courtyard · Brussels',
-		title: localized('Cinema under the stars', 'Cinéma sous les étoiles', 'Cinema onder de sterren'),
+		title: localized(
+			'Cinema under the stars',
+			'Cinéma sous les étoiles',
+			'Cinema onder de sterren',
+		),
 		description: localized(
 			'End the month with an outdoor programme of audience favourites. A shared screen, a few blankets and stories that bring us together.\n\nDoors open 30 minutes before the first film. Bring a warm layer; the screening moves indoors if it rains. Free entry.',
 			'Terminons le mois en plein air avec les coups de cœur du public. Un écran partagé, quelques couvertures et des histoires qui nous rassemblent.\n\nOuverture des portes 30 minutes avant le premier film. Prévoyez un vêtement chaud ; projection en salle en cas de pluie. Entrée libre.',
@@ -200,11 +258,15 @@ const samples = [
 	},
 	{
 		id: 'moving-images',
-		eventType: mockEventTypes.exhibition,
+		eventType: demoEventTypes.exhibition,
 		start: '10-30T16:00:00Z',
 		end: '11-01T18:00:00Z',
 		location: 'Exhibition space · Brussels',
-		title: localized('Moving images, moving stories', 'Images en mouvement, récits vivants', 'Bewegende beelden, levende verhalen'),
+		title: localized(
+			'Moving images, moving stories',
+			'Images en mouvement, récits vivants',
+			'Bewegende beelden, levende verhalen',
+		),
 		description: localized(
 			'A three-day exhibition bringing film, photography and collected voices into one shared space. Move between looping films, listening stations and images from the festival archive.\n\nOpening on Friday at 17:00. Open Saturday and Sunday from 11:00 to 19:00. Free entry; visitors can arrive at any time. A guided conversation takes place each afternoon at 15:00.',
 			'Trois jours d’exposition réunissant films, photographies et voix dans un même espace. Circulez entre projections en boucle, stations d’écoute et images des archives du festival.\n\nVernissage vendredi à 17 h. Ouverture samedi et dimanche de 11 h à 19 h. Entrée libre, à tout moment. Une visite-discussion est proposée chaque après-midi à 15 h.',
@@ -213,11 +275,15 @@ const samples = [
 	},
 	{
 		id: 'new-voices',
-		eventType: mockEventTypes.screening,
+		eventType: demoEventTypes.screening,
 		start: '12-16T18:00:00Z',
 		end: '12-16T21:00:00Z',
 		location: 'Main screening room · Brussels',
-		title: localized('New voices, big screen', 'Nouvelles voix, grand écran', 'Nieuwe stemmen, groot scherm'),
+		title: localized(
+			'New voices, big screen',
+			'Nouvelles voix, grand écran',
+			'Nieuwe stemmen, groot scherm',
+		),
 		description: localized(
 			'An evening dedicated to first films and fresh perspectives. Five emerging filmmakers share stories of friendship, belonging and the places that shape us.\n\nEach film is introduced by its maker. The programme ends with an open discussion and a drink in the foyer. Doors at 18:30; screening at 19:00. Subtitled films and step-free access.',
 			'Une soirée consacrée aux premiers films et aux regards nouveaux. Cinq cinéastes émergent·es racontent l’amitié, l’appartenance et les lieux qui nous façonnent.\n\nChaque film est présenté par son équipe. La soirée se termine par une discussion ouverte et un verre dans le foyer. Portes à 18 h 30 ; projection à 19 h. Films sous-titrés et accès de plain-pied.',
@@ -226,11 +292,15 @@ const samples = [
 	},
 	{
 		id: 'closing-night',
-		eventType: mockEventTypes.meetup,
+		eventType: demoEventTypes.meetup,
 		start: '12-21T17:00:00Z',
 		end: '12-21T22:00:00Z',
 		location: 'Festival foyer and screening room · Brussels',
-		title: localized('Closing night: films, food & conversation', 'Soirée de clôture : films, repas et rencontres', 'Slotavond: films, eten en gesprekken'),
+		title: localized(
+			'Closing night: films, food & conversation',
+			'Soirée de clôture : films, repas et rencontres',
+			'Slotavond: films, eten en gesprekken',
+		),
 		description: localized(
 			'One last gathering before the screens go dark. Revisit audience favourites, share a meal and meet the people behind this edition.\n\n18:00 — welcome and shared food. 19:30 — short-film highlights. 21:00 — music and conversation. Vegetarian food is available. Come for the whole evening or drop in when you can.',
 			'Un dernier rendez-vous avant que les écrans ne s’éteignent. Retrouvez les coups de cœur du public, partagez un repas et rencontrez les personnes qui ont fait cette édition.\n\n18 h — accueil et repas partagé. 19 h 30 — sélection de courts métrages. 21 h — musique et rencontres. Option végétarienne disponible. Venez pour toute la soirée ou passez quand vous pouvez.',
@@ -239,42 +309,26 @@ const samples = [
 	},
 ]
 
-export function getFestivalMockEvents(year = new Date().getFullYear()) {
-	return samples.map(({ id, start, end, imageRef, ...content }, index) => ({
-		...content,
-		_id: `mock-festival-${year}-${id}`,
-		isMock: true,
-		date: `${year}-${start}`,
-		endDate: `${year}-${end}`,
-		visual: imageRef === null ? undefined : {
-			_type: 'image',
-			asset: {
-				_type: 'reference',
-				_ref: imageRef ?? archiveImages[index % archiveImages.length],
-			},
-		},
-	}))
-}
-
-export function withFestivalMockEvents(festival: any) {
-	const blocks = [...(festival.blocks ?? [])]
-	const index = blocks.findIndex(
-		(block: any) => block._type === 'onTourBlock' && block.show !== false,
+export function getFestivalDemoEvents(year: number) {
+	return samples.map(
+		({ id, start, end, imageRef, eventType, ...content }, index) => ({
+			...content,
+			_id: `demo-festival-${year}-${id}`,
+			_type: 'event',
+			eventType: { _type: 'reference', _ref: eventType._id },
+			date: `${year}-${start}`,
+			endDate: `${year}-${end}`,
+			...(imageRef === null
+				? {}
+				: {
+						visual: {
+							_type: 'image',
+							asset: {
+								_type: 'reference',
+								_ref: imageRef ?? archiveImages[index % archiveImages.length],
+							},
+						},
+					}),
+		}),
 	)
-	const existing = index >= 0 ? blocks[index] : {
-		_key: 'mock-events-block',
-		_type: 'onTourBlock',
-		title: localized('Events', 'Événements', 'Evenementen'),
-		show: true,
-	}
-	const block = {
-		...existing,
-		events: [
-			...(existing.events ?? []).filter((event: any) => !event.isMock),
-			...getFestivalMockEvents(),
-		],
-	}
-	if (index >= 0) blocks[index] = block
-	else blocks.push(block)
-	return { ...festival, blocks }
 }

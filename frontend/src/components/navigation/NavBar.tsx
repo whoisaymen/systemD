@@ -238,14 +238,14 @@ import BigBangLogo from '../bigbang/BigBangLogo'
 import HoverableItem from '../HoverableItem'
 import EquipeLogo from '../equipe/EquipeLogo'
 import MemoireLogo from '../memoire/MemoireLogo'
-import LogoShortAnimated from '../svgs/LogoShortAnimated'
+import DesktopLogoLink from './DesktopLogoLink'
 import FabriqueLogoDesktop from '../fabrique/FabriqueLogoDesktop'
 import FestivalLogoDesktop from '../festival/FestivalLogoDesktop'
 import SocialLinks from '@/ui/SocialLinks'
 import type { ThemeCombo } from '@/lib/theme'
 import SectionFolderSurface, { type FolderSection } from './SectionFolderSurface'
 
-import { MdContactSupport } from 'react-icons/md'
+import AboutIcon from './AboutIcon'
 import Loading from '@/app/(frontend)/[locale]/loading'
 import { SKIP_HOME_INTRO_KEY } from '@/components/homepage/HomepageVideoIntro'
 
@@ -307,9 +307,11 @@ const NavBar = ({
 	const [pendingHref, setPendingHref] = useState<string | null>(null)
 	const [isHomeVideoExpanded, setIsHomeVideoExpanded] = useState(true)
 	const displayedPathname = pendingHref ?? normalizedPathname
-	const isMemoireRoute =
-		displayedPathname === `/${locale}/memoire` ||
-		new RegExp(`^/${locale}/festival/\\d{4}$`).test(displayedPathname)
+	const isMemoirePath = (path: string) =>
+		path === `/${locale}/memoire` ||
+		new RegExp(`^/${locale}/festival/\\d{4}$`).test(path) ||
+		path.startsWith(`/${locale}/film/`)
+	const isMemoireRoute = isMemoirePath(displayedPathname)
 	const isFestivalRoute = displayedPathname === `/${locale}/festival`
 	const isBigBangRoute = displayedPathname === `/${locale}/bigbang`
 	const isFabriqueRoute = displayedPathname === `/${locale}/fabrique`
@@ -348,14 +350,13 @@ const NavBar = ({
 		}
 	}, [isHomeRoute])
 
-	// Route active helper (kept identical to your logic)
+	// Film details and festival editions belong to the Mémoire section.
 	const isActive = (path: string) => {
 		const routePath = `/${locale}/${path}`
 		if (path === 'memoire') {
-			const festivalEditionRegex = new RegExp(`^/${locale}/festival/\\d{4}$`)
-			return pathname === routePath || festivalEditionRegex.test(pathname)
+			return isMemoirePath(normalizedPathname)
 		}
-		return pathname === routePath
+		return normalizedPathname === routePath
 	}
 
 	// Local NavItem component (keeps same props and children API)
@@ -448,8 +449,8 @@ const NavBar = ({
 					}`}
 				>
 					{/* Logo */}
-					<Link
-						href="/"
+					<DesktopLogoLink
+						key={normalizedPathname}
 						onClick={() => {
 							if (!isHomeRoute) {
 								window.sessionStorage.setItem(SKIP_HOME_INTRO_KEY, 'true')
@@ -457,10 +458,7 @@ const NavBar = ({
 								setIsHomeVideoExpanded(false)
 							}
 						}}
-						className="group block w-full shrink-0 rounded-md border-0 border-dark px-2 py-1 transition-opacity hover:opacity-80"
-					>
-						<LogoShortAnimated className="block h-auto w-full rounded-md text-primary" />
-					</Link>
+					/>
 
 					{/* Navigation Items */}
 					<div className="desktop-menu-left grid min-h-0 flex-1 grid-rows-[minmax(0,2fr)_minmax(0,1fr)] gap-1 rounded-md">
@@ -569,25 +567,24 @@ const NavBar = ({
 					</div>
 
 					{/* Bottom links and controls */}
-					<div className="desktop-menu-controls flex h-8 w-full shrink-0 items-center justify-between px-1 lg:pointer-events-auto">
-						<div className="flex h-full items-center">
+					<div className="desktop-menu-controls grid h-8 w-full shrink-0 items-center px-1 lg:pointer-events-auto">
+						<div className="desktop-menu-primary-controls grid h-full grid-cols-3 place-items-center">
 							<LocaleSwitcher />
 							<ThemeSwitch themes={themes} />
 							<Link
-								href={`/${locale}/contact`}
-								aria-label={tMenu('contact')}
-								aria-current={isActive('contact') ? 'page' : undefined}
-								className={`flex items-center justify-center text-primary transition-colors hover:text-grayDark ${
-									isActive('contact') ? 'text-grayDark' : ''
-								}`}
+								href={`/${locale}/about`}
+								aria-label={tMenu('about')}
+								title={tMenu('about')}
+								aria-current={isActive('about') ? 'page' : undefined}
+								className="flex items-center justify-center text-primary transition-colors"
 							>
-								<MdContactSupport aria-hidden="true" className="h-7 w-7" />
+								<AboutIcon aria-hidden="true" className="h-7 w-7" />
 							</Link>
 						</div>
 						<SocialLinks
 							social={social}
-							className="flex items-center text-primary"
-							linkClassName="flex shrink-0 items-center justify-center text-primary transition-colors hover:text-grayDark"
+							className="desktop-menu-socials grid h-full auto-cols-fr grid-flow-col items-center text-primary"
+							linkClassName="flex shrink-0 items-center justify-center text-primary transition-colors"
 							iconClassName="h-[22px] w-[22px]"
 						/>
 					</div>

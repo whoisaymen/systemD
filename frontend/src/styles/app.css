@@ -76,6 +76,7 @@
 		--image-grade-brightness: 1.08;
 		/* Shared by the navigation, content panels and homepage video. */
 		--width-column-width: clamp(12rem, 16.5vw, 17rem);
+		--navigation-background: var(--color-dark);
 	}
 
 	html,
@@ -147,18 +148,23 @@
 		padding: var(--menu-padding);
 	}
 
-	.section-folder-surface {
+	.section-folder-surface,
+	.section-folder-language-surface,
+	.section-folder-shadow {
 		display: none;
 	}
 
 	@media (min-width: 1024px) {
-		.desktop-navigation:has(.section-folder-tab) {
+		/* Controls must stay above page content, including pages without a folder tab. */
+		.desktop-navigation {
 			z-index: 50;
 		}
 
 		.section-folder-content,
 		.section-folder-tab,
-		.section-folder-surface {
+		.section-folder-surface,
+		.section-folder-language-surface,
+		.section-folder-shadow {
 			--section-folder-background: var(--color-theme-content, var(--color-dark));
 			--section-folder-shadow: var(--color-grayDark);
 		}
@@ -168,7 +174,9 @@
 			background-color: var(--section-folder-background);
 		}
 
-		.section-folder-surface {
+		.section-folder-surface,
+		.section-folder-language-surface,
+		.section-folder-shadow {
 			display: block;
 			position: fixed;
 			inset: 0;
@@ -178,7 +186,15 @@
 			pointer-events: none;
 		}
 
-		html[data-theme='system-d-neon-black'] .section-folder-surface {
+		.section-folder-language-surface {
+			z-index: 49;
+		}
+
+		.section-folder-shadow {
+			z-index: 51;
+		}
+
+		html[data-theme='system-d-neon-black'] .section-folder-shadow {
 			--section-folder-shadow: var(--color-theme-box-edge, var(--color-ink));
 		}
 	}
@@ -215,31 +231,50 @@
 	}
 
 	.desktop-menu-controls {
+		--navigation-control-hover: var(--color-grayDark);
+		--navigation-control-icon-size: clamp(1rem, 9cqw, 1.375rem);
 		container-type: inline-size;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: 0.75rem;
 	}
 
-	.desktop-menu-controls > div {
-		flex-shrink: 0;
+	html[data-theme='system-d-yellow-blue'] .desktop-menu-controls {
+		--navigation-control-hover: var(--color-dark);
+	}
+
+	.desktop-menu-controls a:is(:hover, :focus-visible, [aria-current='page']) {
+		color: var(--navigation-control-hover);
+	}
+
+	.desktop-menu-primary-controls > :first-child {
+		width: 100%;
+		justify-content: center;
 	}
 
 	.desktop-menu-controls button {
 		padding-inline: 0.125rem;
-		font-size: clamp(1rem, 9cqw, 1.5rem);
+		font-size: clamp(0.875rem, 8cqw, 1.25rem);
 	}
 
 	.desktop-menu-controls .toggler {
-		height: clamp(1.5rem, 12cqw, 2rem);
-		padding: 0.25rem;
+		width: var(--navigation-control-icon-size);
+		height: var(--navigation-control-icon-size);
+		padding: 0;
+	}
+
+	.desktop-menu-controls .toggler > svg {
+		transform: scale(0.9);
 	}
 
 	.desktop-menu-controls a {
-		min-width: 1.5rem;
+		min-width: 0;
+		width: 100%;
 		min-height: 1.5rem;
 	}
 
 	.desktop-menu-controls a > svg {
-		width: clamp(1rem, 9cqw, 1.375rem);
-		height: clamp(1rem, 9cqw, 1.375rem);
+		width: var(--navigation-control-icon-size);
+		height: var(--navigation-control-icon-size);
 	}
 
 	/* typography */
@@ -413,6 +448,30 @@
 	}
 
 	/* components */
+
+	/* Rock clickable titles independently of their existing sticker angles. */
+	.interactive-title-motion {
+		animation: interactive-title-rock 300ms ease-in-out 200ms infinite alternate;
+	}
+
+	.interactive-title-motion:is(
+		[data-state='open'],
+		[aria-expanded='true'],
+		[aria-pressed='true']
+	) {
+		animation-play-state: paused;
+	}
+
+	@keyframes interactive-title-rock {
+		from { rotate: 0deg; }
+		to { rotate: 1deg; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.interactive-title-motion {
+			animation: none;
+		}
+	}
 
 	.accordion {
 		& summary {
@@ -698,49 +757,13 @@
 
 		.theme-fabrique-description {
 			order: 1;
-			width: 100%;
-			max-width: 60%;
-			margin: 8rem auto 0;
-			padding-bottom: 2rem;
-			font-size: 22px;
-			line-height: 1.3;
-			letter-spacing: -0.005em;
+			margin: clamp(2.25rem, 4.78cqw, 5rem) auto 0;
 		}
 
-		.theme-fabrique-actions { order: 2; }
+		.theme-fabrique-actions { order: 2; flex-shrink: 0; }
 
 		.theme-fabrique-logo-collage {
 			order: 4;
-			margin-top: 32vh;
-		}
-	}
-
-	.theme-fabrique-description h2 {
-		font-size: 20px;
-		line-height: 1.2;
-		font-weight: 700;
-		padding: 1rem;
-		border-radius: 6px;
-		background: var(--color-primary);
-		color: var(--color-dark);
-		box-shadow: inset 0 0 6px var(--color-grayDark);
-	}
-	.theme-fabrique-conclusion h2 {
-		font-size: 30px;
-		line-height: 1.2;
-		font-weight: 700;
-		margin: 0;
-	}
-	@media (min-width: 640px) {
-		.theme-fabrique-description h2, .theme-fabrique-conclusion h2 { font-size: 36px; }
-	}
-	@media (min-width: 1024px) {
-		.theme-fabrique-description h2 {
-			font-size: 32px;
-			padding: 0;
-			background: transparent;
-			box-shadow: none;
-			color: inherit;
 		}
 	}
 
@@ -863,10 +886,11 @@
 	@media (min-width: 1024px) {
 		html[data-theme='system-d-yellow-blue'],
 		html[data-theme='system-d-yellow-blue'] body {
+			--navigation-background: var(--color-grayDark);
 			background-color: var(--color-grayDark);
 		}
 
-		/* The single SVG supplies the fill and inset shadow for both surfaces. */
+		/* The shared outline supplies the fill and inset shadow for both surfaces. */
 		body:has(.section-folder-surface) main {
 			position: relative;
 		}

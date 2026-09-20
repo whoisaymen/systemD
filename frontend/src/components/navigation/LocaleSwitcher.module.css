@@ -1,0 +1,134 @@
+.switcher {
+	--language-drawer-width: 4.75rem;
+	--language-slide: 420ms cubic-bezier(0.22, 1, 0.36, 1);
+	position: relative;
+	display: flex;
+	height: 100%;
+	border-radius: 0.375rem;
+	background: var(--color-dark);
+}
+
+.trigger,
+.option {
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.375rem;
+	padding-inline: 0.5rem;
+	color: var(--color-primary);
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.05em;
+	transition: color 160ms ease, opacity 160ms ease;
+}
+
+.trigger {
+	position: relative;
+	flex-shrink: 0;
+}
+
+.trigger[aria-expanded='true'] {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.2em;
+}
+
+.trigger:disabled {
+	opacity: 0.5;
+	cursor: wait;
+}
+
+.trigger:focus-visible,
+.option:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: -2px;
+}
+
+/* The rail grows in place, keeping its labels at their natural size. */
+.drawer {
+	position: relative;
+	order: -1;
+	width: 0;
+	height: 100%;
+	flex-shrink: 0;
+	overflow: hidden;
+	transition: width var(--language-slide);
+}
+
+.switcher[data-open='true'] .drawer {
+	width: var(--language-drawer-width);
+}
+
+.menu {
+	position: absolute;
+	right: 0;
+	display: flex;
+	width: var(--language-drawer-width);
+	height: 100%;
+	align-items: center;
+	gap: 0.25rem;
+	padding-right: 0.25rem;
+	opacity: 0;
+	transform: translateX(0.625rem);
+	transition:
+		transform var(--language-slide),
+		opacity 180ms ease;
+}
+
+.switcher[data-open='true'] .menu {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+.option {
+	flex: 1;
+}
+
+@media (hover: hover) {
+	.trigger:hover,
+	.option:hover {
+		opacity: 0.7;
+	}
+}
+
+@media (min-width: 640px) {
+	.trigger,
+	.option {
+		font-size: 1.5rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.switcher {
+		background: transparent;
+	}
+
+	/* Anchor the current language and the adjacent controls while extending left. */
+	.drawer {
+		position: absolute;
+		right: 100%;
+		bottom: 0;
+		overflow: clip;
+		border-radius: 0.375rem 0 0 0;
+		background: var(--navigation-background);
+	}
+}
+
+@media (min-width: 1024px) and (hover: hover) {
+	.trigger:hover,
+	.option:hover {
+		color: var(--navigation-control-hover, var(--color-primary));
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.drawer,
+	.menu,
+	.trigger,
+	.option {
+		transition: none;
+	}
+}

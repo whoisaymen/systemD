@@ -1,0 +1,51 @@
+.illustration {
+	position: relative;
+	display: block;
+	width: 80%;
+	margin: 0;
+	border: 0;
+	padding: 0.4rem;
+	background: transparent;
+	color: var(--color-grayDark);
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.illustration:is(button) {
+	cursor: pointer;
+}
+
+.illustration:focus-visible {
+	outline: 2px dashed var(--color-primary);
+	outline-offset: 12px;
+	border-radius: 6px;
+}
+
+.art {
+	display: block;
+	width: 100%;
+}
+
+.art svg {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+}
+
+.compact {
+	width: 35%;
+	padding: 0.5rem;
+}
+
+@media (min-width: 640px) {
+	.illustration:not(.compact) {
+		padding: 1.6rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.illustration:is(button) {
+		cursor: default;
+	}
+}

@@ -1,88 +1,166 @@
 'use client'
 
 import { useLocale } from 'next-intl'
-import { routing } from '@/i18n/routing'
 import { useParams } from 'next/navigation'
-import { useTransition, useState, useRef, useEffect } from 'react'
-import { Locale, usePathname, useRouter } from '@/i18n/routing'
-import { motion, AnimatePresence } from 'motion/react'
-import clsx from 'clsx'
+import { useTransition, useState, useRef, useEffect, useId } from 'react'
+import type { KeyboardEvent } from 'react'
+import { routing, type Locale, usePathname, useRouter } from '@/i18n/routing'
+import styles from './LocaleSwitcher.module.css'
+
+const LANGUAGES = {
+	fr: { name: 'Français', action: 'Changer de langue' },
+	en: { name: 'English', action: 'Change language' },
+	nl: { name: 'Nederlands', action: 'Taal wijzigen' },
+} satisfies Record<Locale, { name: string; action: string }>
 
 export default function LocaleSwitcher() {
-	const locale = useLocale()
+	const locale = useLocale() as Locale
 	const router = useRouter()
 	const [isPending, startTransition] = useTransition()
 	const pathname = usePathname()
 	const params = useParams()
 	const [isOpen, setIsOpen] = useState(false)
-	const dropdownRef = useRef<HTMLDivElement>(null)
+	const switcherRef = useRef<HTMLDivElement>(null)
+	const triggerRef = useRef<HTMLButtonElement>(null)
+	const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
+	const menuId = useId()
+	const language = LANGUAGES[locale]
+	const alternatives = routing.locales.filter((language) => language !== locale)
 
-	// Close dropdown when clicking outside
 	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				dropdownRef.current &&
-				!dropdownRef.current.contains(event.target as Node)
-			) {
+		if (!isOpen) return
+
+		optionRefs.current[0]?.focus({ preventScroll: true })
+		const handleClickOutside = (event: PointerEvent) => {
+			if (!switcherRef.current?.contains(event.target as Node)) {
 				setIsOpen(false)
 			}
 		}
 
-		document.addEventListener('mousedown', handleClickOutside)
-		return () => document.removeEventListener('mousedown', handleClickOutside)
-	}, [])
+		document.addEventListener('pointerdown', handleClickOutside)
+		return () => document.removeEventListener('pointerdown', handleClickOutside)
+	}, [isOpen, locale])
+
+	function closeMenu() {
+		setIsOpen(false)
+		triggerRef.current?.focus()
+	}
 
 	function onSelectChange(nextLocale: Locale) {
-		setIsOpen(false)
+		closeMenu()
+		if (nextLocale === locale) return
+
 		startTransition(() => {
 			router.replace(
-				// @ts-expect-error
+				// @ts-expect-error -- The pathname and params belong to the same current route.
 				{ pathname, params },
-				{ locale: nextLocale },
+				{ locale: nextLocale, scroll: false },
 			)
 		})
 	}
 
+	function onOptionKeyDown(
+		event: KeyboardEvent<HTMLButtonElement>,
+		index: number,
+	) {
+		let nextIndex: number
+		switch (event.key) {
+			case 'ArrowRight':
+			case 'ArrowDown':
+				nextIndex = (index + 1) % alternatives.length
+				break
+			case 'ArrowLeft':
+			case 'ArrowUp':
+				nextIndex =
+					(index - 1 + alternatives.length) % alternatives.length
+				break
+			case 'Home':
+				nextIndex = 0
+				break
+			case 'End':
+				nextIndex = alternatives.length - 1
+				break
+			default:
+				return
+		}
+		event.preventDefault()
+		optionRefs.current[nextIndex]?.focus({ preventScroll: true })
+	}
+
 	return (
-		<div ref={dropdownRef} className="relative h-full">
+		<div
+			ref={switcherRef}
+			className={styles.switcher}
+			data-open={isOpen}
+			onBlur={(event) => {
+				if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false)
+			}}
+			onKeyDown={(event) => {
+				if (event.key === 'Escape' && isOpen) {
+					event.preventDefault()
+					event.stopPropagation()
+					closeMenu()
+				}
+			}}
+		>
 			<button
+				ref={triggerRef}
+				type="button"
 				onClick={() => setIsOpen(!isOpen)}
+				onKeyDown={(event) => {
+					if (
+						['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(
+							event.key,
+						)
+					) {
+						event.preventDefault()
+						setIsOpen(true)
+					}
+				}}
 				disabled={isPending}
-				className={clsx(
-					'flex h-full items-center justify-between gap-2 rounded-md bg-dark px-2 text-base font-bold tracking-tighter text-primary transition-all duration-200 hover:opacity-80 sm:border-[0px] sm:border-primary sm:px-1.5 sm:text-2xl lg:bg-transparent',
-					isPending && 'opacity-30',
-					// isOpen && 'border-2 border-primary',
-				)}
+				aria-label={`${language.action} (${language.name})`}
+				aria-haspopup="menu"
+				aria-expanded={isOpen}
+				aria-controls={isOpen ? menuId : undefined}
+				className={styles.trigger}
 			>
-				<span>{locale.toUpperCase()}</span>
+				{locale.toUpperCase()}
 			</button>
 
-			<AnimatePresence>
-				{isOpen && (
-					<motion.div
-						initial={{ opacity: 0, y: 10, scale: 0.95 }}
-						animate={{ opacity: 1, y: 0, scale: 1 }}
-						exit={{ opacity: 0, y: 10, scale: 0.95 }}
-						transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-						className="absolute bottom-full left-0 right-0 z-50 mb-2 w-full rounded-md border-2 border-primary bg-dark shadow-lg"
-					>
-						{routing.locales.map((lang) => (
-							<button
-								key={lang}
-								onClick={() => onSelectChange(lang)}
-								className={clsx(
-									'w-full text-center text-base font-bold tracking-tighter transition-all duration-150 hover:bg-primary hover:text-dark sm:text-xl',
-									lang === locale ? 'bg-primary text-dark' : 'text-primary',
-								)}
-							>
-								<div className="flex h-full items-center justify-center py-2">
-									<span>{lang.toUpperCase()}</span>
-								</div>
-							</button>
-						))}
-					</motion.div>
-				)}
-			</AnimatePresence>
+			<div
+				className={styles.drawer}
+				data-language-drawer
+				inert={!isOpen}
+				aria-hidden={!isOpen}
+			>
+				<div
+					id={menuId}
+					role="menu"
+					aria-label={language.action}
+					aria-orientation="horizontal"
+					className={styles.menu}
+				>
+					{alternatives.map((lang, index) => (
+						<button
+							key={lang}
+							ref={(element) => {
+								optionRefs.current[index] = element
+							}}
+							type="button"
+							role="menuitem"
+							aria-label={LANGUAGES[lang].name}
+							lang={lang}
+							title={LANGUAGES[lang].name}
+							tabIndex={-1}
+							onClick={() => onSelectChange(lang)}
+							onKeyDown={(event) => onOptionKeyDown(event, index)}
+							className={styles.option}
+						>
+							{lang.toUpperCase()}
+						</button>
+					))}
+				</div>
+			</div>
 		</div>
 	)
 }

@@ -1,49 +1,28 @@
 import { localizedRichTextPreview } from '../../lib/richTextPreview'
 import { defineField, defineType } from 'sanity'
+import { FaAlignLeft } from 'react-icons/fa'
 
 export default defineType({
 	name: 'customParagraph',
-	title: 'Custom paragraph',
+	title: 'Texte',
 	type: 'object',
+	icon: FaAlignLeft,
 	fields: [
 		defineField({
 			name: 'text',
-			title: 'Text',
+			title: 'Texte',
 			type: 'internationalizedArrayRichText',
 		}),
-
-		defineField({
-			name: 'svgMarkup',
-			title: 'SVG Markup',
-			type: 'text', // or 'code' if you want syntax highlighting
-		}),
-		// defineField({
-		// 	name: 'svg',
-		// 	title: 'SVG Illustration',
-		// 	type: 'code',
-		// 	options: {
-		// 		language: 'svg',
-		// 		theme: 'github',
-		// 	},
-		// 	description:
-		// 		'Paste SVG markup here. Use fill="currentColor" for theme support.',
-		// }),
 	],
 	preview: {
 		select: {
 			text: 'text',
 		},
 		prepare({ text }) {
-			const getLocalizedValue = localizedRichTextPreview
-
-			const displayText =
-				getLocalizedValue(text, 'fr') ||
-				getLocalizedValue(text, 'en') ||
-				getLocalizedValue(text, 'nl') ||
-				''
-
 			return {
-				title: displayText.substring(0, 100),
+				title: localizedRichTextPreview(text).substring(0, 100) || 'Texte',
+				subtitle: 'Texte',
+				media: FaAlignLeft,
 			}
 		},
 	},

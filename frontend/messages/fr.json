@@ -1,16 +1,33 @@
 {
 	"menu": {
 		"legal": "Mentions légales",
-		"contact": "Contactez-nous",
+		"about": "À propos",
 		"openMainMenu": "Ouvrir le menu principal"
 	},
 
 	"contactPage": {
-		"title": "Contactez-nous",
+		"title": "À propos",
 		"contact": "Contact",
 		"partners": "Partenaires",
+		"credits": "Crédits",
 		"viewOnMap": "Voir sur Google Maps",
-		"noContent": "Aucun contenu disponible"
+		"noContent": "Aucun contenu disponible",
+		"map": {
+			"label": "Carte interactive de Bruxelles autour du Pianofabriek",
+			"controls": "Commandes de la carte",
+			"zoomIn": "Zoomer",
+			"zoomOut": "Dézoomer",
+			"reset": "Revenir à System D",
+			"venueLink": "System D au Pianofabriek — ouvrir dans Google Maps",
+			"openDirections": "Voir l’itinéraire",
+			"instructions": "Faites glisser pour explorer. Utilisez + et − pour zoomer, ou maintenez Ctrl / ⌘ en faisant défiler. Sur écran tactile, utilisez deux doigts. Lorsque la carte est sélectionnée, utilisez les flèches pour vous déplacer et + / − pour zoomer.",
+			"scrollHint": "Utilisez Ctrl + défilement pour zoomer sur la carte",
+			"scrollHintMac": "Utilisez ⌘ + défilement pour zoomer sur la carte",
+			"touchHint": "Utilisez deux doigts pour déplacer la carte",
+			"loading": "On retrouve notre coin de Bruxelles…",
+			"unavailable": "La carte interactive est indisponible. L’itinéraire reste accessible.",
+			"retry": "Réessayer"
+		}
 	},
 
 	"festivalEvents": {
@@ -48,6 +65,8 @@
 	},
 
 	"expo": {
+		"enlargePhoto": "Agrandir la photo",
+		"enlargePhotoBy": "Agrandir la photo de {artist}",
 		"curatedBy": "Sélectionné par",
 		"title": "Expo Photo"
 	},

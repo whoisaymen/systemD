@@ -1,7 +1,6 @@
 'use client'
 
-import { useRef, useMemo } from 'react'
-import { motion, useInView } from 'motion/react'
+import { useRef, useMemo, type RefObject } from 'react'
 
 import {
 	Accordion,
@@ -9,12 +8,21 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion'
-import LogoShortTsx from '../svgs/LogoShort'
+import SystemDHeart from '../common/SystemDHeart'
+import styles from './FabriqueContent.module.css'
 import BackToTopButton from '../common/BackToTop'
 import RichText from '@/components/common/RichText'
+import {
+	EDITORIAL_BODY_TEXT,
+	EDITORIAL_COPY_WIDTH,
+	EDITORIAL_DESKTOP_TAB_STYLE,
+	EDITORIAL_RICH_TEXT_HEADINGS,
+} from '@/components/common/editorialStyles'
 import FestivalSparkleIcon from '../festival/FestivalSparkleIcon'
+import { FILM_LABEL_TEXT } from '../film/filmLabelStyles'
 import {
 	localizedRichText,
+	richTextBlockAlignment,
 	richTextToPlainText,
 	textToRichText,
 } from '@/lib/richText'
@@ -23,12 +31,6 @@ import {
 interface FabriqueContentProps {
 	fabrique: any
 	language: string
-}
-
-interface LogoCollageItem {
-	className: string
-	delay: number
-	rotate: number
 }
 
 // Constants
@@ -41,102 +43,24 @@ const TRIGGER_ROTATIONS = [
 	'rotate-3',
 ]
 
-const LOGO_COLLAGE_CONFIG: LogoCollageItem[] = [
-	{
-		className: 'absolute right-16 top-0 w-20 w-[9rem] sm:w-[15rem]',
-		delay: 0.1,
-		rotate: -50,
-	},
-	{
-		className: 'absolute left-20 top-0 w-20 w-[9rem] sm:w-[15rem]',
-		delay: 0.3,
-		rotate: 25,
-	},
-	{
-		className:
-			'absolute bottom-2 -right-8 lg:-right-12 w-20 w-[9rem] sm:w-[15rem]',
-		delay: 0.5,
-		rotate: -60,
-	},
-	{
-		className: 'absolute -right-8 top-4 w-20 w-[9rem] sm:w-[15rem]',
-		delay: 0.7,
-		rotate: 55,
-	},
-	{
-		className: 'absolute left-0 top-12 w-20 w-[9rem] sm:w-[15rem]',
-		delay: 0.9,
-		rotate: -60,
-	},
-	{
-		className:
-			'absolute -bottom-2 lg:-bottom-8 -left-0 w-20 w-[9rem] sm:w-[15rem]',
-		delay: 1.1,
-		rotate: 60,
-	},
-	{
-		className:
-			'absolute -bottom-24 lg:-bottom-32 left-[45%] w-20 w-[9rem] sm:w-[15rem]',
-		delay: 1.3,
-		rotate: 40,
-	},
-	{
-		className:
-			'absolute -bottom-24 lg:-bottom-28 left-1/2 w-20 w-[9rem] sm:w-[15rem]',
-		delay: 1.3,
-		rotate: -40,
-	},
-]
-
 // Logo Collage Component
-const LogoCollage = ({ text }: { text: any }) => {
-	const collageRef = useRef(null)
-	const isInView = useInView(collageRef, {
-		once: true,
-		margin: '-20% 0px -20% 0px',
-	})
-
+const LogoCollage = ({
+	text,
+	originRef,
+}: {
+	text: any
+	originRef: RefObject<HTMLDivElement | null>
+}) => {
 	return (
-		<div className="theme-fabrique-logo-collage relative flex flex-wrap items-center justify-center gap-2 rounded-none px-4 py-4 lg:mx-auto">
-			<div
-				className="relative mt-24 flex h-[20vh] w-full items-center justify-center lg:max-w-[29vw]"
-				ref={collageRef}
-			>
-				{LOGO_COLLAGE_CONFIG.map((logo, i) => (
-					<motion.div
-						key={i}
-						initial={{ y: '-100vh', opacity: 0, rotate: logo.rotate }}
-						animate={
-							isInView
-								? {
-										y: 0,
-										opacity: 1,
-										rotate: logo.rotate,
-										x: i === 6 ? '-50%' : 0,
-									}
-								: {
-										y: '-100vh',
-										opacity: 0,
-										rotate: logo.rotate,
-										x: i === 6 ? '-50%' : 0,
-									}
-						}
-						transition={{
-							type: 'spring',
-							stiffness: 60,
-							damping: 12,
-							delay: logo.delay,
-						}}
-						className={`${logo.className} inline-block h-auto rounded-md bg-grayDark px-2 py-1`}
-						style={{ position: 'absolute' }}
-					>
-						<LogoShortTsx className="lg:bg-grayDark lg:text-dark" />
-					</motion.div>
-				))}
+		<div className={`theme-fabrique-logo-collage ${styles.collage}`}>
+			<div className={styles.artworkSlot}>
+				<div className={styles.artwork}>
+					<SystemDHeart entrance="corners" originRef={originRef} />
+				</div>
 			</div>
 
 			<RichText
-				className="theme-fabrique-conclusion mx-auto py-2 pt-40 text-center text-base font-normal leading-[1.2] tracking-tight text-primary sm:pt-52 lg:text-xl"
+				className={`theme-fabrique-conclusion ${EDITORIAL_BODY_TEXT} ${EDITORIAL_COPY_WIDTH} ${EDITORIAL_RICH_TEXT_HEADINGS} mx-auto shrink-0 py-2 text-center text-primary`}
 				value={text}
 			/>
 		</div>
@@ -144,56 +68,53 @@ const LogoCollage = ({ text }: { text: any }) => {
 }
 
 // Keep the artwork and section layout while rendering the editor's formatting.
-const renderActionContent = (action: any, language: string, subtitle: any) => (
-	<div className="relative px-0 py-4 text-primary sm:py-10">
-		{richTextToPlainText(subtitle) && (
-			<div className="flex items-center justify-center">
-				<h2 className="-mt-4 inline-block -rotate-1 rounded-md border-2 border-dark bg-primary px-2 py-0 text-center text-lg font-medium tracking-tight text-dark lg:-mt-8 lg:border-0 lg:text-lg">
-					<RichText value={subtitle} inline />
-				</h2>
-			</div>
-		)}
-
-		{textToRichText(localizedRichText(action.text, language)).map(
-			(block: any, index: number) => {
-				const blockKey = block._key ?? index
-				if (block.style === 'h6' && !block.listItem) {
+const renderActionContent = (action: any, language: string) => (
+	<div
+		className={`${EDITORIAL_BODY_TEXT} relative pb-4 pt-12 text-primary lg:pb-[0.89em] lg:pt-8`}
+	>
+		<div className={EDITORIAL_COPY_WIDTH}>
+			{textToRichText(localizedRichText(action.text, language)).map(
+				(block: any, index: number) => {
+					const blockKey = block._key ?? index
+					if (block.style === 'h6' && !block.listItem) {
+						return (
+							<div key={blockKey} className="mt-4 flex justify-start first:mt-0">
+								<p className="rounded-md border-2 border-dark bg-grayDark px-[0.3em] py-0 text-center font-medium text-dark">
+									<RichText value={[block]} inline />
+								</p>
+							</div>
+						)
+					}
+					if (block.listItem === 'bullet') {
+						return (
+							<ul key={blockKey} className="mt-4 pl-[1.5em] first:mt-0">
+								<li
+									className={`relative ${block.style === 'h6' ? 'font-bold' : ''}`}
+									style={{ textAlign: richTextBlockAlignment(block) }}
+								>
+									<RichText value={[{ ...block, listItem: undefined }]} inline />
+									<FestivalSparkleIcon
+										className="absolute -left-[1.5em] top-[0.6em] h-[1em] w-[1em] -translate-y-1/2"
+										theme={{
+											fill: 'var(--color-primary)',
+											stroke: 'var(--color-dark)',
+										}}
+									/>
+								</li>
+							</ul>
+						)
+					}
 					return (
-						<div key={blockKey} className="flex justify-start lg:ml-28">
-							<p className="-z-10 m-4 -mb-4 -rotate-0 rounded-md border-2 border-dark bg-grayDark px-2 py-0 text-center text-base font-medium tracking-tight text-dark">
-								<RichText value={[block]} inline />
-							</p>
+						<div key={blockKey} className="mt-4 first:mt-0">
+							<RichText
+								value={[block]}
+								className={EDITORIAL_RICH_TEXT_HEADINGS}
+							/>
 						</div>
 					)
-				}
-				if (block.listItem === 'bullet') {
-					return (
-						<ul key={blockKey} className="px-9 lg:px-36">
-							<li
-								className={`relative mt-4 text-base font-normal leading-[1.2] tracking-tight lg:px-0 lg:text-xl ${block.style === 'h6' ? 'font-bold' : ''}`}
-							>
-								<RichText value={[{ ...block, listItem: undefined }]} inline />
-								<FestivalSparkleIcon
-									className="absolute -left-6 top-3.5 h-4 w-4 -translate-y-1/2"
-									theme={{
-										fill: 'var(--color-primary)',
-										stroke: 'var(--color-dark)',
-									}}
-								/>
-							</li>
-						</ul>
-					)
-				}
-				return (
-					<div
-						key={blockKey}
-						className="mt-4 px-4 text-base font-normal leading-[1.2] tracking-tight first:mt-0 lg:px-32 lg:text-xl"
-					>
-						<RichText value={[block]} />
-					</div>
-				)
-			},
-		)}
+				},
+			)}
+		</div>
 	</div>
 )
 
@@ -202,7 +123,7 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	fabrique,
 	language,
 }) => {
-	const ref = useRef(null)
+	const ref = useRef<HTMLDivElement>(null)
 
 	// Memoize computed values
 	const memoizedValues = useMemo(
@@ -217,9 +138,6 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 		return null
 	}
 
-	const actionValues = (memoizedValues.actions ?? []).map(
-		(_: any, index: number) => `action-${index}`,
-	)
 	const renderActionItems = () =>
 		memoizedValues.actions.map((action: any, index: number) => {
 			const actionTitle = localizedRichText(action.title, language)
@@ -236,19 +154,27 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 				<AccordionItem
 					key={index}
 					value={`action-${index}`}
-					className="flex flex-col items-center justify-center"
+					className="group/action flex flex-col items-center justify-center lg:contents"
 				>
-					<AccordionTrigger className={`theme-fabrique-dropdown-label ${triggerRotation} sm:text-5xl`}>
-						<div className="flex flex-col items-center">
-							<div className="z-10 inline-block w-fit text-3xl tracking-tight lg:text-5xl">
-								<span className="text-center">
-									<RichText value={mainTitle} inline allowLinks={false} />
+					<div className="relative z-20">
+						<AccordionTrigger
+							className={`theme-fabrique-dropdown-label ${triggerRotation} text-3xl ${EDITORIAL_DESKTOP_TAB_STYLE}`}
+						>
+							<RichText value={mainTitle} inline allowLinks={false} />
+						</AccordionTrigger>
+						{richTextToPlainText(subTitle) && (
+							<div className="theme-fabrique-action-subtitle absolute left-1/2 top-full z-30 mt-0 hidden w-max max-w-[min(22rem,calc(100cqw-2rem))] -translate-x-1/2 group-data-[state=open]/action:block lg:max-w-[min(22rem,40cqw)]">
+								<span
+									style={{ rotate: index % 2 === 0 ? '3deg' : '-3deg' }}
+									className={`block rounded-md border-2 border-dark bg-primary px-1.5 py-0 text-center text-dark ${FILM_LABEL_TEXT}`}
+								>
+									<RichText value={subTitle} inline />
 								</span>
 							</div>
-						</div>
-					</AccordionTrigger>
+						)}
+					</div>
 					<AccordionContent>
-						{renderActionContent(action, language, subTitle)}
+						{renderActionContent(action, language)}
 					</AccordionContent>
 				</AccordionItem>
 			)
@@ -257,22 +183,24 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 	return (
 		<div
 			ref={ref}
-			className="lg:shadowtest section-folder-content section-folder-content--fabrique theme-fabrique-main-content no-scrollbar relative isolate z-0 flex h-auto w-full flex-col overflow-x-clip px-4 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-0 lg:overflow-y-auto text-base font-medium leading-[1.2] tracking-tight text-dark lg:my-1 lg:h-[calc(100svh-8px)] lg:rounded-xl"
+			className="lg:shadowtest section-folder-content section-folder-content--fabrique theme-fabrique-main-content no-scrollbar relative isolate z-0 flex h-auto w-full flex-col overflow-x-clip pb-[calc(8rem+env(safe-area-inset-bottom))] pt-0 lg:overflow-y-auto text-base font-medium leading-[1.2] tracking-tight text-dark [container-type:inline-size] lg:my-1 lg:h-[calc(100svh-8px)] lg:rounded-xl lg:pb-4"
 		>
 			<div className="fixed bottom-4 right-12 z-50">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
 
-			{/* Single Accordion for all Actions */}
+			{/* Desktop titles share a row; each panel opens below the whole row. */}
 			{memoizedValues.actions && (
-				<div className="theme-fabrique-actions mb-0 pt-4 lg:pb-0 lg:pt-16">
+				<div className="theme-fabrique-actions mb-0 pt-4 lg:pb-0 lg:pt-10">
 					<Accordion type="single" collapsible className="lg:hidden">
 						{renderActionItems()}
 					</Accordion>
 					<Accordion
-						type="multiple"
-						defaultValue={actionValues}
-						className="hidden lg:block"
+						type="single"
+						collapsible
+						orientation="horizontal"
+						defaultValue="action-0"
+						className="hidden lg:flex lg:flex-wrap lg:items-start lg:justify-center lg:gap-y-[min(1.5rem,1.67cqw)] lg:[&>div>[role=region]]:order-1 lg:[&>div>[role=region]]:basis-full"
 					>
 						{renderActionItems()}
 					</Accordion>
@@ -282,11 +210,14 @@ const FabriqueContent: React.FC<FabriqueContentProps> = ({
 			{richTextToPlainText(memoizedValues.description) && (
 				<RichText
 					value={memoizedValues.description}
-					className="theme-fabrique-description mt-8 text-base font-normal leading-[1.2] tracking-tight text-primary"
+					className={`theme-fabrique-description ${EDITORIAL_BODY_TEXT} ${EDITORIAL_COPY_WIDTH} ${EDITORIAL_RICH_TEXT_HEADINGS} mt-8 text-primary [&>h2]:mb-[0.8em] [&>p]:min-h-[1.2em]`}
 				/>
 			)}
 
-			<LogoCollage text={localizedRichText(fabrique.closingText, language)} />
+			<LogoCollage
+				text={localizedRichText(fabrique.closingText, language)}
+				originRef={ref}
+			/>
 		</div>
 	)
 }

@@ -33,8 +33,6 @@ async function getFestivalEdition(year: string, locale: string) {
 			exhibitionTitle,
 			photosTitle,
 			juryTitle,
-			pressLinkLabel,
-			aftermovieLinkLabel,
 
 			"filmSelection": *[_type == 'film' && references(^._id)] | order(year asc, coalesce(
 				pt::text(title[language == $locale || _key == $locale][0].value),
@@ -48,7 +46,7 @@ async function getFestivalEdition(year: string, locale: string) {
 				description,
 				director,
 				year,
-				affiche,
+				affiche{..., asset->{_id, metadata{dimensions, lqip}}},
 				isWinner
 			},
 			jury[]->{
@@ -93,15 +91,18 @@ async function getFestivalEdition(year: string, locale: string) {
 					asset->{
 						_id,
 						url,
-						metadata
+						metadata{dimensions, lqip}
 					}
 				},
 			},
 			expoPhoto[]{
+				_key,
 				_type,
 				curatorName,
 				photos[]{
+					_key,
 					photo{
+						...,
 						asset->{
 							_id,
 							url,

@@ -46,6 +46,18 @@ export function textToRichText(value: any): any[] {
 	}))
 }
 
+/** Alignment is independent of paragraph/heading style and inline formatting. */
+export function richTextBlockAlignment(block: {
+	style?: string
+	children?: { _type: string; marks?: unknown }[]
+}): 'center' | undefined {
+	return block.children?.some((child) =>
+		Array.isArray(child.marks) && child.marks.includes('alignCenter'),
+	) || ['normalCenter', 'h2Center', 'h3Center', 'blockquoteCenter'].includes(block.style ?? '')
+		? 'center'
+		: undefined
+}
+
 /** Render an old separate heading during the transition to a single prose editor. */
 export function combineRichText(title: any, body: any, style = 'h3'): any[] {
 	return [

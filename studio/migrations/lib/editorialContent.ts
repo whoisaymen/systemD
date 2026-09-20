@@ -1,7 +1,7 @@
 type Schema = { name?: string; type?: string; fields?: Schema[]; of?: Schema[] }
 type JsonObject = Record<string, any>
 
-// Retired controls were never visible in the established page layouts.
+// Retired controls are no longer used by the page layouts.
 const retiredFields: Record<string, string[]> = {
 	memoire: [
 		'title',
@@ -23,7 +23,7 @@ const retiredFields: Record<string, string[]> = {
 	mediaTeaserBlock: ['text'],
 	person: ['title', 'displayName'],
 	film: ['directorDisplay', 'productionDisplay', 'links'],
-	festival: ['venueDisplay'],
+	festival: ['venueDisplay', 'pressLinkLabel', 'aftermovieLinkLabel'],
 	jury: ['nameDisplay'],
 	photoGalleryBlock: ['photographerDisplay'],
 	expoPhotoBlock: ['curatorDisplay'],

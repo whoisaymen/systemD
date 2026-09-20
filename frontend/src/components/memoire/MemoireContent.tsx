@@ -7,6 +7,8 @@ import RichText from '@/components/common/RichText'
 import { EDITORIAL_BODY_TEXT } from '@/components/common/editorialStyles'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import { useTranslations } from 'next-intl'
+import styles from './MemoireContent.module.css'
+import MemoireTimeline from './MemoireTimeline'
 
 interface MemoireContentProps {
 	memoire: any
@@ -33,26 +35,35 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		.sort((a: any, b: any) => b.year - a.year)
 
 	const renderFestivalCard = (festival: any, index: number) => (
-		<Link
+		<li
 			key={festival._id || index}
-			href={`/${language}/festival/${festival.year}`}
-			className="group relative block min-w-0"
+			className={styles.item}
+			data-edition-year={festival.year}
 		>
-			<div className="relative isolate aspect-[4/3] w-full overflow-hidden rounded-xl border-[3px] border-primary bg-dark lg:rounded-md lg:border-0">
-				<div
-					aria-hidden="true"
-					className="shadowtest pointer-events-none absolute inset-0 z-30 hidden [border-radius:inherit] lg:block"
-				/>
-				<div className="absolute left-1/2 top-[43%] z-20 -translate-x-1/2 -rotate-6 rounded-md bg-primary px-2 text-xl font-black tracking-tight text-dark lg:top-[47%] lg:text-3xl">
-					<span>{festival.year}</span>
-				</div>
-				<div className="absolute left-1/2 top-[55%] z-10 -translate-x-1/2 rotate-6 rounded-md bg-dark px-2 text-xl font-semibold tracking-tight text-primary lg:top-[57%] lg:text-3xl">
-					<RichText value={festival.venue} inline allowLinks={false} />
+			<Link
+				href={`/${language}/festival/${festival.year}`}
+				draggable={false}
+				onNavigate={() => {
+					sessionStorage.removeItem('currentFilmSlug')
+					sessionStorage.removeItem('festivalScroll')
+				}}
+				className={styles.print}
+				data-memoire-card
+			>
+				<div className={`interactive-title-motion ${styles.labels}`}>
+					<div className="relative z-20 -rotate-6 rounded-md bg-primary px-2 text-xl font-black leading-tight tracking-tight text-dark lg:text-3xl">
+						<span>{festival.year}</span>
+					</div>
+					<div className="relative z-10 -mt-0.5 rotate-6 rounded-md bg-dark px-2 text-xl font-semibold leading-tight tracking-tight text-primary lg:text-3xl">
+						<RichText value={festival.venue} inline allowLinks={false} />
+					</div>
 				</div>
 				{festival.visual?.asset ? (
 					<Img
 						image={festival.visual}
-						src={festival.visual.asset.url}
+						draggable={false}
+						imageWidth={1000}
+						sizes="(min-width: 1024px) 30vw, (min-width: 640px) 42vw, 80vw"
 						alt={
 							festival.title
 								? richTextToPlainText(
@@ -60,13 +71,13 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 									)
 								: 'Festival image'
 						}
-						className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+						className={styles.photo}
 					/>
 				) : (
-					<div className="flex h-full w-full items-center justify-center bg-primary" />
+					<div className={styles.placeholder} />
 				)}
-			</div>
-		</Link>
+			</Link>
+		</li>
 	)
 
 	return (
@@ -76,7 +87,9 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 				className="lg:shadowtest section-folder-content section-folder-content--memoire no-scrollbar relative z-10 mt-8 flex min-w-0 flex-col overflow-x-hidden rounded-md bg-grayDark px-4 pb-10 pt-4 text-dark sm:mx-0 lg:mt-0 lg:h-full lg:overflow-y-auto lg:overflow-x-hidden lg:rounded-xl lg:rounded-tr-none lg:bg-dark lg:p-8 lg:text-primary"
 			>
 				<div className="hidden w-full lg:px-6 xl:px-12">
-					<div className={`${EDITORIAL_BODY_TEXT} py-0 text-dark sm:py-4 lg:mx-auto lg:max-w-[36rem] lg:py-8 lg:text-center lg:text-primary 2xl:py-12`}>
+					<div
+						className={`${EDITORIAL_BODY_TEXT} py-0 text-dark sm:py-4 lg:mx-auto lg:max-w-[36rem] lg:py-8 lg:text-center lg:text-primary 2xl:py-12`}
+					>
 						{renderParagraph(
 							{ value: description },
 							[],
@@ -99,11 +112,13 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 									inline
 								/>
 							</h2>
-							<div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-2">
-								{filteredFestivals.map((festival: any, index: number) =>
-									renderFestivalCard(festival, index),
-								)}
-							</div>
+							<MemoireTimeline>
+								<ol className={styles.collage}>
+									{filteredFestivals.map((festival: any, index: number) =>
+										renderFestivalCard(festival, index),
+									)}
+								</ol>
+							</MemoireTimeline>
 						</div>
 					</section>
 				)}

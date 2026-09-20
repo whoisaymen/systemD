@@ -29,9 +29,12 @@
 		"migrate:editorial:release": "sanity exec migrations/migrateEditorialContent.ts --with-user-token -- --apply",
 		"migrate:form-settings:dry": "sanity exec migrations/moveFilmSubmissionSettings.ts --with-user-token",
 		"migrate:form-settings": "sanity exec migrations/moveFilmSubmissionSettings.ts --with-user-token -- --apply",
+		"migrate:bigbang-story:dry": "node --import tsx migrations/restructureBigBangShortStory.ts",
+		"migrate:bigbang-story": "node --import tsx migrations/restructureBigBangShortStory.ts --apply",
 		"lint": "eslint ."
 	},
 	"dependencies": {
+		"@portabletext/editor": "8.1.5",
 		"@sanity/client": "^8.6.2",
 		"@sanity/code-input": "^7.3.8",
 		"@sanity/color-input": "^6.1.4",
@@ -40,6 +43,7 @@
 		"@sanity/image-url": "^2.1.1",
 		"@sanity/language-filter": "^5.0.18",
 		"@sanity/locale-fr-fr": "^1.2.37",
+		"@sanity/orderable-document-list": "^2.0.24",
 		"@sanity/ui": "^4.2.1",
 		"@sanity/vision": "^6.15.0",
 		"groq": "^6.15.0",

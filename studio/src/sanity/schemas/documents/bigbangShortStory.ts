@@ -14,11 +14,16 @@ export default defineType({
 		}),
 		defineField({
 			name: 'body',
-			title: 'Paragraphes',
+			title: 'Contenu de la page',
 			type: 'array',
+			description:
+				'Les textes et les illustrations s’affichent dans cet ordre sur la page. Glissez les blocs pour les déplacer, ou ajoutez un texte ou une illustration séparément.',
 			of: [
 				{
 					type: 'customParagraph',
+				},
+				{
+					type: 'storyIllustration',
 				},
 			],
 		}),

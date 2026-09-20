@@ -51,6 +51,7 @@ import cardList from './modules/card-list'
 import creativeModule from './modules/creative'
 import customHtml from './modules/custom-html'
 import customParagraph from './modules/customParagraph'
+import storyIllustration from './modules/storyIllustration'
 import flagList from './modules/flag-list'
 import hero from './modules/hero'
 import heroSaas from './modules/hero.saas'
@@ -151,6 +152,7 @@ export const schemaTypes = [
 	testimonialList,
 	internationalizedBlock,
 	customParagraph,
+	storyIllustration,
 	quote,
 	paragraph,
 	image,

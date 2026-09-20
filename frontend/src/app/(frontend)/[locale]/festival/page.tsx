@@ -114,13 +114,5 @@ async function getFestival() {
 		festivalData.blocks = [visionBlock, ...(festivalData.blocks ?? [])]
 	}
 
-	if (
-		process.env.NODE_ENV === 'development' &&
-		process.env.FESTIVAL_MOCK_EVENTS !== 'false'
-	) {
-		const { withFestivalMockEvents } = await import('@/content/festivalMockEvents')
-		return withFestivalMockEvents(festivalData)
-	}
-
 	return festivalData
 }

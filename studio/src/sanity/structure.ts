@@ -1,4 +1,5 @@
 import { structureTool } from 'sanity/structure'
+import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 import { singleton } from './lib/utils'
 import { VscCalendar, VscServerProcess } from 'react-icons/vsc'
 import { GiFactory, GiGooExplosion, GiBrain } from 'react-icons/gi'
@@ -11,12 +12,11 @@ import {
 	FaHome,
 	FaBook,
 } from 'react-icons/fa'
-import { MdEmail } from 'react-icons/md'
 
 export const structure = structureTool({
 	name: 'content',
 	title: 'Content',
-	structure: (S) =>
+	structure: (S, context) =>
 		S.list()
 			.title('CMS')
 			.items([
@@ -46,7 +46,13 @@ export const structure = structureTool({
 					),
 				singleton(S, 'memoire', 'La Mémoire').icon(GiBrain),
 				singleton(S, 'fabrique', 'La Fabrique').icon(GiFactory),
-				S.documentTypeListItem('person').title("L'Équipe"),
+				orderableDocumentListDeskItem({
+					type: 'person',
+					title: "L'Équipe",
+					icon: FaUserFriends,
+					S,
+					context,
+				}),
 
 				// S.listItem()
 				// 	.title('Le Festival')
@@ -154,7 +160,7 @@ export const structure = structureTool({
 				S.documentTypeListItem('event').title('Événements'),
 				S.documentTypeListItem('eventType').title('Types d’événements').icon(FaTags),
 				S.divider(),
-				singleton(S, 'contact', 'Contact').icon(MdEmail),
+				singleton(S, 'contact', 'About').icon(FaInfoCircle),
 				S.listItem()
 					.id('filmSubmissions')
 					.title('Soumissions de films')
