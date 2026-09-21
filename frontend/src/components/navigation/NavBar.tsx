@@ -226,7 +226,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useLayoutEffect, useState, useTransition } from 'react'
 import { useReducedMotion } from 'motion/react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
@@ -246,7 +246,7 @@ import type { ThemeCombo } from '@/lib/theme'
 import SectionFolderSurface, { type FolderSection } from './SectionFolderSurface'
 
 import AboutIcon from './AboutIcon'
-import Loading from '@/app/(frontend)/[locale]/loading'
+import PageSkeleton, { skeletonPageForPath } from '@/components/loading/PageSkeleton'
 import { SKIP_HOME_INTRO_KEY } from '@/components/homepage/HomepageVideoIntro'
 
 // Theme configuration
@@ -283,7 +283,67 @@ type RenderFunction = (
 	isHovered: boolean,
 ) => ReactNode
 
-// NavBar component (contains a local NavItem that uses transition+router)
+// Keep menu cards mounted while the destination and loading state change.
+const NavItem = ({
+	href,
+	label,
+	children,
+	className = '',
+	isActive: active = false,
+	folderTab,
+	pendingHref,
+	onNavigate,
+}: {
+	href: string
+	label: string
+	children: RenderFunction
+	className?: string
+	isActive?: boolean
+	folderTab?: FolderSection
+	pendingHref: string | null
+	onNavigate: (href: string) => void
+}) => {
+	const navHref = normalizeNavHref(href)
+	const effectiveActive = pendingHref ? pendingHref === navHref : active
+
+	return (
+		<HoverableItem className="flex min-h-0 w-full">
+			{(isHovered) => {
+				const shouldShowAnimatedState = isHovered || effectiveActive
+
+				return (
+					<Link
+						href={href}
+						aria-label={label}
+						aria-current={effectiveActive ? 'page' : undefined}
+						onClick={(event) => {
+							if (
+								event.metaKey ||
+								event.ctrlKey ||
+								event.shiftKey ||
+								event.altKey
+							) {
+								return
+							}
+
+							event.preventDefault()
+							onNavigate(href)
+						}}
+						className={`theme-menu-item relative flex h-full w-full cursor-pointer items-center justify-center rounded-md shadow-inner transition-colors duration-200 ${
+							effectiveActive
+								? `shadowtest ${folderTab ? `section-folder-tab section-folder-tab--${folderTab}` : ''} bg-dark lg:relative lg:z-50`
+								: 'theme-menu-card-gradient shadowtest bg-dark bg-gradient-to-b from-primary to-grayDark/25 shadow-inner'
+						} ${className}`}
+					>
+						{children(shouldShowAnimatedState, !!effectiveActive, isHovered)}
+					</Link>
+				)
+			}}
+		</HoverableItem>
+	)
+}
+
+// Desktop navigation and destination loading state.
 const NavBar = ({
 	locale,
 	social,
@@ -302,8 +362,7 @@ const NavBar = ({
 	const isHomeRoute = normalizedPathname === `/${locale}`
 
 	// transition + loading state
-	const [, startTransition] = useTransition()
-	const [isLoading, setIsLoading] = useState(false)
+	const [isPending, startTransition] = useTransition()
 	const [pendingHref, setPendingHref] = useState<string | null>(null)
 	const [isHomeVideoExpanded, setIsHomeVideoExpanded] = useState(true)
 	const displayedPathname = pendingHref ?? normalizedPathname
@@ -317,12 +376,12 @@ const NavBar = ({
 	const isFabriqueRoute = displayedPathname === `/${locale}/fabrique`
 	const isEquipeRoute = displayedPathname === `/${locale}/equipe`
 
-	// Keep the destination surface until that navigation has committed.
-	useEffect(() => {
-		if (pendingHref !== normalizedPathname) return
-		setIsLoading(false)
+	// The URL can update before the destination finishes rendering. Keep the
+	// cover until the router transition commits, then hand off before paint.
+	useLayoutEffect(() => {
+		if (isPending || pendingHref !== normalizedPathname) return
 		setPendingHref(null)
-	}, [normalizedPathname, pendingHref])
+	}, [isPending, normalizedPathname, pendingHref])
 
 	useEffect(() => {
 		if (!isHomeRoute) {
@@ -359,67 +418,13 @@ const NavBar = ({
 		return normalizedPathname === routePath
 	}
 
-	// Local NavItem component (keeps same props and children API)
-	const NavItem = ({
-		href,
-		label,
-		children,
-		className = '',
-		isActive: active = false,
-		folderTab,
-	}: {
-		href: string
-		label: string
-		children: RenderFunction
-		className?: string
-		isActive?: boolean
-		folderTab?: FolderSection
-	}) => {
+	const handleNavigate = (href: string) => {
 		const navHref = normalizeNavHref(href)
-		const effectiveActive = pendingHref ? pendingHref === navHref : active
-
-		return (
-			<HoverableItem className="flex min-h-0 w-full">
-				{(isHovered) => {
-					const shouldShowAnimatedState = isHovered || effectiveActive
-
-					return (
-						<Link
-							href={href}
-							aria-label={label}
-							aria-current={effectiveActive ? 'page' : undefined}
-							onClick={(event) => {
-								if (
-									event.metaKey ||
-									event.ctrlKey ||
-									event.shiftKey ||
-									event.altKey
-								) {
-									return
-								}
-
-								event.preventDefault()
-								if (navHref === normalizedPathname) return
-
-								setPendingHref(navHref)
-								setIsLoading(true)
-								startTransition(() => {
-									router.push(href)
-								})
-							}}
-							className={`theme-menu-item relative flex h-full w-full cursor-pointer items-center justify-center rounded-md shadow-inner transition-colors duration-200 ${
-								effectiveActive
-									? `shadowtest ${folderTab ? `section-folder-tab section-folder-tab--${folderTab}` : ''} bg-dark lg:relative lg:z-50`
-									: 'theme-menu-card-gradient shadowtest bg-dark bg-gradient-to-b from-primary to-grayDark/25 shadow-inner'
-							} ${className}`}
-						>
-							{children(shouldShowAnimatedState, !!effectiveActive, isHovered)}
-						</Link>
-					)
-				}}
-			</HoverableItem>
-		)
+		if (navHref === displayedPathname) return
+		setPendingHref(navHref)
+		startTransition(() => router.push(href))
 	}
+	const navItemProps = { pendingHref, onNavigate: handleNavigate }
 
 	const shouldHideHomeNav = isHomeRoute && isHomeVideoExpanded
 	const homeNavTransitionDuration =
@@ -464,6 +469,7 @@ const NavBar = ({
 					<div className="desktop-menu-left grid min-h-0 flex-1 grid-rows-[minmax(0,2fr)_minmax(0,1fr)] gap-1 rounded-md">
 						{/* Festival */}
 						<NavItem
+							{...navItemProps}
 							href={`/${locale}/festival`}
 							label="Festival"
 							isActive={isActive('festival')}
@@ -482,6 +488,7 @@ const NavBar = ({
 
 						{/* BigBang */}
 						<NavItem
+							{...navItemProps}
 							isActive={isActive('bigbang')}
 							href={`/${locale}/bigbang`}
 							label="Big Bang"
@@ -514,6 +521,7 @@ const NavBar = ({
 				>
 					<div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1.2fr)_minmax(0,2.1fr)_minmax(0,1fr)] gap-1 rounded-md lg:pointer-events-auto">
 						<NavItem
+							{...navItemProps}
 							isActive={isActive('memoire')}
 							folderTab={isMemoireRoute ? 'memoire' : undefined}
 							href={`/${locale}/memoire`}
@@ -532,6 +540,7 @@ const NavBar = ({
 
 						{/* Fabrique */}
 						<NavItem
+							{...navItemProps}
 							isActive={isActive('fabrique')}
 							href={`/${locale}/fabrique`}
 							label="Fabrique"
@@ -549,6 +558,7 @@ const NavBar = ({
 						</NavItem>
 
 						<NavItem
+							{...navItemProps}
 							isActive={isActive('equipe')}
 							href={`/${locale}/equipe`}
 							label="Équipe"
@@ -592,9 +602,9 @@ const NavBar = ({
 			</nav>
 
 			{/* Global loader overlay (shows instantly when user clicks a NavItem) */}
-			{isLoading && (
+			{pendingHref && (
 				<div className="navigation-loading-overlay fixed inset-0 z-[45] hidden lg:flex lg:items-center lg:justify-center lg:px-[var(--width-column-width)]" aria-busy="true">
-					<Loading />
+					<PageSkeleton page={skeletonPageForPath(displayedPathname)} />
 				</div>
 			)}
 		</>

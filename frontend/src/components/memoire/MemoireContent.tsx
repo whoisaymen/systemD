@@ -1,6 +1,6 @@
 'use client'
 
-import Img from '@/ui/Img'
+import Img, { getImageDimensions } from '@/ui/Img'
 import Link from 'next/link'
 import { renderParagraph } from '../common/RenderParagraph'
 import RichText from '@/components/common/RichText'
@@ -34,51 +34,67 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 		.filter(Boolean)
 		.sort((a: any, b: any) => b.year - a.year)
 
-	const renderFestivalCard = (festival: any, index: number) => (
-		<li
-			key={festival._id || index}
-			className={styles.item}
-			data-edition-year={festival.year}
-		>
-			<Link
-				href={`/${language}/festival/${festival.year}`}
-				draggable={false}
-				onNavigate={() => {
-					sessionStorage.removeItem('currentFilmSlug')
-					sessionStorage.removeItem('festivalScroll')
-				}}
-				className={styles.print}
-				data-memoire-card
+	const renderFestivalCard = (festival: any, index: number) => {
+		const dimensions = festival.visual?.asset
+			? getImageDimensions(festival.visual)
+			: undefined
+		const ratio = dimensions ? dimensions.width / dimensions.height : undefined
+		return (
+			<li
+				key={festival._id || index}
+				className={styles.item}
+				data-edition-year={festival.year}
 			>
-				<div className={`interactive-title-motion ${styles.labels}`}>
-					<div className="relative z-20 -rotate-6 rounded-md bg-primary px-2 text-xl font-black leading-tight tracking-tight text-dark lg:text-3xl">
-						<span>{festival.year}</span>
+				<Link
+					href={`/${language}/festival/${festival.year}`}
+					draggable={false}
+					onNavigate={() => {
+						sessionStorage.removeItem('currentFilmSlug')
+						sessionStorage.removeItem('festivalScroll')
+					}}
+					className={styles.print}
+					data-memoire-card
+				>
+					<div className={`interactive-title-motion ${styles.labels}`}>
+						<div className="relative z-20 -rotate-6 rounded-md bg-primary px-2 text-xl font-black leading-tight tracking-tight text-dark lg:text-3xl">
+							<span>{festival.year}</span>
+						</div>
+						<div className="relative z-10 -mt-0.5 rotate-6 rounded-md bg-dark px-2 text-xl font-semibold leading-tight tracking-tight text-primary lg:text-3xl">
+							<RichText value={festival.venue} inline allowLinks={false} />
+						</div>
 					</div>
-					<div className="relative z-10 -mt-0.5 rotate-6 rounded-md bg-dark px-2 text-xl font-semibold leading-tight tracking-tight text-primary lg:text-3xl">
-						<RichText value={festival.venue} inline allowLinks={false} />
-					</div>
-				</div>
-				{festival.visual?.asset ? (
-					<Img
-						image={festival.visual}
-						draggable={false}
-						imageWidth={1000}
-						sizes="(min-width: 1024px) 30vw, (min-width: 640px) 42vw, 80vw"
-						alt={
-							festival.title
-								? richTextToPlainText(
-										localizedRichText(festival.title, language),
-									)
-								: 'Festival image'
-						}
-						className={styles.photo}
-					/>
-				) : (
-					<div className={styles.placeholder} />
-				)}
-			</Link>
-		</li>
-	)
+					{festival.visual?.asset ? (
+						<Img
+							image={festival.visual}
+							draggable={false}
+							imageWidth={1000}
+							loading={index < 2 ? 'eager' : 'lazy'}
+							fetchPriority={index === 0 ? 'high' : undefined}
+							style={
+								ratio
+									? {
+											width: `${Math.min(1, ratio) * 100}cqw`,
+											aspectRatio: String(ratio),
+										}
+									: undefined
+							}
+							sizes="(min-width: 1024px) 30vw, (min-width: 640px) 42vw, 80vw"
+							alt={
+								festival.title
+									? richTextToPlainText(
+											localizedRichText(festival.title, language),
+										)
+									: 'Festival image'
+							}
+							className={styles.photo}
+						/>
+					) : (
+						<div className={styles.placeholder} />
+					)}
+				</Link>
+			</li>
+		)
+	}
 
 	return (
 		<div className="no-scrollbar relative flex min-h-[calc(100svh-4rem)] w-full min-w-0 flex-col gap-1 overflow-x-hidden px-4 pb-16 tracking-tight [container-type:inline-size] sm:mt-1 sm:px-0 lg:my-1 lg:h-[calc(100svh-8px)] lg:min-h-0 lg:p-0">

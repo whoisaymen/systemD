@@ -1,12 +1,13 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Transition } from 'motion/react'
 import Img, { getImageDimensions } from '@/ui/Img'
 import RichText from '@/components/common/RichText'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import NewArrowRightFull from '../common/NewArrowRightFull'
+import PageSkeleton from '@/components/loading/PageSkeleton'
 import { FILM_LABEL_TEXT } from '../film/filmLabelStyles'
 import {
 	EDITORIAL_BODY_TEXT,
@@ -168,11 +169,12 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	const activeMember = teamMembers[activeIndex]
 	const activeNameParts = getNameParts(activeMember?.name || '')
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const element = containerRef.current
 		if (!element) return
 
 		const updateWidth = () => {
+			if (!element.offsetWidth) return
 			setContainerWidth(element.offsetWidth)
 			setWindowWidth(window.innerWidth)
 			setWindowHeight(window.innerHeight)
@@ -366,8 +368,14 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 		)
 	}
 
+	const layoutReady = containerWidth > 0
+	// Mount motion cards at their measured size; animating the SSR estimate would
+	// briefly zoom the portraits on a first visit. Later interactions keep their keys.
+
 	return (
 		<div
+			data-layout-ready={layoutReady}
+			style={layoutReady ? undefined : { visibility: 'hidden' }}
 			className="team-carousel lg:shadowtest section-folder-content section-folder-content--equipe theme-equipe-main-content no-scrollbar relative flex w-full flex-col pb-28 text-primary [container-type:inline-size] lg:my-1 lg:h-[calc(100svh-8px)] lg:overflow-y-auto lg:rounded-xl lg:py-10"
 			onKeyDown={(event) => {
 				if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -376,6 +384,11 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 				}
 			}}
 		>
+			{!layoutReady && (
+				<div className="visible absolute inset-0 z-40" aria-hidden="true">
+					<PageSkeleton page="equipe" />
+				</div>
+			)}
 			<div
 				ref={containerRef}
 				className="shrink-0 overflow-hidden pt-12 lg:mt-auto lg:pt-3"
@@ -397,7 +410,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 						return (
 							<motion.div
-								key={`buffer-${slot}-${member.id}`}
+								key={`buffer-${slot}-${member.id}-${layoutReady}`}
 								aria-hidden="true"
 								className="pointer-events-none absolute left-0 top-0"
 								style={{ zIndex: 0 }}
@@ -469,7 +482,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 						return (
 							<motion.button
-								key={member.id}
+								key={`${member.id}-${layoutReady}`}
 								type="button"
 								aria-label={member.name}
 								aria-pressed={isActive}
@@ -556,6 +569,8 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 											draggable={false}
 											alt=""
 											imageWidth={900}
+											loading={isActive ? 'eager' : 'lazy'}
+											sizes="(min-width: 1024px) 30vw, 72vw"
 											className="h-full w-full object-contain"
 											placeholderFit="contain"
 										/>

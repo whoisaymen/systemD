@@ -40,7 +40,7 @@ const AccordionTrigger = React.forwardRef<
 					style={{ animationDelay: `${delay}s`, ...style }}
 					className={cn(
 						'interactive-title-motion',
-						'flex items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-all lg:pt-px lg:text-7xl',
+						'flex items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-colors lg:pt-px lg:text-7xl',
 						'border-primary bg-dark text-primary',
 						'data-[state=open]:border-grayDark data-[state=open]:bg-grayDark data-[state=open]:text-dark',
 						'lg:hover:border-grayDark lg:hover:bg-grayDark lg:hover:text-dark',

@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import ShortStory from './ShortStory'
 import LongStory from './LongStory'
 import { motion } from 'motion/react'
@@ -22,7 +22,12 @@ const BigBangContent: React.FC<BigBangContentProps> = ({
 	const [activeTab, setActiveTab] = useState<'short' | 'long'>('short')
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-	useEffect(() => {
+	useLayoutEffect(() => {
+		if (window.matchMedia('(min-width: 1024px)').matches) {
+			// Reset the panel after the story changes, before the new content paints.
+			scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+			return
+		}
 		document
 			.getElementById('navbar-mobile')
 			?.scrollIntoView({ behavior: 'smooth' })

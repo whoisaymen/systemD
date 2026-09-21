@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 import { MEMOIRE_FORWARD_PATHS } from './MemoireFwdIcon'
 import styles from './MemoireContent.module.css'
+import { MemoireCardsSkeleton } from '@/components/loading/PageSkeleton'
 
 interface TimelineLine {
 	d: string
@@ -190,7 +191,7 @@ export default function MemoireTimeline({ children }: { children: ReactNode }) {
 
 		const measureLogo = () => {
 			logoFrame = 0
-			// Navigation replaces its logo nodes when the pending route commits.
+			// Reconnect if the navigation artwork changes (for example on a locale change).
 			const nextLogo = document.querySelector<SVGSVGElement>(
 				'.section-folder-tab--memoire .menu-artwork svg',
 			)
@@ -439,7 +440,17 @@ export default function MemoireTimeline({ children }: { children: ReactNode }) {
 	}, [children, isMemoireIndex])
 
 	return (
-		<div ref={containerRef} className={styles.timeline}>
+		<div
+			ref={containerRef}
+			className={styles.timeline}
+			data-layout-ready={geometry.width > 0}
+			style={geometry.width > 0 ? undefined : { visibility: 'hidden' }}
+		>
+			{geometry.width === 0 && (
+				<div className="visible absolute inset-0 motion-safe:animate-pulse" aria-hidden="true">
+					<MemoireCardsSkeleton />
+				</div>
+			)}
 			{geometry.width > 0 && (
 				<svg
 					className={styles.connections}

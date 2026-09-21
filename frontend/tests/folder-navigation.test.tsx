@@ -2,11 +2,15 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { JSDOM } from 'jsdom'
 import SectionFolderSurface, { type FolderSection } from '../src/components/navigation/SectionFolderSurface'
-import Loading from '../src/app/(frontend)/[locale]/loading'
+import './helpers/css'
+
+const loadingModule = import('../src/components/loading/PageSkeleton')
 
 test('the destination panel exists before its page arrives and survives the loader handoff', async () => {
+	const { default: Loading } = await loadingModule
 	const dom = new JSDOM('<div id="root"></div>', { pretendToBeVisual: true })
 	Object.defineProperty(dom.window, 'matchMedia', {
 		value: () => ({ matches: true, addEventListener() {}, removeEventListener() {} }),
@@ -15,6 +19,7 @@ test('the destination panel exists before its page arrives and survives the load
 	const festivalTab = new dom.window.DOMRect(4, 44, 192, 500)
 	const memoireTab = new dom.window.DOMRect(1004, 4, 192, 220)
 	dom.window.Element.prototype.getBoundingClientRect = function () {
+		if (this.hasAttribute('data-cached-hidden')) return new dom.window.DOMRect()
 		if (this.classList.contains('section-folder-tab--festival')) return festivalTab
 		if (this.classList.contains('section-folder-tab--memoire')) return memoireTab
 		return panel
@@ -41,9 +46,11 @@ test('the destination panel exists before its page arrives and survives the load
 			root.render(<>
 				<SectionFolderSurface section={section} />
 				<nav><a className={`section-folder-tab--${section}`} /></nav>
-				{phase === 'pending' && <div className="navigation-loading-overlay"><Loading /></div>}
+				{phase === 'pending' && <div className="navigation-loading-overlay"><Loading page={section} /></div>}
 				<main>
-					{phase === 'fallback' ? <Loading /> : (
+					{/* Next can retain an earlier visit in a hidden route tree. */}
+					<section data-cached-hidden className={`section-folder-content--${section}`} />
+					{phase === 'fallback' ? <Loading page={section} /> : (
 						<section className={`section-folder-content--${phase === 'pending' ? 'festival' : section}`} />
 					)}
 				</main>
@@ -64,7 +71,7 @@ test('the destination panel exists before its page arrives and survives the load
 
 		// The new route has not committed: only the old page and instant loader exist.
 		await render('memoire', 'pending')
-		assert.equal(host.querySelector('.section-folder-content--memoire'), null)
+		assert.equal(host.querySelector('.section-folder-content--memoire:not([data-cached-hidden])'), null)
 		const pendingOutline = outline()
 		assert.ok(pendingOutline, 'draw the destination in the same layout pass as the click')
 		assert.notEqual(pendingOutline, originalOutline)
@@ -88,5 +95,55 @@ test('the destination panel exists before its page arrives and survives the load
 			if (descriptor) Object.defineProperty(globalThis, key, descriptor)
 			else Reflect.deleteProperty(globalThis, key)
 		}
+	}
+})
+
+test('destination skeletons distinguish sections and nested archive pages', async () => {
+	const { skeletonPageForPath } = await loadingModule
+	for (const locale of ['en', 'fr', 'nl']) {
+		for (const section of [
+			'festival',
+			'bigbang',
+			'memoire',
+			'fabrique',
+			'equipe',
+			'about',
+		]) {
+			assert.equal(skeletonPageForPath(`/${locale}/${section}/`), section)
+		}
+		assert.equal(
+			skeletonPageForPath(`/${locale}/festival/2023?chapter=films`),
+			'edition',
+		)
+		assert.equal(skeletonPageForPath(`/${locale}/film/a-film`), 'film')
+		assert.equal(skeletonPageForPath(`/${locale}/contact`), 'about')
+		assert.equal(skeletonPageForPath(`/${locale}`), 'generic')
+	}
+})
+
+test('desktop fallbacks contain page content placeholders and one measurable loading panel', async () => {
+	const { default: Loading } = await loadingModule
+	for (const page of [
+		'bigbang',
+		'festival',
+		'memoire',
+		'fabrique',
+		'equipe',
+		'edition',
+		'film',
+		'about',
+	] as const) {
+		const dom = new JSDOM(renderToStaticMarkup(<Loading page={page} />))
+		const panel = dom.window.document.querySelector(
+			`[data-skeleton-page="${page}"]`,
+		)!
+		assert.equal(
+			dom.window.document.querySelectorAll('.theme-loading-surface').length,
+			1,
+		)
+		assert.equal(panel.getAttribute('aria-busy'), 'true')
+		assert.equal(panel.querySelector('svg, animate, button, a'), null)
+		assert.ok(panel.querySelectorAll('.shape').length > 3)
+		dom.window.close()
 	}
 })

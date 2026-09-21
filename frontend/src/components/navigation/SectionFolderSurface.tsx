@@ -88,10 +88,16 @@ export default function SectionFolderSurface({ section }: { section: FolderSecti
 			frame = requestAnimationFrame(measure)
 		}
 		const resizeObserver = new ResizeObserver(schedule)
+		const visiblePanel = (selector: string) =>
+			Array.from(document.querySelectorAll(selector)).find(element => {
+				const bounds = element.getBoundingClientRect()
+				return bounds.width > 0 && bounds.height > 0
+			}) ?? null
 		function measure() {
-			const nextPanel = document.querySelector('.navigation-loading-overlay .theme-loading-surface')
-				?? document.querySelector(`.section-folder-content--${section}`)
-				?? document.querySelector('main .theme-loading-surface')
+			// Cached routes can remain mounted but have no visible layout box.
+			const nextPanel = visiblePanel('.navigation-loading-overlay .theme-loading-surface')
+				?? visiblePanel(`.section-folder-content--${section}`)
+				?? visiblePanel('main .theme-loading-surface')
 			const nextTab = document.querySelector(`.section-folder-tab--${section}`)
 			const nextDrawer = document.querySelector('.desktop-navigation [data-language-drawer]')
 			if (nextPanel !== panel || nextTab !== tab || nextDrawer !== drawer) {

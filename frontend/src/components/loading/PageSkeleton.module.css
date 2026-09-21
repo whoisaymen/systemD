@@ -1,0 +1,99 @@
+.shape {
+	background-color: currentColor;
+	opacity: 0.16;
+}
+
+.surface {
+	pointer-events: none;
+}
+
+.copy {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4em;
+	padding-block: 0.2em;
+}
+
+.line {
+	height: 0.8em;
+	border-radius: 0.15em;
+}
+
+.centered {
+	align-items: center;
+}
+
+.tab {
+	height: calc(1em + 5px);
+	max-width: 100%;
+}
+
+.storyIllustration {
+	position: relative;
+	width: 35%;
+	aspect-ratio: 1.04;
+}
+
+.storyCircle {
+	position: absolute;
+	width: 54%;
+	aspect-ratio: 1;
+	border-radius: 50%;
+}
+
+.storyCircle:nth-child(1) {
+	top: 0;
+	left: 23%;
+}
+.storyCircle:nth-child(2) {
+	bottom: 0;
+	left: 0;
+}
+.storyCircle:nth-child(3) {
+	bottom: 0;
+	right: 0;
+}
+
+.heading {
+	padding-block: 0.2em;
+	font-size: clamp(1.4875rem, 2.771cqw, 1.9125rem);
+}
+
+.teamStage {
+	position: relative;
+	--portrait-size: clamp(280px, min(45cqw, 42svh), 440px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	height: calc(var(--portrait-size) + 12px);
+	overflow: hidden;
+}
+
+.teamPortrait {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	width: calc(var(--portrait-size) * 0.77);
+	height: var(--portrait-size);
+}
+
+@media (max-height: 649px) {
+	.teamStage {
+		position: relative;
+		--portrait-size: clamp(240px, min(45cqw, 42svh), 440px);
+	}
+}
+
+.teamSideLeft,
+.teamSideRight {
+	position: absolute;
+}
+
+.teamSideLeft {
+	left: calc(50% - var(--portrait-size) * 0.385 - 102px);
+}
+
+.teamSideRight {
+	left: calc(50% + var(--portrait-size) * 0.385 + 10px);
+}

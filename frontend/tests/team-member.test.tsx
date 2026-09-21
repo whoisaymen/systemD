@@ -3,6 +3,7 @@ import test from 'node:test'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { JSDOM } from 'jsdom'
+import './helpers/css'
 
 process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||= 'test1234'
 process.env.NEXT_PUBLIC_SANITY_DATASET ||= 'production'

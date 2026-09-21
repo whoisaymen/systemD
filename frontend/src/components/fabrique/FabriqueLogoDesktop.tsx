@@ -1,5 +1,5 @@
 'use client'
-import { motion, MotionGlobalConfig } from 'motion/react'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 
 interface FabriqueLogoDesktopProps {
@@ -30,6 +30,7 @@ const FabriqueLogoDesktop: React.FC<FabriqueLogoDesktopProps> = ({
 			onMouseLeave={() => setIsHovered(false)}
 		>
 			<motion.g
+				initial={false}
 				animate={{
 					scale: shouldAnimate ? 0.9 : 1,
 					transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },

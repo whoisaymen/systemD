@@ -895,13 +895,21 @@
 			position: relative;
 		}
 
+		/* A loading panel must cover content even when its folder is already drawn. */
+		.theme-loading-surface {
+			background-color: var(--color-theme-content, var(--color-dark)) !important;
+		}
+
+		body:has(.section-folder-surface) .theme-loading-surface {
+			box-shadow: none !important;
+		}
+
 		/* Preserve the panel's geometry while the fixed loader hides stale content. */
 		body:has(.navigation-loading-overlay) main {
 			visibility: hidden;
 		}
 
 		body:has(.section-folder-surface) .section-folder-content,
-		body:has(.section-folder-surface) .theme-loading-surface,
 		body:has(.section-folder-surface) .desktop-navigation .section-folder-tab {
 			background: transparent !important;
 			box-shadow: none !important;
