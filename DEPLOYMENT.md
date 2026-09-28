@@ -25,7 +25,7 @@ uses the workspace lockfile from the repository root.
 Set these environment variables in the existing Vercel project:
 
 ```dotenv
-NEXT_PUBLIC_BASE_URL=https://YOUR-FRONTEND-DOMAIN
+NEXT_PUBLIC_BASE_URL=https://systemd.brussels
 NEXT_PUBLIC_SANITY_PROJECT_ID=s7yacqk1
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-12-01
@@ -33,6 +33,11 @@ NEXT_PUBLIC_SANITY_STUDIO_URL=https://systemd.sanity.studio
 SANITY_API_READ_TOKEN=
 SANITY_API_WRITE_TOKEN=
 ```
+
+Vercel Production builds pin the public base URL to `https://systemd.brussels`
+in `frontend/next.config.ts`, so metadata and sitemap URLs stay on the custom
+domain even if an older project environment value remains configured. Local and
+Preview builds continue to use `NEXT_PUBLIC_BASE_URL` from their environment.
 
 `SANITY_API_READ_TOKEN` is required for frontend startup and builds, draft mode,
 and live preview. Use a token with the Viewer role: Sanity Live can send this
