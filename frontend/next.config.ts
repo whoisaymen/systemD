@@ -71,6 +71,11 @@ const nextConfig: NextConfig = {
 
 	env: {
 		SC_DISABLE_SPEEDY: 'false',
+		// Production metadata and sitemap URLs must use the public custom domain.
+		NEXT_PUBLIC_BASE_URL:
+			process.env.VERCEL_ENV === 'production'
+				? 'https://systemd.brussels'
+				: process.env.NEXT_PUBLIC_BASE_URL,
 	},
 
 	webpack(config) {
