@@ -3,10 +3,10 @@
 import Img, { getImageDimensions } from '@/ui/Img'
 import Link from 'next/link'
 import { renderParagraph } from '../common/RenderParagraph'
+import BackToTopButton from '../common/BackToTop'
 import RichText from '@/components/common/RichText'
 import { EDITORIAL_BODY_TEXT } from '@/components/common/editorialStyles'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
-import { useTranslations } from 'next-intl'
 import styles from './MemoireContent.module.css'
 import MemoireTimeline from './MemoireTimeline'
 
@@ -19,8 +19,6 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	memoire,
 	language,
 }) => {
-	const tMemoire = useTranslations('memoire')
-
 	if (!memoire) {
 		return null
 	}
@@ -73,8 +71,7 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 							style={
 								ratio
 									? {
-											width: `${Math.min(1, ratio) * 100}cqw`,
-											aspectRatio: String(ratio),
+											width: `calc(${Math.min(1, ratio) * 100}cqw - var(--memoire-frame-width) * 2)`,
 										}
 									: undefined
 							}
@@ -97,10 +94,13 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 	}
 
 	return (
-		<div className="no-scrollbar relative flex min-h-[calc(100svh-4rem)] w-full min-w-0 flex-col gap-1 overflow-x-hidden px-4 pb-16 tracking-tight [container-type:inline-size] sm:mt-1 sm:px-0 lg:my-1 lg:h-[calc(100svh-8px)] lg:min-h-0 lg:p-0">
+		<div className="no-scrollbar relative flex min-h-[calc(100svh-4rem)] w-full min-w-0 flex-col gap-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] tracking-tight [container-type:inline-size] lg:my-1 lg:h-[calc(100svh-8px)] lg:min-h-0 lg:overflow-x-hidden lg:p-0">
+			<div className="fixed bottom-0 right-0 z-50 mb-4 flex items-center justify-end px-8 lg:hidden">
+				<BackToTopButton targetId="navbar-mobile" />
+			</div>
 			<section
 				id="memoire-description"
-				className="lg:shadowtest section-folder-content section-folder-content--memoire no-scrollbar relative z-10 mt-8 flex min-w-0 flex-col overflow-x-hidden rounded-md bg-grayDark px-4 pb-10 pt-4 text-dark sm:mx-0 lg:mt-0 lg:h-full lg:overflow-y-auto lg:overflow-x-hidden lg:rounded-xl lg:rounded-tr-none lg:bg-dark lg:p-8 lg:text-primary"
+				className="lg:shadowtest section-folder-content section-folder-content--memoire no-scrollbar relative z-10 flex min-w-0 flex-col text-primary lg:h-full lg:overflow-y-auto lg:overflow-x-hidden lg:rounded-xl lg:rounded-tr-none lg:bg-dark lg:p-8"
 			>
 				<div className="hidden w-full lg:px-6 xl:px-12">
 					<div
@@ -116,26 +116,15 @@ const MemoireContent: React.FC<MemoireContentProps> = ({
 				{filteredFestivals.length > 0 && (
 					<section
 						data-testid="memoire-cards-area"
-						className="relative z-10 mt-10 min-h-[18rem] shrink-0 overflow-visible py-6 text-primary lg:mt-0 lg:p-0"
+						className="relative z-10 min-h-[18rem] shrink-0 overflow-visible text-primary"
 					>
-						<div>
-							<h2 className="mb-5 text-xl font-black leading-tight text-primary sm:text-2xl lg:hidden">
-								<RichText
-									value={
-										localizedRichText(memoire.pastFestivalsTitle, language) ||
-										tMemoire('previousEditions')
-									}
-									inline
-								/>
-							</h2>
-							<MemoireTimeline>
-								<ol className={styles.collage}>
-									{filteredFestivals.map((festival: any, index: number) =>
-										renderFestivalCard(festival, index),
-									)}
-								</ol>
-							</MemoireTimeline>
-						</div>
+						<MemoireTimeline>
+							<ol className={styles.collage}>
+								{filteredFestivals.map((festival: any, index: number) =>
+									renderFestivalCard(festival, index),
+								)}
+							</ol>
+						</MemoireTimeline>
 					</section>
 				)}
 			</section>

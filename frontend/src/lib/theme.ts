@@ -1,6 +1,8 @@
 export const THEME_STORAGE_KEY = 'system-d-theme'
 export const THEME_CHANGE_EVENT = 'system-d-theme-change'
 
+const browserThemeFrames = new WeakMap<Document, number>()
+
 type ThemeImageGradeInput = Partial<{
 	gray: number | string
 	sepia: number | string
@@ -49,6 +51,57 @@ export function applyThemeColors(
 	for (const [name, value] of Object.entries(imageGrade)) {
 		root.style.setProperty(`--image-grade-${name}`, value)
 	}
+	syncBrowserThemeColor(dark, root)
+}
+
+export function syncBrowserThemeColor(color: string, root: HTMLElement) {
+	const document = root.ownerDocument
+	const view = document.defaultView
+	const previousFrame = browserThemeFrames.get(document)
+	if (previousFrame !== undefined) {
+		view?.cancelAnimationFrame(previousFrame)
+		browserThemeFrames.delete(document)
+	}
+	// Keep the browser's sampled root background and legacy theme color in sync.
+	root.style.backgroundColor = color
+	if (document.body) document.body.style.backgroundColor = color
+	for (const edge of document.querySelectorAll<HTMLElement>('[data-mobile-browser-tint]')) {
+		edge.style.backgroundColor = color
+	}
+
+	const themeColors = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+	if (themeColors.length) {
+		for (const meta of themeColors) meta.content = color
+	} else {
+		const meta = document.createElement('meta')
+		meta.name = 'theme-color'
+		meta.content = color
+		document.head.appendChild(meta)
+	}
+
+	if (
+		!view?.requestAnimationFrame ||
+		!view.CSS?.supports('-webkit-touch-callout', 'none') ||
+		!/^#[0-9a-f]{6}$/i.test(color)
+	) return
+
+	// iOS Safari can retain an overlay's old tint even after its CSS changes.
+	// Nudge the theme-color observer after the new edge colors have painted,
+	// then restore the opaque color on the following frame. Cancel older work
+	// above so rapid theme changes cannot restore a stale palette.
+	// https://github.com/ianfebi01/next-webkit-bar/blob/main/app/page.tsx
+	const updateMeta = (value: string) => {
+		for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) {
+			meta.content = value
+		}
+	}
+	browserThemeFrames.set(document, view.requestAnimationFrame(() => {
+		updateMeta(`${color}fe`)
+		browserThemeFrames.set(document, view.requestAnimationFrame(() => {
+			updateMeta(color)
+			browserThemeFrames.delete(document)
+		}))
+	}))
 }
 
 export const FALLBACK_THEME_COMBOS: ThemeCombo[] = [

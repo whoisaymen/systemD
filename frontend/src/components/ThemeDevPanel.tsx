@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { THEME_CHANGE_EVENT, type ThemeCombo } from '@/lib/theme'
+import { THEME_CHANGE_EVENT, syncBrowserThemeColor, type ThemeCombo } from '@/lib/theme'
 
 type ThemeDraft = {
 	primary: string
@@ -253,6 +253,7 @@ function applyDraft(draft: ThemeDraft) {
 	setColorVariable(root, 'grayDark', draft.grayDark)
 	root.style.setProperty('--color-theme-text', draft.text)
 	root.style.setProperty('--color-theme-box-edge', draft.boxEdge)
+	syncBrowserThemeColor(draft.dark, root)
 }
 
 function setColorVariable(root: HTMLElement, name: string, value: string) {

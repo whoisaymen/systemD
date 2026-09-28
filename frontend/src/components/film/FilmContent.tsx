@@ -1,5 +1,5 @@
 'use client'
-import { useTransition } from 'react'
+import { useLayoutEffect } from 'react'
 
 import { getRandomRotationClass } from '@/lib/utils'
 import Img from '@/ui/Img'
@@ -10,6 +10,7 @@ import {
 } from '@/components/common/editorialStyles'
 import { filmTextLines } from './filmTextLines'
 import { FILM_LABEL_TEXT, FILM_TITLE_TEXT } from './filmLabelStyles'
+import MobileFilmTitle from './MobileFilmTitle'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import { sortFilmSelection } from '@/lib/filmSelection'
 import { GoClockFill } from 'react-icons/go'
@@ -23,6 +24,7 @@ import NewArrowRightSimple from '../common/NewArrowRightSimple'
 import NewArrowRightFull from '../common/NewArrowRightFull'
 import { useTranslations } from 'next-intl'
 import LoadingOverlay from '../common/LoadingOverlay'
+import { useFilmNavigationControls } from './FilmNavigationProvider'
 
 interface FilmContentProps {
 	film: any
@@ -40,7 +42,7 @@ const FilmContent: React.FC<FilmContentProps> = ({
 	const [showPlayer, setShowPlayer] = useState(false)
 	const router = useRouter()
 	const tFilmSelection = useTranslations('filmSelection')
-	const [isPending, startTransition] = useTransition()
+	const { setNavigation, isPending } = useFilmNavigationControls()
 
 	const getLocalizedValue = (value: any, lang: string) =>
 		richTextToPlainText(localizedRichText(value, lang))
@@ -75,27 +77,25 @@ const FilmContent: React.FC<FilmContentProps> = ({
 		}
 	}, [sortedFilms, film])
 
-	// const navigateToFilm = (targetFilm: any) => {
-	// 	if (!targetFilm?.slug?.current) return
-
-	// 	// Preserve search parameters
-	// 	const params = new URLSearchParams(searchParams || {})
-	// 	const queryString = params.toString()
-	// 	const url = `/${language}/film/${targetFilm.slug.current}${queryString ? `?${queryString}` : ''}`
-
-	// 	router.push(url)
-	// }
-	const navigateToFilm = (targetFilm: any) => {
-		if (!targetFilm?.slug?.current) return
-
-		const params = new URLSearchParams(searchParams || {})
-		const queryString = params.toString()
-		const url = `/${language}/film/${targetFilm.slug.current}${queryString ? `?${queryString}` : ''}`
-
-		startTransition(() => {
-			router.push(url)
+	useLayoutEffect(() => {
+		const query = new URLSearchParams(searchParams || {}).toString()
+		const target = (targetFilm: any) =>
+			targetFilm?.slug?.current
+				? {
+						href: `/${language}/film/${targetFilm.slug.current}${query ? `?${query}` : ''}`,
+						title: richTextToPlainText(localizedRichText(targetFilm.title, language)),
+					}
+				: null
+		setNavigation({
+			pathname: `/${language}/film/${film.slug?.current}`,
+			currentIndex: navigationInfo.currentIndex,
+			total: navigationInfo.total,
+			previous: target(navigationInfo.prevFilm),
+			next: target(navigationInfo.nextFilm),
 		})
-	}
+		// Retain these controls through the next route's loading fallback.
+	}, [film.slug, language, navigationInfo, searchParams, setNavigation])
+
 	const goBack = () => {
 		if (!festival?._id) {
 			// Fallback to general memoire page if no festival data
@@ -127,47 +127,24 @@ const FilmContent: React.FC<FilmContentProps> = ({
 	return (
 		<div className="relative w-full lg:[container-type:inline-size]">
 			<div className="theme-main-content-surface section-folder-content section-folder-content--memoire lg:no-scrollbar lg:shadowtest relative flex h-full w-full flex-col rounded-md px-5 tracking-tighter lg:my-1 lg:h-[calc(100svh-8px)] lg:overflow-y-auto lg:rounded-xl lg:rounded-tr-none lg:bg-dark lg:px-32 lg:pb-20">
-				<div className="pointer-events-none fixed bottom-0 left-0 right-0 z-40 mb-4 flex items-center justify-between px-8 lg:hidden">
-					{navigationInfo.prevFilm ? (
-						<button
-							className="pointer-events-auto"
-							onClick={() => navigateToFilm(navigationInfo.prevFilm)}
-							aria-label="Previous film"
-							title={`Previous: ${getLocalizedValue(navigationInfo.prevFilm.title, language)}`}
-						>
-							<NewArrowRightSimple
-								theme={{ stroke: 'var(--color-dark)' }}
-								className="h-[2.5rem] w-[2.5rem] -rotate-180 rounded-lg border-2 border-dark bg-grayDark p-2"
-							/>
-						</button>
-					) : (
-						<div className="w-[2.5rem]" />
-					)}{' '}
-					{/* Spacer for alignment */}
-					{navigationInfo.nextFilm ? (
-						<button
-							className="pointer-events-auto"
-							onClick={() => navigateToFilm(navigationInfo.nextFilm)}
-							aria-label="Next film"
-							title={`Next: ${getLocalizedValue(navigationInfo.nextFilm.title, language)}`}
-						>
-							<NewArrowRightSimple
-								theme={{ stroke: 'var(--color-dark)' }}
-								className="h-[2.5rem] w-[2.5rem] rounded-lg border-2 border-dark bg-grayDark p-2"
-							/>
-						</button>
-					) : (
-						<div className="w-[2.5rem]" />
-					)}{' '}
-					{/* Spacer for alignment */}
-				</div>
 				<div className="relative flex w-full items-start justify-between">
 					<div className="flex shrink-0 flex-col items-start gap-1 pb-4 lg:absolute lg:-left-[6.5rem] lg:top-0 lg:pb-0">
 						<button
 							type="button"
 							onClick={goBack}
 							aria-label="Go back"
-							className="relative aspect-[76/61] w-10 rounded-md transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary lg:w-14"
+							className="pointer-events-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-[1.5px] border-primary bg-dark text-primary shadow-sm transition-opacity hover:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+						>
+							<NewArrowRightSimple
+								theme={{ stroke: 'currentColor' }}
+								className="h-3.5 w-3.5 rotate-180"
+							/>
+						</button>
+						<button
+							type="button"
+							onClick={goBack}
+							aria-label="Go back"
+							className="relative hidden aspect-[76/61] w-14 rounded-md transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary lg:block"
 						>
 							<NewArrowRightFull
 								theme={{ stroke: 'var(--color-primary)' }}
@@ -175,21 +152,15 @@ const FilmContent: React.FC<FilmContentProps> = ({
 								className="absolute inset-0 h-full w-full translate-y-1 rotate-180 scale-[0.55] lg:-translate-x-1/4"
 							/>
 						</button>
-						<button
-							type="button"
-							onClick={goBack}
-							className={`relative -rotate-3 rounded-md border-2 border-grayDark bg-grayDark px-2 py-0 text-center text-xl font-bold uppercase italic leading-none tracking-tighter text-dark shadow-sm transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${EDITORIAL_DESKTOP_TAB_STYLE}`}
-						>
-							{tFilmSelection('title')}
-						</button>
-					</div>
-
-					<div className="mr-2 mt-2 flex items-center justify-center gap-x-2">
-						{festival && sortedFilms.length > 0 && (
-							<div className="text-base text-grayDark lg:hidden lg:text-lg">
-								{navigationInfo.currentIndex + 1}/{navigationInfo.total}
-							</div>
-						)}
+						<div className="flex items-center gap-2">
+							<button
+								type="button"
+								onClick={goBack}
+								className={`relative -rotate-3 rounded-md border-2 border-grayDark bg-grayDark px-2 py-0 text-center text-xl font-bold uppercase italic leading-none tracking-tighter text-dark shadow-sm transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${EDITORIAL_DESKTOP_TAB_STYLE}`}
+							>
+								{tFilmSelection('title')}
+							</button>
+						</div>
 					</div>
 
 					<div className="z-50 hidden items-center justify-center rounded-b-md bg-dark px-2 lg:mt-28 lg:flex">
@@ -286,20 +257,9 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				</div>
 
 				<div className="relative z-0 mb-0 mt-2 flex w-full flex-col items-center justify-center gap-2 px-6 text-sm font-medium leading-[1.2]">
-					<div className="flex flex-col items-center lg:hidden lg:flex-row">
+					<div className="flex w-full flex-col items-center lg:hidden lg:flex-row">
 						{film.title && (
-							<>
-								{filmTextLines(localizedRichText(film.title, language), 20).map(
-									(line, index) => (
-										<h1
-											key={index}
-											className={`z-10 max-w-full rounded-md border-2 border-primary bg-dark px-2 text-center text-primary ${FILM_TITLE_TEXT} ${index % 2 === 0 ? '-rotate-1 lg:-rotate-3' : 'rotate-1 lg:rotate-3'} ${index ? '-mt-1' : ''}`}
-										>
-											<RichText value={line} inline />
-										</h1>
-									),
-								)}
-							</>
+							<MobileFilmTitle value={localizedRichText(film.title, language)} />
 						)}
 
 						{film.director && (
@@ -383,52 +343,6 @@ const FilmContent: React.FC<FilmContentProps> = ({
 				<LoadingOverlay isVisible={isPending} />
 			</div>
 
-			{navigationInfo.currentIndex >= 0 && (
-				<nav
-					aria-label="Film navigation"
-					className="absolute bottom-8 left-1/2 z-50 hidden -translate-x-1/2 items-center rounded-md bg-dark px-2 text-primary lg:flex"
-				>
-					<button
-						type="button"
-						onClick={() => navigateToFilm(navigationInfo.prevFilm)}
-						disabled={!navigationInfo.prevFilm || isPending}
-						aria-label="Previous film"
-						title={
-							navigationInfo.prevFilm
-								? getLocalizedValue(navigationInfo.prevFilm.title, language)
-								: undefined
-						}
-						className="relative aspect-[76/61] w-10 rounded-md transition-opacity enabled:hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:opacity-30"
-					>
-						<NewArrowRightFull
-							theme={{ stroke: 'var(--color-primary)' }}
-							strokeWidth={8}
-							className="absolute inset-0 h-full w-full translate-y-1 rotate-180 scale-[0.55]"
-						/>
-					</button>
-					<span className="translate-y-1 text-base tabular-nums">
-						{navigationInfo.currentIndex + 1}/{navigationInfo.total}
-					</span>
-					<button
-						type="button"
-						onClick={() => navigateToFilm(navigationInfo.nextFilm)}
-						disabled={!navigationInfo.nextFilm || isPending}
-						aria-label="Next film"
-						title={
-							navigationInfo.nextFilm
-								? getLocalizedValue(navigationInfo.nextFilm.title, language)
-								: undefined
-						}
-						className="relative aspect-[76/61] w-10 rounded-md transition-opacity enabled:hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:opacity-30"
-					>
-						<NewArrowRightFull
-							theme={{ stroke: 'var(--color-primary)' }}
-							strokeWidth={8}
-							className="absolute inset-0 h-full w-full translate-y-1 scale-[0.55]"
-						/>
-					</button>
-				</nav>
-			)}
 		</div>
 	)
 }

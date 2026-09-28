@@ -9,17 +9,22 @@ import {
 	LayoutGroup,
 } from 'motion/react'
 import RichText from '@/components/common/RichText'
+import MobileSectionMenu, {
+	type MobileSection,
+} from '@/components/common/MobileSectionMenu'
 import OverflowText from '@/components/common/OverflowText'
 import {
 	EDITORIAL_BODY_TEXT as FESTIVAL_BODY_TEXT,
-	EDITORIAL_COPY_WIDTH as FESTIVAL_COPY_WIDTH,
+	EDITORIAL_COPY_WIDTH,
 	EDITORIAL_DESKTOP_TAB_STYLE,
+	EDITORIAL_MOBILE_TAB_STYLE,
 } from '@/components/common/editorialStyles'
 import {
 	combineRichText,
 	localizedRichText,
 	richTextToPlainText,
 } from '@/lib/richText'
+import { cn } from '@/lib/utils'
 import { Maximize2, Minimize2, X } from 'lucide-react'
 import ReactPlayer from 'react-player'
 import { useTranslations } from 'next-intl'
@@ -34,6 +39,21 @@ import {
 import BackToTopButton from '../common/BackToTop'
 import NewArrowRightSimple from '../common/NewArrowRightSimple'
 import SparkleEffect from './SparkleEffect'
+import MobileEventsCalendar from './MobileEventsCalendar'
+import {
+	type Event,
+	type EventMonthGroup,
+	getValidDate,
+	getEventEndDate,
+	isSameCalendarDay,
+	eventOccursOnDay,
+	getCalendarDays,
+	getWeekdayLabels,
+	getEventDayLabel,
+	getInitialEventYear,
+	getEventsForYear,
+	groupEventsByMonth,
+} from './calendar'
 
 // Types
 interface FestivalContentProps {
@@ -46,33 +66,11 @@ interface BlockProps {
 	index: number
 	language: string
 }
-// Types
-interface Event {
-	_id?: string
-	date?: string
-	endDate?: string
-	title: Array<{ _key?: string; language?: string; value: any }>
-	eventType?: {
-		_id?: string
-		title?: Array<{ _key?: string; language?: string; value: any }>
-	} | null
-	location?: any
-	visual?: Sanity.Image
-	isMock?: boolean
-	description?: Array<{ _key?: string; language?: string; value: any }>
-	pressLink?: string
-}
 
+// Types
 interface EventsListProps {
 	events: Event[]
 	language: string
-}
-
-interface EventMonthGroup {
-	key: string
-	month: number
-	label: string
-	events: Event[]
 }
 
 type EventDetailSelection = {
@@ -97,139 +95,9 @@ const EVENT_CARD_LAYOUT_MS = 340
 const EVENT_CARD_RADIUS = 8
 const CALENDAR_ARROW_BUTTON =
 	'flex h-7 w-7 shrink-0 items-center justify-center text-primary transition-opacity hover:opacity-60 lg:h-5 lg:w-5'
-const FESTIVAL_TITLE_STYLE =
-	`text-4xl rounded-md border-[3px] px-2 pr-4 text-center font-bold uppercase italic tracking-tighter shadow-sm ${EDITORIAL_DESKTOP_TAB_STYLE}`
-
-const getValidDate = (value?: string) => {
-	if (!value) return null
-
-	const date = new Date(value)
-	return Number.isNaN(date.getTime()) ? null : date
-}
-
-const isSameCalendarDay = (a: Date, b: Date) =>
-	a.getFullYear() === b.getFullYear() &&
-	a.getMonth() === b.getMonth() &&
-	a.getDate() === b.getDate()
-
-const getEventEndDate = (event: Event) => {
-	const start = getValidDate(event.date)
-	const end = getValidDate(event.endDate)
-
-	if (!start) return null
-	if (!end || end < start) return start
-
-	return end
-}
-
-const eventOverlapsYear = (event: Event, year: number) => {
-	const start = getValidDate(event.date)
-	const end = getEventEndDate(event)
-
-	if (!start || !end) return false
-
-	const yearStart = new Date(year, 0, 1)
-	const nextYearStart = new Date(year + 1, 0, 1)
-
-	return start < nextYearStart && end >= yearStart
-}
-
-const eventOverlapsMonth = (event: Event, year: number, month: number) => {
-	const start = getValidDate(event.date)
-	const end = getEventEndDate(event)
-
-	if (!start || !end) return false
-
-	const monthStart = new Date(year, month, 1)
-	const nextMonthStart = new Date(year, month + 1, 1)
-
-	return start < nextMonthStart && end >= monthStart
-}
-
-const eventOccursOnDay = (event: Event, day: Date) => {
-	const start = getValidDate(event.date)
-	const end = getEventEndDate(event)
-
-	if (!start || !end) return false
-
-	const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate())
-	const nextDayStart = new Date(
-		day.getFullYear(),
-		day.getMonth(),
-		day.getDate() + 1,
-	)
-
-	return start < nextDayStart && end >= dayStart
-}
-
-const getCalendarDays = (year: number, month: number) => {
-	const firstDay = new Date(year, month, 1)
-	const mondayOffset = (firstDay.getDay() + 6) % 7
-	const numberOfDays = new Date(year, month + 1, 0).getDate()
-
-	return [
-		...Array.from({ length: mondayOffset }, () => null),
-		...Array.from(
-			{ length: numberOfDays },
-			(_, index) => new Date(year, month, index + 1),
-		),
-	]
-}
-
-const getWeekdayLabels = (language: string) =>
-	Array.from({ length: 7 }, (_, index) =>
-		new Date(2024, 0, index + 1).toLocaleDateString(language, {
-			weekday: 'narrow',
-		}),
-	)
-
-const getEventDayLabel = (event: Event) => {
-	const start = getValidDate(event.date)
-	const end = getEventEndDate(event)
-
-	if (!start) return '--'
-	if (!end || isSameCalendarDay(start, end)) {
-		return String(start.getDate())
-	}
-
-	return `${start.getDate()}-${end.getDate()}`
-}
-
-const getInitialEventYear = (events: Event[]) => {
-	const currentYear = new Date().getFullYear()
-	const years = events
-		.map((event) => getValidDate(event.date)?.getFullYear())
-		.filter((year): year is number => typeof year === 'number')
-		.sort((a, b) => a - b)
-
-	if (years.includes(currentYear)) return currentYear
-
-	return years[0] ?? currentYear
-}
-
-const getEventsForYear = (events: Event[], year: number) =>
-	events
-		.filter((event) => eventOverlapsYear(event, year))
-		.map((event) => ({ event, start: getValidDate(event.date) }))
-		.filter(
-			(item): item is { event: Event; start: Date } => item.start !== null,
-		)
-		.sort((a, b) => a.start.getTime() - b.start.getTime())
-		.map(({ event }) => event)
-
-const groupEventsByMonth = (
-	events: Event[],
-	year: number,
-	language: string,
-): EventMonthGroup[] =>
-	Array.from({ length: 12 }, (_, month) => ({
-		key: `${year}-${month}`,
-		month,
-		label: new Date(year, month, 1).toLocaleDateString(language, {
-			month: 'long',
-		}),
-		events: events.filter((event) => eventOverlapsMonth(event, year, month)),
-	}))
+// The Festival wrapper already supplies the mobile page gutter.
+const FESTIVAL_COPY_WIDTH = cn(EDITORIAL_COPY_WIDTH, 'px-0')
+const FESTIVAL_TITLE_STYLE = `rounded-md border-[3px] px-2 pr-4 text-center font-bold uppercase italic tracking-tighter shadow-sm ${EDITORIAL_MOBILE_TAB_STYLE} ${EDITORIAL_DESKTOP_TAB_STYLE}`
 
 const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 	const tFestivalEvents = useTranslations('festivalEvents')
@@ -440,14 +308,14 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 	}
 
 	const getEventCountLabel = (count: number) =>
-		`${count} ${tFestivalEvents(
-			count === 1 ? 'eventSingular' : 'eventPlural',
-		)}`
+		`${count} ${tFestivalEvents(count === 1 ? 'eventSingular' : 'eventPlural')}`
 
 	const renderMonthEventList = () => {
 		if (!expandedMonthGroup) return null
 		const visibleEvents = selectedDay
-			? expandedMonthGroup.events.filter((event) => eventOccursOnDay(event, selectedDay))
+			? expandedMonthGroup.events.filter((event) =>
+					eventOccursOnDay(event, selectedDay),
+				)
 			: expandedMonthGroup.events
 
 		if (expandedMonthGroup.events.length === 0) {
@@ -498,7 +366,10 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 							}`}
 						>
 							{start && (
-								<time dateTime={start.toISOString()} className="shrink-0 whitespace-nowrap tabular-nums tracking-wide">
+								<time
+									dateTime={start.toISOString()}
+									className="shrink-0 whitespace-nowrap tabular-nums tracking-wide"
+								>
 									{start.toLocaleTimeString(language, {
 										hour: '2-digit',
 										minute: '2-digit',
@@ -625,7 +496,10 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 												? eventOccursOnDay(selectedEvent, day)
 												: false
 										const dayLabel = `${day.toLocaleDateString(language, {
-											weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+											weekday: 'long',
+											day: 'numeric',
+											month: 'long',
+											year: 'numeric',
 										})} · ${getEventCountLabel(dayEvents.length)}`
 
 										return (
@@ -638,7 +512,10 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 												disabled={dayEvents.length === 0}
 												onClick={() => {
 													setSelectedDay(day)
-													if (!selectedEvent || !eventOccursOnDay(selectedEvent, day)) {
+													if (
+														!selectedEvent ||
+														!eventOccursOnDay(selectedEvent, day)
+													) {
 														selectEvent(dayEvents[0])
 													}
 												}}
@@ -652,7 +529,10 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 											>
 												{day.getDate()}
 												{dayEvents.length > 1 && (
-													<span aria-hidden="true" className="pointer-events-none absolute bottom-[3px] flex gap-[2px]">
+													<span
+														aria-hidden="true"
+														className="pointer-events-none absolute bottom-[3px] flex gap-[2px]"
+													>
 														<span className="h-0.5 w-0.5 rounded-full bg-current" />
 														<span className="h-0.5 w-0.5 rounded-full bg-current" />
 													</span>
@@ -684,16 +564,16 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 									</h4>
 									{selectedEvent.location && (
 										<p className="mt-1 text-sm">
-											<span className="font-semibold text-dark">
-												@
-											</span>{' '}
+											<span className="font-semibold text-dark">@</span>{' '}
 											<RichText value={selectedEvent.location} inline />
 										</p>
 									)}
 
 									<Img
 										image={selectedEvent.visual}
-										alt={richTextToPlainText(localizedRichText(selectedEvent.title, language))}
+										alt={richTextToPlainText(
+											localizedRichText(selectedEvent.title, language),
+										)}
 										imageWidth={960}
 										className={`mt-5 rounded-md ${isPortraitImage ? 'h-auto max-h-[clamp(10rem,28svh,16rem)] w-auto max-w-full shrink-0 self-start object-contain' : 'aspect-video w-full object-cover'}`}
 									/>
@@ -745,7 +625,9 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 								className="h-3.5 w-3.5 rotate-180 lg:h-3 lg:w-3"
 							/>
 						</button>
-						<h3 className={`${FESTIVAL_TITLE_STYLE} theme-festival-events-year -rotate-3 border-dark bg-grayDark text-dark`}>
+						<h3
+							className={`${FESTIVAL_TITLE_STYLE} theme-festival-events-year -rotate-3 border-dark bg-grayDark text-dark`}
+						>
 							{selectedYear}
 						</h3>
 						<button
@@ -818,7 +700,9 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 													tabIndex={hasEvents ? 0 : -1}
 													aria-disabled={!hasEvents}
 													aria-label={`${monthGroup.label} ${selectedYear}`}
-													onClick={hasEvents ? () => openMonth(monthGroup) : undefined}
+													onClick={
+														hasEvents ? () => openMonth(monthGroup) : undefined
+													}
 													onKeyDown={(event) => {
 														if (
 															hasEvents &&
@@ -903,7 +787,9 @@ const AnnualEventsList: React.FC<EventsListProps> = ({ events, language }) => {
 																		}}
 																		className="group grid w-full grid-cols-[minmax(1.125rem,max-content)_minmax(0,1fr)] items-center gap-1 rounded border-b border-primary/25 bg-primary p-1 text-left text-xs font-semibold normal-case leading-tight text-dark disabled:pointer-events-none"
 																	>
-																		<span className="whitespace-nowrap">{getEventDayLabel(event)}</span>
+																		<span className="whitespace-nowrap">
+																			{getEventDayLabel(event)}
+																		</span>
 																		<OverflowText
 																			value={localizedRichText(
 																				event.title,
@@ -940,23 +826,27 @@ const VisionBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			className="relative flex flex-col items-center justify-center lg:contents"
 		>
 			<AccordionTrigger
-				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label -rotate-3 lg:translate-y-0.5`}
+				wrapperClassName="hidden lg:block"
+				aria-controls={`festival-panel-vision-${index}`}
+				className={`${EDITORIAL_DESKTOP_TAB_STYLE} theme-festival-dropdown-label -rotate-3 lg:translate-y-0.5`}
 				animationDelay={0.15}
 			>
 				{richTextToPlainText(localizedRichText(block.visionTitle, language)) ||
 					tFestivalEvents('visionFallback')}
 			</AccordionTrigger>
-			<AccordionContent>
-				<div className={`${FESTIVAL_BODY_TEXT} mb-4 pt-2 lg:mb-[0.89em] lg:pt-[0.45em]`}>
+			<AccordionContent id={`festival-panel-vision-${index}`}>
+				<div
+					className={`${FESTIVAL_BODY_TEXT} mb-4 pt-2 lg:mb-[0.89em] lg:pt-[0.45em]`}
+				>
 					{block.vision?.map((visionItem: any, vIndex: number) => (
 						<motion.div
 							key={vIndex}
-							className="mt-4 first:-mt-2 lg:mt-[0.89em] lg:first:-mt-[0.45em]"
+							className="mt-2 first:-mt-2 lg:mt-[0.89em] lg:first:-mt-[0.45em]"
 							// initial={{ opacity: 0, x: -20 }}
 							// animate={{ opacity: 1, x: 0 }}
 							// transition={{ duration: 0.5, delay: vIndex * 0.2 }}
 						>
-							<div className="relative mb-8 flex flex-col items-center rounded-t-3xl lg:mb-[1.78em]">
+							<div className="relative mb-2 flex flex-col items-center rounded-t-3xl lg:mb-[1.78em]">
 								<RichText
 									value={combineRichText(
 										localizedRichText(visionItem.title, language),
@@ -981,10 +871,12 @@ const CustomTextBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	return (
 		<AccordionItem
 			value={`custom-${index}`}
-			className="flex flex-col items-center justify-center hover:relative hover:z-50 lg:contents"
+			className="flex flex-col items-center justify-center lg:contents lg:hover:relative lg:hover:z-50"
 		>
 			<AccordionTrigger
-				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label -mb-0 rotate-3 lg:-translate-y-1 lg:-rotate-6`}
+				wrapperClassName="hidden lg:block"
+				aria-controls={`festival-panel-custom-${index}`}
+				className={`${EDITORIAL_DESKTOP_TAB_STYLE} theme-festival-dropdown-label -mb-0 rotate-3 lg:-translate-y-1 lg:-rotate-6`}
 				animationDelay={0.43}
 			>
 				<RichText
@@ -993,8 +885,10 @@ const CustomTextBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 					allowLinks={false}
 				/>
 			</AccordionTrigger>
-			<AccordionContent>
-				<div className={`${FESTIVAL_COPY_WIDTH} ${FESTIVAL_BODY_TEXT} pb-0 pt-4 text-primary lg:rounded-md lg:pb-8 lg:pt-8`}>
+			<AccordionContent id={`festival-panel-custom-${index}`}>
+				<div
+					className={`${FESTIVAL_COPY_WIDTH} ${FESTIVAL_BODY_TEXT} pb-0 pt-4 text-primary lg:rounded-md lg:pb-8 lg:pt-8`}
+				>
 					<RichText value={localizedRichText(block.content, language)} />
 				</div>
 			</AccordionContent>
@@ -1277,10 +1171,14 @@ const MediaTeaserBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 	)
 }
 
-const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
+const JuryBlock: React.FC<BlockProps & { isOpen: boolean }> = ({
+	block,
+	index,
+	language,
+	isOpen,
+}) => {
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const [isVisible, setIsVisible] = useState(false)
-	const [isOpen, setIsOpen] = useState(false) // track accordion open state
 	const juryRef = useRef<HTMLDivElement>(null)
 
 	const members = block.juryMembers || []
@@ -1314,9 +1212,10 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			className="flex flex-col items-center justify-center lg:contents"
 		>
 			<AccordionTrigger
-				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label -rotate-6 lg:-translate-y-0.5 lg:rotate-3`}
+				wrapperClassName="hidden lg:block"
+				aria-controls={`festival-panel-jury-${index}`}
+				className={`${EDITORIAL_DESKTOP_TAB_STYLE} theme-festival-dropdown-label -rotate-6 lg:-translate-y-0.5 lg:rotate-3`}
 				animationDelay={0.31}
-				onClick={() => setIsOpen((prev) => !prev)}
 			>
 				<RichText
 					value={localizedRichText(block.title, language) || 'Jury'}
@@ -1325,7 +1224,7 @@ const JuryBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 				/>
 			</AccordionTrigger>
 
-			<AccordionContent>
+			<AccordionContent id={`festival-panel-jury-${index}`}>
 				<div
 					ref={juryRef}
 					className={`${FESTIVAL_COPY_WIDTH} relative flex flex-col items-center justify-center pt-4 lg:flex-row lg:items-stretch lg:justify-center lg:gap-8 lg:py-8`}
@@ -1417,7 +1316,9 @@ const EventsBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 			className="flex flex-col items-center justify-center lg:contents"
 		>
 			<AccordionTrigger
-				className={`${FESTIVAL_TITLE_STYLE} theme-festival-dropdown-label rotate-6 lg:translate-y-1`}
+				wrapperClassName="hidden lg:block"
+				aria-controls={`festival-panel-events-${index}`}
+				className={`${EDITORIAL_DESKTOP_TAB_STYLE} theme-festival-dropdown-label rotate-6 lg:translate-y-1`}
 				animationDelay={0.24}
 			>
 				<RichText
@@ -1428,9 +1329,20 @@ const EventsBlock: React.FC<BlockProps> = ({ block, index, language }) => {
 					allowLinks={false}
 				/>
 			</AccordionTrigger>
-			<AccordionContent className="relative w-full">
-				<div className="relative mt-4 w-full lg:mt-8">
-					<AnnualEventsList events={block.events || []} language={language} />
+			<AccordionContent
+				id={`festival-panel-events-${index}`}
+				className="relative w-full"
+			>
+				<div className="relative w-full lg:mt-8">
+					<div className="lg:hidden">
+						<MobileEventsCalendar
+							events={block.events || []}
+							language={language}
+						/>
+					</div>
+					<div className="hidden lg:block">
+						<AnnualEventsList events={block.events || []} language={language} />
+					</div>
 				</div>
 			</AccordionContent>
 		</AccordionItem>
@@ -1465,19 +1377,81 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 
 		return eventsBlockIndex >= 0 ? `events-${eventsBlockIndex}` : ''
 	}, [accordionBlocks])
-	const [accordionValue, setAccordionValue] = useState('')
+	const mobileSections: MobileSection[] = accordionBlocks.flatMap(
+		(block: any, index: number) => {
+			if (block.show === false) return []
+
+			switch (block._type) {
+				case 'visionBlock':
+					return [
+						{
+							value: `vision-${index}`,
+							title:
+								richTextToPlainText(
+									localizedRichText(block.visionTitle, language),
+								) || tFestivalEvents('visionFallback'),
+							rotation: -3,
+							delay: 0.15,
+						},
+					]
+				case 'onTourBlock':
+					return [
+						{
+							value: `events-${index}`,
+							title:
+								localizedRichText(block.title, language) ||
+								tFestivalEvents('title'),
+							rotation: 6,
+							delay: 0.24,
+						},
+					]
+				case 'juryBlock':
+					return block.juryMembers?.length
+						? [
+								{
+									value: `jury-${index}`,
+									title: localizedRichText(block.title, language) || 'Jury',
+									rotation: -6,
+									delay: 0.31,
+								},
+							]
+						: []
+				case 'customTextBlock':
+					return [
+						{
+							value: `custom-${index}`,
+							title: localizedRichText(block.title, language),
+							rotation: 3,
+							delay: 0.43,
+						},
+					]
+				default:
+					return []
+			}
+		},
+	)
+	const [accordionValue, setAccordionValue] = useState(eventsAccordionValue)
 	const [isDesktop, setIsDesktop] = useState(false)
 
 	useEffect(() => {
 		const desktopQuery = window.matchMedia('(min-width: 1024px)')
-		const updateLayout = () => setIsDesktop(desktopQuery.matches)
+		const updateLayout = () => {
+			setIsDesktop(desktopQuery.matches)
+			if (!desktopQuery.matches) {
+				setAccordionValue((value) => value || eventsAccordionValue)
+			}
+		}
 		updateLayout()
-		setAccordionValue(desktopQuery.matches ? eventsAccordionValue : '')
 		desktopQuery.addEventListener('change', updateLayout)
 		return () => desktopQuery.removeEventListener('change', updateLayout)
+	}, [eventsAccordionValue])
+
+	useEffect(() => {
+		setAccordionValue(eventsAccordionValue)
 	}, [eventsAccordionValue, festival?._id])
 
-	const handleAccordionValueChange = (value: any) => {
+	const handleAccordionValueChange = (value: string) => {
+		if (value === accordionValue) return
 		setAccordionValue(value)
 		const navbar = document.getElementById('navbar-mobile')
 		if (navbar) {
@@ -1502,7 +1476,13 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 			case 'yellowBannerBlock':
 				return <YellowBannerBlock key={`yellow-${index}`} {...blockProps} />
 			case 'juryBlock':
-				return <JuryBlock key={`jury-${index}`} {...blockProps} />
+				return (
+					<JuryBlock
+						key={`jury-${index}`}
+						{...blockProps}
+						isOpen={accordionValue === `jury-${index}`}
+					/>
+				)
 			case 'onTourBlock':
 				return <EventsBlock key={`events-${index}`} {...blockProps} />
 			case 'visionBlock':
@@ -1533,7 +1513,7 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 			<div
 				id="festival-content"
 				data-testid="festival-accordion-area"
-				className="lg:shadowtest section-folder-content section-folder-content--festival no-scrollbar relative z-10 rounded-md border-primary lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:rounded-xl lg:border-[0px] lg:bg-dark [container-type:inline-size]"
+				className="lg:shadowtest section-folder-content section-folder-content--festival no-scrollbar relative z-10 rounded-md border-primary [container-type:inline-size] lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:rounded-xl lg:border-[0px] lg:bg-dark"
 			>
 				<SparkleEffect
 					count={15}
@@ -1549,12 +1529,20 @@ const FestivalContent: React.FC<FestivalContentProps> = ({
 				{/* Accordion Items */}
 				<Accordion
 					type="single"
-					collapsible
+					collapsible={isDesktop}
 					orientation={isDesktop ? 'horizontal' : 'vertical'}
 					value={accordionValue}
 					onValueChange={handleAccordionValueChange}
-					className="mt-4 lg:mt-[clamp(0.75rem,1.45cqw,1rem)] lg:flex lg:flex-wrap lg:items-start lg:justify-center lg:gap-y-[min(1.5rem,1.67cqw)] lg:rounded-lg lg:border-0 lg:border-primary lg:bg-transparent lg:py-[clamp(1.5rem,3.33cqw,4rem)] lg:[&>div>[role=region]]:order-1 lg:[&>div>[role=region]]:basis-full"
+					className="mt-0 lg:mt-[clamp(0.75rem,1.45cqw,1rem)] lg:flex lg:flex-wrap lg:items-start lg:justify-center lg:gap-y-[min(1.5rem,1.67cqw)] lg:rounded-lg lg:border-0 lg:border-primary lg:bg-transparent lg:py-[clamp(1.5rem,3.33cqw,4rem)] lg:[&>div>[role=region]]:order-1 lg:[&>div>[role=region]]:basis-full"
 				>
+					<MobileSectionMenu
+						id="festival-mobile-menu"
+						sections={mobileSections}
+						value={accordionValue}
+						onValueChange={handleAccordionValueChange}
+						panelIdPrefix="festival-panel"
+						buttonClassName="theme-festival-dropdown-label"
+					/>
 					{accordionBlocks?.map(renderBlock)}
 				</Accordion>
 				{mediaTeaserBlocks?.length ? (

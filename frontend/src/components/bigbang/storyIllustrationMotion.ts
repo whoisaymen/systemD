@@ -35,6 +35,9 @@ export function playStoryIllustration(
 	)
 	const circle = group?.querySelector('circle')
 	const ease = 'cubic-bezier(0.45, 0, 0.2, 1)'
+	const random = (min: number, max: number) => min + Math.random() * (max - min)
+	const tempo = random(0.85, 1.15)
+	const direction = Math.random() < 0.5 ? -1 : 1
 
 	const animate = (
 		elements: (SVGElement | undefined | null)[],
@@ -50,7 +53,7 @@ export function playStoryIllustration(
 						transformBox: 'view-box',
 						transformOrigin: origin,
 					})),
-					{ duration, delay, easing: ease },
+					{ duration: duration * tempo, delay: delay * tempo, easing: ease },
 				),
 			)
 		}
@@ -89,16 +92,26 @@ export function playStoryIllustration(
 	}
 
 	if (kind === 'planet' && paths.length === 8 && circle) {
-		focus(24)
+		focus(random(32, 44))
+		const drift = random(1.3, 1.8)
 		// Hemisphere, outline, and equator turn as one little planet.
 		animate(
 			[paths[5], circle, paths[6]],
 			[
 				{ transform: move(0, 0), offset: 0 },
-				{ transform: move(-18, 5, -22), offset: 0.18 },
-				{ transform: move(26, -16, 195), offset: 0.48 },
-				{ transform: move(-5, 3, 372), offset: 0.77 },
-				{ transform: move(0, 0, 360), offset: 1 },
+				{
+					transform: move(-18 * drift, 5 * drift, -22 * direction),
+					offset: 0.18,
+				},
+				{
+					transform: move(26 * drift, -16 * drift, 195 * direction),
+					offset: 0.48,
+				},
+				{
+					transform: move(-5 * drift, 3 * drift, 372 * direction),
+					offset: 0.77,
+				},
+				{ transform: move(0, 0, 360 * direction), offset: 1 },
 			],
 			{ origin: '235.014px 88.248px' },
 		)
@@ -108,9 +121,9 @@ export function playStoryIllustration(
 				[path],
 				[
 					{ transform: move(0, 0), offset: 0 },
-					{ transform: move(direction * 18, 0), offset: 0.22 },
-					{ transform: move(-direction * 12, 0), offset: 0.48 },
-					{ transform: move(direction * 4, 0), offset: 0.76 },
+					{ transform: move(direction * 18 * drift, 0), offset: 0.22 },
+					{ transform: move(-direction * 12 * drift, 0), offset: 0.48 },
+					{ transform: move(direction * 4 * drift, 0), offset: 0.76 },
 					{ transform: move(0, 0), offset: 1 },
 				],
 			)
@@ -118,6 +131,7 @@ export function playStoryIllustration(
 	}
 
 	if (kind === 'tiles' && tiles.length === 4 && paths.length === 4) {
+		focus(random(20, 36), 2100)
 		// Four satellites chase each other around an oval, each doing a cartwheel.
 		const angles = [
 			0,
@@ -126,7 +140,7 @@ export function playStoryIllustration(
 			Math.PI * 1.2,
 			Math.PI * 1.8,
 			Math.PI * 2,
-		]
+		].map((angle) => angle * direction)
 		const offsets = [0, 0.12, 0.36, 0.62, 0.85, 1]
 		tiles.forEach((tile, index) => {
 			const x =
@@ -154,9 +168,9 @@ export function playStoryIllustration(
 		// Each circle and its outline travel together; the overlap shading rests
 		// while they separate, then returns when the three circles meet again.
 		const hops = [
-			[0, -42],
-			[-38, 22],
-			[38, 22],
+			[random(-12, 12), -random(75, 110)],
+			[-random(65, 95), random(40, 65)],
+			[random(65, 95), random(40, 65)],
 		]
 		hops.forEach(([x, y], index) => {
 			animate(
@@ -189,8 +203,14 @@ export function playStoryIllustration(
 			paths.slice(12, 16),
 			[
 				{ transform: 'rotate(0deg)', offset: 0 },
-				{ transform: 'rotate(-8deg)', offset: 0.2 },
-				{ transform: 'rotate(8deg)', offset: 0.52 },
+				{
+					transform: `rotate(${-16 * direction}deg)`,
+					offset: 0.2,
+				},
+				{
+					transform: `rotate(${16 * direction}deg)`,
+					offset: 0.52,
+				},
 				{ transform: 'rotate(-3deg)', offset: 0.8 },
 				{ transform: 'rotate(0deg)', offset: 1 },
 			],
@@ -200,9 +220,15 @@ export function playStoryIllustration(
 			[paths[19]],
 			[
 				{ transform: 'rotate(0deg)', offset: 0 },
-				{ transform: 'rotate(-30deg)', offset: 0.18 },
-				{ transform: 'rotate(190deg)', offset: 0.66 },
-				{ transform: 'rotate(180deg)', offset: 1 },
+				{ transform: `rotate(${-30 * direction}deg)`, offset: 0.18 },
+				{
+					transform: `rotate(${375 * direction}deg)`,
+					offset: 0.66,
+				},
+				{
+					transform: `rotate(${360 * direction}deg)`,
+					offset: 1,
+				},
 			],
 			{ duration: 2200, origin: '320px 343px' },
 		)

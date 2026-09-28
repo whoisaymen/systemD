@@ -139,11 +139,15 @@ test('archive photos reserve their cropped proportions before loading and priori
 		)
 		assert.deepEqual(
 			photos.map((photo) => photo.style.width),
-			['75cqw', '100cqw', '75cqw'],
+			[
+				'calc(75cqw - var(--memoire-frame-width) * 2)',
+				'calc(100cqw - var(--memoire-frame-width) * 2)',
+				'calc(75cqw - var(--memoire-frame-width) * 2)',
+			],
 		)
 		assert.deepEqual(
-			photos.map((photo) => parseFloat(photo.style.aspectRatio)),
-			[0.75, 1.5, 0.75],
+			photos.map((photo) => [photo.width, photo.height]),
+			[[600, 800], [1000, 667], [600, 800]],
 		)
 		assert.deepEqual(
 			photos.map((photo) => photo.getAttribute('loading')),

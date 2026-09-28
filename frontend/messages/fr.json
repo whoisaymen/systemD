@@ -10,6 +10,7 @@
 		"contact": "Contact",
 		"partners": "Partenaires",
 		"credits": "Crédits",
+		"copyright": "© {year} System D · Tous droits réservés.",
 		"viewOnMap": "Voir sur Google Maps",
 		"noContent": "Aucun contenu disponible",
 		"map": {
@@ -43,6 +44,7 @@
 		"previousMonth": "Mois précédent",
 		"nextMonth": "Mois suivant",
 		"backToYearCalendar": "Revenir au calendrier annuel",
+		"backToCalendar": "Retour au calendrier",
 		"sampleEvent": "Événement fictif · aperçu de mise en page",
 		"monthAgenda": "Agenda du mois",
 		"allEvents": "Tout",
@@ -68,10 +70,13 @@
 		"enlargePhoto": "Agrandir la photo",
 		"enlargePhotoBy": "Agrandir la photo de {artist}",
 		"curatedBy": "Sélectionné par",
-		"title": "Expo Photo"
+		"title": "Exposition"
 	},
 
 	"filmSelection": {
+		"directorShort": "Réal.",
+		"ascending": "Croissant",
+		"descending": "Décroissant",
 		"title": "Sélection films",
 		"year": "Année",
 		"titleCol": "Titre",

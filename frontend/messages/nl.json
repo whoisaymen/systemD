@@ -10,6 +10,7 @@
 		"contact": "Contact",
 		"partners": "Partners",
 		"credits": "Credits",
+		"copyright": "© {year} System D · Alle rechten voorbehouden.",
 		"viewOnMap": "Bekijk op Google Maps",
 		"noContent": "Geen inhoud beschikbaar",
 		"map": {
@@ -43,6 +44,7 @@
 		"previousMonth": "Vorige maand",
 		"nextMonth": "Volgende maand",
 		"backToYearCalendar": "Terug naar de jaarkalender",
+		"backToCalendar": "Terug naar de kalender",
 		"sampleEvent": "Voorbeeldevenement · lay-outvoorbeeld",
 		"monthAgenda": "Maandagenda",
 		"allEvents": "Alles",
@@ -68,10 +70,13 @@
 		"enlargePhoto": "Foto vergroten",
 		"enlargePhotoBy": "Foto van {artist} vergroten",
 		"curatedBy": "Gecureerd door",
-		"title": "Foto-expo"
+		"title": "Tentoonstelling"
 	},
 
 	"filmSelection": {
+		"directorShort": "Regie",
+		"ascending": "Oplopend",
+		"descending": "Aflopend",
 		"title": "Filmselectie",
 		"year": "Jaar",
 		"titleCol": "Titel",

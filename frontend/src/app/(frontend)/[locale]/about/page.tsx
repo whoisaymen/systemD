@@ -1,5 +1,6 @@
 import ContactContent from '@/components/contact/ContactContent'
 import { groq, fetchSanity } from '@/sanity/lib/fetch'
+import { getSite } from '@/sanity/lib/queries'
 
 export default async function AboutPage({
 	params,
@@ -7,19 +8,30 @@ export default async function AboutPage({
 	params: Promise<{ locale: string }>
 }) {
 	const { locale } = await params
-	const content = await getContact()
+	const [content, site] = await Promise.all([
+		getContact(),
+		getSite().catch(() => null),
+	])
 
-	return <ContactContent contact={content} language={locale} />
+	return (
+		<ContactContent
+			contact={content}
+			language={locale}
+			social={site?.social}
+			copyrightYear={new Date().getFullYear()}
+		/>
+	)
 }
 
 async function getContact() {
 	const query = groq`
     *[_type == 'contact'][0]{
-      ...,
-      formEmail,
+      _id,
       address,
+      contactTitle,
+      partnersTitle,
+      credits,
       mapLocation,
-      phone,
       partners[]{
         _key,
         logo {

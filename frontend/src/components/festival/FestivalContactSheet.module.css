@@ -6,12 +6,19 @@
 	gap: clamp(0.5rem, 1.2cqw, 0.75rem);
 	width: 100%;
 	margin-inline: auto;
-	padding: 2.5rem 2% 2rem;
+	padding: 0 0 2rem;
+}
+
+@media (max-width: 1023px) {
+	.sheet {
+		width: calc(100% + 2rem);
+		margin-inline: -1rem;
+	}
 }
 
 @media (min-width: 1024px) {
 	.sheet {
-		padding-inline: 0;
+		padding: 2.5rem 0 2rem;
 	}
 }
 
@@ -97,4 +104,9 @@
 
 .frameNumber[data-edge='bottom'] {
 	bottom: calc(1px - var(--rail));
+}
+
+.frameNumber[data-side='right'] {
+	left: auto;
+	right: 8%;
 }

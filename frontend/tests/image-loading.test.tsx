@@ -69,6 +69,28 @@ test('cropped posters reserve the correct proportions and are never upscaled', a
 	dom.window.close()
 })
 
+test('an enlarged photo can reuse its loaded thumbnail instead of returning to the tiny preview', async () => {
+	const { default: Img } = await imageModule
+	const previewSrc = 'https://example.test/already-loaded-thumbnail.jpg'
+	const dom = new JSDOM(
+		renderToStaticMarkup(
+			<Img
+				image={image}
+				previewSrc={previewSrc}
+				placeholderFit="contain"
+				loading="eager"
+				sizes="358px"
+			/>,
+		),
+	)
+	const img = dom.window.document.querySelector('img')!
+	assert.ok(img.style.backgroundImage.includes(previewSrc))
+	assert.equal(img.style.backgroundSize, 'contain')
+	assert.equal(img.hasAttribute('previewSrc'), false)
+	assert.equal(img.sizes, '358px')
+	dom.window.close()
+})
+
 test('the main film image preloads the same responsive candidates as the displayed image', async () => {
 	const { default: Img } = await imageModule
 	const dom = new JSDOM(

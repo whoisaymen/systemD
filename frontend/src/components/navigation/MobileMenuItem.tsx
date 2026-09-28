@@ -1,4 +1,6 @@
-import { useTranslations } from 'next-intl'
+import { useEffect, useRef } from 'react'
+import { containMobileMenuScroll } from '@/lib/mobile-menu-scroll'
+import { mountMobileMenuTint } from '@/lib/mobile-menu-tint'
 
 import { circOut, motion } from 'motion/react'
 import Link from 'next/link'
@@ -7,8 +9,6 @@ import FestivalLogoMobile from '../festival/FestivalLogoMobile'
 import MemoireLogoMobile from '../memoire/MemoireLogoMobile'
 import EquipeLogoMobile from '../equipe/EquipeLogoMobile'
 import FabriqueLogoMobile from '../fabrique/FabriqueLogoMobile'
-import AboutIcon from './AboutIcon'
-import SocialLinks from '@/ui/SocialLinks'
 
 import LogoShortAnimated from '../svgs/LogoShortAnimated'
 
@@ -108,7 +108,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
 	return (
 		<Link
 			href={`/${locale}/${href}`}
-			className={`w-full ${rotation}`}
+			className="min-h-0 w-full"
 			onClick={closeMenu}
 		>
 			<motion.div
@@ -127,10 +127,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
 						ease: 'easeInOut',
 					},
 				}}
-				className="group w-full rounded-md border-dark px-6 py-[0.82rem]"
+				className="group flex h-full min-h-0 w-full items-center justify-center px-6 py-3"
 			>
 				<Component
-					className="h-full w-full overflow-visible text-primary group-hover:text-primary"
+					className={`h-full w-full overflow-visible text-primary group-hover:text-primary ${rotation}`}
 					theme={theme.dark}
 				/>
 			</motion.div>
@@ -142,18 +142,26 @@ interface MenuProps {
 	menuOpen: boolean
 	locale: string
 	closeMenu: () => void
-	social?: Sanity.Navigation
 }
 
-const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu, social }) => {
-	const t = useTranslations('menu')
+const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu }) => {
+	const menuRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		if (!menuOpen || !menuRef.current) return
+		const releaseScroll = containMobileMenuScroll(menuRef.current)
+		const releaseTint = mountMobileMenuTint(document.documentElement)
+		return () => {
+			releaseScroll()
+			releaseTint()
+		}
+	}, [menuOpen])
 
 	if (!menuOpen) return null
-	const footerDelay = Math.max(...menuItems.map((item) => item.delay)) + 0.1
 
 	return (
 		<motion.div
-			className="fixed inset-0 z-50 flex w-full flex-col items-center justify-start overflow-y-auto overflow-x-hidden bg-dark px-0 pt-8 md:w-[30%]"
+			className="fixed inset-x-0 top-0 z-50 h-dvh w-full pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[calc(2rem+env(safe-area-inset-top))] lg:hidden"
 			initial={{ y: '-100%' }}
 			animate={{ y: '0%' }}
 			transition={{
@@ -171,58 +179,31 @@ const Menu: React.FC<MenuProps> = ({ menuOpen, locale, closeMenu, social }) => {
 				},
 			}}
 		>
-			<div className="relative"></div>
-
-			{menuItems.map(({ href, Component, delay, rotation }) => (
-				<MenuItem
-					key={href}
-					href={href}
-					Component={Component}
-					delay={delay}
-					locale={locale}
-					closeMenu={closeMenu}
-					totalItems={menuItems.length}
-					rotation={rotation}
-				/>
-			))}
-
-			<motion.div
-				className="mx-2 mt-4 flex items-center justify-center gap-1 tracking-tighter"
-				initial={{ opacity: 0, y: 20 }}
-				animate={{
-					opacity: 1,
-					y: 0,
-					transition: {
-						duration: 0.5,
-						delay: footerDelay, // Show after all menu items
-						ease: 'easeInOut',
-					},
-				}}
-				exit={{
-					opacity: 0,
-					y: 20,
-					transition: {
-						duration: 0.3,
-						delay: 0, // Exit first, before menu items
-						ease: 'easeInOut',
-					},
-				}}
+			{/* Keep the fixed shell transparent so it cannot override the edge strips.
+			    The solid child bleeds past both viewport edges behind browser chrome. */}
+			<div
+				aria-hidden="true"
+				data-mobile-menu-background
+				className="pointer-events-none absolute inset-x-0 bottom-[calc(-12px-env(safe-area-inset-bottom))] top-[calc(-12px-env(safe-area-inset-top))] bg-dark"
+			/>
+			<div
+				ref={menuRef}
+				data-mobile-menu
+				className="relative grid h-full w-full auto-rows-[minmax(4.5rem,1fr)] overflow-y-auto overflow-x-hidden overscroll-y-contain pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
 			>
-				<Link
-					className="flex items-center justify-center text-primary"
-					href={`/${locale}/about`}
-					onClick={closeMenu}
-					aria-label={t('about')}
-				>
-					<AboutIcon aria-hidden="true" className="h-8 w-8" />
-				</Link>
-				<SocialLinks
-					social={social}
-					className="flex items-center gap-1"
-					linkClassName="flex aspect-square h-9 items-center justify-center rounded-md border-2 border-primary bg-primary text-dark"
-					iconClassName="h-5 w-5"
-				/>
-			</motion.div>
+				{menuItems.map(({ href, Component, delay, rotation }) => (
+					<MenuItem
+						key={href}
+						href={href}
+						Component={Component}
+						delay={delay}
+						locale={locale}
+						closeMenu={closeMenu}
+						totalItems={menuItems.length}
+						rotation={rotation}
+					/>
+				))}
+			</div>
 		</motion.div>
 	)
 }

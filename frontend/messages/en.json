@@ -10,6 +10,7 @@
 		"contact": "Contact",
 		"partners": "Partners",
 		"credits": "Credits",
+		"copyright": "© {year} System D · All rights reserved.",
 		"viewOnMap": "View on Google Maps",
 		"noContent": "No content available",
 		"map": {
@@ -43,6 +44,7 @@
 		"previousMonth": "Previous month",
 		"nextMonth": "Next month",
 		"backToYearCalendar": "Back to year calendar",
+		"backToCalendar": "Back to calendar",
 		"sampleEvent": "Sample event · layout preview",
 		"monthAgenda": "Month agenda",
 		"allEvents": "All",
@@ -68,10 +70,13 @@
 		"enlargePhoto": "Enlarge photo",
 		"enlargePhotoBy": "Enlarge photo by {artist}",
 		"curatedBy": "Curated by",
-		"title": "Photo Exhibition"
+		"title": "Exhibition"
 	},
 
 	"filmSelection": {
+		"directorShort": "Dir.",
+		"ascending": "Ascending",
+		"descending": "Descending",
 		"title": "Film Selection",
 		"year": "Year",
 		"titleCol": "Title",

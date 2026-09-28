@@ -15,6 +15,7 @@
 }
 
 .line {
+	width: var(--line-width, 100%);
 	height: 0.8em;
 	border-radius: 0.15em;
 }
@@ -24,8 +25,28 @@
 }
 
 .tab {
-	height: calc(1em + 5px);
-	max-width: 100%;
+	width: var(--mobile-tab-width);
+	height: calc(1.2em + 6px);
+	max-width: calc(100% - 2rem);
+	border-radius: 6px;
+}
+
+@media (min-width: 1024px) {
+	.tab {
+		width: var(--tab-width);
+		height: calc(1em + 5px);
+		max-width: 100%;
+	}
+}
+
+.formCopy {
+	gap: 0.625em;
+	padding-block: 0.3125em;
+	font-size: 1rem;
+}
+
+.formCopy .line {
+	height: 1em;
 }
 
 .storyIllustration {
@@ -96,4 +117,53 @@
 
 .teamSideRight {
 	left: calc(50% + var(--portrait-size) * 0.385 + 10px);
+}
+
+@media (max-width: 1023px) {
+	.contactCopy {
+		font-size: calc(min(1.0625rem, 3.9cqw) * 1.2);
+	}
+
+	.line {
+		width: var(--mobile-line-width, 100%);
+	}
+
+	.storyIllustration {
+		width: calc(35% - 1rem);
+		margin-block: 0.5rem;
+	}
+
+	.mobileHeading {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.3em;
+		padding-block: 0.15em;
+		font-size: calc(min(1.0625rem, 3.9cqw) * 1.3);
+	}
+
+	.teamStage {
+		--portrait-size: clamp(236px, 72cqw, 330px);
+		height: var(--portrait-size);
+	}
+
+	.teamSideLeft,
+	.teamSideRight {
+		height: 70%;
+	}
+
+	.teamSideLeft {
+		width: 58px;
+		left: calc(50% - var(--portrait-size) * 0.385 - 66px);
+	}
+
+	.teamSideRight {
+		width: 88px;
+		left: calc(50% + var(--portrait-size) * 0.385 + 8px);
+	}
+
+	.teamName .tab {
+		height: 26px;
+		font-size: 18px;
+	}
 }

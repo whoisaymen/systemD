@@ -33,7 +33,18 @@ test('leaving Noir Lab restores the full palette and synchronizes both theme con
 	const host = dom.window.document.getElementById('root')!
 	const root = createRoot(host)
 	const html = dom.window.document.documentElement
+	const body = dom.window.document.body
+	const assertBrowserColor = (color: string) => {
+		const swatch = dom.window.document.createElement('div')
+		swatch.style.backgroundColor = color
+		assert.equal(html.style.backgroundColor, swatch.style.backgroundColor)
+		assert.equal(body.style.backgroundColor, swatch.style.backgroundColor)
+		const meta = dom.window.document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+		assert.equal(meta.length, 1)
+		assert.equal(meta[0].content, color)
+	}
 	const assertBlue = () => {
+		assertBrowserColor(blue.dark)
 		assert.equal(html.dataset.theme, blue.key)
 		assert.equal(html.style.getPropertyValue('--color-dark'), blue.dark)
 		assert.equal(html.style.getPropertyValue('--color-dark-rgb'), '18 61 166')
@@ -59,13 +70,20 @@ test('leaving Noir Lab restores the full palette and synchronizes both theme con
 		</>))
 		assert.equal(html.style.getPropertyValue('--color-theme-content'), draft.content)
 		assert.equal(html.style.getPropertyValue('--color-theme-text'), draft.text)
+		assertBrowserColor(draft.dark)
 		await toggle(0)
 		assertBlue()
 
+		// Palette changes must leave the document scrollable for Safari's chrome.
+		html.scrollTop = 240
 		// Alternating controls must continue the same cycle, without stale indices.
 		for (let index = 1; index < FALLBACK_THEME_COMBOS.length; index++) {
 			await toggle(index % 2)
 			assert.equal(html.dataset.theme, FALLBACK_THEME_COMBOS[index].key)
+			assertBrowserColor(index === FALLBACK_THEME_COMBOS.length - 1 ? draft.dark : FALLBACK_THEME_COMBOS[index].dark)
+			assert.equal(body.style.position, '')
+			assert.equal(body.style.overflow, '')
+			assert.equal(html.scrollTop, 240)
 		}
 		assert.equal(html.style.getPropertyValue('--color-theme-content'), draft.content)
 		assert.equal(html.style.getPropertyValue('--color-primary'), draft.primary)

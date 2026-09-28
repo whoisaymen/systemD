@@ -5,7 +5,6 @@ import {
 	FaBluesky,
 	FaFacebookF,
 	FaGithub,
-	FaInstagram,
 	FaLinkedinIn,
 	FaTiktok,
 	FaVimeoV,
@@ -13,6 +12,7 @@ import {
 	FaYoutube,
 } from 'react-icons/fa6'
 import { IoIosLink } from 'react-icons/io'
+import { RiInstagramFill } from 'react-icons/ri'
 
 export default function SocialLinks({
 	social,
@@ -100,7 +100,7 @@ function Icon({
 	) : url.includes('github.com') ? (
 		<FaGithub {...props} />
 	) : url.includes('instagram.com') ? (
-		<FaInstagram {...props} />
+		<RiInstagramFill {...props} />
 	) : url.includes('linkedin.com') ? (
 		<FaLinkedinIn {...props} />
 	) : url.includes('tiktok.com') ? (

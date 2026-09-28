@@ -8,7 +8,7 @@ import {
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import { renderParagraph } from '../common/RenderParagraph'
 import BackToTopButton from '../common/BackToTop'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Maximize2 } from 'lucide-react'
 import FestivalCarousel, {
@@ -59,6 +59,17 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 	const [fullscreenImage, setFullscreenImage] =
 		useState<FullscreenImage | null>(null)
 
+	useEffect(() => {
+		if (!fullscreenImage) return
+		const desktop = window.matchMedia('(min-width: 1024px)')
+		const closeOnMobile = () => {
+			if (!desktop.matches) setFullscreenImage(null)
+		}
+		closeOnMobile()
+		desktop.addEventListener('change', closeOnMobile)
+		return () => desktop.removeEventListener('change', closeOnMobile)
+	}, [fullscreenImage])
+
 	return (
 		<div className={`${EDITORIAL_COPY_WIDTH} pb-8`} id="long-story">
 			<div className="fixed bottom-4 right-4 z-50 sm:hidden">
@@ -85,7 +96,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 						return (
 							<div
 								key={block._key || index}
-								className="relative flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 rounded-none py-4 sm:gap-x-3 lg:-mx-[6cqw]"
+								className="relative flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 rounded-none py-6 sm:gap-x-3 lg:-mx-[6cqw] lg:py-4"
 							>
 								<span className="inline-block text-[1.05rem] font-bold leading-none tracking-tight text-primary lg:text-[3.15rem]">
 									"
@@ -206,25 +217,7 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 									key={index}
 									className="relative mx-auto w-full lg:mt-8"
 								>
-									<button
-										type="button"
-										className="group/story-image relative block w-full overflow-hidden shadow-md"
-										aria-expanded={Boolean(fullscreenImage?.image === block.file)}
-										onClick={(event) => {
-											const rect = event.currentTarget.getBoundingClientRect()
-
-											setFullscreenImage({
-												image: block.file,
-												originRect: {
-													height: rect.height,
-													left: rect.left,
-													top: rect.top,
-													width: rect.width,
-												},
-											})
-										}}
-										aria-label="Open image fullscreen"
-									>
+									<div className="group/story-image relative w-full overflow-hidden shadow-md">
 										<Image
 											src={block.file.asset.url}
 											alt={
@@ -236,13 +229,33 @@ const LongStory: React.FC<LongStoryProps> = ({ content, lang }) => {
 											height={block.file.asset.metadata.dimensions.height}
 											className="aspect-video h-full w-full object-cover object-[100%_45%]"
 										/>
-										<span
-											aria-hidden="true"
-											className="absolute right-8 top-8 flex h-8 w-8 items-center justify-center rounded-md border-2 border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark group-hover/story-image:opacity-100 group-focus-visible/story-image:opacity-100 [@media(hover:none)]:opacity-100"
+										<button
+											type="button"
+											className="absolute inset-0 hidden lg:block"
+											aria-expanded={Boolean(fullscreenImage?.image === block.file)}
+											onClick={(event) => {
+												const rect = event.currentTarget.getBoundingClientRect()
+
+												setFullscreenImage({
+													image: block.file,
+													originRect: {
+														height: rect.height,
+														left: rect.left,
+														top: rect.top,
+														width: rect.width,
+													},
+												})
+											}}
+											aria-label="Open image fullscreen"
 										>
-											<Maximize2 className="h-5 w-5" />
-										</span>
-									</button>
+											<span
+												aria-hidden="true"
+												className="absolute right-8 top-8 flex h-8 w-8 items-center justify-center rounded-md border-2 border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark group-hover/story-image:opacity-100 group-focus-within/story-image:opacity-100 [@media(hover:none)]:opacity-100"
+											>
+												<Maximize2 className="h-5 w-5" />
+											</span>
+										</button>
+									</div>
 									{block.caption && (
 										<p className="mt-2 text-center text-sm italic text-primary">
 											<RichText

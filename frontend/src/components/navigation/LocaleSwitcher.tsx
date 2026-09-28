@@ -13,7 +13,11 @@ const LANGUAGES = {
 	nl: { name: 'Nederlands', action: 'Taal wijzigen' },
 } satisfies Record<Locale, { name: string; action: string }>
 
-export default function LocaleSwitcher() {
+export default function LocaleSwitcher({
+	orientation = 'horizontal',
+}: {
+	orientation?: 'horizontal' | 'vertical'
+}) {
 	const locale = useLocale() as Locale
 	const router = useRouter()
 	const [isPending, startTransition] = useTransition()
@@ -90,7 +94,7 @@ export default function LocaleSwitcher() {
 	return (
 		<div
 			ref={switcherRef}
-			className={styles.switcher}
+			className={`${styles.switcher} ${orientation === 'vertical' ? styles.vertical : ''}`}
 			data-open={isOpen}
 			onBlur={(event) => {
 				if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false)
@@ -137,7 +141,7 @@ export default function LocaleSwitcher() {
 					id={menuId}
 					role="menu"
 					aria-label={language.action}
-					aria-orientation="horizontal"
+					aria-orientation={orientation}
 					className={styles.menu}
 				>
 					{alternatives.map((lang, index) => (

@@ -8,6 +8,7 @@ interface BigBangLogoMobileProps {
 		icon?: string
 	}
 	className?: string
+	containAnimation?: boolean
 }
 
 const outlineTrimProps = {
@@ -17,10 +18,13 @@ const outlineTrimProps = {
 const BigBangLogoMobile: React.FC<BigBangLogoMobileProps> = ({
 	theme,
 	className,
+	containAnimation = false,
 }) => (
 	<svg
 		className={className}
-		viewBox="0 0 319 60"
+		// The circle reaches 1.5× its size, extending 15 units above and below.
+		// Keep the mobile header's full animation inside its SVG viewport for Safari.
+		viewBox={containAnimation ? '0 -15 319 90' : '0 0 319 60'}
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 	>

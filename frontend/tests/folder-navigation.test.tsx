@@ -108,6 +108,7 @@ test('destination skeletons distinguish sections and nested archive pages', asyn
 			'fabrique',
 			'equipe',
 			'about',
+			'apply',
 		]) {
 			assert.equal(skeletonPageForPath(`/${locale}/${section}/`), section)
 		}
@@ -117,7 +118,7 @@ test('destination skeletons distinguish sections and nested archive pages', asyn
 		)
 		assert.equal(skeletonPageForPath(`/${locale}/film/a-film`), 'film')
 		assert.equal(skeletonPageForPath(`/${locale}/contact`), 'about')
-		assert.equal(skeletonPageForPath(`/${locale}`), 'generic')
+		assert.equal(skeletonPageForPath(`/${locale}`), 'home')
 	}
 })
 

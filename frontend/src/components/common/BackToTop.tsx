@@ -55,13 +55,14 @@ const BackToTopButton: React.FC<BackToTopButtonProps> = ({ targetId }) => {
 		>
 			{isVisible && (
 				<motion.button
+					type="button"
 					whileHover={{ y: -5 }}
 					onClick={scrollToTop}
 					aria-label="Scroll to top of section"
-					className="flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-lg border-2 border-dark bg-grayDark p-2"
+					className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-primary bg-dark p-2 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 				>
 					<NewArrowRightSimple
-						theme={{ stroke: 'var(--color-dark)' }}
+						theme={{ stroke: 'currentColor' }}
 						className="h-full w-full -rotate-90"
 					/>
 				</motion.button>

@@ -28,7 +28,7 @@ export default function PartnerLogo({
 				role="img"
 				aria-label={name || undefined}
 				aria-hidden={name ? undefined : true}
-				className="mx-auto block h-10 w-full lg:h-12"
+				className="mx-auto block h-[4.5rem] w-[90%] lg:h-12 lg:w-full"
 				style={{
 					backgroundColor: 'var(--color-primary)',
 					mask,
@@ -45,7 +45,7 @@ export default function PartnerLogo({
 			loading="lazy"
 			src={asset.url}
 			alt={name}
-			className="mx-auto h-10 w-auto max-w-full object-contain lg:h-12"
+			className="mx-auto h-[4.5rem] w-auto max-w-[90%] object-contain lg:h-12 lg:max-w-full"
 		/>
 	)
 }

@@ -40,7 +40,7 @@ const ParagraphBlock = ({ children, value }: TextBlockProps) => (
 
 const Heading2Block = ({ children, value }: TextBlockProps) => (
 	<h2
-		className="mb-3 mt-6 text-[1.4em] font-bold leading-tight first:mt-0"
+		className="mb-2 mt-4 text-[1.3em] font-bold leading-[1.1] first:mt-0 lg:mb-3 lg:mt-6 lg:text-[1.4em] lg:leading-tight"
 		style={{ textAlign: richTextBlockAlignment(value) }}
 	>
 		{children}

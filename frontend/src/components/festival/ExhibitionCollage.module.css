@@ -104,7 +104,18 @@
 	.collage {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1.5rem 3%;
-		padding-inline: 5%;
+		padding: 0 0 2rem;
+	}
+	.print,
+	.photo {
+		width: 100%;
+	}
+	.photo {
+		max-height: none;
+	}
+	.print:focus-visible {
+		outline: none;
+		filter: drop-shadow(0 8px 8px rgb(0 0 0 / 18%));
 	}
 	.item:nth-child(n) {
 		margin-top: 0;
@@ -112,28 +123,14 @@
 	.item:nth-child(2n) {
 		margin-top: 28%;
 	}
-}
-
-@media (max-width: 639px) {
-	.collage {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 1.75rem;
-		padding: 1.5rem 8% 2rem;
-	}
-	.item:nth-child(n) {
-		grid-column: 1 / -1;
-		margin-top: 0;
-		width: 87%;
-	}
-	.item:nth-child(2n) {
-		justify-self: end;
-	}
-	.item:nth-child(3n) {
-		justify-self: center;
+	.item:nth-child(2n) .credit {
+		left: auto;
+		right: 8%;
+		align-items: flex-end;
 	}
 }
 
-@media (hover: none), (pointer: coarse), (max-width: 639px) {
+@media (hover: none), (pointer: coarse), (max-width: 1023px) {
 	.credit {
 		top: auto;
 		bottom: -0.5rem;

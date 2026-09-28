@@ -28,11 +28,7 @@ async function getFestivalEdition(year: string, locale: string) {
 			visual,
 			pressLink,
 			aftermovieLink,
-			overviewTitle,
-			filmsTitle,
-			exhibitionTitle,
-			photosTitle,
-			juryTitle,
+			"menu": *[_type == 'memoire' && _id == 'memoire'][0].menu,
 
 			"filmSelection": *[_type == 'film' && references(^._id)] | order(year asc, coalesce(
 				pt::text(title[language == $locale || _key == $locale][0].value),
@@ -99,6 +95,7 @@ async function getFestivalEdition(year: string, locale: string) {
 				_key,
 				_type,
 				curatorName,
+				description,
 				photos[]{
 					_key,
 					photo{

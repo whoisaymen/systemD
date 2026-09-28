@@ -22,6 +22,7 @@ export default function Img({
 	className,
 	sizes = '100vw',
 	loading,
+	previewSrc,
 	placeholderFit = 'cover',
 	...props
 }: {
@@ -29,6 +30,7 @@ export default function Img({
 	imageWidth?: number
 	imageSizes?: number[]
 	options?: ImageOptions
+	previewSrc?: string
 	placeholderFit?: 'cover' | 'contain'
 } & React.ImgHTMLAttributes<HTMLImageElement>) {
 	if (!image?.asset) return null
@@ -40,7 +42,7 @@ export default function Img({
 		options,
 	})
 	const resolvedLoading = loading || stegaClean(image.loading) || 'lazy'
-	const placeholder = image.asset?.metadata?.lqip
+	const placeholder = previewSrc || image.asset?.metadata?.lqip
 
 	if (resolvedLoading === 'eager' && props.fetchPriority === 'high') {
 		preload(src, {

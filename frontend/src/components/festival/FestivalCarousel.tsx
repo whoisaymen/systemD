@@ -1,17 +1,33 @@
 import Img from '@/ui/Img'
 import RichText from '@/components/common/RichText'
-import { motion, useReducedMotion } from 'motion/react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+	animate,
+	motion,
+	useMotionValue,
+	useTransform,
+	useReducedMotion,
+	type MotionValue,
+} from 'motion/react'
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+	type ReactNode,
+} from 'react'
 import { useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, Minimize2 } from 'lucide-react'
-import { FILM_LABEL_TEXT } from '../film/filmLabelStyles'
-import { richTextLines } from '@/lib/richTextLines'
-import { photoCreditRotation } from './photoCreditStyles'
+import ArtistCreditPills from './ArtistCreditPills'
+import contactSheet from './FestivalContactSheet.module.css'
+import ZoomablePhoto from './ZoomablePhoto'
 
 import {
 	getGalleryLayout,
 	getActivePhotoRect,
 	getGalleryFrames,
+	getExhibitionFrames,
 	getWrappedIndex,
 	type GalleryLayout,
 	type GalleryRect,
@@ -27,6 +43,167 @@ const PHOTO_TRANSITION_EASE = [0.76, 0, 0.24, 1] as const
 const FILM_SURFACE = 'var(--color-grayDark)'
 const FILM_DARK = 'var(--color-dark)'
 const FILM_LIGHT = 'var(--color-primary)'
+const PHOTO_PERSPECTIVE = 900
+const PHOTO_TILT = 16
+const PHOTO_DEPTH = 56
+
+function GalleryPhotoFrame({
+	page,
+	index,
+	position,
+	rect,
+	layout,
+	drag,
+	duration,
+	reducedMotion,
+	children,
+}: {
+	page: number
+	index: number
+	position: number
+	rect: GalleryRect
+	layout: GalleryLayout
+	drag: MotionValue<number>
+	duration: number
+	reducedMotion: boolean
+	children: ReactNode
+}) {
+	const { compactFilm, perforations } = layout
+	const viewportWidth = layout.stage.width + layout.stage.left * 2
+	const left = useMotionValue(rect.left)
+	const frameLeft = useTransform(
+		left,
+		(value) => value - (compactFilm ? perforations.padding : 0),
+	)
+	// Follow the frame's actual position, so dragging and settling share one curve.
+	const progress = useTransform(() =>
+		compactFilm && !reducedMotion
+			? Math.max(
+					-1,
+					Math.min(
+						1,
+						(left.get() + rect.width / 2 + drag.get() - viewportWidth / 2) /
+							viewportWidth,
+					),
+				)
+			: 0,
+	)
+	const rotateY = useTransform(progress, (value) => -value * PHOTO_TILT)
+	const z = useTransform(progress, (value) => -Math.abs(value) * PHOTO_DEPTH)
+
+	useLayoutEffect(() => {
+		if (reducedMotion || duration === 0) {
+			left.jump(rect.left)
+			return
+		}
+		const animation = animate(left, rect.left, {
+			duration,
+			ease: [0.22, 1, 0.36, 1],
+		})
+		return () => animation.stop()
+	}, [left, rect.left, duration, reducedMotion])
+
+	return (
+		<motion.div
+			data-gallery-photo={index + 1}
+			data-active={page === position}
+			onClick={(event) => event.stopPropagation()}
+			className={compactFilm ? contactSheet.strip : 'absolute overflow-hidden'}
+			style={{
+				position: 'absolute',
+				left: frameLeft,
+				rotateY,
+				z,
+				transformPerspective:
+					compactFilm && !reducedMotion ? PHOTO_PERSPECTIVE : undefined,
+				...(compactFilm
+					? {
+							'--frame-width': `${rect.width}px`,
+							'--film-gap': `${perforations.padding}px`,
+							'--rail': `${perforations.railHeight}px`,
+							'--hole-height': `${perforations.height}px`,
+						}
+					: {}),
+			}}
+			initial={false}
+			animate={{
+				top:
+					rect.top - (compactFilm ? perforations.railHeight : layout.stage.top),
+				width: rect.width + (compactFilm ? perforations.padding * 2 : 0),
+				height: rect.height + (compactFilm ? perforations.railHeight * 2 : 0),
+				opacity: compactFilm || page === position ? 1 : 0.45,
+			}}
+			transition={{
+				duration: reducedMotion ? 0 : duration,
+				ease: [0.22, 1, 0.36, 1],
+			}}
+		>
+			{children}
+		</motion.div>
+	)
+}
+
+function ExhibitionPhotoMotion({
+	offset,
+	step,
+	drag,
+	duration,
+	reducedMotion,
+	children,
+}: {
+	offset: number
+	step: number
+	drag: MotionValue<number>
+	duration: number
+	reducedMotion: boolean
+	children: ReactNode
+}) {
+	const isMobile = step < 1024
+	const frameOffset = useMotionValue(offset * step)
+	const progress = useTransform(() =>
+		Math.max(-1, Math.min(1, (frameOffset.get() + drag.get()) / step)),
+	)
+	const scale = useTransform(progress, (value) =>
+		isMobile || reducedMotion ? 1 : 1 - Math.abs(value) * 0.06,
+	)
+	const opacity = useTransform(progress, (value) =>
+		isMobile ? 1 : 1 - Math.abs(value) * 0.2,
+	)
+	const rotateY = useTransform(progress, (value) =>
+		isMobile && !reducedMotion ? -value * PHOTO_TILT : 0,
+	)
+	const z = useTransform(progress, (value) =>
+		isMobile && !reducedMotion ? -Math.abs(value) * PHOTO_DEPTH : 0,
+	)
+
+	useLayoutEffect(() => {
+		if (reducedMotion || duration === 0) {
+			frameOffset.jump(offset * step)
+			return
+		}
+		const animation = animate(frameOffset, offset * step, {
+			duration,
+			ease: [0.22, 1, 0.36, 1],
+		})
+		return () => animation.stop()
+	}, [frameOffset, offset, step, duration, reducedMotion])
+
+	return (
+		<motion.div
+			className="relative h-full w-full shadow-2xl [container-type:inline-size]"
+			style={{
+				scale,
+				opacity,
+				rotateY,
+				z,
+				transformPerspective:
+					isMobile && !reducedMotion ? PHOTO_PERSPECTIVE : undefined,
+			}}
+		>
+			{children}
+		</motion.div>
+	)
+}
 
 const getFallbackOriginRect = (): GalleryRect => {
 	const width = Math.min(window.innerWidth * 0.65, 420)
@@ -40,10 +217,14 @@ const getFallbackOriginRect = (): GalleryRect => {
 	}
 }
 
-const getViewportGalleryLayout = (fullscreenImage = false) =>
+const getViewportGalleryLayout = (
+	fullscreenImage = false,
+	compactMobileFilm = false,
+) =>
 	getGalleryLayout(
 		{ width: window.innerWidth, height: window.innerHeight },
 		fullscreenImage,
+		compactMobileFilm,
 	)
 
 const FestivalCarousel: React.FC<{
@@ -51,10 +232,13 @@ const FestivalCarousel: React.FC<{
 		photo: any
 		photographer?: any
 		artistName?: string
+		artistCreditSide?: 'left' | 'right'
 		curatorName?: string
 	}[]
 	initialIndex?: number
 	originRect?: GalleryRect | null
+	originSrc?: string
+	getThumbnail?: (index: number) => HTMLElement | null
 	onClose?: () => void
 	variant?: 'gallery' | 'image'
 	imageFit?: 'cover' | 'contain'
@@ -62,11 +246,14 @@ const FestivalCarousel: React.FC<{
 	photos,
 	initialIndex = 0,
 	originRect,
+	originSrc,
+	getThumbnail,
 	onClose,
 	variant = 'gallery',
 	imageFit = 'cover',
 }) => {
 	const isPlainImage = variant === 'image'
+	const isExhibition = isPlainImage && imageFit === 'contain'
 	const fillsViewport = isPlainImage && imageFit === 'cover'
 	const shouldReduceMotion = useReducedMotion() === true
 	const [position, setPosition] = useState(initialIndex)
@@ -77,7 +264,7 @@ const FestivalCarousel: React.FC<{
 	>('opening')
 	const [layout, setLayout] = useState<GalleryLayout | null>(() => {
 		if (typeof window === 'undefined') return null
-		return getViewportGalleryLayout(fillsViewport)
+		return getViewportGalleryLayout(fillsViewport, !isPlainImage)
 	})
 	const [imageFrame, setImageFrame] = useState<GalleryRect | null>(() => {
 		if (typeof window === 'undefined') return null
@@ -86,8 +273,12 @@ const FestivalCarousel: React.FC<{
 	const [hasFrameTransition, setHasFrameTransition] = useState(false)
 	const [backdropOpacity, setBackdropOpacity] = useState(0)
 	const isClosingRef = useRef(false)
+	const filmOffset = useMotionValue(0)
+	const isSettlingRef = useRef(false)
+	const didPanRef = useRef(false)
 	const closeButtonRef = useRef<HTMLButtonElement>(null)
 	const dialogRef = useRef<HTMLDivElement>(null)
+	const returnFocusRef = useRef<HTMLElement | null>(null)
 	const openingPhotoRef = useRef(photos[initialIndex]?.photo)
 	const tPhotoGallery = useTranslations('photoGallery')
 
@@ -104,10 +295,14 @@ const FestivalCarousel: React.FC<{
 			? getActivePhotoRect(layout, activePhoto.photo, fillsViewport)
 			: null
 
+	useLayoutEffect(() => {
+		filmOffset.jump(0)
+	}, [position, filmOffset])
+
 	useEffect(() => {
 		if (!startRect) return
 
-		const nextLayout = getViewportGalleryLayout(fillsViewport)
+		const nextLayout = getViewportGalleryLayout(fillsViewport, !isPlainImage)
 		const nextActiveRect = getActivePhotoRect(
 			nextLayout,
 			openingPhotoRef.current,
@@ -139,21 +334,25 @@ const FestivalCarousel: React.FC<{
 			window.cancelAnimationFrame(firstFrame)
 			window.cancelAnimationFrame(secondFrame)
 		}
-	}, [fillsViewport, shouldReduceMotion, startRect])
+	}, [fillsViewport, isPlainImage, shouldReduceMotion, startRect])
 
 	useEffect(() => {
-		if (!isPlainImage) return
 		const trigger = document.activeElement
 		return () => {
-			if (trigger instanceof HTMLElement && trigger.isConnected) {
-				trigger.focus({ preventScroll: true })
+			const target = returnFocusRef.current ?? trigger
+			if (target instanceof HTMLElement && target.isConnected) {
+				target.focus({ preventScroll: true })
 			}
 		}
-	}, [isPlainImage])
+	}, [])
 
 	useEffect(() => {
 		if (isPlainImage && showChrome) {
-			closeButtonRef.current?.focus({ preventScroll: true })
+			const closeButton = closeButtonRef.current
+			const target = closeButton?.getClientRects().length
+				? closeButton
+				: dialogRef.current
+			target?.focus({ preventScroll: true })
 		}
 	}, [isPlainImage, showChrome])
 
@@ -195,16 +394,87 @@ const FestivalCarousel: React.FC<{
 		setPosition((previous) => previous - 1)
 	}, [])
 
+	const swipeDistance = (direction: number) => {
+		if (!layout || !activeRect) return 0
+		if (isExhibition) return layout.stage.width + layout.stage.left * 2
+		const next = photos[getWrappedIndex(position + direction, photos.length)]
+		const nextRect = getActivePhotoRect(layout, next.photo)
+		return (activeRect.width + nextRect.width) / 2 + layout.gap
+	}
+	const finishSwipe = (offset: number, velocity: number) => {
+		if (isSettlingRef.current || isClosingRef.current) return
+		const threshold = Math.min(60, window.innerWidth * 0.15)
+		const direction =
+			hasNavigation &&
+			(Math.abs(offset) > threshold || Math.abs(velocity) > 500)
+				? offset < 0
+					? 1
+					: -1
+				: 0
+		isSettlingRef.current = true
+		setNavigationDuration(0)
+		animate(filmOffset, direction ? -direction * swipeDistance(direction) : 0, {
+			duration: shouldReduceMotion ? 0 : 0.32,
+			ease: [0.22, 1, 0.36, 1],
+			onComplete: () => {
+				if (direction) setPosition((previous) => previous + direction)
+				isSettlingRef.current = false
+			},
+		})
+	}
+	const movePhoto = (offset: number) => {
+		if (isSettlingRef.current || isClosingRef.current || !hasNavigation) return
+		didPanRef.current = true
+		filmOffset.stop()
+		filmOffset.set(
+			Math.max(-swipeDistance(1), Math.min(swipeDistance(-1), offset)),
+		)
+	}
+
 	const handleClose = useCallback(() => {
 		if (isClosingRef.current) return
 		isClosingRef.current = true
+		filmOffset.stop()
+		filmOffset.jump(0)
+
+		let returnRect =
+			currentIndex === initialIndex && startRect
+				? startRect
+				: getFallbackOriginRect()
+		const thumbnail = getThumbnail?.(currentIndex)
+		if (thumbnail?.isConnected) {
+			let rect = thumbnail.getBoundingClientRect()
+			if (rect.width > 0 && rect.height > 0) {
+				// Move the page underneath the opaque viewer before measuring the landing.
+				if (
+					rect.top < 24 ||
+					rect.bottom > window.innerHeight - 24 ||
+					rect.left < 0 ||
+					rect.right > window.innerWidth
+				) {
+					thumbnail.scrollIntoView({
+						behavior: 'instant',
+						block: 'center',
+						inline: 'nearest',
+					})
+					rect = thumbnail.getBoundingClientRect()
+				}
+				returnRect = {
+					left: rect.left,
+					top: rect.top,
+					width: rect.width,
+					height: rect.height,
+				}
+				returnFocusRef.current = thumbnail
+			}
+		}
 
 		if (shouldReduceMotion) {
 			onClose?.()
 			return
 		}
 
-		const currentLayout = getViewportGalleryLayout(fillsViewport)
+		const currentLayout = getViewportGalleryLayout(fillsViewport, !isPlainImage)
 		const currentActiveRect = getActivePhotoRect(
 			currentLayout,
 			photos[currentIndex]?.photo,
@@ -221,7 +491,7 @@ const FestivalCarousel: React.FC<{
 			secondFrame = window.requestAnimationFrame(() => {
 				setHasFrameTransition(true)
 				setBackdropOpacity(0)
-				setImageFrame(startRect ?? getFallbackOriginRect())
+				setImageFrame(returnRect)
 			})
 		})
 
@@ -231,7 +501,11 @@ const FestivalCarousel: React.FC<{
 		}
 	}, [
 		currentIndex,
+		filmOffset,
 		fillsViewport,
+		getThumbnail,
+		initialIndex,
+		isPlainImage,
 		onClose,
 		photos,
 		shouldReduceMotion,
@@ -245,7 +519,7 @@ const FestivalCarousel: React.FC<{
 					dialogRef.current?.querySelectorAll<HTMLButtonElement>(
 						'button:not([disabled])',
 					) ?? [],
-				)
+				).filter((button) => button.getClientRects().length > 0)
 				const first = buttons[0]
 				const last = buttons[buttons.length - 1]
 				const active = document.activeElement
@@ -287,7 +561,7 @@ const FestivalCarousel: React.FC<{
 
 	useEffect(() => {
 		const handleResize = () => {
-			const nextLayout = getViewportGalleryLayout(fillsViewport)
+			const nextLayout = getViewportGalleryLayout(fillsViewport, !isPlainImage)
 			setNavigationDuration(0)
 			setLayout(nextLayout)
 			if (overlayMode !== 'closing' && (showChrome || hasFrameTransition)) {
@@ -302,6 +576,7 @@ const FestivalCarousel: React.FC<{
 	}, [
 		activePhoto?.photo,
 		fillsViewport,
+		isPlainImage,
 		overlayMode,
 		showChrome,
 		hasFrameTransition,
@@ -340,13 +615,21 @@ const FestivalCarousel: React.FC<{
 	if (!activePhoto || !imageFrame || !activeRect || !layout) return null
 
 	const frames = isPlainImage ? [] : getGalleryFrames(layout, photos, position)
+	const exhibitionFrames = isExhibition
+		? getExhibitionFrames(layout, photos, position).filter(
+				(frame) => showChrome || frame.page === position,
+			)
+		: []
 	const stripBottom = layout.stage.top
+	const { compactFilm, perforations } = layout
+	const stageTop = compactFilm ? 0 : layout.stage.top
 
 	return (
 		<div
 			ref={dialogRef}
 			data-gallery-dialog
-			className="group/fullscreen-image pointer-events-none fixed inset-0 z-[10000]"
+			className="group/fullscreen-image pointer-events-none fixed inset-0 z-[10000] outline-none"
+			tabIndex={isPlainImage ? -1 : undefined}
 			role={isPlainImage ? 'dialog' : undefined}
 			aria-modal={isPlainImage ? true : undefined}
 			aria-label={
@@ -356,18 +639,107 @@ const FestivalCarousel: React.FC<{
 			<div
 				className="pointer-events-auto absolute inset-0"
 				style={{
-					backgroundColor: isPlainImage ? 'var(--color-dark)' : FILM_SURFACE,
+					backgroundColor:
+						isPlainImage || compactFilm ? FILM_DARK : FILM_SURFACE,
 					opacity: backdropOpacity,
 					transition: shouldReduceMotion ? 'none' : GALLERY_BACKDROP_TRANSITION,
 				}}
 			/>
 
+			{isExhibition && (
+				<div
+					data-exhibition-stage
+					className="pointer-events-auto absolute inset-0 z-20 overflow-hidden"
+					onPointerDownCapture={() => {
+						didPanRef.current = false
+					}}
+					onClick={() => {
+						if (showChrome && !didPanRef.current) handleClose()
+					}}
+				>
+					<motion.div
+						className="absolute inset-0 touch-none"
+						style={{ x: filmOffset }}
+					>
+						{exhibitionFrames.map(({ page, index, rect }) => (
+							<div
+								key={page}
+								data-exhibition-photo={index + 1}
+								data-active={page === position}
+								aria-hidden={page !== position}
+								className="absolute"
+								style={{
+									...(showChrome ? rect : imageFrame),
+									transition: shouldReduceMotion
+										? 'none'
+										: showChrome
+											? navigationDuration > 0
+												? 'left 550ms cubic-bezier(0.22, 1, 0.36, 1), top 550ms cubic-bezier(0.22, 1, 0.36, 1), width 550ms cubic-bezier(0.22, 1, 0.36, 1), height 550ms cubic-bezier(0.22, 1, 0.36, 1)'
+												: 'none'
+											: hasFrameTransition
+												? GALLERY_FRAME_TRANSITION
+												: 'none',
+								}}
+								onTransitionEnd={handleFrameTransitionEnd}
+								onClick={(event) => event.stopPropagation()}
+							>
+								<ExhibitionPhotoMotion
+									offset={page - position}
+									step={layout.stage.width + layout.stage.left * 2}
+									drag={filmOffset}
+									duration={showChrome ? navigationDuration : 0}
+									reducedMotion={shouldReduceMotion}
+								>
+									<ZoomablePhoto
+										active={showChrome && page === position}
+										onClose={handleClose}
+										onSwipeMove={movePhoto}
+										onSwipeEnd={finishSwipe}
+									>
+										{(resolutionScale) => (
+											<Img
+												image={photos[index].photo}
+												alt={photos[index].artistName || `Photo ${index + 1}`}
+												sizes={`${Math.ceil(rect.width * resolutionScale)}px`}
+												previewSrc={
+													index === initialIndex ? originSrc : undefined
+												}
+												placeholderFit="contain"
+												fetchPriority={page === position ? 'high' : 'low'}
+												className="h-full w-full object-contain"
+												loading="eager"
+												draggable={false}
+											/>
+										)}
+									</ZoomablePhoto>
+									{photos[index].artistName && (
+										<div
+											data-exhibition-credit
+											className={`pointer-events-none absolute -bottom-2 z-30 flex max-w-[84%] items-start lg:bottom-auto lg:left-[8%] lg:right-auto lg:top-0 lg:-translate-y-1/2 lg:flex-col ${photos[index].artistCreditSide === 'right' ? 'right-[8%]' : 'left-[8%]'}`}
+										>
+											<ArtistCreditPills value={photos[index].artistName} compact />
+										</div>
+									)}
+								</ExhibitionPhotoMotion>
+							</div>
+						))}
+					</motion.div>
+				</div>
+			)}
+
 			{showChrome && (
 				<div
 					className="pointer-events-auto absolute inset-0 overflow-hidden"
-					onClick={isPlainImage ? handleClose : undefined}
+					onPointerDownCapture={() => {
+						didPanRef.current = false
+					}}
+					onClick={() => {
+						if ((isPlainImage || compactFilm) && !didPanRef.current)
+							handleClose()
+					}}
 				>
 					{!isPlainImage &&
+						!compactFilm &&
 						['top', 'bottom'].map((edge) => (
 							<div
 								key={edge}
@@ -399,12 +771,21 @@ const FestivalCarousel: React.FC<{
 
 					{photographer && (
 						<motion.h3
-							className="absolute z-40 -translate-y-1/2 -rotate-2 rounded-md px-2 text-sm font-medium tracking-tighter sm:text-base"
+							className="absolute z-40 hidden -translate-y-1/2 -rotate-2 rounded-md px-2 text-sm font-medium tracking-tighter sm:text-base lg:block"
 							initial={false}
 							animate={{
-								left: activeRect.left + activeRect.width * 0.05,
-								top: activeRect.top,
-								maxWidth: Math.max(0, activeRect.width * 0.95 - 56),
+								left: compactFilm
+									? activeRect.left - perforations.padding + 12
+									: activeRect.left + activeRect.width * 0.05,
+								top: compactFilm
+									? activeRect.top - perforations.railHeight + 12
+									: activeRect.top,
+								maxWidth: Math.max(
+									0,
+									compactFilm
+										? activeRect.width - 8
+										: activeRect.width * 0.95 - 56,
+								),
 							}}
 							transition={{
 								duration: shouldReduceMotion ? 0 : navigationDuration,
@@ -424,52 +805,115 @@ const FestivalCarousel: React.FC<{
 						<div
 							data-gallery-stage
 							className="absolute inset-x-0 overflow-hidden"
-							style={{ top: layout.stage.top, height: layout.stage.height }}
+							style={{
+								top: stageTop,
+								height:
+									layout.stage.height +
+									(compactFilm ? layout.stage.top * 2 : 0),
+							}}
 						>
-							{frames.map(({ page, index, rect }) => (
-								<motion.div
-									key={page}
-									data-gallery-photo={index + 1}
-									data-active={page === position}
-									className="absolute overflow-hidden"
-									initial={false}
-									animate={{
-										...rect,
-										top: rect.top - layout.stage.top,
-										opacity: page === position ? 1 : 0.45,
-									}}
-									transition={{
-										duration: shouldReduceMotion ? 0 : navigationDuration,
-										ease: [0.22, 1, 0.36, 1],
-									}}
-								>
-									<Img
-										image={photos[index].photo}
-										alt={`Photo ${index + 1}`}
-										sizes={`${Math.ceil(rect.width)}px`}
-										placeholderFit="contain"
-										fetchPriority={page === position ? 'high' : 'low'}
-										className="h-full w-full object-contain"
-										loading={Math.abs(page - position) <= 1 ? 'eager' : 'lazy'}
-									/>
-									{page !== position && (
-										<button
-											type="button"
-											className="absolute inset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
-											onClick={() => {
-												setNavigationDuration(0.55)
-												setPosition(page)
-											}}
-											aria-label={`Go to photo ${index + 1}`}
-											tabIndex={Math.abs(page - position) === 1 ? 0 : -1}
-										/>
-									)}
-								</motion.div>
-							))}
+							<motion.div
+								className="absolute inset-0"
+								style={{
+									x: filmOffset,
+									touchAction: compactFilm ? 'none' : undefined,
+								}}
+							>
+								{frames.map(({ page, index, rect }) => (
+									<GalleryPhotoFrame
+										key={page}
+										page={page}
+										index={index}
+										position={position}
+										rect={rect}
+										layout={layout}
+										drag={filmOffset}
+										duration={navigationDuration}
+										reducedMotion={shouldReduceMotion}
+									>
+										{compactFilm &&
+											['top', 'bottom'].map((edge) => (
+												<div
+													key={edge}
+													aria-hidden="true"
+													data-gallery-perforations={edge}
+													data-edge={edge}
+													className={contactSheet.perforations}
+												>
+													{Array.from(
+														{ length: perforations.count },
+														(_, hole) => (
+															<span key={hole} />
+														),
+													)}
+												</div>
+											))}
+										<div className="relative h-full w-full">
+											<ZoomablePhoto
+												active={page === position}
+												onClose={handleClose}
+												onSwipeMove={movePhoto}
+												onSwipeEnd={finishSwipe}
+											>
+												{(resolutionScale) => (
+													<Img
+														image={photos[index].photo}
+														alt={`Photo ${index + 1}`}
+														sizes={`${Math.ceil(rect.width * resolutionScale)}px`}
+														placeholderFit="contain"
+														draggable={false}
+														fetchPriority={page === position ? 'high' : 'low'}
+														className="h-full w-full object-contain"
+														loading={
+															Math.abs(page - position) <= 1 ? 'eager' : 'lazy'
+														}
+													/>
+												)}
+											</ZoomablePhoto>
+											{compactFilm &&
+												['top', 'bottom'].map((edge) => (
+													<span
+														key={edge}
+														className={contactSheet.frameNumber}
+														data-edge={edge}
+														aria-hidden="true"
+													>
+														{String(index + 1).padStart(2, '0')}
+													</span>
+												))}
+											{compactFilm && hasNavigation && (
+												<span
+													className={contactSheet.frameNumber}
+													data-edge="bottom"
+													data-side="right"
+													aria-hidden="true"
+												>
+													{String(index + 1).padStart(2, '0')}/
+													{String(photos.length).padStart(2, '0')}
+												</span>
+											)}
+											{page !== position && (
+												<button
+													type="button"
+													className="absolute inset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
+													onClick={() => {
+														if (!didPanRef.current) {
+															setNavigationDuration(0.55)
+															setPosition(page)
+														}
+													}}
+													aria-label={`Go to photo ${index + 1}`}
+													tabIndex={Math.abs(page - position) === 1 ? 0 : -1}
+												/>
+											)}
+										</div>
+									</GalleryPhotoFrame>
+								))}
+							</motion.div>
 						</div>
 					)}
 
-					{isPlainImage && (
+					{isPlainImage && !isExhibition && (
 						<motion.div
 							key={currentIndex}
 							initial={
@@ -497,30 +941,18 @@ const FestivalCarousel: React.FC<{
 						</motion.div>
 					)}
 
-					{isPlainImage && activePhoto.artistName && (
+					{isPlainImage && !isExhibition && activePhoto.artistName && (
 						<div
-							className="pointer-events-none absolute z-30 flex -translate-y-1/2 flex-col items-start"
-							style={{
-								left: activeRect.left + activeRect.width * 0.08,
-								maxWidth: activeRect.width * 0.84,
-								top: activeRect.top,
-							}}
+							className="pointer-events-none absolute z-30"
+							style={activeRect}
 						>
-							{richTextLines(activePhoto.artistName, 26).map((line, index) => (
-								<span
-									key={index}
-									style={{
-										rotate: photoCreditRotation(activePhoto.artistName, index),
-									}}
-									className={`relative rounded-md border-2 border-dark bg-grayDark px-1.5 py-0 text-center text-dark ${FILM_LABEL_TEXT} ${index === 0 ? 'z-10' : '-mt-[0.15rem]'}`}
-								>
-									<RichText value={line} inline allowLinks={false} />
-								</span>
-							))}
+							<div className="absolute -bottom-2 left-[8%] flex max-w-[84%] items-start lg:bottom-auto lg:top-0 lg:-translate-y-1/2 lg:flex-col">
+								<ArtistCreditPills value={activePhoto.artistName} />
+							</div>
 						</div>
 					)}
 
-					{hasNavigation && !isPlainImage && (
+					{hasNavigation && !isPlainImage && !compactFilm && (
 						<>
 							<button
 								type="button"
@@ -552,7 +984,18 @@ const FestivalCarousel: React.FC<{
 						</>
 					)}
 
-					{hasNavigation && !isPlainImage && (
+					{hasNavigation && compactFilm && (
+						<div
+							aria-live="polite"
+							aria-atomic="true"
+							className="sr-only"
+						>
+							{String(currentIndex + 1).padStart(2, '0')} /{' '}
+							{String(photos.length).padStart(2, '0')}
+						</div>
+					)}
+
+					{hasNavigation && !isPlainImage && !compactFilm && (
 						<div
 							className="absolute left-1/2 z-40 -translate-x-1/2 rounded-md px-3 py-1 text-base font-medium"
 							style={{
@@ -573,7 +1016,7 @@ const FestivalCarousel: React.FC<{
 								event.stopPropagation()
 								handleClose()
 							}}
-							className="pointer-events-none absolute right-8 top-8 z-50 flex h-8 w-8 items-center justify-center rounded-md border-2 border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark focus:outline-none focus-visible:pointer-events-auto focus-visible:opacity-100 group-hover/fullscreen-image:pointer-events-auto group-hover/fullscreen-image:opacity-100 [@media(hover:none)]:pointer-events-auto [@media(hover:none)]:opacity-100"
+							className={`pointer-events-none absolute right-8 top-8 z-50 flex h-8 w-8 items-center justify-center rounded-md border-2 border-primary bg-dark/90 text-[color:var(--color-primary)] opacity-0 shadow-md backdrop-blur transition-[color,background-color,opacity] duration-200 hover:bg-primary hover:text-dark focus:outline-none focus-visible:pointer-events-auto focus-visible:opacity-100 group-hover/fullscreen-image:pointer-events-auto group-hover/fullscreen-image:opacity-100 [@media(hover:none)]:pointer-events-auto [@media(hover:none)]:opacity-100 ${isExhibition ? 'max-lg:hidden' : ''}`}
 							aria-label="Collapse fullscreen image"
 							initial={{ scale: 0.8 }}
 							animate={{ scale: 1 }}
@@ -585,11 +1028,11 @@ const FestivalCarousel: React.FC<{
 						>
 							<Minimize2 aria-hidden="true" className="h-5 w-5" />
 						</motion.button>
-					) : (
+					) : compactFilm ? null : (
 						<motion.button
 							type="button"
 							onClick={handleClose}
-							className="absolute z-50 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-2 shadow-md transition-opacity hover:opacity-80 focus:outline-none"
+							className="absolute right-8 top-8 z-50 flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border-2 shadow-md transition-opacity hover:opacity-80 focus:outline-none"
 							style={{
 								backgroundColor: FILM_LIGHT,
 								borderColor: FILM_SURFACE,
@@ -601,21 +1044,11 @@ const FestivalCarousel: React.FC<{
 								opacity: 1,
 								scale: 1,
 								y: 0,
-								left: activeRect.left + activeRect.width - 48,
-								top: activeRect.top + 8,
 							}}
 							whileHover={{ scale: 1.06 }}
 							transition={{
 								duration: shouldReduceMotion ? 0 : 0.25,
 								ease: PHOTO_TRANSITION_EASE,
-								left: {
-									duration: shouldReduceMotion ? 0 : navigationDuration,
-									ease: [0.22, 1, 0.36, 1],
-								},
-								top: {
-									duration: shouldReduceMotion ? 0 : navigationDuration,
-									ease: [0.22, 1, 0.36, 1],
-								},
 							}}
 						>
 							<Minimize2 aria-hidden="true" className="h-5 w-5" />
@@ -624,7 +1057,7 @@ const FestivalCarousel: React.FC<{
 				</div>
 			)}
 
-			{!showChrome && (
+			{!showChrome && !isExhibition && (
 				<div
 					className="pointer-events-auto fixed overflow-hidden"
 					style={{

@@ -86,6 +86,60 @@
 	flex: 1;
 }
 
+/* Open above the mobile trigger without changing the bottom bar's dimensions. */
+.vertical {
+	border: 2px solid var(--color-primary);
+	border-radius: 0.5rem;
+}
+
+.vertical[data-open='true'] {
+	border-top-color: transparent;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.vertical .trigger {
+	min-width: 2.25rem;
+}
+
+.vertical .trigger,
+.vertical .option {
+	padding-inline: 0.25rem;
+	font-size: 1.125rem;
+}
+
+.vertical .drawer {
+	position: absolute;
+	bottom: 100%;
+	left: -2px;
+	width: calc(100% + 4px);
+	height: 0;
+	transition: height var(--language-slide);
+}
+
+.vertical[data-open='true'] .drawer {
+	width: calc(100% + 4px);
+	height: 4.125rem;
+}
+
+.vertical .menu {
+	width: 100%;
+	height: 4.125rem;
+	flex-direction: column;
+	gap: 0;
+	border: 2px solid var(--color-primary);
+	border-bottom: 0;
+	border-radius: 0.5rem 0.5rem 0 0;
+	padding: 0;
+	background: var(--color-dark);
+	transform: translateY(0.625rem);
+}
+
+.vertical .option {
+	width: 100%;
+	min-height: 0;
+}
+
 @media (hover: hover) {
 	.trigger:hover,
 	.option:hover {
@@ -126,6 +180,7 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.drawer,
+	.vertical .drawer,
 	.menu,
 	.trigger,
 	.option {

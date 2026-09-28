@@ -15,7 +15,9 @@ const MemoireLogoMobile: React.FC<MemoireLogoMobileProps> = ({
 	className,
 }) => (
 	<svg
-		className={className}
+		// Cover the incoming timeline arrow at the icon's actual outline, just
+		// as the edition cards cover arrows at their borders.
+		className={`relative z-20 ${className ?? ''}`}
 		viewBox="0 0 321 62"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"

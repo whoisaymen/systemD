@@ -7,6 +7,7 @@ import Img, { getImageDimensions } from '@/ui/Img'
 import RichText from '@/components/common/RichText'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
 import NewArrowRightFull from '../common/NewArrowRightFull'
+import NewArrowRightSimple from '../common/NewArrowRightSimple'
 import PageSkeleton from '@/components/loading/PageSkeleton'
 import { FILM_LABEL_TEXT } from '../film/filmLabelStyles'
 import {
@@ -130,6 +131,8 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	const shouldReduceMotion = useReducedMotion()
 	const containerRef = useRef<HTMLDivElement>(null)
 	const wheelLockRef = useRef(false)
+	const touchStartRef = useRef<{ id: number; x: number; y: number } | null>(null)
+	const suppressTouchClickRef = useRef(false)
 	const transitionTimersRef = useRef<number[]>([])
 	const [containerWidth, setContainerWidth] = useState(0)
 	const [windowWidth, setWindowWidth] = useState(0)
@@ -293,6 +296,9 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 	const shapeHeight = activeSize * (isDesktop ? 0.68 : 0.7)
 	const centerX = viewportWidth / 2
 	const cardGap = isDesktop ? 10 : 8
+	// Match the biography's px-4 inset and keep navigation close to the card stage.
+	const mobileArrowInset = '1rem'
+	const mobileArrowTop = `calc(3rem + ${stageHeight}px - 0.75rem)`
 	const slotCenters = new Map([[0, centerX]])
 	for (const direction of [-1, 1]) {
 		let edge = centerX + direction * (activeWidth / 2)
@@ -337,6 +343,63 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 
 	const goToPrev = () => navigate(-1)
 	const goToNext = () => navigate(1)
+
+	const cancelTouch = () => {
+		touchStartRef.current = null
+		suppressTouchClickRef.current = true
+	}
+
+	const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+		touchStartRef.current = null
+		suppressTouchClickRef.current = false
+		if (event.touches.length !== 1) {
+			cancelTouch()
+			return
+		}
+		if (isDesktop || totalMembers <= 1) return
+		if (animationPhase !== 'idle' || isNormalizingSlots) {
+			cancelTouch()
+			return
+		}
+
+		const touch = event.touches[0]
+		touchStartRef.current = {
+			id: touch.identifier,
+			x: touch.clientX,
+			y: touch.clientY,
+		}
+	}
+
+	const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+		const start = touchStartRef.current
+		if (!start) return
+		const touch = event.touches[0]
+		if (event.touches.length !== 1 || touch.identifier !== start.id) {
+			cancelTouch()
+			return
+		}
+		const deltaX = Math.abs(touch.clientX - start.x)
+		const deltaY = Math.abs(touch.clientY - start.y)
+		if (Math.max(deltaX, deltaY) > 10) suppressTouchClickRef.current = true
+		// Once a gesture becomes a page scroll, it cannot turn into a swipe.
+		if (deltaY > 10 && deltaY > deltaX) cancelTouch()
+	}
+
+	const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+		const start = touchStartRef.current
+		touchStartRef.current = null
+		if (!start || event.touches.length) return
+		const touch = Array.from(event.changedTouches).find(
+			({ identifier }) => identifier === start.id,
+		)
+		if (!touch) return
+		const deltaX = touch.clientX - start.x
+		const deltaY = touch.clientY - start.y
+		if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY) * 1.35) return
+
+		suppressTouchClickRef.current = true
+		navigate(deltaX < 0 ? 1 : -1)
+	}
 
 	const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
 		if (
@@ -391,8 +454,20 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 			)}
 			<div
 				ref={containerRef}
-				className="shrink-0 overflow-hidden pt-12 lg:mt-auto lg:pt-3"
+				className="shrink-0 select-none overflow-hidden pt-12 lg:mt-auto lg:pt-3"
+				style={{ touchAction: isDesktop ? 'auto' : 'pan-y pinch-zoom' }}
 				onWheel={handleWheel}
+				onTouchStart={handleTouchStart}
+				onTouchMove={handleTouchMove}
+				onTouchEnd={handleTouchEnd}
+				onTouchCancel={cancelTouch}
+				onClickCapture={(event) => {
+					if (suppressTouchClickRef.current && event.detail !== 0) {
+						event.preventDefault()
+						event.stopPropagation()
+						suppressTouchClickRef.current = false
+					}
+				}}
 			>
 				<div className="relative w-full" style={{ height: stageHeight }}>
 					{bufferShapes.map(({ member, slot }) => {
@@ -428,7 +503,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 								}
 							>
 								<motion.div
-									className="h-full w-full rounded-md bg-grayDark shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
+									className="h-full w-full rounded-md bg-grayDark lg:shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
 									style={{ transformOrigin: 'center' }}
 									animate={{
 										scaleX: shouldPulse ? pulse.animate.scaleX : 1,
@@ -517,8 +592,8 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 								<motion.div
 									className={`relative h-full w-full overflow-hidden rounded-md border-primary bg-grayDark ${
 										isActive
-											? 'shadow-[0_8px_20px_rgba(0,0,0,0.09)]'
-											: 'shadow-[0_14px_34px_rgba(0,0,0,0.16)]'
+											? 'lg:shadow-[0_8px_20px_rgba(0,0,0,0.09)]'
+											: 'lg:shadow-[0_14px_34px_rgba(0,0,0,0.16)]'
 									}`}
 									style={{ transformOrigin: 'center' }}
 									animate={{
@@ -593,7 +668,7 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 			</div>
 
 			<div
-				className="team-member-controls relative z-30 mx-auto w-[calc(100%-2rem)] max-w-[38rem] shrink-0"
+				className="team-member-controls z-30 mx-auto w-[calc(100%-2rem)] max-w-[38rem] shrink-0 lg:relative"
 				style={{ marginTop: -nameHeight / 2 }}
 			>
 				<div
@@ -638,18 +713,23 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 						</motion.div>
 					</AnimatePresence>
 				</div>
-				<div className="team-member-role-controls mx-auto mt-1 flex w-fit max-w-full items-center justify-center gap-2">
+				<div className="team-member-role-controls mx-auto mt-1 flex min-h-7 w-fit max-w-[76%] items-center justify-center gap-2 lg:max-w-full">
 					<button
 						type="button"
 						onClick={goToPrev}
-						className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-sm transition-transform before:absolute before:-inset-1.5 hover:-translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
+						className="absolute flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-[1.5px] border-primary bg-dark text-primary shadow-sm transition-[opacity,transform] before:absolute before:-inset-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none lg:relative lg:h-8 lg:w-8 lg:rounded-sm lg:border-0 lg:bg-transparent lg:shadow-none lg:hover:-translate-x-1 lg:hover:opacity-100 lg:focus-visible:outline-offset-4"
+						style={isDesktop ? undefined : { top: mobileArrowTop, left: mobileArrowInset }}
 						aria-label="Previous team member"
 						disabled={totalMembers <= 1}
 					>
+						<NewArrowRightSimple
+							theme={{ stroke: 'currentColor' }}
+							className="h-3.5 w-3.5 rotate-180 lg:hidden"
+						/>
 						<NewArrowRightFull
 							theme={{ stroke: 'var(--color-primary)' }}
 							strokeWidth={8}
-							className="h-auto w-6 rotate-180"
+							className="hidden h-auto w-6 rotate-180 lg:block"
 						/>
 					</button>
 					<AnimatePresence mode="wait" initial={false}>
@@ -669,14 +749,19 @@ export default function TeamCarousel({ persons, language }: TeamCarouselProps) {
 					<button
 						type="button"
 						onClick={goToNext}
-						className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-sm transition-transform before:absolute before:-inset-1.5 hover:translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none"
+						className="absolute flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-[1.5px] border-primary bg-dark text-primary shadow-sm transition-[opacity,transform] before:absolute before:-inset-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:invisible motion-reduce:transform-none lg:relative lg:h-8 lg:w-8 lg:rounded-sm lg:border-0 lg:bg-transparent lg:shadow-none lg:hover:translate-x-1 lg:hover:opacity-100 lg:focus-visible:outline-offset-4"
+						style={isDesktop ? undefined : { top: mobileArrowTop, right: mobileArrowInset }}
 						aria-label="Next team member"
 						disabled={totalMembers <= 1}
 					>
+						<NewArrowRightSimple
+							theme={{ stroke: 'currentColor' }}
+							className="h-3.5 w-3.5 lg:hidden"
+						/>
 						<NewArrowRightFull
 							theme={{ stroke: 'var(--color-primary)' }}
 							strokeWidth={8}
-							className="h-auto w-6"
+							className="hidden h-auto w-6 lg:block"
 						/>
 					</button>
 				</div>

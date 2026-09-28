@@ -547,6 +547,18 @@
 		background-color: var(--color-grayDark);
 		color: var(--color-dark);
 	}
+
+	@media (max-width: 1023px) {
+		.festival-film-list tbody tr:is(:hover, :active, :focus-within),
+		.festival-film-list tbody tr:is(:hover, :active, :focus-within) > td {
+			background-color: var(--color-primary);
+			color: var(--color-dark);
+		}
+
+		.festival-film-list tbody tr:is(:hover, :active, :focus-within) .text-grayDark {
+			color: var(--color-dark);
+		}
+	}
 }
 
 @layer utilities {
@@ -736,9 +748,8 @@
 
 	@media (max-width: 1023px) {
 		html[data-theme='system-d-neon-black']
-			.theme-bigbang-story-tabs
-			button[aria-pressed='true'] {
-			color: var(--color-theme-text, var(--color-primary)) !important;
+			.interactive-title-motion:is([aria-pressed='true'], [data-state='open']) {
+			color: var(--color-dark) !important;
 		}
 	}
 

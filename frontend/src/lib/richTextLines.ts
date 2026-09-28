@@ -60,7 +60,11 @@ export function richTextWordTiles(value: any): any[][] {
 }
 
 /** Wrap title pills without discarding editor marks or link annotations. */
-export function richTextLines(value: any, maxLength: number): any[][] {
+export function richTextLines(
+	value: any,
+	maxLength: number,
+	firstLineMaxLength = maxLength,
+): any[][] {
 	const result: any[][] = []
 	for (const block of textToRichText(value)) {
 		const children = block.children ?? []
@@ -70,9 +74,10 @@ export function richTextLines(value: any, maxLength: number): any[][] {
 			while (/\s/.test(text[start] ?? '') && start < text.length) start++
 			if (start >= text.length) break
 			let end = text.length
-			if (end - start > maxLength) {
-				const space = text.lastIndexOf(' ', start + maxLength)
-				end = space > start ? space : start + maxLength
+			const lineMaxLength = result.length === 0 ? firstLineMaxLength : maxLength
+			if (end - start > lineMaxLength) {
+				const space = text.lastIndexOf(' ', start + lineMaxLength)
+				end = space > start ? space : start + lineMaxLength
 			}
 			let trimmedEnd = end
 			while (trimmedEnd > start && /\s/.test(text[trimmedEnd - 1])) trimmedEnd--

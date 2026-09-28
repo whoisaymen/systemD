@@ -6,6 +6,7 @@ export type GalleryRect = {
 }
 
 export type GalleryLayout = {
+	compactFilm: boolean
 	gap: number
 	stage: GalleryRect
 	perforations: {
@@ -20,28 +21,43 @@ export type GalleryLayout = {
 export function getGalleryLayout(
 	viewport: { width: number; height: number },
 	fullscreenImage = false,
+	compactMobileFilm = false,
 ): GalleryLayout {
 	const { width, height } = viewport
 	const isDesktop = width >= 1024
-	const padding = Math.min(16, Math.max(4, height * 0.018))
-	const holeHeight = Math.min(64, Math.max(8, height * 0.065), width / 24)
-	const holeWidth = holeHeight * 0.75
-	const railHeight = padding * 2 + holeHeight
+	const compactFilm = compactMobileFilm && !isDesktop && !fullscreenImage
+	const padding = compactFilm ? 8 : Math.min(16, Math.max(4, height * 0.018))
+	const holeHeight = compactFilm
+		? 20
+		: Math.min(64, Math.max(8, height * 0.065), width / 24)
+	const holeWidth = compactFilm ? 14 : holeHeight * 0.75
+	const railHeight = compactFilm ? 36 : padding * 2 + holeHeight
 	const clearance = Math.min(16, Math.max(6, height * 0.014))
+	// Leave space outside the film for tapping to dismiss the mobile viewer.
+	const mobileInset = railHeight + 24
 	// The photos and perforations share these bounds, including on short screens.
 	const verticalInset = Math.min(
 		height * 0.4,
 		Math.max(
 			railHeight + clearance,
-			isDesktop ? Math.max(72, height * 0.1) : Math.max(84, height * 0.16),
+			compactFilm
+				? mobileInset
+				: isDesktop
+					? Math.max(72, height * 0.1)
+					: Math.max(84, height * 0.16),
 		),
 	)
-	const horizontalInset = Math.min(isDesktop ? 24 : 16, width * 0.05)
+	const horizontalInset = compactFilm
+		? padding
+		: Math.min(isDesktop ? 24 : 16, width * 0.05)
 
 	return {
+		compactFilm,
 		gap: isDesktop ? Math.max(28, width * 0.02) : Math.max(16, width * 0.04),
 		perforations: {
-			count: Math.max(2, Math.floor((width - padding * 2) / (holeWidth * 1.8))),
+			count: compactFilm
+				? 12
+				: Math.max(2, Math.floor((width - padding * 2) / (holeWidth * 1.8))),
 			width: holeWidth,
 			height: holeHeight,
 			padding,
@@ -144,4 +160,24 @@ export function getGalleryFrames(
 		}
 	}
 	return frames
+}
+
+/** A fixed-size window keeps large exhibitions from loading every full-size photo. */
+export function getExhibitionFrames(
+	layout: GalleryLayout,
+	photos: { photo: any }[],
+	position: number,
+) {
+	if (!photos.length) return []
+	const viewportWidth = layout.stage.width + layout.stage.left * 2
+	return (photos.length === 1 ? [0] : [-1, 0, 1]).map((offset) => {
+		const page = position + offset
+		const index = getWrappedIndex(page, photos.length)
+		const rect = getActivePhotoRect(layout, photos[index].photo)
+		return {
+			page,
+			index,
+			rect: { ...rect, left: rect.left + offset * viewportWidth },
+		}
+	})
 }

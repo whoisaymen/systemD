@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { useTranslations } from 'next-intl'
 import Img from '@/ui/Img'
 import Link from 'next/link'
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { IoGrid, IoList } from 'react-icons/io5'
 import {
@@ -18,11 +18,14 @@ import ExhibitionCollage from './ExhibitionCollage'
 import { photoCreditRotation } from './photoCreditStyles'
 import BackToTopButton from '../common/BackToTop'
 import RichText from '@/components/common/RichText'
+import type { MobileSection } from '@/components/common/MobileSectionMenu'
+import MobileEditionMenu from './MobileEditionMenu'
 import OverflowText from '@/components/common/OverflowText'
 import {
 	EDITORIAL_BODY_TEXT,
 	EDITORIAL_COPY_WIDTH,
 	EDITORIAL_DESKTOP_TAB_STYLE,
+	EDITORIAL_MOBILE_TAB_STYLE,
 	EDITORIAL_RICH_TEXT_HEADINGS,
 } from '@/components/common/editorialStyles'
 import { localizedRichText, richTextToPlainText } from '@/lib/richText'
@@ -36,6 +39,7 @@ import {
 import { richTextLines } from '@/lib/richTextLines'
 import { useRouter, useSearchParams } from 'next/navigation'
 import NewArrowRightFull from '../common/NewArrowRightFull'
+import NewArrowRightSimple from '../common/NewArrowRightSimple'
 import FilterIcon from '../svgs/FilterIcon'
 import FilmHoverPreview from './FilmHoverPreview'
 import { FILM_LABEL_TEXT, FILM_TITLE_TEXT } from '../film/filmLabelStyles'
@@ -49,7 +53,7 @@ interface FestivalEditionContentProps {
 type EditionChapter = 'overview' | 'films' | 'exhibition' | 'photos' | 'jury'
 
 const FILM_FILTER_BUTTON_STYLE =
-	'relative flex items-center justify-center gap-1 rounded-md border-2 border-transparent px-1 py-0 transition-colors hover:bg-primary hover:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+	'relative flex shrink-0 items-center justify-center gap-px whitespace-nowrap rounded-md pl-1.5 pr-1 py-0.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary max-lg:pr-0.5 lg:hover:bg-primary lg:hover:text-dark'
 
 const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	festival,
@@ -65,10 +69,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		key: string
 		row: HTMLTableRowElement
 	} | null>(null)
-	const [isFilmSectionOpen, setIsFilmSectionOpen] = useState(false)
-	const [isPhotoGalleryOpen, setIsPhotoGalleryOpen] = useState(false)
 	const [photosPerRow, setPhotosPerRow] = useState(3)
-	const [photoExhibitionValue, setPhotoExhibitionValue] = useState('')
 	const [sortField, setSortField] = useState<FilmSortField>(DEFAULT_FILM_SORT)
 	const [sortOrder, setSortOrder] = useState<FilmSortOrder>(DEFAULT_FILM_ORDER)
 
@@ -77,8 +78,23 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	const [lightboxOriginRect, setLightboxOriginRect] =
 		useState<GalleryRect | null>(null)
 	const [showWinnersOnly, setShowWinnersOnly] = useState(false)
-	const [isJuryOpen, setIsJuryOpen] = useState(false)
 	const [activeChapter, setActiveChapter] = useState<EditionChapter>('overview')
+	const [mobileFilmHeadingHeight, setMobileFilmHeadingHeight] = useState(54)
+	const isFilmSectionOpen = activeChapter === 'films'
+	const isPhotoGalleryOpen = activeChapter === 'photos'
+	const isJuryOpen = activeChapter === 'jury'
+	const photoExhibitionValue = activeChapter === 'exhibition' ? 'item-3' : ''
+	const scrollToChapterRef = useRef(false)
+	const photoSheetRef = useRef<HTMLDivElement>(null)
+
+	useLayoutEffect(() => {
+		if (!scrollToChapterRef.current) return
+		scrollToChapterRef.current = false
+		document.getElementById('navbar-mobile')?.scrollIntoView({
+			behavior: 'smooth',
+			block: 'start',
+		})
+	}, [activeChapter])
 
 	const filmSelection = useMemo(
 		() => festival?.filmSelection ?? [],
@@ -95,12 +111,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	const juryMembers = useMemo(() => festival?.jury ?? [], [festival?.jury])
 
 	const selectChapter = (chapter: EditionChapter) => {
+		if (chapter === activeChapter) return
+		// Scroll after the new panel is laid out, so collapsing long content cannot interrupt it.
+		scrollToChapterRef.current = !window.matchMedia('(min-width: 1024px)').matches
 		setHoveredFilm(null)
 		setActiveChapter(chapter)
-		setIsFilmSectionOpen(chapter === 'films')
-		setPhotoExhibitionValue(chapter === 'exhibition' ? 'item-3' : '')
-		setIsPhotoGalleryOpen(chapter === 'photos')
-		setIsJuryOpen(chapter === 'jury')
 	}
 
 	const openLightbox = (index: number, trigger?: HTMLElement) => {
@@ -243,7 +258,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			// We're returning from a film, open the film selection and scroll to that film
 			sessionStorage.removeItem('currentFilmSlug')
 			sessionStorage.removeItem('festivalScroll')
-			setIsFilmSectionOpen(true)
 			setActiveChapter('films')
 
 			// Use a timeout to ensure the DOM is rendered
@@ -256,7 +270,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 		if (scroll) {
 			// Regular scroll restoration
-			setIsFilmSectionOpen(true)
 			setActiveChapter('films')
 			window.scrollTo(0, parseInt(scroll, 10))
 			sessionStorage.removeItem('festivalScroll')
@@ -265,7 +278,6 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 		// Otherwise, open dropdown if any filter/sort/view param is present
 		if (sort || order || winners || view) {
-			setIsFilmSectionOpen(true)
 			setActiveChapter('films')
 		}
 		// Run once on mount to hydrate URL state and restore scroll position.
@@ -282,11 +294,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			type="button"
 			onClick={() => selectChapter('overview')}
 			aria-expanded={activeChapter === 'overview'}
-			aria-controls="edition-description"
+			aria-controls="edition-panel-overview"
 			className="interactive-title-motion group relative flex flex-col items-start"
 		>
 			<span
-				className={`relative rotate-2 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-colors group-hover:border-grayDark group-hover:bg-grayDark group-hover:text-dark ${EDITORIAL_DESKTOP_TAB_STYLE} ${activeChapter === 'overview' ? 'border-grayDark bg-grayDark text-dark' : 'border-primary bg-dark text-primary'}`}
+				className={`relative rotate-2 rounded-md border-[3px] px-2 pr-4 text-center font-bold uppercase italic tracking-tighter shadow-sm transition-colors group-hover:border-grayDark group-hover:bg-grayDark group-hover:text-dark ${EDITORIAL_MOBILE_TAB_STYLE} ${EDITORIAL_DESKTOP_TAB_STYLE} ${activeChapter === 'overview' ? 'border-grayDark bg-grayDark text-dark' : 'border-primary bg-dark text-primary'}`}
 			>
 				<RichText value={festival.venue} inline allowLinks={false} />
 			</span>
@@ -295,13 +307,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 			</span>
 		</button>
 	)
-	const sectionLabel = (field: string, fallback: string) => (
-		<RichText
-			value={localizedRichText(festival[field], language) || fallback}
-			inline
-			allowLinks={false}
-		/>
-	)
+	const sectionLabel = (field: string, fallback: string) =>
+		localizedRichText(festival.menu?.[field], language) || fallback
 	const curators = expoPhoto.filter((expo: any) => richTextToPlainText(expo.curatorName))
 	const photographers = photoGallery.filter((gallery: any) => richTextToPlainText(gallery.photographer))
 	const exhibitionCredit = curators.length > 0 ? (
@@ -321,7 +328,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	)
 	const chapters: Array<{
 		key: EditionChapter
-		label: React.ReactNode
+		label: MobileSection['title']
 		titleClassName: string
 		credit?: React.ReactNode
 		creditRotation?: string
@@ -354,9 +361,18 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 	const visibleChapters = chapters.filter(
 		(chapter) => chapter.key !== 'jury' || juryMembers.length > 0,
 	)
+	const mobileSections: MobileSection[] = visibleChapters.map((chapter) => ({
+		value: chapter.key,
+		title: chapter.label,
+		rotation: 3,
+	}))
+	const mobileCredit = isPhotoGalleryOpen
+		? galleryCredit
+		: activeChapter === 'exhibition' ? exhibitionCredit : null
+	const mobileCreditRotation = mobileSections.length % 2 === 0 ? '-3deg' : '3deg'
 	const jurySection =
 		juryMembers.length > 0 ? (
-			<div className={activeChapter === 'jury' ? 'lg:block' : 'lg:hidden'}>
+			<div id="edition-panel-jury" className={activeChapter === 'jury' ? 'block' : 'hidden'}>
 				<Accordion
 					type="single"
 					collapsible
@@ -367,19 +383,20 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				>
 					<AccordionItem
 						value="jury"
-						className="festival-section-layer relative -mt-5 flex flex-col items-center justify-center pb-1 lg:-mt-2"
+						className="festival-section-layer relative flex flex-col items-center justify-center pb-1 lg:-mt-2"
 						data-active={isJuryOpen}
 						data-any-active={hasActiveSection}
 						data-stack="jury"
 					>
 						<AccordionTrigger
+							wrapperClassName="hidden"
 							data-active={isJuryOpen}
 							className="festival-section-label relative -rotate-[2deg] hover:border-grayDark lg:hidden"
 						>
-							{sectionLabel('juryTitle', tEdition('jury'))}
+							<RichText value={sectionLabel('juryTitle', tEdition('jury'))} inline allowLinks={false} />
 						</AccordionTrigger>
 						<AccordionContent className="w-full">
-							<ul className="festival-jury mx-auto my-8 grid w-full max-w-6xl grid-cols-1 items-start gap-x-[6%] gap-y-14 px-3 sm:grid-cols-2 sm:px-5 lg:my-4 lg:gap-y-16 lg:px-4">
+							<ul className="festival-jury mx-auto mb-8 mt-4 grid w-full max-w-6xl grid-cols-1 items-start gap-x-[6%] gap-y-14 sm:grid-cols-2 lg:my-4 lg:gap-y-16 lg:px-4">
 								{juryMembers.map((member: any, index: number) => {
 									const biography = localizedRichText(
 										member.biography,
@@ -442,20 +459,20 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 		) : null
 
 	return (
-		<div className="theme-main-content-surface section-folder-content section-folder-content--memoire no-scrollbar lg:shadowtest relative flex h-full w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-primary [container-type:inline-size] sm:justify-start sm:space-y-1 sm:px-0 sm:pt-1 lg:my-1 lg:h-[calc(100svh-8px)] lg:w-full lg:overflow-y-auto lg:rounded-xl lg:rounded-tr-none lg:bg-dark lg:pb-16 lg:pt-0">
+		<div className="theme-main-content-surface section-folder-content section-folder-content--memoire no-scrollbar lg:shadowtest relative flex h-full w-full flex-col space-y-4 rounded-md px-4 py-24 pt-0 text-base font-medium leading-tight tracking-tighter text-primary [container-type:inline-size] sm:justify-start sm:space-y-1 sm:pt-1 lg:my-1 lg:h-[calc(100svh-8px)] lg:w-full lg:overflow-y-auto lg:rounded-xl lg:rounded-tr-none lg:bg-dark lg:px-0 lg:pb-16 lg:pt-0">
 			<div className="fixed bottom-4 right-12 z-50 lg:bottom-2 lg:right-[16.5%]">
 				<BackToTopButton targetId="navbar-mobile" />
 			</div>
-			<div className="absolute -top-3 z-50 rounded-md text-3xl font-semibold text-dark lg:hidden">
+			<div className="absolute -top-3 left-4 z-50 lg:hidden">
 				<button
 					type="button"
 					onClick={() => router.push(`/${language}/memoire`)}
 					aria-label="Go back"
+					className="pointer-events-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-[1.5px] border-primary bg-dark text-primary shadow-sm transition-opacity hover:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 				>
-					<NewArrowRightFull
-						theme={{ stroke: 'var(--color-primary)' }}
-						strokeWidth={8}
-						className="h-auto w-10 translate-y-1 rotate-180 scale-[0.55]"
+					<NewArrowRightSimple
+						theme={{ stroke: 'currentColor' }}
+						className="h-3.5 w-3.5 rotate-180"
 					/>
 				</button>
 			</div>
@@ -476,7 +493,26 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				{overviewTrigger}
 			</div>
 
-			<div>
+			<div className="pt-3 max-[374px]:pt-4 lg:pt-0">
+				<MobileEditionMenu
+					year={festival.year}
+					id="edition-mobile-menu"
+					sections={mobileSections}
+					value={activeChapter}
+					onValueChange={(value) =>
+						selectChapter((value || 'overview') as EditionChapter)
+					}
+					panelIdPrefix="edition-panel"
+					collapsible
+					stickyActiveOnly={activeChapter !== 'overview'}
+					stickyBackground={isFilmSectionOpen}
+					activeCaption={
+						mobileCredit
+							? creditPill(mobileCredit, mobileCreditRotation)
+							: undefined
+					}
+					onStickyHeightChange={setMobileFilmHeadingHeight}
+				/>
 				<nav
 					className="relative hidden lg:mt-[clamp(0.75rem,1.45cqw,1rem)] lg:block lg:px-24 lg:py-[clamp(1.5rem,3.33cqw,4rem)]"
 					aria-label={tEdition('indexLabel')}
@@ -497,11 +533,16 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												: 'border-primary bg-dark text-primary'
 										}`}
 									>
-										{chapter.label}
+										<RichText value={chapter.label} inline allowLinks={false} />
 									</button>
 									{isActive && chapter.credit && (
-										<div className={`absolute left-1/2 top-full z-30 w-max max-w-[min(22rem,40cqw)] -translate-x-1/2 ${chapter.key === 'exhibition' ? 'mt-2' : 'mt-0.5'}`}>
-											{creditPill(chapter.credit, chapter.creditRotation ?? '0deg')}
+										<div
+											className={`absolute left-1/2 top-full z-30 w-max max-w-[min(22rem,40cqw)] -translate-x-1/2 ${chapter.key === 'exhibition' ? 'mt-2' : 'mt-0.5'}`}
+										>
+											{creditPill(
+												chapter.credit,
+												chapter.creditRotation ?? '0deg',
+											)}
 										</div>
 									)}
 								</li>
@@ -511,15 +552,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 				</nav>
 
 				<main
-					className={`min-w-0 lg:pt-6 ${activeChapter === 'overview' ? '' : 'lg:px-6'}`}
+					className={`min-w-0 max-lg:relative max-lg:z-0 ${isFilmSectionOpen ? 'pt-1' : 'pt-4'} lg:pt-6 ${activeChapter === 'overview' || activeChapter === 'exhibition' ? '' : 'lg:px-6'}`}
 				>
-					<div className="flex justify-center pt-8 lg:hidden">
-						{overviewTrigger}
-					</div>
-
 					<div
-						id="edition-description"
-						className={`${EDITORIAL_BODY_TEXT} ${EDITORIAL_COPY_WIDTH} mx-auto py-4 pt-3 text-primary lg:pb-8 lg:pt-[0.45em] ${
+						id="edition-panel-overview"
+						className={`${EDITORIAL_BODY_TEXT} ${EDITORIAL_COPY_WIDTH} mx-auto py-4 pt-3 text-primary max-lg:px-0 lg:pb-8 lg:pt-[0.45em] ${
 							activeChapter === 'overview' ? 'block' : 'hidden'
 						}`}
 					>
@@ -529,20 +566,24 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						/>
 
 						{festival.pressLink && (
-							<div className="mt-6">
+							<div className="mt-6 flex justify-end">
 								<a
 									href={festival.pressLink}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="underline underline-offset-4 hover:opacity-75"
+									className="inline-flex w-fit rounded border border-current px-1.5 py-0.5 normal-case leading-tight no-underline transition-opacity hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
 								>
-									{{ fr: 'Presse', en: 'Press', nl: 'Pers' }[language] || 'Presse'}
+									{{ fr: 'Presse', en: 'Press', nl: 'Pers' }[language] ||
+										'Presse'}
 								</a>
 							</div>
 						)}
 
 						{festival.aftermovieLink && activeChapter === 'overview' && (
-							<figure className="mt-8" aria-label={`Aftermovie ${festival.year}`}>
+							<figure
+								className="mt-8"
+								aria-label={`Aftermovie ${festival.year}`}
+							>
 								<div className="overflow-hidden bg-dark">
 									<div className="aspect-video">
 										<AftermoviePlayer
@@ -557,111 +598,120 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					</div>
 
 					<div
-						className={`mb-8 pt-8 lg:pt-0 ${
-							activeChapter === 'films' ? 'lg:block' : 'lg:hidden'
-						}`}
-						id="film-selection"
+						className={`mb-8 ${activeChapter === 'films' ? 'block' : 'hidden'}`}
+						id="edition-panel-films"
 					>
 						<div
-							className="festival-section-layer sticky top-[0px] flex flex-col items-center justify-center bg-dark pt-2 lg:sticky lg:mx-0 lg:items-stretch lg:pt-0"
+							className="festival-section-layer sticky top-[var(--film-heading-height)] flex flex-col items-center justify-center bg-dark pb-2 lg:top-0 lg:mx-0 lg:items-stretch lg:pb-0"
+							style={
+								{
+									'--film-heading-height': `${mobileFilmHeadingHeight}px`,
+								} as CSSProperties
+							}
 							data-active={isFilmSectionOpen}
 							data-any-active={hasActiveSection}
 							data-stack="film"
 						>
-							<div className="flex items-center justify-center lg:hidden">
-								<button
-									type="button"
-									aria-expanded={isFilmSectionOpen}
-									onClick={() =>
-										selectChapter(isFilmSectionOpen ? 'overview' : 'films')
-									}
-									data-active={isFilmSectionOpen}
-									className={`interactive-title-motion festival-section-label relative flex w-fit -rotate-1 cursor-pointer items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-tighter shadow-sm transition-colors hover:border-grayDark hover:bg-grayDark hover:text-dark lg:text-5xl ${
-										isFilmSectionOpen
-											? 'border-grayDark bg-grayDark text-dark'
-											: 'border-primary bg-dark text-primary'
-									}`}
-								>
-									<span>
-										{sectionLabel('filmsTitle', tFilmSelection('title'))}
-									</span>
-								</button>
-							</div>
-
 							{isFilmSectionOpen && (
 								<>
 									{filmSelection.length > 0 ? (
 										<div
-											className={`festival-film-filters mt-0 flex w-full flex-wrap items-center justify-between gap-2 bg-dark text-primary lg:mt-2 ${FILM_LABEL_TEXT}`}
+											className={`festival-film-filters mt-0 flex w-full flex-nowrap items-center gap-4 bg-dark text-primary max-lg:text-[clamp(0.875rem,4.7cqw,1rem)] lg:mt-2 ${FILM_LABEL_TEXT}`}
 										>
-											{[
-												{
-													field: 'title' as const,
-													label: tFilmSelection('titleCol'),
-												},
-												{
-													field: 'director' as const,
-													label: tFilmSelection('director'),
-												},
-												{
-													field: 'year' as const,
-													label: tFilmSelection('year'),
-												},
-											].map(({ field, label }) => {
-												const isActive = !showWinnersOnly && sortField === field
-												return (
-													<button
-														key={field}
-														type="button"
-														onClick={() => {
-															const nextOrder =
-																isActive && sortOrder === 'asc' ? 'desc' : 'asc'
-															setSortField(field)
-															setSortOrder(nextOrder)
-															setShowWinnersOnly(false)
-															updateQuery({
-																sort: field,
-																order: nextOrder,
-																winners: undefined,
-															})
-														}}
-														aria-pressed={isActive}
-														className={`${FILM_FILTER_BUTTON_STYLE} ${isActive ? 'bg-primary text-dark' : 'text-primary'}`}
-													>
-														<span className="flex items-center gap-1">
+											<div className="no-scrollbar flex min-w-0 flex-1 items-center justify-between gap-0.5 overflow-x-auto lg:gap-2">
+												{[
+													{
+														field: 'title' as const,
+														label: tFilmSelection('titleCol'),
+													},
+													{
+														field: 'director' as const,
+														label: tFilmSelection('director'),
+													},
+													{
+														field: 'year' as const,
+														label: tFilmSelection('year'),
+													},
+												].map(({ field, label }) => {
+													const isActive =
+														!showWinnersOnly && sortField === field
+													return (
+														<button
+															key={field}
+															type="button"
+															onClick={() => {
+																const nextOrder =
+																	isActive && sortOrder === 'asc'
+																		? 'desc'
+																		: 'asc'
+																setSortField(field)
+																setSortOrder(nextOrder)
+																setShowWinnersOnly(false)
+																updateQuery({
+																	sort: field,
+																	order: nextOrder,
+																	winners: undefined,
+																})
+															}}
+															aria-label={
+																isActive
+																	? `${label}: ${tFilmSelection(sortOrder === 'asc' ? 'ascending' : 'descending')}`
+																	: label
+															}
+															aria-pressed={isActive}
+															className={`${FILM_FILTER_BUTTON_STYLE} ${isActive ? 'bg-primary text-dark' : 'text-primary'}`}
+														>
+															<span
+																className={
+																	field === 'director'
+																		? 'max-[389px]:hidden'
+																		: undefined
+																}
+															>
+																{label}
+															</span>
+															{field === 'director' && (
+																<span className="hidden max-[389px]:inline">
+																	{tFilmSelection('directorShort')}
+																</span>
+															)}
 															<FilterIcon
 																theme={{
 																	upArrow:
-																		isActive && sortOrder === 'asc'
-																			? 'var(--color-dark)'
-																			: 'var(--color-grayDark)',
+																		sortOrder === 'asc'
+																			? 'currentColor'
+																			: 'color-mix(in srgb, currentColor 35%, transparent)',
 																	downArrow:
-																		isActive && sortOrder === 'desc'
-																			? 'var(--color-dark)'
-																			: 'var(--color-grayDark)',
+																		sortOrder === 'desc'
+																			? 'currentColor'
+																			: 'color-mix(in srgb, currentColor 35%, transparent)',
 																}}
-																className="h-[1em] w-auto shrink-0"
+																className={`h-[1em] w-[1em] shrink-0 ${isActive ? 'visible' : 'invisible'}`}
 															/>
-															<span>{label}</span>
-														</span>
-													</button>
-												)
-											})}
-											<button
-												type="button"
-												onClick={() => {
-													setShowWinnersOnly(!showWinnersOnly)
-													updateQuery({
-														winners: !showWinnersOnly ? '1' : undefined,
-													})
-												}}
-												aria-pressed={showWinnersOnly}
-												className={`${FILM_FILTER_BUTTON_STYLE} ${showWinnersOnly ? 'bg-primary text-dark' : 'text-primary'}`}
-											>
-												{showWinnersOnly && <span aria-hidden="true">★</span>}
-												<span>{tFilmSelection('winners')}</span>
-											</button>
-											<div className="flex items-center justify-center">
+														</button>
+													)
+												})}
+												<button
+													type="button"
+													onClick={() => {
+														setShowWinnersOnly(!showWinnersOnly)
+														updateQuery({
+															winners: !showWinnersOnly ? '1' : undefined,
+														})
+													}}
+													aria-pressed={showWinnersOnly}
+													className={`${FILM_FILTER_BUTTON_STYLE} ${showWinnersOnly ? 'bg-primary text-dark' : 'text-primary'}`}
+												>
+													<span>{tFilmSelection('winners')}</span>
+													<span
+														aria-hidden="true"
+														className={`flex h-[1em] w-[1em] shrink-0 items-center justify-center ${showWinnersOnly ? 'visible' : 'invisible'}`}
+													>
+														★
+													</span>
+												</button>
+											</div>
+											<div className="flex shrink-0 items-center justify-center">
 												{[
 													{
 														icon: IoGrid,
@@ -681,7 +731,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															setView(value)
 															updateQuery({ view: value })
 														}}
-														className="relative p-0 text-center transition-colors"
+														className={`relative items-center justify-center p-0 leading-none transition-colors ${view === value ? 'hidden lg:flex' : 'flex'}`}
 														aria-label={label}
 														aria-pressed={view === value}
 													>
@@ -702,16 +752,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																stiffness: 400,
 																damping: 22,
 															}}
-															className="inline-block"
+															className="flex items-center justify-center max-lg:!transform-none max-lg:!opacity-100"
 														>
 															<Icon
 																aria-hidden="true"
 																size={36}
-																className={
-																	view === value
-																		? 'text-primary'
-																		: 'text-grayDark'
-																}
+																className={`max-lg:h-6 max-lg:w-6 max-lg:!text-primary ${view === value ? 'text-primary' : 'text-grayDark'}`}
 															/>
 														</motion.span>
 													</button>
@@ -730,7 +776,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						{isFilmSectionOpen && filmSelection.length > 0 && (
 							<div className="mt-0 pb-16">
 								{view === 'grid' ? (
-									<ul className="grid grid-cols-1 gap-2 pt-4 sm:grid-cols-2 lg:grid-cols-3">
+									<ul className="grid grid-cols-1 gap-x-2 gap-y-4 pt-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-y-2">
 										{sortedFilms.map((film: any, index: number) => {
 											const title = getLocalizedValue(film.title, language)
 											const card = (
@@ -742,10 +788,10 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 															imageWidth={1200}
 															sizes="(min-width: 1024px) 22vw, (min-width: 640px) 46vw, calc(100vw - 64px)"
 															loading={index < 3 ? 'eager' : 'lazy'}
-															className="aspect-square h-auto w-full rounded-lg border-2 border-primary object-cover lg:border-dark"
+															className="aspect-square h-auto w-full rounded-lg object-cover lg:border-2 lg:border-dark"
 														/>
 													) : (
-														<div className="aspect-square w-full rounded-lg border-2 border-primary bg-grayDark/20 lg:border-dark" />
+														<div className="aspect-square w-full rounded-lg bg-grayDark/20 lg:border-2 lg:border-dark" />
 													)}
 
 													<div className="absolute left-1/2 top-1/2 -mt-4 flex w-[90%] -translate-x-1/2 flex-col items-center">
@@ -869,11 +915,11 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 												return (
 													<tr
 														key={filmKey}
-														className={`relative ${film.isWinner ? 'text-dark [&>td:first-child]:pl-2 [&>td]:bg-grayDark' : 'text-primary hover:bg-primary/15'}`}
+														className={`relative [&:last-child>td]:border-b-0 ${film.isWinner ? 'text-dark [&>td:first-child]:pl-2 [&>td]:bg-grayDark' : 'text-primary lg:hover:bg-primary/15'}`}
 														data-film-slug={film.slug?.current}
 													>
 														<td
-															className="group border-b border-primary py-2"
+															className="group border-b border-primary py-2 max-lg:pl-2"
 															onMouseEnter={(event) => {
 																const row = event.currentTarget.closest('tr')
 																if (row) setHoveredFilm({ key: filmKey, row })
@@ -929,7 +975,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																<span className="group block">{director}</span>
 															)}
 														</td>
-														<td className="border-b border-primary px-4 py-2 pr-8">
+														<td className="border-b border-primary py-2 pl-4 text-right max-lg:pr-2 lg:px-4 lg:pr-8 lg:text-left">
 															{filmHref ? (
 																<Link href={filmHref} onClick={saveScroll}>
 																	{film.year}
@@ -955,9 +1001,8 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 					</div>
 
 					<div
-						className={
-							activeChapter === 'exhibition' ? 'lg:block' : 'lg:hidden'
-						}
+						id="edition-panel-exhibition"
+						className={activeChapter === 'exhibition' ? 'block' : 'hidden'}
 					>
 						<Accordion
 							type="single"
@@ -969,22 +1014,22 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 						>
 							<AccordionItem
 								value="item-3"
-								className="festival-section-layer relative -mt-5 flex flex-col items-center justify-center pb-1 lg:-mt-2"
+								className="festival-section-layer relative flex flex-col items-center justify-center pb-1 lg:-mt-2"
 								data-active={photoExhibitionValue === 'item-3'}
 								data-any-active={hasActiveSection}
 								data-stack="exhibition"
 							>
 								<AccordionTrigger
+									wrapperClassName="hidden"
 									data-active={photoExhibitionValue === 'item-3'}
 									className="festival-section-label relative rotate-[2deg] hover:border-grayDark lg:hidden"
 								>
-									{sectionLabel('exhibitionTitle', tExpo('title'))}
+									<RichText
+										value={sectionLabel('exhibitionTitle', tExpo('title'))}
+										inline
+										allowLinks={false}
+									/>
 								</AccordionTrigger>
-								{photoExhibitionValue === 'item-3' && exhibitionCredit && (
-									<div className="relative z-30 -mt-1 flex justify-center px-4 lg:hidden">
-										{creditPill(exhibitionCredit, photoCreditRotation(curators.map((expo: any) => richTextToPlainText(expo.curatorName)).join(', ')))}
-									</div>
-								)}
 								<AccordionContent>
 									<ExhibitionCollage exhibitions={expoPhoto} />
 								</AccordionContent>
@@ -994,45 +1039,15 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 
 					<div
 						className={`relative pb-0 pt-0 ${
-							activeChapter === 'photos' ? 'lg:block' : 'lg:hidden'
+							activeChapter === 'photos' ? 'block' : 'hidden'
 						}`}
-						id="photo-gallery"
+						id="edition-panel-photos"
 					>
-						<div
-							className="festival-section-layer relative -mt-5 flex justify-center"
-							data-active={isPhotoGalleryOpen}
-							data-any-active={hasActiveSection}
-							data-stack="gallery"
-						>
-							<button
-								type="button"
-								aria-expanded={isPhotoGalleryOpen}
-								onClick={() =>
-									selectChapter(isPhotoGalleryOpen ? 'overview' : 'photos')
-								}
-								data-active={isPhotoGalleryOpen}
-								className={`interactive-title-motion festival-section-label relative flex w-fit -rotate-3 cursor-pointer items-center justify-center gap-1 rounded-md border-[3px] px-2 pr-4 text-center text-4xl font-bold uppercase italic tracking-[-0.06em] shadow-sm transition-colors hover:border-grayDark hover:bg-grayDark hover:text-dark lg:hidden ${
-									isPhotoGalleryOpen
-										? 'border-grayDark bg-grayDark text-dark'
-										: 'border-primary bg-dark text-primary'
-								}`}
-							>
-								<span>
-									{sectionLabel('photosTitle', tPhotoGallery('title'))}
-								</span>
-							</button>
-						</div>
-
 						{isPhotoGalleryOpen && (
 							<div className="relative">
-								{galleryCredit && (
-									<div className="relative z-30 -mt-1 flex justify-center px-4 lg:hidden">
-										{creditPill(galleryCredit, '3deg')}
-									</div>
-								)}
-
 								<div
 									className={contactSheet.sheet}
+									ref={photoSheetRef}
 									style={{ '--frames-per-row': photosPerRow } as CSSProperties}
 								>
 									{photoRows.map((row, rowIndex) => (
@@ -1048,9 +1063,12 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													className={contactSheet.perforations}
 													data-edge={edge}
 												>
-													{Array.from({ length: row.length * 8 }, (_, index) => (
-														<span key={index} />
-													))}
+													{Array.from(
+														{ length: row.length * 8 },
+														(_, index) => (
+															<span key={index} />
+														),
+													)}
 												</div>
 											))}
 											<div className={contactSheet.frames}>
@@ -1058,6 +1076,7 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 													<button
 														key={index}
 														type="button"
+														data-gallery-thumbnail={rowIndex * photosPerRow + index}
 														onClick={(event) =>
 															openLightbox(
 																rowIndex * photosPerRow + index,
@@ -1081,7 +1100,9 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 																data-edge={edge}
 																aria-hidden="true"
 															>
-																{String(rowIndex * photosPerRow + index + 1).padStart(2, '0')}
+																{String(
+																	rowIndex * photosPerRow + index + 1,
+																).padStart(2, '0')}
 															</span>
 														))}
 													</button>
@@ -1091,20 +1112,26 @@ const FestivalEditionContent: React.FC<FestivalEditionContentProps> = ({
 									))}
 								</div>
 
-								{isLightboxOpen && createPortal(
-									<FestivalCarousel
-										photos={photoGallery.flatMap((gallery: any) =>
-											(gallery.photos ?? []).map((photo: any) => ({
-												photo,
-												photographer: gallery.photographer,
-											})),
-										)}
-										initialIndex={currentImageIndex}
-										originRect={lightboxOriginRect}
-										onClose={closeLightbox}
-									/>,
-									document.body,
-								)}
+								{isLightboxOpen &&
+									createPortal(
+										<FestivalCarousel
+											photos={photoGallery.flatMap((gallery: any) =>
+												(gallery.photos ?? []).map((photo: any) => ({
+													photo,
+													photographer: gallery.photographer,
+												})),
+											)}
+											initialIndex={currentImageIndex}
+											originRect={lightboxOriginRect}
+											getThumbnail={(index) =>
+												photoSheetRef.current?.querySelector<HTMLButtonElement>(
+													`[data-gallery-thumbnail="${index}"]`,
+												) ?? null
+											}
+											onClose={closeLightbox}
+										/>,
+										document.body,
+									)}
 							</div>
 						)}
 					</div>

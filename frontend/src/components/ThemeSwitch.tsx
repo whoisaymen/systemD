@@ -52,14 +52,14 @@ const ThemeSwitch = ({
 		'bg-dark toggler flex aspect-square h-[2.25rem] cursor-pointer items-stretch justify-center border-primary p-1 sm:h-[2rem] sm:border-[3px] sm:border-primary sm:rounded-md sm:p-1.5 lg:border-0 lg:bg-transparent' : 'toggler flex h-full w-full items-center justify-center bg-dark p-2'
 
 	return (
-		<button type="button" onClick={handleToggle} aria-label={`Change color theme (current: ${activeCombo.name})`} className={`${commonClass} transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}>
+		<button type="button" onClick={handleToggle} aria-label={`Change color theme (current: ${activeCombo.name})`} className={`${commonClass} ${framed ? 'transition-opacity hover:opacity-80' : ''} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}>
 			<ColorSwitch
 				theme={{
 					left: activeCombo.dark,
 					right: activeCombo.primary,
 					stroke: activeCombo.primary,
 				}}
-				className="h-full w-full overflow-visible p-1 sm:p-0"
+				className={`h-full w-full overflow-visible ${framed ? 'p-1 sm:p-0' : ''}`}
 			/>
 		</button>
 	)

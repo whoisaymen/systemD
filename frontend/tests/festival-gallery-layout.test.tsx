@@ -3,12 +3,74 @@ import test from 'node:test'
 import {
 	getActivePhotoRect,
 	getGalleryFrames,
+	getExhibitionFrames,
 	getGalleryLayout,
 	getWrappedIndex,
 } from '../src/components/festival/festivalGalleryLayout'
 
 const photo = (width: number, height: number) => ({
 	asset: { metadata: { dimensions: { width, height } } },
+})
+
+test('large exhibitions keep only the current photo and its two neighbours mounted', () => {
+	const layout = getGalleryLayout({ width: 390, height: 844 })
+	const photos = Array.from({ length: 10000 }, () => ({
+		photo: photo(1200, 1600),
+	}))
+	const first = getExhibitionFrames(layout, photos, 0)
+	assert.deepEqual(
+		first.map(({ index }) => index),
+		[9999, 0, 1],
+	)
+	assert.equal(first[1].rect.left - first[0].rect.left, 390)
+	assert.equal(first[2].rect.left - first[1].rect.left, 390)
+	const next = getExhibitionFrames(layout, photos, 1)
+	assert.equal(
+		first[2].page,
+		next[1].page,
+		'the preloaded next photo keeps its React key',
+	)
+	assert.equal(getExhibitionFrames(layout, photos.slice(0, 1), 0).length, 1)
+	assert.deepEqual(getExhibitionFrames(layout, [], 0), [])
+})
+
+test('mobile film fills the screen width and leaves space outside for dismissal', () => {
+	for (const [width, height] of [
+		[390, 844],
+		[320, 568],
+		[844, 390],
+		[640, 240],
+	]) {
+		const layout = getGalleryLayout({ width, height }, false, true)
+		assert.equal(layout.compactFilm, true)
+		for (const [imageWidth, imageHeight] of [
+			[3000, 2000],
+			[2000, 3000],
+			[1000, 5000],
+		]) {
+			const rect = getActivePhotoRect(layout, photo(imageWidth, imageHeight))
+			const filmTop = rect.top - layout.perforations.railHeight
+			const filmBottom = rect.top + rect.height + layout.perforations.railHeight
+			assert.ok(filmTop >= 24, 'space above the film remains tappable')
+			assert.ok(
+				filmBottom <= height - 24,
+				'space below the film remains tappable',
+			)
+			assert.ok(rect.left - layout.perforations.padding >= 0)
+			assert.ok(rect.left + rect.width + layout.perforations.padding <= width)
+		}
+		assert.equal(layout.stage.left - layout.perforations.padding, 0)
+		assert.equal(layout.stage.width + layout.perforations.padding * 2, width)
+	}
+	assert.deepEqual(
+		getGalleryLayout({ width: 1280, height: 720 }, false, true),
+		getGalleryLayout({ width: 1280, height: 720 }),
+		'desktop retains its existing layout',
+	)
+	assert.equal(
+		getGalleryLayout({ width: 390, height: 844 }, true, true).compactFilm,
+		false,
+	)
 })
 
 test('photos stay between both perforation rails on laptops and small screens', () => {

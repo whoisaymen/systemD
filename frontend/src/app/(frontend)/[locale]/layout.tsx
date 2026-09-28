@@ -11,11 +11,13 @@ import '@/styles/app.css'
 import { GeistSans } from 'geist/font/sans'
 import { ViewTransitions } from 'next-view-transitions'
 import NavBar from '@/components/navigation/NavBar'
-import { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import NavBarMobile from '@/components/navigation/NavBarMobile'
 import ThemeDevPanel from '@/components/ThemeDevPanel'
 import { getSite } from '@/sanity/lib/queries'
 import { resolveThemeCombos } from '@/lib/theme'
+
+export const viewport: Viewport = { viewportFit: 'cover' }
 
 const FALLBACK_TITLE = 'System_D | Empowering self-made filmmakers'
 const FALLBACK_DESCRIPTION =
@@ -83,7 +85,6 @@ export default async function RootLayout({
 							<NavBar locale={locale} social={site?.social} themes={themes} />
 							<NavBarMobile
 								locale={locale}
-								social={site?.social}
 								themes={themes}
 							/>
 							{process.env.NODE_ENV === 'development' && (
@@ -95,7 +96,8 @@ export default async function RootLayout({
 						{children}
 					</main> */}
 
-							<main className="z-40 w-full rounded-md lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))]">
+							{/* Contain mobile section layers below the navigation overlay. */}
+							<main className="z-40 w-full rounded-md pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] max-lg:relative lg:flex lg:min-h-[calc(100svh-1rem)] lg:w-full lg:items-center lg:justify-center lg:px-[calc(var(--width-column-width))] lg:pb-0">
 								{children}
 							</main>
 
