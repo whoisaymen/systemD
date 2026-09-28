@@ -10,9 +10,11 @@ The existing page layouts are preserved. Editable prose uses Portable Text, incl
 | Événements → Type d’événement | Optional label above the event-detail title; choose or create a reusable type under Types d’événements, with names in French, English and Dutch |
 | Big Bang → Short / Long story | Existing story blocks, quotes, captions and tab labels |
 | La Mémoire | Rich introduction and existing edition list |
+| La Mémoire → Menu | Shared edition labels: Film selection, Exhibition, Photo gallery and Jury, translated once for every edition |
 | La Fabrique | Existing introduction, action accordions, supporting copy and text below the animated collage |
 | Festivals → Description | Complete edition overview in one rich-text editor per language; the opening can use « Titre de niveau 2 », followed by « Normal » paragraphs |
-| Festivals | Existing section labels, films, jury, venue and exhibition/gallery credits |
+| Festivals | Edition content, films, jury, venue and exhibition/gallery credits |
+| Festivals → Exposition → Description de l’exposition | Optional translated rich text below the curator credit and above the images; starter copy is populated for 2023 only |
 | L’Équipe, Films, Genres | Existing names, biographies, film copy, credits and taxonomy labels |
 | Contact | Existing address, accordion labels and map link |
 | Soumissions de films → Formulaire de participation | Existing application-form copy |
@@ -20,6 +22,8 @@ The existing page layouts are preserved. Editable prose uses Portable Text, incl
 Festival editions use only `description` for their overview. The former `text` field is merged into it, preserving translations and inline formatting. The 2023 opening uses `h2` (bold, 1.7 times the body size on edition pages), and the rest uses normal paragraphs. To review or apply this migration from the repository root, run `node --import tsx studio/migrations/mergeFestivalDescription.ts`, adding `--apply` to save. It backs up originals, checks document revisions, and handles drafts separately from published copy.
 
 Unused controls have been removed instead of adding new visible sections. Mémoire has no separate introduction title; customers add headings in its rich-text editor. Festival vision headings are merged into the corresponding rich body. Graphic wordmarks and decorative animations remain design assets.
+
+The Menu tab in La Mémoire stores the four active edition labels in `memoire.menu`. All edition pages read this shared object. The unused overview label and the per-edition menu fields are retired. Run `npm run migrate:edition-menu:dry --workspace=studio` to review the transfer, or `npm run migrate:edition-menu --workspace=studio` to apply it. The migration backs up originals, guards revisions, preserves draft and published states, and renames the default exhibition labels to Exhibition / Exposition / Tentoonstelling. Conflicting edition translations stop the migration for review.
 
 ## Validation
 

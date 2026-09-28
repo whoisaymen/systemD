@@ -89,34 +89,9 @@ export default defineType({
 		}),
 		defineField({
 			name: 'expoPhoto',
-			title: 'Expo photo',
+			title: 'Exposition',
 			type: 'array',
 			of: [{ type: 'expoPhotoBlock' }],
-		}),
-		defineField({
-			name: 'overviewTitle',
-			title: 'Titre : présentation',
-			type: 'internationalizedArrayRichText',
-		}),
-		defineField({
-			name: 'filmsTitle',
-			title: 'Titre : sélection des films',
-			type: 'internationalizedArrayRichText',
-		}),
-		defineField({
-			name: 'exhibitionTitle',
-			title: 'Titre : exposition photo',
-			type: 'internationalizedArrayRichText',
-		}),
-		defineField({
-			name: 'photosTitle',
-			title: 'Titre : galerie photo',
-			type: 'internationalizedArrayRichText',
-		}),
-		defineField({
-			name: 'juryTitle',
-			title: 'Titre : jury',
-			type: 'internationalizedArrayRichText',
 		}),
 	],
 	preview: {

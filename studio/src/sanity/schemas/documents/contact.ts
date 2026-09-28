@@ -17,7 +17,7 @@ export default defineType({
 			title: 'Titre des partenaires',
 			type: 'internationalizedArrayRichText',
 		}),
-		// Retain the old label in saved drafts without exposing a retired control.
+		// Retain legacy values in saved documents without exposing retired controls.
 		defineField({
 			name: 'mapLinkLabel',
 			type: 'internationalizedArrayRichText',
@@ -25,25 +25,28 @@ export default defineType({
 		}),
 		defineField({
 			name: 'formEmail',
-			title: 'Email pour le formulaire',
 			type: 'string',
-			validation: (Rule) => Rule.required().email(),
+			hidden: true,
+			readOnly: true,
+		}),
+		defineField({
+			name: 'phone',
+			type: 'string',
+			hidden: true,
+			readOnly: true,
 		}),
 		defineField({
 			name: 'address',
 			title: 'Adresse',
 			type: 'internationalizedArrayRichText',
+			description:
+				'Coordonnées affichées dans la section Contact : adresse, téléphone et email, avec la mise en forme de votre choix.',
 		}),
 		defineField({
 			name: 'mapLocation',
 			title: 'Google Maps',
 			type: 'url',
 			description: 'URL Google Maps de votre localisation',
-		}),
-		defineField({
-			name: 'phone',
-			title: 'Téléphone',
-			type: 'string',
 		}),
 		defineField({
 			name: 'partners',

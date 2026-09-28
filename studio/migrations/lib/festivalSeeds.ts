@@ -1,20 +1,15 @@
 import { localizeText } from './editorialContent'
 
-const editionLabels: Record<string, Record<string, string>> = {
-	overviewTitle: {
-		fr: 'Aperçu',
-		en: 'Overview',
-		nl: 'Overzicht',
-	},
+export const editionMenuLabels: Record<string, Record<string, string>> = {
 	filmsTitle: {
 		fr: 'Sélection films',
 		en: 'Film Selection',
 		nl: 'Filmselectie',
 	},
 	exhibitionTitle: {
-		fr: 'Expo Photo',
-		en: 'Photo Exhibition',
-		nl: 'Foto-expo',
+		fr: 'Exposition',
+		en: 'Exhibition',
+		nl: 'Tentoonstelling',
 	},
 	photosTitle: {
 		fr: 'Galerie photo',
@@ -34,9 +29,13 @@ export function seedFestivalContent(document: any): any {
 	const seed = (field: string, translations: Record<string, string>) => {
 		if (result[field] === undefined) result[field] = localizeText(translations)
 	}
-	if (result._type === 'festival') {
-		for (const [field, translations] of Object.entries(editionLabels))
-			seed(field, translations)
+	if (result._type === 'memoire' && result.menu === undefined) {
+		result.menu = Object.fromEntries(
+			Object.entries(editionMenuLabels).map(([field, translations]) => [
+				field,
+				localizeText(translations),
+			]),
+		)
 	}
 	if (result._type === 'lefestival') {
 		seed('visionTitle', {

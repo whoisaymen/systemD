@@ -3,7 +3,7 @@ import { richTextToPlainText } from '../../lib/richTextPreview'
 
 export default defineType({
 	name: 'expoPhotoBlock',
-	title: 'Expo photo',
+	title: 'Exposition',
 	type: 'object',
 	fields: [
 		defineField({
@@ -11,6 +11,13 @@ export default defineType({
 			title: 'Nom du curateur',
 			type: 'array',
 			of: [{ type: 'block' }],
+		}),
+		defineField({
+			name: 'description',
+			title: 'Description de l’exposition',
+			type: 'internationalizedArrayRichText',
+			description:
+				'Texte facultatif affiché sous le crédit du curateur, avant les images. Laissez vide pour ne rien afficher.',
 		}),
 		defineField({
 			name: 'photos',
