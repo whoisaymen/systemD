@@ -1,0 +1,70 @@
+{
+	"name": "studio",
+	"version": "1.0.0",
+	"private": true,
+	"keywords": [
+		"sanity"
+	],
+	"license": "UNLICENSED",
+	"main": "package.json",
+	"scripts": {
+		"build": "sanity build",
+		"deploy": "sanity deploy --yes",
+		"dev": "sanity dev",
+		"migrate:festival-content:dry": "sanity exec migrations/moveFestivalContent.ts --with-user-token -- --dry-run",
+		"migrate:festival-content": "sanity exec migrations/moveFestivalContent.ts --with-user-token",
+		"migrate:festival-jury-2023:dry": "sanity exec migrations/copyFestivalJuryTo2023.ts --with-user-token -- --dry-run",
+		"migrate:festival-jury-2023": "sanity exec migrations/copyFestivalJuryTo2023.ts --with-user-token",
+		"migrate:i18n-arrays:dry": "sanity migration run migrateToLanguageField",
+		"migrate:i18n-arrays": "sanity migration run migrateToLanguageField --no-dry-run",
+		"migrate:memoire-rich-text:dry": "sanity exec migrations/migrateMemoireDescriptionToRichText.ts --with-user-token -- --dry-run",
+		"migrate:memoire-rich-text": "sanity exec migrations/migrateMemoireDescriptionToRichText.ts --with-user-token",
+		"migrate:edition-menu:dry": "node --import tsx migrations/moveEditionMenuToMemoire.ts",
+		"migrate:edition-menu": "node --import tsx migrations/moveEditionMenuToMemoire.ts --apply",
+		"seed:site-settings:dry": "sanity exec migrations/seedSiteSettings.ts --with-user-token -- --dry-run",
+		"seed:site-settings": "sanity exec migrations/seedSiteSettings.ts --with-user-token",
+		"start": "sanity start",
+		"typecheck": "tsc --noEmit",
+		"migrate:editorial:dry": "sanity exec migrations/migrateEditorialContent.ts --with-user-token -- --drafts-only",
+		"migrate:editorial:drafts": "sanity exec migrations/migrateEditorialContent.ts --with-user-token -- --drafts-only --apply",
+		"migrate:editorial:release:dry": "sanity exec migrations/migrateEditorialContent.ts --with-user-token",
+		"migrate:editorial:release": "sanity exec migrations/migrateEditorialContent.ts --with-user-token -- --apply",
+		"migrate:form-settings:dry": "sanity exec migrations/moveFilmSubmissionSettings.ts --with-user-token",
+		"migrate:form-settings": "sanity exec migrations/moveFilmSubmissionSettings.ts --with-user-token -- --apply",
+		"migrate:bigbang-story:dry": "node --import tsx migrations/restructureBigBangShortStory.ts",
+		"migrate:bigbang-story": "node --import tsx migrations/restructureBigBangShortStory.ts --apply",
+		"lint": "eslint ."
+	},
+	"dependencies": {
+		"@portabletext/editor": "8.1.5",
+		"@sanity/client": "^8.6.2",
+		"@sanity/code-input": "^7.3.8",
+		"@sanity/color-input": "^6.1.4",
+		"@sanity/dashboard": "^6.0.18",
+		"@sanity/document-internationalization": "^6.2.36",
+		"@sanity/image-url": "^2.1.1",
+		"@sanity/language-filter": "^5.0.18",
+		"@sanity/locale-fr-fr": "^1.2.37",
+		"@sanity/orderable-document-list": "^2.0.24",
+		"@sanity/ui": "^4.2.1",
+		"@sanity/vision": "^6.15.0",
+		"groq": "^6.15.0",
+		"react": "^19.3.0",
+		"react-dom": "^19.3.0",
+		"react-icons": "^5.7.0",
+		"sanity": "^6.15.0",
+		"sanity-plugin-dashboard-widget-vercel": "^4.0.28",
+		"sanity-plugin-internationalized-array": "^5.3.0",
+		"styled-components": "^6.5.3"
+	},
+	"devDependencies": {
+		"@sanity/eslint-config-studio": "^6.0.0",
+		"@types/react": "^19.3.0",
+		"eslint": "^9.39.5",
+		"typescript": "^6.0.3"
+	},
+	"engines": {
+		"node": ">=24.15.0 <25",
+		"npm": ">=12.0.2 <13"
+	}
+}

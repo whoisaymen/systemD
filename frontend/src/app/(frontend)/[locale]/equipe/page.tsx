@@ -1,0 +1,36 @@
+import { groq, fetchSanityLive } from '@/sanity/lib/fetch'
+import TeamCarousel from '@/components/equipe/TeamCarousel'
+
+export default async function EquipePage({
+	params,
+}: {
+	params: Promise<{ locale: string }>
+}) {
+	const { locale } = await params
+	const content = await getEquipe('person', locale)
+
+	// return <EquipeContent persons={content} language={locale} />
+
+	return <TeamCarousel persons={content} language={locale} />
+}
+
+async function getEquipe(tab: string, locale: string) {
+	const query = groq`
+    {
+      "person": *[_type == 'person'] | order(orderRank asc, _id asc){
+        _id,
+        name,
+        role,
+        biography,
+        image
+      }
+    }
+  `
+	const data = await fetchSanityLive({ query })
+
+	if (!data?.person) {
+		throw new Error(`No content found for tab "${tab}"`)
+	}
+
+	return data.person
+}

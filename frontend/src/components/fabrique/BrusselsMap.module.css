@@ -1,0 +1,200 @@
+.map {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	background: var(--color-grayDark);
+	color: var(--color-dark);
+}
+
+:global(html[data-theme='system-d-neon-black']) .map {
+	background: var(--color-primary);
+}
+
+.canvas,
+.fallback {
+	position: absolute;
+	inset: 0;
+}
+
+.fallback {
+	background: currentColor;
+	mask: url('/maps/brussels.svg') center / cover no-repeat;
+}
+
+.canvas {
+	opacity: 0;
+	transition: opacity 450ms ease;
+}
+
+.map[data-map-status='ready'] .canvas {
+	opacity: 1;
+}
+.map[data-map-status='ready'] .fallback {
+	visibility: hidden;
+}
+
+.controls {
+	position: absolute;
+	top: 18px;
+	right: 18px;
+	display: flex;
+	flex-direction: column;
+	border: 1.5px solid var(--color-dark);
+	border-radius: 8px;
+	background: var(--color-primary);
+	box-shadow: 2px 2px 0 var(--color-dark);
+	overflow: hidden;
+}
+
+.controls button {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	transition:
+		background 150ms ease,
+		color 150ms ease;
+}
+
+.controls button + button {
+	border-top: 1px solid currentColor;
+}
+.controls button:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+.controls button:not(:disabled):hover {
+	background: var(--color-dark);
+	color: var(--color-primary);
+}
+.controls svg {
+	width: 16px;
+	height: 16px;
+	stroke-width: 2;
+}
+
+.map a:focus-visible,
+.map button:focus-visible {
+	outline: 3px solid var(--color-dark);
+	outline-offset: 4px;
+}
+
+.controls button:focus-visible {
+	outline-offset: -5px;
+}
+
+.marker {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	color: var(--color-dark);
+	text-decoration: none;
+}
+
+.markerDot {
+	width: 13px;
+	height: 13px;
+	border: 3px solid var(--color-dark);
+	border-radius: 50%;
+	background: var(--color-primary);
+	box-shadow: 0 0 0 5px
+		color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.instructions {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.status {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: max-content;
+	max-width: calc(100% - 110px);
+	transform: translate(-50%, -50%);
+	padding: 12px 16px;
+	border: 2px solid currentColor;
+	border-radius: 8px;
+	background: var(--color-primary);
+	font-size: 13px;
+	text-align: center;
+}
+
+.statusActions {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 7px;
+}
+.statusActions a,
+.statusActions button {
+	font-weight: 700;
+	text-decoration: underline;
+}
+.attribution {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	padding: 3px 7px;
+	background: inherit;
+	color: var(--color-dark);
+	font-size: 9px;
+	line-height: 1.5;
+}
+.attribution a:hover {
+	text-decoration: underline;
+}
+.map :global(.maplibregl-ctrl-scale) {
+	margin: 0 0 17px 20px;
+	padding: 0 5px;
+	background: var(--color-primary);
+	color: var(--color-dark);
+	border-color: var(--color-dark);
+	font-size: 10px;
+	line-height: 1.5;
+}
+.map :global(.maplibregl-canvas):focus-visible {
+	outline: 3px solid var(--color-primary);
+	outline-offset: -5px;
+}
+.map :global(.maplibregl-cooperative-gesture-screen) {
+	background: color-mix(in srgb, var(--color-dark) 85%, transparent);
+	color: var(--color-primary);
+	font-family: inherit;
+}
+
+@media (max-width: 640px) {
+	.controls {
+		top: 12px;
+		right: 12px;
+	}
+	.controls button {
+		width: 28px;
+		height: 28px;
+	}
+	.controls svg {
+		width: 14px;
+		height: 14px;
+	}
+	.map :global(.maplibregl-ctrl-scale) {
+		margin-left: 16px;
+		margin-bottom: 27px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.canvas,
+	.controls button {
+		transition: none;
+	}
+}

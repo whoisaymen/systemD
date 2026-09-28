@@ -1,0 +1,111 @@
+{
+	"menu": {
+		"legal": "Legal notice",
+		"about": "About",
+		"openMainMenu": "Open main menu"
+	},
+
+	"contactPage": {
+		"title": "About",
+		"contact": "Contact",
+		"partners": "Partners",
+		"credits": "Credits",
+		"copyright": "© {year} System D · All rights reserved.",
+		"viewOnMap": "View on Google Maps",
+		"noContent": "No content available",
+		"map": {
+			"label": "Interactive map of Brussels around Pianofabriek",
+			"controls": "Map controls",
+			"zoomIn": "Zoom in",
+			"zoomOut": "Zoom out",
+			"reset": "Back to System D",
+			"venueLink": "System D at Pianofabriek — open in Google Maps",
+			"openDirections": "Open directions",
+			"instructions": "Drag to explore. Use + and − to zoom, or hold Ctrl / ⌘ while scrolling. On touch screens, use two fingers. With the map focused, use the arrow keys to move and + / − to zoom.",
+			"scrollHint": "Use Ctrl + scroll to zoom the map",
+			"scrollHintMac": "Use ⌘ + scroll to zoom the map",
+			"touchHint": "Use two fingers to move the map",
+			"loading": "Finding our corner of Brussels…",
+			"unavailable": "The live map is unavailable. You can still open directions.",
+			"retry": "Try again"
+		}
+	},
+
+	"festivalEvents": {
+		"title": "Events",
+		"previousYear": "Previous year",
+		"nextYear": "Next year",
+		"gridView": "Grid",
+		"listView": "List",
+		"calendarView": "Calendar",
+		"agendaView": "Agenda",
+		"eventSingular": "event",
+		"eventPlural": "events",
+		"previousMonth": "Previous month",
+		"nextMonth": "Next month",
+		"backToYearCalendar": "Back to year calendar",
+		"backToCalendar": "Back to calendar",
+		"sampleEvent": "Sample event · layout preview",
+		"monthAgenda": "Month agenda",
+		"allEvents": "All",
+		"noEventsScheduled": "No events scheduled",
+		"openPressKit": "Open press kit",
+		"moreEvents": "+{count} more",
+		"noEvents": "No events scheduled in {year}",
+		"closeDetails": "Close event details",
+		"dateLabel": "Date",
+		"timeLabel": "Time",
+		"locationLabel": "Location",
+		"descriptionLabel": "Description",
+		"pressLink": "Press link",
+		"visionFallback": "Our Vision",
+		"noDescription": "No description available",
+		"noContent": "No content available",
+		"expandVideo": "Expand festival video",
+		"closeVideo": "Close festival video",
+		"videoUnsupported": "Your browser does not support the video tag."
+	},
+
+	"expo": {
+		"enlargePhoto": "Enlarge photo",
+		"enlargePhotoBy": "Enlarge photo by {artist}",
+		"curatedBy": "Curated by",
+		"title": "Exhibition"
+	},
+
+	"filmSelection": {
+		"directorShort": "Dir.",
+		"ascending": "Ascending",
+		"descending": "Descending",
+		"title": "Film Selection",
+		"year": "Year",
+		"titleCol": "Title",
+		"director": "Director",
+		"films": "Films",
+		"sort": "Sort",
+		"show": "Show",
+		"all": "All",
+		"award": "Award",
+		"winner": "Winner",
+		"noAward": "No award",
+		"winners": "Winners",
+		"comingSoon": "Films coming soon...",
+		"gridView": "Grid",
+		"listView": "List"
+	},
+
+	"photoGallery": {
+		"title": "Photo Gallery",
+		"photosBy": "Photos by"
+	},
+
+	"festivalEdition": {
+		"overview": "Overview",
+		"jury": "Jury",
+		"indexLabel": "Edition chapters"
+	},
+
+	"memoire": {
+		"previousEditions": "Editions"
+	}
+}

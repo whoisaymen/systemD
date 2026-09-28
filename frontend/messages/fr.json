@@ -1,0 +1,111 @@
+{
+	"menu": {
+		"legal": "Mentions légales",
+		"about": "À propos",
+		"openMainMenu": "Ouvrir le menu principal"
+	},
+
+	"contactPage": {
+		"title": "À propos",
+		"contact": "Contact",
+		"partners": "Partenaires",
+		"credits": "Crédits",
+		"copyright": "© {year} System D · Tous droits réservés.",
+		"viewOnMap": "Voir sur Google Maps",
+		"noContent": "Aucun contenu disponible",
+		"map": {
+			"label": "Carte interactive de Bruxelles autour du Pianofabriek",
+			"controls": "Commandes de la carte",
+			"zoomIn": "Zoomer",
+			"zoomOut": "Dézoomer",
+			"reset": "Revenir à System D",
+			"venueLink": "System D au Pianofabriek — ouvrir dans Google Maps",
+			"openDirections": "Voir l’itinéraire",
+			"instructions": "Faites glisser pour explorer. Utilisez + et − pour zoomer, ou maintenez Ctrl / ⌘ en faisant défiler. Sur écran tactile, utilisez deux doigts. Lorsque la carte est sélectionnée, utilisez les flèches pour vous déplacer et + / − pour zoomer.",
+			"scrollHint": "Utilisez Ctrl + défilement pour zoomer sur la carte",
+			"scrollHintMac": "Utilisez ⌘ + défilement pour zoomer sur la carte",
+			"touchHint": "Utilisez deux doigts pour déplacer la carte",
+			"loading": "On retrouve notre coin de Bruxelles…",
+			"unavailable": "La carte interactive est indisponible. L’itinéraire reste accessible.",
+			"retry": "Réessayer"
+		}
+	},
+
+	"festivalEvents": {
+		"title": "Événements",
+		"previousYear": "Année précédente",
+		"nextYear": "Année suivante",
+		"gridView": "Grille",
+		"listView": "Liste",
+		"calendarView": "Calendrier",
+		"agendaView": "Agenda",
+		"eventSingular": "événement",
+		"eventPlural": "événements",
+		"previousMonth": "Mois précédent",
+		"nextMonth": "Mois suivant",
+		"backToYearCalendar": "Revenir au calendrier annuel",
+		"backToCalendar": "Retour au calendrier",
+		"sampleEvent": "Événement fictif · aperçu de mise en page",
+		"monthAgenda": "Agenda du mois",
+		"allEvents": "Tout",
+		"noEventsScheduled": "Aucun événement programmé",
+		"openPressKit": "Ouvrir le dossier de presse",
+		"moreEvents": "+{count} autres",
+		"noEvents": "Aucun événement programmé en {year}",
+		"closeDetails": "Fermer le détail de l'événement",
+		"dateLabel": "Date",
+		"timeLabel": "Horaire",
+		"locationLabel": "Lieu",
+		"descriptionLabel": "Description",
+		"pressLink": "Lien de presse",
+		"visionFallback": "Notre vision",
+		"noDescription": "Aucune description disponible",
+		"noContent": "Aucun contenu disponible",
+		"expandVideo": "Agrandir la vidéo du festival",
+		"closeVideo": "Réduire la vidéo du festival",
+		"videoUnsupported": "Votre navigateur ne prend pas en charge la vidéo."
+	},
+
+	"expo": {
+		"enlargePhoto": "Agrandir la photo",
+		"enlargePhotoBy": "Agrandir la photo de {artist}",
+		"curatedBy": "Sélectionné par",
+		"title": "Exposition"
+	},
+
+	"filmSelection": {
+		"directorShort": "Réal.",
+		"ascending": "Croissant",
+		"descending": "Décroissant",
+		"title": "Sélection films",
+		"year": "Année",
+		"titleCol": "Titre",
+		"director": "Réalisateur",
+		"films": "Films",
+		"sort": "Trier",
+		"show": "Afficher",
+		"all": "Tous",
+		"award": "Prix",
+		"winner": "Lauréat",
+		"noAward": "Aucun prix",
+		"winners": "Lauréats",
+		"comingSoon": "Films à venir...",
+		"gridView": "Grille",
+		"listView": "Liste"
+	},
+
+	"photoGallery": {
+		"title": "Galerie photo",
+		"photosBy": "Photos par"
+	},
+
+	"festivalEdition": {
+		"overview": "Aperçu",
+		"jury": "Jury",
+		"indexLabel": "Chapitres de l’édition"
+	},
+
+	"memoire": {
+		"previousEditions": "Éditions"
+	}
+}

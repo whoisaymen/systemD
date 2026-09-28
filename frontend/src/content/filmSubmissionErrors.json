@@ -1,0 +1,87 @@
+{
+	"submissionError": {
+		"fr": "Une erreur est survenue. Veuillez réessayer.",
+		"en": "Something went wrong. Please try again.",
+		"nl": "Er is iets misgegaan. Probeer het opnieuw."
+	},
+	"validation1": {
+		"fr": "Le nom doit contenir au moins 2 caractères.",
+		"en": "Name must be at least 2 characters",
+		"nl": "De naam moet minstens 2 tekens bevatten."
+	},
+	"validation2": {
+		"fr": "Veuillez saisir un numéro de téléphone valide.",
+		"en": "Please enter a valid phone number",
+		"nl": "Voer een geldig telefoonnummer in."
+	},
+	"validation3": {
+		"fr": "Veuillez saisir une adresse e-mail valide.",
+		"en": "Please enter a valid email address",
+		"nl": "Voer een geldig e-mailadres in."
+	},
+	"validation4": {
+		"fr": "Veuillez renseigner votre compte Instagram.",
+		"en": "Instagram handle is required",
+		"nl": "Vul je Instagram-account in."
+	},
+	"validation5": {
+		"fr": "Veuillez renseigner le titre du film.",
+		"en": "Film title is required",
+		"nl": "Vul de titel van de film in."
+	},
+	"validation6": {
+		"fr": "Veuillez renseigner le réalisateur ou le producteur.",
+		"en": "Director/Producer is required",
+		"nl": "Vul de regisseur of producent in."
+	},
+	"validation7": {
+		"fr": "Veuillez renseigner le porteur du projet.",
+		"en": "Project holder is required",
+		"nl": "Vul de initiatiefnemer van het project in."
+	},
+	"validation8": {
+		"fr": "Veuillez sélectionner un genre.",
+		"en": "Please select a genre",
+		"nl": "Selecteer een genre."
+	},
+	"validation9": {
+		"fr": "Veuillez saisir une année à partir de 1900.",
+		"en": "Year must be after 1900",
+		"nl": "Voer een jaar vanaf 1900 in."
+	},
+	"validation10": {
+		"fr": "L’année ne peut pas être dans le futur.",
+		"en": "Year cannot be in the future",
+		"nl": "Het jaar mag niet in de toekomst liggen."
+	},
+	"validation11": {
+		"fr": "Veuillez sélectionner au moins une langue.",
+		"en": "At least one language is required",
+		"nl": "Selecteer minstens één taal."
+	},
+	"validation12": {
+		"fr": "La durée doit être d’au moins une minute.",
+		"en": "Duration must be at least 1 minute",
+		"nl": "De duur moet minstens één minuut zijn."
+	},
+	"validation13": {
+		"fr": "Veuillez saisir une adresse de téléchargement valide.",
+		"en": "Please enter a valid URL",
+		"nl": "Voer een geldige downloadlink in."
+	},
+	"validation14": {
+		"fr": "Veuillez accepter le stockage de vos données pour envoyer le formulaire.",
+		"en": "You must agree to data storage to submit",
+		"nl": "Geef toestemming voor de opslag van je gegevens om het formulier te verzenden."
+	},
+	"validation15": {
+		"fr": "Veuillez sélectionner un format.",
+		"en": "Please select a format.",
+		"nl": "Selecteer een formaat."
+	},
+	"validation16": {
+		"fr": "Veuillez sélectionner une réponse.",
+		"en": "Please select an answer.",
+		"nl": "Selecteer een antwoord."
+	}
+}

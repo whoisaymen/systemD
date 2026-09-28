@@ -1,0 +1,111 @@
+{
+	"menu": {
+		"legal": "Wettelijke vermeldingen",
+		"about": "Over ons",
+		"openMainMenu": "Hoofdmenu openen"
+	},
+
+	"contactPage": {
+		"title": "Over ons",
+		"contact": "Contact",
+		"partners": "Partners",
+		"credits": "Credits",
+		"copyright": "© {year} System D · Alle rechten voorbehouden.",
+		"viewOnMap": "Bekijk op Google Maps",
+		"noContent": "Geen inhoud beschikbaar",
+		"map": {
+			"label": "Interactieve kaart van Brussel rond de Pianofabriek",
+			"controls": "Kaartbediening",
+			"zoomIn": "Inzoomen",
+			"zoomOut": "Uitzoomen",
+			"reset": "Terug naar System D",
+			"venueLink": "System D in de Pianofabriek — openen in Google Maps",
+			"openDirections": "Route bekijken",
+			"instructions": "Sleep om te verkennen. Gebruik + en − om te zoomen, of houd Ctrl / ⌘ ingedrukt tijdens het scrollen. Gebruik op een aanraakscherm twee vingers. Als de kaart geselecteerd is, gebruik je de pijltjestoetsen om te bewegen en + / − om te zoomen.",
+			"scrollHint": "Gebruik Ctrl + scrollen om op de kaart in te zoomen",
+			"scrollHintMac": "Gebruik ⌘ + scrollen om op de kaart in te zoomen",
+			"touchHint": "Gebruik twee vingers om de kaart te verplaatsen",
+			"loading": "Even ons plekje in Brussel zoeken…",
+			"unavailable": "De interactieve kaart is niet beschikbaar. Je kunt de route nog steeds openen.",
+			"retry": "Opnieuw proberen"
+		}
+	},
+
+	"festivalEvents": {
+		"title": "Evenementen",
+		"previousYear": "Vorig jaar",
+		"nextYear": "Volgend jaar",
+		"gridView": "Raster",
+		"listView": "Lijst",
+		"calendarView": "Kalender",
+		"agendaView": "Agenda",
+		"eventSingular": "evenement",
+		"eventPlural": "evenementen",
+		"previousMonth": "Vorige maand",
+		"nextMonth": "Volgende maand",
+		"backToYearCalendar": "Terug naar de jaarkalender",
+		"backToCalendar": "Terug naar de kalender",
+		"sampleEvent": "Voorbeeldevenement · lay-outvoorbeeld",
+		"monthAgenda": "Maandagenda",
+		"allEvents": "Alles",
+		"noEventsScheduled": "Geen evenementen gepland",
+		"openPressKit": "Open persmap",
+		"moreEvents": "+{count} meer",
+		"noEvents": "Geen evenementen gepland in {year}",
+		"closeDetails": "Evenementdetails sluiten",
+		"dateLabel": "Datum",
+		"timeLabel": "Tijd",
+		"locationLabel": "Locatie",
+		"descriptionLabel": "Beschrijving",
+		"pressLink": "Perslink",
+		"visionFallback": "Onze visie",
+		"noDescription": "Geen beschrijving beschikbaar",
+		"noContent": "Geen inhoud beschikbaar",
+		"expandVideo": "Festivalvideo vergroten",
+		"closeVideo": "Festivalvideo sluiten",
+		"videoUnsupported": "Je browser ondersteunt deze video niet."
+	},
+
+	"expo": {
+		"enlargePhoto": "Foto vergroten",
+		"enlargePhotoBy": "Foto van {artist} vergroten",
+		"curatedBy": "Gecureerd door",
+		"title": "Tentoonstelling"
+	},
+
+	"filmSelection": {
+		"directorShort": "Regie",
+		"ascending": "Oplopend",
+		"descending": "Aflopend",
+		"title": "Filmselectie",
+		"year": "Jaar",
+		"titleCol": "Titel",
+		"director": "Regisseur",
+		"films": "Films",
+		"sort": "Sorteren",
+		"show": "Tonen",
+		"all": "Alle",
+		"award": "Prijs",
+		"winner": "Winnaar",
+		"noAward": "Geen prijs",
+		"winners": "Winnaars",
+		"comingSoon": "Films binnenkort beschikbaar...",
+		"gridView": "Raster",
+		"listView": "Lijst"
+	},
+
+	"photoGallery": {
+		"title": "Fotogalerij",
+		"photosBy": "Foto's door"
+	},
+
+	"festivalEdition": {
+		"overview": "Overzicht",
+		"jury": "Jury",
+		"indexLabel": "Hoofdstukken van de editie"
+	},
+
+	"memoire": {
+		"previousEditions": "Edities"
+	}
+}
