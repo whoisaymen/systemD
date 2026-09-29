@@ -156,7 +156,12 @@
 
 @media (min-width: 1024px) {
 	.switcher {
+		--language-drawer-width: 5.25rem;
 		background: transparent;
+	}
+
+	.menu {
+		padding-left: 0.5rem;
 	}
 
 	/* Anchor the current language and the adjacent controls while extending left. */
@@ -166,7 +171,7 @@
 		bottom: 0;
 		overflow: clip;
 		border-radius: 0.375rem 0 0 0;
-		background: var(--navigation-background);
+		background: var(--color-dark);
 	}
 }
 
