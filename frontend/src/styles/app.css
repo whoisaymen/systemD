@@ -238,10 +238,6 @@
 		column-gap: 0.75rem;
 	}
 
-	html[data-theme='system-d-yellow-blue'] .desktop-menu-controls {
-		--navigation-control-hover: var(--color-dark);
-	}
-
 	.desktop-menu-controls a:is(:hover, :focus-visible, [aria-current='page']) {
 		color: var(--navigation-control-hover);
 	}
