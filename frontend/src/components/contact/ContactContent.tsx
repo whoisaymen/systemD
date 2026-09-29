@@ -104,7 +104,7 @@ const ContactContent: React.FC<ContactContentProps> = ({
 	return (
 		<div
 			key={contact._id}
-			className="no-scrollbar relative flex h-full w-full flex-col gap-2 px-4 pb-24 pt-2 text-primary lg:my-1 lg:grid lg:h-[calc(100svh-10px)] lg:grid-rows-[auto_auto_minmax(16rem,1fr)] lg:gap-1 lg:overflow-hidden lg:p-0"
+			className="no-scrollbar relative flex h-full w-full flex-col gap-2 px-4 pb-24 pt-2 text-primary lg:my-1 lg:grid lg:h-[calc(100svh-10px)] lg:grid-rows-[auto_minmax(16rem,1fr)] lg:gap-1 lg:overflow-hidden lg:p-0"
 		>
 			<section className="theme-main-content-surface lg:shadowtest relative z-10 rounded-xl [container-type:inline-size] lg:min-h-0 lg:overflow-y-auto lg:bg-dark">
 				<Accordion
@@ -225,11 +225,10 @@ const ContactContent: React.FC<ContactContentProps> = ({
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>
+				<footer className="px-4 pb-4 pt-2 text-center text-xs leading-relaxed tracking-tight lg:text-sm">
+					<p>{t('copyright', { year: copyrightYear })}</p>
+				</footer>
 			</section>
-
-			<footer className="theme-main-content-surface rounded-xl bg-dark px-4 py-2 text-center text-xs leading-relaxed tracking-tight lg:text-sm">
-				<p>{t('copyright', { year: copyrightYear })}</p>
-			</footer>
 
 			<section className="theme-contact-map-card relative z-10 min-h-[18rem] overflow-hidden rounded-[2rem] bg-grayDark text-dark shadow-inner lg:min-h-0 lg:rounded-xl">
 				<BrusselsMap
