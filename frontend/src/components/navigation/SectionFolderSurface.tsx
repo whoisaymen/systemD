@@ -150,7 +150,7 @@ export default function SectionFolderSurface({ section }: { section: FolderSecti
 							<path d={outline} fill="black" />
 						</mask>
 					</defs>
-					<rect x={cutout.left - 12} y={cutout.top - 12} width={cutout.right - cutout.left + 24} height={cutout.bottom - cutout.top + 24} fill="var(--navigation-background)" mask={`url(#${cutoutId})`} />
+					<rect x={cutout.left - 12} y={cutout.top - 12} width={cutout.right - cutout.left + 24} height={cutout.bottom - cutout.top + 24} fill="var(--color-dark)" mask={`url(#${cutoutId})`} />
 				</svg>
 			)}
 			{/* Keep the inset edge above opaque content such as sticky headers. */}
